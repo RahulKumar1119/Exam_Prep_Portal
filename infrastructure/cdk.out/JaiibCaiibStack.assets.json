@@ -1,0 +1,20 @@
+{
+  "version": "34.0.0",
+  "files": {
+    "443b8e78555f9b8a29bc3b941caada394f210e6ffdc832c2b7e4a770a66c1f5e": {
+      "source": {
+        "path": "JaiibCaiibStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "438097524343-ap-south-1": {
+          "bucketName": "cdk-hnb659fds-assets-438097524343-ap-south-1",
+          "objectKey": "443b8e78555f9b8a29bc3b941caada394f210e6ffdc832c2b7e4a770a66c1f5e.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::438097524343:role/cdk-hnb659fds-file-publishing-role-438097524343-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

@@ -1,0 +1,359 @@
+{
+  "version": "34.0.0",
+  "artifacts": {
+    "JaiibCaiibStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "JaiibCaiibStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "JaiibCaiibStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://438097524343/ap-south-1",
+      "properties": {
+        "templateFile": "JaiibCaiibStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::438097524343:role/cdk-hnb659fds-deploy-role-438097524343-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::438097524343:role/cdk-hnb659fds-cfn-exec-role-438097524343-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-438097524343-ap-south-1/443b8e78555f9b8a29bc3b941caada394f210e6ffdc832c2b7e4a770a66c1f5e.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "JaiibCaiibStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::438097524343:role/cdk-hnb659fds-lookup-role-438097524343-ap-south-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "JaiibCaiibStack.assets"
+      ],
+      "metadata": {
+        "/JaiibCaiibStack/JaiibKmsKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibKmsKeyACB32463"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibKmsKey/Alias/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibKmsKeyAlias7BCD03E6"
+          }
+        ],
+        "/JaiibCaiibStack/LambdaExecutionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LambdaExecutionRoleD5C26073"
+          }
+        ],
+        "/JaiibCaiibStack/LambdaExecutionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LambdaExecutionRoleDefaultPolicy6D69732F"
+          }
+        ],
+        "/JaiibCaiibStack/UsersTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "UsersTable9725E9C8"
+            }
+          }
+        ],
+        "/JaiibCaiibStack/UsersTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UsersTable9725E9C8"
+          }
+        ],
+        "/JaiibCaiibStack/PracticeSessionsTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "PracticeSessionsTable950216DE"
+            }
+          }
+        ],
+        "/JaiibCaiibStack/PracticeSessionsTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PracticeSessionsTable950216DE"
+          }
+        ],
+        "/JaiibCaiibStack/ScoresTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "ScoresTable6CB35494"
+            }
+          }
+        ],
+        "/JaiibCaiibStack/ScoresTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ScoresTable6CB35494"
+          }
+        ],
+        "/JaiibCaiibStack/QuestionBankTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "QuestionBankTable708CA732"
+            }
+          }
+        ],
+        "/JaiibCaiibStack/QuestionBankTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuestionBankTable708CA732"
+          }
+        ],
+        "/JaiibCaiibStack/AuditLogsTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "AuditLogsTable7D096F6F"
+            }
+          }
+        ],
+        "/JaiibCaiibStack/AuditLogsTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditLogsTable7D096F6F"
+          }
+        ],
+        "/JaiibCaiibStack/NotificationsTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "NotificationsTable76DCFC6C"
+            }
+          }
+        ],
+        "/JaiibCaiibStack/NotificationsTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NotificationsTable76DCFC6C"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibLogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibLogGroup1FCE30C7"
+          }
+        ],
+        "/JaiibCaiibStack/ApiResponseTimeAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiResponseTimeAlarm2D504207"
+          }
+        ],
+        "/JaiibCaiibStack/ErrorRateAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ErrorRateAlarm1E0D8C38"
+          }
+        ],
+        "/JaiibCaiibStack/DynamoDBThrottlingAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBThrottlingAlarm3D3194A5"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiA4F3AD36"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/CloudWatchRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiCloudWatchRole7678AC82"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Account": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiAccount1B0397F4"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiDeployment53D9F67188162694313959e99b4e1a0f16e25c07"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiDeploymentStageprod73744479"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiEndpoint30562DFA"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiOPTIONSADDC8970"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/auth/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiauthD01FCEFA"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/auth/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiauthOPTIONSAEDFD9A6"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/auth/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiauthPOST2EB3193F"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/practice/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApipractice34469C5E"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/practice/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApipracticeOPTIONSDC9B3E64"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/practice/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApipracticePOST2F88B517"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/dashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApidashboard3DA3D48F"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/dashboard/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApidashboardOPTIONS0862672A"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/dashboard/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApidashboardGET43612742"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/RequestValidator/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApiRequestValidator5E7A1E54"
+          }
+        ],
+        "/JaiibCaiibStack/KmsKeyArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "KmsKeyArn"
+          }
+        ],
+        "/JaiibCaiibStack/LambdaRoleArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LambdaRoleArn"
+          }
+        ],
+        "/JaiibCaiibStack/ApiEndpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ApiEndpoint"
+          }
+        ],
+        "/JaiibCaiibStack/UsersTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UsersTableName"
+          }
+        ],
+        "/JaiibCaiibStack/PracticeSessionsTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PracticeSessionsTableName"
+          }
+        ],
+        "/JaiibCaiibStack/ScoresTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ScoresTableName"
+          }
+        ],
+        "/JaiibCaiibStack/QuestionBankTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuestionBankTableName"
+          }
+        ],
+        "/JaiibCaiibStack/AuditLogsTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AuditLogsTableName"
+          }
+        ],
+        "/JaiibCaiibStack/NotificationsTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "NotificationsTableName"
+          }
+        ],
+        "/JaiibCaiibStack/LogGroupName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LogGroupName"
+          }
+        ],
+        "/JaiibCaiibStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/JaiibCaiibStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/JaiibCaiibStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "JaiibCaiibStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

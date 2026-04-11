@@ -203,7 +203,7 @@ class JaiibCaiibStack(cdk.Stack):
             partition_key=dynamodb.Attribute(
                 name="email", type=dynamodb.AttributeType.STRING
             ),
-            projection=dynamodb.ProjectionType.ALL,
+            projection_type=dynamodb.ProjectionType.ALL,
         )
 
         return table
@@ -231,7 +231,7 @@ class JaiibCaiibStack(cdk.Stack):
             partition_key=dynamodb.Attribute(
                 name="user_id", type=dynamodb.AttributeType.STRING
             ),
-            projection=dynamodb.ProjectionType.ALL,
+            projection_type=dynamodb.ProjectionType.ALL,
         )
 
         return table
@@ -285,7 +285,7 @@ class JaiibCaiibStack(cdk.Stack):
             sort_key=dynamodb.Attribute(
                 name="topic", type=dynamodb.AttributeType.STRING
             ),
-            projection=dynamodb.ProjectionType.ALL,
+            projection_type=dynamodb.ProjectionType.ALL,
         )
 
         return table
@@ -318,7 +318,7 @@ class JaiibCaiibStack(cdk.Stack):
             sort_key=dynamodb.Attribute(
                 name="timestamp", type=dynamodb.AttributeType.NUMBER
             ),
-            projection=dynamodb.ProjectionType.ALL,
+            projection_type=dynamodb.ProjectionType.ALL,
         )
 
         return table

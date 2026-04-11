@@ -1,0 +1,1378 @@
+{
+ "Resources": {
+  "JaiibKmsKeyACB32463": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "KMS key for JAIIB-CAIIB Portal data encryption",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": "kms:*",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::438097524343:root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibKmsKey/Resource"
+   }
+  },
+  "JaiibKmsKeyAlias7BCD03E6": {
+   "Type": "AWS::KMS::Alias",
+   "Properties": {
+    "AliasName": "alias/jaiib-caiib-key",
+    "TargetKeyId": {
+     "Fn::GetAtt": [
+      "JaiibKmsKeyACB32463",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibKmsKey/Alias/Resource"
+   }
+  },
+  "LambdaExecutionRoleD5C26073": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Execution role for JAIIB-CAIIB Lambda functions",
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/LambdaExecutionRole/Resource"
+   }
+  },
+  "LambdaExecutionRoleDefaultPolicy6D69732F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:dynamodb:*:*:table/jaiib-*"
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:GenerateDataKey",
+        "kms:DescribeKey"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "JaiibKmsKeyACB32463",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "JaiibKmsKeyACB32463",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "UsersTable9725E9C8",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "UsersTable9725E9C8",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "PracticeSessionsTable950216DE",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "PracticeSessionsTable950216DE",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ScoresTable6CB35494",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "QuestionBankTable708CA732",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "QuestionBankTable708CA732",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AuditLogsTable7D096F6F",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "AuditLogsTable7D096F6F",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "NotificationsTable76DCFC6C",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaExecutionRoleDefaultPolicy6D69732F",
+    "Roles": [
+     {
+      "Ref": "LambdaExecutionRoleD5C26073"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/LambdaExecutionRole/DefaultPolicy/Resource"
+   }
+  },
+  "UsersTable9725E9C8": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "email",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "email-index",
+      "KeySchema": [
+       {
+        "AttributeName": "email",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "user_id",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "JaiibKmsKeyACB32463",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "jaiib-users"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/UsersTable/Resource"
+   }
+  },
+  "PracticeSessionsTable950216DE": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "session_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "user-id-index",
+      "KeySchema": [
+       {
+        "AttributeName": "user_id",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "session_id",
+      "KeyType": "HASH"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "JaiibKmsKeyACB32463",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "jaiib-practice-sessions",
+    "TimeToLiveSpecification": {
+     "AttributeName": "ttl",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/PracticeSessionsTable/Resource"
+   }
+  },
+  "ScoresTable6CB35494": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "submitted_at",
+      "AttributeType": "N"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "user_id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "submitted_at",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "JaiibKmsKeyACB32463",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "jaiib-scores"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/ScoresTable/Resource"
+   }
+  },
+  "QuestionBankTable708CA732": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "question_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "version",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "paper_name",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "topic",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "paper-topic-index",
+      "KeySchema": [
+       {
+        "AttributeName": "paper_name",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "topic",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "question_id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "version",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "JaiibKmsKeyACB32463",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "jaiib-question-bank"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/QuestionBankTable/Resource"
+   }
+  },
+  "AuditLogsTable7D096F6F": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "log_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "timestamp",
+      "AttributeType": "N"
+     },
+     {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "user-id-index",
+      "KeySchema": [
+       {
+        "AttributeName": "user_id",
+        "KeyType": "HASH"
+       },
+       {
+        "AttributeName": "timestamp",
+        "KeyType": "RANGE"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "log_id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "timestamp",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "JaiibKmsKeyACB32463",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "jaiib-audit-logs"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/AuditLogsTable/Resource"
+   }
+  },
+  "NotificationsTable76DCFC6C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "notification_id",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "user_id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "notification_id",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "JaiibKmsKeyACB32463",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "jaiib-notifications"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/NotificationsTable/Resource"
+   }
+  },
+  "JaiibLogGroup1FCE30C7": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/jaiib-caiib",
+    "RetentionInDays": 365
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibLogGroup/Resource"
+   }
+  },
+  "ApiResponseTimeAlarm2D504207": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "Alert when API response time exceeds 500ms",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 2,
+    "EvaluationPeriods": 2,
+    "MetricName": "ApiResponseTime",
+    "Namespace": "JaiibCaiib",
+    "Period": 60,
+    "Statistic": "Average",
+    "Threshold": 500
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/ApiResponseTimeAlarm/Resource"
+   }
+  },
+  "ErrorRateAlarm1E0D8C38": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "Alert when error rate exceeds 1%",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 2,
+    "EvaluationPeriods": 2,
+    "MetricName": "ErrorRate",
+    "Namespace": "JaiibCaiib",
+    "Period": 60,
+    "Statistic": "Sum",
+    "Threshold": 1
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/ErrorRateAlarm/Resource"
+   }
+  },
+  "DynamoDBThrottlingAlarm3D3194A5": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmDescription": "Alert when DynamoDB reaches 80% capacity",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "DatapointsToAlarm": 1,
+    "EvaluationPeriods": 1,
+    "MetricName": "ConsumedReadCapacityUnits",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 60,
+    "Statistic": "Sum",
+    "Threshold": 80
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/DynamoDBThrottlingAlarm/Resource"
+   }
+  },
+  "JaiibApiA4F3AD36": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "JAIIB-CAIIB Exam Prep Portal API",
+    "EndpointConfiguration": {
+     "Types": [
+      "REGIONAL"
+     ]
+    },
+    "Name": "jaiib-caiib-api"
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Resource"
+   }
+  },
+  "JaiibApiCloudWatchRole7678AC82": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/CloudWatchRole/Resource"
+   }
+  },
+  "JaiibApiAccount1B0397F4": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "JaiibApiCloudWatchRole7678AC82",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "JaiibApiA4F3AD36"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Account"
+   }
+  },
+  "JaiibApiDeployment53D9F67188162694313959e99b4e1a0f16e25c07": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "JAIIB-CAIIB Exam Prep Portal API",
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "DependsOn": [
+    "JaiibApiauthOPTIONSAEDFD9A6",
+    "JaiibApiauthPOST2EB3193F",
+    "JaiibApiauthD01FCEFA",
+    "JaiibApidashboardGET43612742",
+    "JaiibApidashboardOPTIONS0862672A",
+    "JaiibApidashboard3DA3D48F",
+    "JaiibApiOPTIONSADDC8970",
+    "JaiibApipracticeOPTIONSDC9B3E64",
+    "JaiibApipracticePOST2F88B517",
+    "JaiibApipractice34469C5E",
+    "JaiibApiRequestValidator5E7A1E54"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Deployment/Resource"
+   }
+  },
+  "JaiibApiDeploymentStageprod73744479": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "JaiibApiDeployment53D9F67188162694313959e99b4e1a0f16e25c07"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "JaiibApiAccount1B0397F4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "JaiibApiOPTIONSADDC8970": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Max-Age": "'86400'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Max-Age": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "JaiibApiA4F3AD36",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/OPTIONS/Resource"
+   }
+  },
+  "JaiibApiauthD01FCEFA": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "JaiibApiA4F3AD36",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "auth",
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/auth/Resource"
+   }
+  },
+  "JaiibApiauthOPTIONSAEDFD9A6": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Max-Age": "'86400'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Max-Age": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApiauthD01FCEFA"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/auth/OPTIONS/Resource"
+   }
+  },
+  "JaiibApiauthPOST2EB3193F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "StatusCode": "200"
+      }
+     ],
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApiauthD01FCEFA"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/auth/POST/Resource"
+   }
+  },
+  "JaiibApipractice34469C5E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "JaiibApiA4F3AD36",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "practice",
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/practice/Resource"
+   }
+  },
+  "JaiibApipracticeOPTIONSDC9B3E64": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Max-Age": "'86400'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Max-Age": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApipractice34469C5E"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/practice/OPTIONS/Resource"
+   }
+  },
+  "JaiibApipracticePOST2F88B517": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "StatusCode": "200"
+      }
+     ],
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApipractice34469C5E"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/practice/POST/Resource"
+   }
+  },
+  "JaiibApidashboard3DA3D48F": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "JaiibApiA4F3AD36",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "dashboard",
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/dashboard/Resource"
+   }
+  },
+  "JaiibApidashboardOPTIONS0862672A": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Max-Age": "'86400'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Max-Age": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApidashboard3DA3D48F"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/dashboard/OPTIONS/Resource"
+   }
+  },
+  "JaiibApidashboardGET43612742": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "StatusCode": "200"
+      }
+     ],
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApidashboard3DA3D48F"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/dashboard/GET/Resource"
+   }
+  },
+  "JaiibApiRequestValidator5E7A1E54": {
+   "Type": "AWS::ApiGateway::RequestValidator",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    },
+    "ValidateRequestBody": true,
+    "ValidateRequestParameters": true
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/RequestValidator/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOwU7DMBBEv6V3xwS4cA0gcSiIKkVc0cZZEhM7G+K1osjyvyPHrWhP83ZmveM7eVuWstzB4grVDoXRjQxHBjUIWNxXGKyTYY+rePoek1RGg0vDBlFosDLUZDB5mx7IaLXtZ4qiXUew1DYyfECTNzeIwlDnZHil7mUmP6XgzFEoQ75dgFUvQ2VgtrkVZhsFTLoDxgVWGWp0XE166//HSinyI4tnnAytFkdO7sV0ZOi2r2So0ZGfFT6CQ/GG3FObwhOd01NJ5hp/PTr+BKNbYJpzeO3FePX23fPk+fJKFIeVexpv7uWDLHc/Tuti9iNri7LO+gf3UXQlowEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "JaiibApiEndpoint30562DFA": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "JaiibApiA4F3AD36"
+      },
+      ".execute-api.ap-south-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "JaiibApiDeploymentStageprod73744479"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "KmsKeyArn": {
+   "Description": "ARN of KMS key for data encryption",
+   "Value": {
+    "Fn::GetAtt": [
+     "JaiibKmsKeyACB32463",
+     "Arn"
+    ]
+   }
+  },
+  "LambdaRoleArn": {
+   "Description": "ARN of Lambda execution role",
+   "Value": {
+    "Fn::GetAtt": [
+     "LambdaExecutionRoleD5C26073",
+     "Arn"
+    ]
+   }
+  },
+  "ApiEndpoint": {
+   "Description": "API Gateway endpoint URL",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "JaiibApiA4F3AD36"
+      },
+      ".execute-api.ap-south-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "JaiibApiDeploymentStageprod73744479"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "UsersTableName": {
+   "Description": "DynamoDB Users table name",
+   "Value": {
+    "Ref": "UsersTable9725E9C8"
+   }
+  },
+  "PracticeSessionsTableName": {
+   "Description": "DynamoDB Practice Sessions table name",
+   "Value": {
+    "Ref": "PracticeSessionsTable950216DE"
+   }
+  },
+  "ScoresTableName": {
+   "Description": "DynamoDB Scores table name",
+   "Value": {
+    "Ref": "ScoresTable6CB35494"
+   }
+  },
+  "QuestionBankTableName": {
+   "Description": "DynamoDB Question Bank table name",
+   "Value": {
+    "Ref": "QuestionBankTable708CA732"
+   }
+  },
+  "AuditLogsTableName": {
+   "Description": "DynamoDB Audit Logs table name",
+   "Value": {
+    "Ref": "AuditLogsTable7D096F6F"
+   }
+  },
+  "NotificationsTableName": {
+   "Description": "DynamoDB Notifications table name",
+   "Value": {
+    "Ref": "NotificationsTable76DCFC6C"
+   }
+  },
+  "LogGroupName": {
+   "Description": "CloudWatch Log Group name",
+   "Value": {
+    "Ref": "JaiibLogGroup1FCE30C7"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

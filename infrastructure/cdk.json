@@ -1,5 +1,5 @@
 {
-  "app": "python -m cdk_stack.app",
+  "app": "python3 -m cdk_stack.app",
   "context": {
     "availability_zones:account=123456789012:region=ap-south-1": [
       "ap-south-1a",
