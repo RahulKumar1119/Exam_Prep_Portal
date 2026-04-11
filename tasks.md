@@ -93,7 +93,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 4: Implement Practice Set Generation with Adaptive Selection
 
-- [ ] 4.1 Create practice set generator Lambda function
+- [x] 4.1 Create practice set generator Lambda function
   - Implement random question selection for users with <10 completed sets
   - Implement adaptive selection algorithm that weights weak areas (topics with <70% accuracy)
   - Ensure no duplicate questions within a single session
@@ -101,14 +101,14 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Retrieve questions from DynamoDB with current version
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-- [ ] 4.2 Implement practice set display and session management
+- [x] 4.2 Implement practice set display and session management
   - Create API endpoint to retrieve practice set questions with options A-D
   - Implement session state management (in_progress, completed, expired)
   - Handle incomplete session saving when user generates new set
   - Implement session retrieval for resuming incomplete sets
   - _Requirements: 2.7, 2.8_
 
-- [ ]* 4.3 Write property tests for practice set generation
+- [x]* 4.3 Write property tests for practice set generation
   - **Property 7: Practice set contains unique questions**
   - **Validates: Requirements 2.2, 2.3**
   - Test that generated sets contain exactly 4 unique questions
