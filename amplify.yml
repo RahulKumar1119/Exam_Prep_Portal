@@ -9,6 +9,7 @@ applications:
       preBuild:
         commands:
           - echo "Installing dependencies..."
+          - cd frontend
           - npm install
       build:
         commands:
@@ -16,12 +17,12 @@ applications:
           - npm run build
           - echo "Build completed successfully"
     artifacts:
-      baseDirectory: build
+      baseDirectory: frontend/build
       files:
         - '**/*'
     cache:
       paths:
-        - node_modules/**/*
+        - frontend/node_modules/**/*
     customHeaders:
       - pattern: '**'
         headers:

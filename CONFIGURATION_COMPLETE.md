@@ -1,5 +1,15 @@
 # ✅ AWS Deployment Configuration Complete
 
+## 🔧 Latest Update: Amplify Build Fix Applied
+
+**Issue Fixed**: AWS Amplify build was failing with "Missing frontend definition in buildspec"
+**Solution**: Moved `amplify.yml` from `frontend/` to repository root
+**Status**: ✅ Build configuration now correct and ready for deployment
+
+See `AMPLIFY_BUILD_FIX.md` for details.
+
+---
+
 ## What Was Done
 
 Your JAIIB-CAIIB Exam Prep Portal has been configured for AWS deployment. Here's what was set up:
@@ -10,10 +20,11 @@ Your JAIIB-CAIIB Exam Prep Portal has been configured for AWS deployment. Here's
 - **`frontend/.env.development`** - Development API endpoint (already existed)
 
 ### 2. Build Configuration ✅
-- **`frontend/amplify.yml`** - AWS Amplify build configuration
-  - Monorepo support
+- **`amplify.yml`** - AWS Amplify build configuration (at repository root)
+  - Monorepo support with correct appRoot configuration
   - Optimized caching headers
   - Production build settings
+  - Fixed: Moved from `frontend/amplify.yml` to root for proper Amplify detection
 
 ### 3. Code Updates ✅
 - **`frontend/src/services/api.ts`** - Updated to use environment variables
