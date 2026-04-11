@@ -28,8 +28,9 @@
 ### 🔧 Latest Fix Applied
 
 **Issue**: AWS Amplify build failing with "Missing frontend definition in buildspec"
-**Solution**: Moved `amplify.yml` from `frontend/` to repository root
-**Status**: ✅ Fixed and ready for deployment
+**Root Cause**: `amplify.yml` was using wrong schema format (`applications` instead of `frontend`)
+**Solution**: Updated `amplify.yml` to use correct `frontend` key structure
+**Status**: ✅ Fixed, committed, and pushed to GitHub (commit: `0d67bbd6`)
 
 ### 📋 Deployment Checklist
 
