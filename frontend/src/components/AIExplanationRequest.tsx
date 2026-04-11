@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { apiClient } from '../services/api';
-import { useNotification } from '../context/NotificationContext';
 import { ExplanationDisplay } from './ExplanationDisplay';
 
 interface AIExplanationRequestProps {
@@ -23,7 +22,6 @@ export const AIExplanationRequest: React.FC<AIExplanationRequestProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const { showNotification } = useNotification();
 
   const handleRequestExplanation = async () => {
     if (explanation) {
@@ -41,12 +39,12 @@ export const AIExplanationRequest: React.FC<AIExplanationRequestProps> = ({
       if (response.success && response.data) {
         setExplanation(response.data);
         setIsExpanded(true);
-        showNotification('Explanation generated successfully', 'success');
+        console.log('Explanation generated successfully');
       } else {
         throw new Error(response.error || 'Failed to generate explanation');
       }
     } catch (err) {
-      showNotification('Explanation temporarily unavailable. Please try again.', 'error');
+      console.error('Explanation temporarily unavailable. Please try again.', err);
     } finally {
       setIsLoading(false);
     }
@@ -61,9 +59,9 @@ export const AIExplanationRequest: React.FC<AIExplanationRequestProps> = ({
         explanation: explanation.explanation,
       });
       setIsSaved(true);
-      showNotification('Explanation saved successfully', 'success');
+      console.log('Explanation saved successfully');
     } catch (err) {
-      showNotification('Failed to save explanation', 'error');
+      console.error('Failed to save explanation', err);
     }
   };
 

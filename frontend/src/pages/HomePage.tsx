@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { usePractice } from '../context/PracticeContext';
 import { useDashboard } from '../context/DashboardContext';
 import { useNotification } from '../context/NotificationContext';
 

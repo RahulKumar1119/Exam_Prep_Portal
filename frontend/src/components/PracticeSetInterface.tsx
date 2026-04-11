@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
-import { useNotification } from '../context/NotificationContext';
 import { QuestionDisplay } from './QuestionDisplay';
 import { OptionButtons } from './OptionButtons';
 import { Timer } from './Timer';
 import { SubmitButton } from './SubmitButton';
-import { LoadingSpinner } from './LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner';
 
 interface PracticeSetInterfaceProps {
   onResultsReady?: () => void;
@@ -15,11 +14,9 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
   onResultsReady,
 }) => {
   const { current_session, submitPracticeSet, is_loading, error } = usePractice();
-  const { showNotification } = useNotification();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [timerKey, setTimerKey] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!current_session || current_session.questions.length === 0) {
@@ -55,19 +52,19 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
     }
   };
 
-  const handleTimeUp = useCallback(async () => {
-    showNotification('Time is up! Submitting your practice set...', 'info');
+  const handleTimeUp = async () => {
+    console.log('Time is up! Submitting your practice set...');
     await handleSubmit();
-  }, []);
+  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       await submitPracticeSet(current_session.session_id, answers);
-      showNotification('Practice set submitted successfully!', 'success');
+      console.log('Practice set submitted successfully!');
       onResultsReady?.();
     } catch (err) {
-      showNotification('Failed to submit practice set', 'error');
+      console.error('Failed to submit practice set', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -85,7 +82,6 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
             </div>
             <div className="bg-gray-50 rounded-lg p-4">
               <Timer
-                key={timerKey}
                 duration={600}
                 onTimeUp={handleTimeUp}
               />

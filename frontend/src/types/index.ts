@@ -139,3 +139,72 @@ export interface NewPasswordFormData {
   new_password: string;
   confirm_password: string;
 }
+
+// Admin Analytics types
+export interface AdminAnalyticsData {
+  total_users: number;
+  active_users_7d: number;
+  active_users_30d: number;
+  active_users_90d: number;
+  total_practice_sets: number;
+  average_score: number;
+  daily_active_users: TrendPoint[];
+  performance_by_paper: PaperPerformance[];
+  most_attempted_questions: QuestionStats[];
+  most_skipped_questions: QuestionStats[];
+  system_metrics: SystemMetrics;
+  top_users: TopUser[];
+}
+
+export interface QuestionStats {
+  question_id: string;
+  question_text: string;
+  attempt_count: number;
+  skip_count?: number;
+  average_score?: number;
+}
+
+export interface SystemMetrics {
+  api_response_time_ms: number;
+  error_rate: number;
+  uptime_percentage: number;
+  last_updated: string;
+}
+
+export interface TopUser {
+  user_id: string;
+  full_name: string;
+  email: string;
+  completion_count: number;
+  average_score: number;
+}
+
+// Question Bank Management types
+export interface MCQFormData {
+  question_text: string;
+  options: [string, string, string, string];
+  correct_answer: 'A' | 'B' | 'C' | 'D';
+  topic: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  rbi_reference?: string;
+  iibf_reference?: string;
+}
+
+export interface QuestionBankVersion {
+  version_id: string;
+  version_number: string;
+  published_at: string;
+  publisher_id: string;
+  publisher_name: string;
+  change_summary: string;
+  question_count: number;
+}
+
+export interface QuestionBankSearchParams {
+  paper?: string;
+  topic?: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  keyword?: string;
+  page?: number;
+  page_size?: number;
+}

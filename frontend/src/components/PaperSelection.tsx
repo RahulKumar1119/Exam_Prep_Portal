@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
-import { useNotification } from '../context/NotificationContext';
-import { LoadingSpinner } from './LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner';
 
 const PAPERS = [
   {
@@ -33,20 +32,19 @@ interface PaperSelectionProps {
 export const PaperSelection: React.FC<PaperSelectionProps> = ({ onPracticeStart }) => {
   const [selectedPaper, setSelectedPaper] = useState<string | null>(null);
   const { generatePracticeSet, is_loading, error } = usePractice();
-  const { showNotification } = useNotification();
 
   const handleStartPractice = async () => {
     if (!selectedPaper) {
-      showNotification('Please select a paper', 'error');
+      console.log('Please select a paper');
       return;
     }
 
     try {
       await generatePracticeSet(selectedPaper);
-      showNotification(`Practice set generated for ${selectedPaper}`, 'success');
+      console.log(`Practice set generated for ${selectedPaper}`);
       onPracticeStart?.(selectedPaper);
     } catch (err) {
-      showNotification('Failed to generate practice set', 'error');
+      console.error('Failed to generate practice set', err);
     }
   };
 

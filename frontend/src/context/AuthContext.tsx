@@ -47,31 +47,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             is_loading: false,
           }));
         }
-      } else if (process.env.NODE_ENV === 'development' && !token) {
-        // Auto-authenticate in development mode for local testing
-        const mockUser: User = {
-          user_id: 'dev-user-1',
-          email: 'dev@example.com',
-          full_name: 'Dev User',
-          bank_affiliation: 'Development Bank',
-          role: 'bank_officer',
-          email_verified: true,
-          created_at: new Date().toISOString(),
-          status: 'active',
-        };
-        const mockToken = 'dev-mock-token-' + Date.now();
-
-        localStorage.setItem('access_token', mockToken);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-
-        setAuthState({
-          user: mockUser,
-          access_token: mockToken,
-          refresh_token: null,
-          is_authenticated: true,
-          is_loading: false,
-          error: null,
-        });
       } else {
         setAuthState((prev) => ({
           ...prev,

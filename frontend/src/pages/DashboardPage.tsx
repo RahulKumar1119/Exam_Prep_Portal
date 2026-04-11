@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDashboard } from '../context/DashboardContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import PerformanceOverview from '../components/Dashboard/PerformanceOverview';
+import ScoreTrends from '../components/Dashboard/ScoreTrends';
+import PaperBreakdown from '../components/Dashboard/PaperBreakdown';
+import WeakAreas from '../components/Dashboard/WeakAreas';
+import StrongAreas from '../components/Dashboard/StrongAreas';
+import RecommendedPractice from '../components/Dashboard/RecommendedPractice';
 
 const DashboardPage: React.FC = () => {
   const { dashboard_data, is_loading, error, fetchDashboardData } = useDashboard();
@@ -30,39 +36,50 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {dashboard_data ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Overall Score Card */}
-          <div className="card">
-            <p className="text-gray-600 text-sm font-medium">Overall Score</p>
-            <p className="text-4xl font-bold text-primary-600 mt-2">
-              {dashboard_data.metrics.overall_score.toFixed(1)}%
-            </p>
+        <>
+          {/* Performance Overview Cards */}
+          <PerformanceOverview
+            overall_score={dashboard_data.metrics.overall_score}
+            total_sessions={dashboard_data.metrics.total_sessions}
+            average_score={dashboard_data.metrics.average_score}
+            total_study_time={dashboard_data.metrics.total_study_time}
+            last_session_date={dashboard_data.metrics.last_session_date}
+          />
+
+          {/* Score Trends Chart */}
+          <ScoreTrends trend_data={dashboard_data.trend_data} />
+
+          {/* Paper Breakdown Chart */}
+          <PaperBreakdown paper_performance={dashboard_data.paper_performance} />
+
+          {/* Weak and Strong Areas */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <WeakAreas
+              weak_areas={dashboard_data.weak_areas}
+              accuracy_by_topic={
+                dashboard_data.paper_performance.reduce(
+                  (acc, paper) => ({ ...acc, ...paper.accuracy_by_topic }),
+                  {}
+                )
+              }
+            />
+            <StrongAreas
+              strong_areas={dashboard_data.strong_areas}
+              accuracy_by_topic={
+                dashboard_data.paper_performance.reduce(
+                  (acc, paper) => ({ ...acc, ...paper.accuracy_by_topic }),
+                  {}
+                )
+              }
+            />
           </div>
 
-          {/* Total Sessions Card */}
-          <div className="card">
-            <p className="text-gray-600 text-sm font-medium">Practice Sets</p>
-            <p className="text-4xl font-bold text-primary-600 mt-2">
-              {dashboard_data.metrics.total_sessions}
-            </p>
-          </div>
-
-          {/* Average Score Card */}
-          <div className="card">
-            <p className="text-gray-600 text-sm font-medium">Average Score</p>
-            <p className="text-4xl font-bold text-primary-600 mt-2">
-              {dashboard_data.metrics.average_score.toFixed(1)}%
-            </p>
-          </div>
-
-          {/* Study Time Card */}
-          <div className="card">
-            <p className="text-gray-600 text-sm font-medium">Study Time</p>
-            <p className="text-4xl font-bold text-primary-600 mt-2">
-              {Math.floor(dashboard_data.metrics.total_study_time / 60)}h
-            </p>
-          </div>
-        </div>
+          {/* Recommended Practice */}
+          <RecommendedPractice
+            weak_areas={dashboard_data.weak_areas}
+            total_sessions={dashboard_data.metrics.total_sessions}
+          />
+        </>
       ) : (
         <div className="text-center py-12">
           <p className="text-gray-600">No data available yet. Start practicing to see your progress!</p>
