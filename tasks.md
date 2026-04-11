@@ -34,7 +34,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 2: Implement User Authentication Service
 
-- [ ] 2.1 Create authentication Lambda function with registration and login
+- [x] 2.1 Create authentication Lambda function with registration and login
   - Implement user registration endpoint with email, password, full name, bank affiliation validation
   - Hash passwords using bcrypt with 12-character salt rounds
   - Generate and send verification emails with 24-hour valid links
@@ -42,21 +42,21 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Implement refresh token mechanism with httpOnly cookies
   - _Requirements: 1.1, 1.2, 1.4, 1.5, 13.3_
 
-- [ ] 2.2 Implement email verification and password reset flows
+- [x] 2.2 Implement email verification and password reset flows
   - Create email verification endpoint that marks accounts as verified
   - Implement password reset request endpoint with 24-hour valid reset links
   - Implement password reset endpoint with bcrypt hashing
   - Add email sending integration (SES or similar)
   - _Requirements: 1.3, 1.6, 1.7_
 
-- [ ] 2.3 Implement session management and token validation
+- [x] 2.3 Implement session management and token validation
   - Create middleware for JWT token validation on all protected endpoints
   - Implement session timeout after 30 minutes of inactivity
   - Implement logout endpoint that invalidates tokens
   - Add token refresh logic with automatic renewal
   - _Requirements: 1.8, 1.9_
 
-- [ ]* 2.4 Write property tests for authentication
+- [x]* 2.4 Write property tests for authentication
   - **Property 2: User registration creates verified account**
   - **Validates: Requirements 1.2**
   - Test that valid registration creates user account and sends email
@@ -73,14 +73,14 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - **Validates: Requirements 1.5**
   - Test that invalid credentials are rejected without revealing email existence
 
-- [ ]* 2.5 Write property test for session timeout
+- [x]* 2.5 Write property test for session timeout
   - **Property 6: Session timeout enforces inactivity**
   - **Validates: Requirements 1.8**
   - Test that sessions expire after 30 minutes of inactivity
 
 ### Task 3: Checkpoint - Authentication Complete
 
-- [ ] 3.1 Verify all authentication tests pass
+- [x] 3.1 Verify all authentication tests pass
   - Run all unit tests for authentication service
   - Run all property-based tests for authentication
   - Verify JWT token generation and validation
