@@ -1,53 +1,54 @@
 version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - echo "Installing dependencies..."
-        - cd frontend
-        - npm install
-    build:
-      commands:
-        - echo "Building React application..."
-        - npm run build
-        - echo "Build completed successfully"
-  artifacts:
-    baseDirectory: frontend/build
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - frontend/node_modules/**/*
-  customHeaders:
-    - pattern: '**'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=0, no-cache, no-store, must-revalidate'
-    - pattern: '**/*.js'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000, immutable'
-    - pattern: '**/*.css'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000, immutable'
-    - pattern: '**/*.png'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000, immutable'
-    - pattern: '**/*.jpg'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000, immutable'
-    - pattern: '**/*.svg'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000, immutable'
-    - pattern: '**/*.woff'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000, immutable'
-    - pattern: '**/*.woff2'
-      headers:
-        - key: 'Cache-Control'
-          value: 'max-age=31536000, immutable'
+applications:
+  - appRoot: frontend
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - echo "Installing dependencies..."
+            - npm install
+        build:
+          commands:
+            - echo "Building React application..."
+            - npm run build
+            - echo "Build completed successfully"
+      artifacts:
+        baseDirectory: build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+      customHeaders:
+        - pattern: '**'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=0, no-cache, no-store, must-revalidate'
+        - pattern: '**/*.js'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=31536000, immutable'
+        - pattern: '**/*.css'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=31536000, immutable'
+        - pattern: '**/*.png'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=31536000, immutable'
+        - pattern: '**/*.jpg'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=31536000, immutable'
+        - pattern: '**/*.svg'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=31536000, immutable'
+        - pattern: '**/*.woff'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=31536000, immutable'
+        - pattern: '**/*.woff2'
+          headers:
+            - key: 'Cache-Control'
+              value: 'max-age=31536000, immutable'
