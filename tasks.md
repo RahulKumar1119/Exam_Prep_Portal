@@ -10,7 +10,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 1: Set Up AWS Infrastructure and Core Services
 
-- [ ] 1.1 Configure AWS Lambda, API Gateway, DynamoDB, KMS, and CloudWatch
+- [x] 1.1 Configure AWS Lambda, API Gateway, DynamoDB, KMS, and CloudWatch
   - Create Lambda execution role with DynamoDB and KMS permissions
   - Set up DynamoDB tables: Users, Practice Sessions, Scores, Question Bank, Audit Logs, Notifications
   - Configure API Gateway with CORS, rate limiting (100 req/min per user), and request validation
@@ -18,7 +18,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Configure CloudWatch logs and metrics for monitoring
   - _Requirements: 13.1, 14.5, 14.6_
 
-- [ ] 1.2 Set Up Frontend Infrastructure with AWS Amplify
+- [x] 1.2 Set Up Frontend Infrastructure with AWS Amplify
   - Configure AWS Amplify for React.js hosting
   - Set up CloudFront CDN for static asset distribution
   - Configure environment variables for API endpoints

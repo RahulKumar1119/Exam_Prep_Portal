@@ -1,0 +1,102 @@
+{
+  "DistributionConfig": {
+    "CallerReference": "jaiib-caiib-portal-distribution",
+    "Comment": "CloudFront distribution for JAIIB-CAIIB Exam Prep Portal",
+    "Enabled": true,
+    "HttpVersion": "http2and3",
+    "PriceClass": "PriceClass_100",
+    "Origins": [
+      {
+        "Id": "amplify-origin",
+        "DomainName": "d1234567890.cloudfront.net",
+        "CustomOriginConfig": {
+          "HTTPPort": 80,
+          "HTTPSPort": 443,
+          "OriginProtocolPolicy": "https-only",
+          "OriginSSLProtocols": {
+            "Quantity": 3,
+            "Items": ["TLSv1.2", "TLSv1.3"]
+          },
+          "OriginReadTimeout": 30,
+          "OriginKeepaliveTimeout": 5
+        }
+      }
+    ],
+    "DefaultCacheBehavior": {
+      "TargetOriginId": "amplify-origin",
+      "ViewerProtocolPolicy": "redirect-to-https",
+      "AllowedMethods": {
+        "Quantity": 7,
+        "Items": ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"],
+        "CachedMethods": {
+          "Quantity": 2,
+          "Items": ["GET", "HEAD"]
+        }
+      },
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "OriginRequestPolicyId": "216adef5-5c7f-47e4-b989-5492eafa07d3",
+      "Compress": true,
+      "FunctionAssociations": {
+        "Quantity": 0
+      }
+    },
+    "CacheBehaviors": [
+      {
+        "PathPattern": "/static/*",
+        "TargetOriginId": "amplify-origin",
+        "ViewerProtocolPolicy": "redirect-to-https",
+        "AllowedMethods": {
+          "Quantity": 2,
+          "Items": ["GET", "HEAD"],
+          "CachedMethods": {
+            "Quantity": 2,
+            "Items": ["GET", "HEAD"]
+          }
+        },
+        "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+        "Compress": true
+      },
+      {
+        "PathPattern": "/api/*",
+        "TargetOriginId": "amplify-origin",
+        "ViewerProtocolPolicy": "https-only",
+        "AllowedMethods": {
+          "Quantity": 7,
+          "Items": ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"],
+          "CachedMethods": {
+            "Quantity": 2,
+            "Items": ["GET", "HEAD"]
+          }
+        },
+        "CachePolicyId": "4135ea3d-c35d-46eb-81d7-reeSJwDDlie",
+        "OriginRequestPolicyId": "216adef5-5c7f-47e4-b989-5492eafa07d3",
+        "Compress": true
+      }
+    ],
+    "CustomErrorResponses": [
+      {
+        "ErrorCode": 404,
+        "ResponsePagePath": "/index.html",
+        "ResponseCode": "200",
+        "ErrorCachingMinTTL": 300
+      },
+      {
+        "ErrorCode": 403,
+        "ResponsePagePath": "/index.html",
+        "ResponseCode": "200",
+        "ErrorCachingMinTTL": 300
+      }
+    ],
+    "ViewerCertificate": {
+      "CloudFrontDefaultCertificate": true,
+      "MinimumProtocolVersion": "TLSv1.2_2021"
+    },
+    "Logging": {
+      "Enabled": true,
+      "IncludeCookies": false,
+      "Bucket": "jaiib-caiib-cloudfront-logs.s3.amazonaws.com",
+      "Prefix": "cloudfront-logs/"
+    },
+    "WebACLId": "arn:aws:wafv2:us-east-1:123456789012:global/webacl/jaiib-caiib-waf/a1234567-b890-c123-d456-e78901234567"
+  }
+}

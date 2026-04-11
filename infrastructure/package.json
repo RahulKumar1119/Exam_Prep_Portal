@@ -1,0 +1,16 @@
+{
+  "name": "jaiib-caiib-infrastructure",
+  "version": "1.0.0",
+  "description": "AWS CDK infrastructure for JAIIB-CAIIB Exam Prep Portal",
+  "main": "cdk_stack/app.py",
+  "scripts": {
+    "cdk": "cdk",
+    "build": "cdk synth",
+    "deploy": "cdk deploy",
+    "destroy": "cdk destroy",
+    "diff": "cdk diff"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.100.0"
+  }
+}
