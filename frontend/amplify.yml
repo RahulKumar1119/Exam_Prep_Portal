@@ -1,24 +1,57 @@
 version: 1
 applications:
   - appRoot: frontend
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - echo "Installing dependencies..."
-            - npm install
-        build:
-          commands:
-            - echo "Building React application..."
-            - npm run build
-      artifacts:
-        baseDirectory: build
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-      env:
-        variables:
-          NODE_ENV: production
-          GENERATE_SOURCEMAP: false
+    env:
+      variables:
+        NODE_ENV: production
+        REACT_APP_ENVIRONMENT: production
+    phases:
+      preBuild:
+        commands:
+          - echo "Installing dependencies..."
+          - npm install
+      build:
+        commands:
+          - echo "Building React application..."
+          - npm run build
+          - echo "Build completed successfully"
+    artifacts:
+      baseDirectory: build
+      files:
+        - '**/*'
+    cache:
+      paths:
+        - node_modules/**/*
+    customHeaders:
+      - pattern: '**'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=0, no-cache, no-store, must-revalidate'
+      - pattern: '**/*.js'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=31536000, immutable'
+      - pattern: '**/*.css'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=31536000, immutable'
+      - pattern: '**/*.png'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=31536000, immutable'
+      - pattern: '**/*.jpg'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=31536000, immutable'
+      - pattern: '**/*.svg'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=31536000, immutable'
+      - pattern: '**/*.woff'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=31536000, immutable'
+      - pattern: '**/*.woff2'
+        headers:
+          - key: 'Cache-Control'
+            value: 'max-age=31536000, immutable'
