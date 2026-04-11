@@ -119,7 +119,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 5: Implement Session Timer Management
 
-- [ ] 5.1 Create timer service with real-time updates
+- [x] 5.1 Create timer service with real-time updates
   - Implement 10-minute countdown timer (600 seconds)
   - Display timer in MM:SS format with real-time updates every second
   - Implement color changes: yellow at 5 minutes, red at 1 minute
@@ -127,14 +127,14 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Handle timer pause/resume when user navigates away (5-min window)
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.6, 3.7_
 
-- [ ] 5.2 Implement timer display and warning messages
+- [x] 5.2 Implement timer display and warning messages
   - Create frontend timer component with MM:SS display
   - Implement warning messages at 5-min and 1-min thresholds
   - Implement "Session Expired" message after 5 minutes of inactivity
   - Ensure timer updates with <100ms latency
   - _Requirements: 3.1, 3.2, 3.3, 3.8_
 
-- [ ]* 5.3 Write property tests for timer accuracy
+- [x]* 5.3 Write property tests for timer accuracy
   - **Property 9: Timer accuracy within tolerance**
   - **Validates: Requirements 3.1, 3.8**
   - Test that timer displays MM:SS format and updates every second with ±1s accuracy
