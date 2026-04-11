@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
 import { ApiResponse } from '../types/index';
 
 // API Base URL - uses environment variable or defaults to localhost for development
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:5000/api';
 
 // Log API configuration in development
 if (process.env.NODE_ENV === 'development') {
