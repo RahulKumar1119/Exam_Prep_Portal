@@ -330,14 +330,14 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 13: Implement Question Bank Versioning and Management
 
-- [ ] 13.1 Create question bank versioning system
+- [x] 13.1 Create question bank versioning system
   - Implement version creation with unique version numbers (v1.0, v1.1, v2.0)
   - Record publication timestamp, publisher user ID, and change summary
   - Store complete MCQ data for each version
   - Implement version history retrieval with publication dates and change summaries
   - _Requirements: 7.6, 7.7, 7.8, 7.10, 15.1, 15.2, 15.3, 15.4_
 
-- [ ] 13.2 Implement question bank rollback functionality
+- [x] 13.2 Implement question bank rollback functionality
   - Create rollback endpoint requiring confirmation before proceeding
   - Implement version restoration to selected version
   - Record rollback action with timestamp, initiator user ID, and reason
@@ -345,14 +345,14 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Ensure incomplete practice sets use original version's questions
   - _Requirements: 15.5, 15.6, 15.7, 15.8, 15.10_
 
-- [ ] 13.3 Implement question bank CRUD operations
+- [x] 13.3 Implement question bank CRUD operations
   - Create MCQ creation endpoint with validation (question text, options, correct answer, topic, difficulty, references)
   - Implement MCQ edit endpoint that creates new version and preserves previous version
   - Implement MCQ deletion (mark as inactive, not permanent)
   - Create search endpoint with filtering by paper, topic, difficulty, keyword
   - _Requirements: 7.3, 7.4, 7.5, 7.11, 7.12_
 
-- [ ]* 13.4 Write property tests for versioning
+- [x]* 13.4 Write property tests for versioning
   - **Property 20: Question bank versioning preserves history**
   - **Validates: Requirements 7.6, 7.7**
   - Test that edits create new versions while preserving previous versions
