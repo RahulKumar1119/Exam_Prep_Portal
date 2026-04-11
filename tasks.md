@@ -145,14 +145,14 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 6: Implement MCQ Scoring Engine
 
-- [ ] 6.1 Create scoring Lambda function
+- [x] 6.1 Create scoring Lambda function
   - Implement score calculation: (correct_answers / 4) × 100
   - Store scores with session ID, timestamp, paper name, and time taken
   - Calculate and store topic-wise accuracy breakdown
   - Implement score retrieval for results display
   - _Requirements: 4.1, 4.2, 4.4, 4.9_
 
-- [ ] 6.2 Implement results display with feedback
+- [x] 6.2 Implement results display with feedback
   - Create results endpoint showing score as percentage (0-100%)
   - Display correct/incorrect indicators for each question
   - Show user's selected answer and correct answer for each question
@@ -161,7 +161,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Add "Request AI Explanation" button for each incorrect answer
   - _Requirements: 4.3, 4.5, 4.6, 4.7, 4.8, 4.10_
 
-- [ ]* 6.3 Write property tests for scoring accuracy
+- [x]* 6.3 Write property tests for scoring accuracy
   - **Property 11: Score calculation accuracy**
   - **Validates: Requirements 4.1, 4.4**
   - Test that score equals (correct/4)*100 for all answer combinations
@@ -176,7 +176,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 7: Checkpoint - Practice Engine Complete
 
-- [ ] 7.1 Verify all practice engine tests pass
+- [x] 7.1 Verify all practice engine tests pass
   - Run all unit tests for practice set generation, timer, and scoring
   - Run all property-based tests for practice engine
   - Test end-to-end practice set flow: generate → answer → submit → score
