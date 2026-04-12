@@ -43,11 +43,14 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   };
 
   const handleSubmit = () => {
-    if (answeredCount === totalQuestions) {
-      onSubmit(answers);
-    } else {
-      alert(`Please answer all ${totalQuestions} questions before submitting.`);
+    const unanswered = totalQuestions - answeredCount;
+    if (unanswered > 0) {
+      const confirmed = window.confirm(
+        `You have ${unanswered} unanswered question${unanswered > 1 ? 's' : ''}. Unanswered questions will be marked incorrect. Submit anyway?`
+      );
+      if (!confirmed) return;
     }
+    onSubmit(answers);
   };
 
   const isAnswered = answers[currentQuestion.question_id];
@@ -124,22 +127,16 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             ← Previous
           </button>
 
-          <div className="flex gap-2">
-            {Array.from({ length: totalQuestions }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentQuestionIndex(index)}
-                className={`w-8 h-8 rounded-lg font-medium text-sm transition-all ${
-                  index === currentQuestionIndex
-                    ? 'bg-blue-600 text-white'
-                    : answers[session.questions[index].question_id]
-                    ? 'bg-green-100 text-green-700 border border-green-300'
-                    : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
-                }`}
-              >
-                {index + 1}
-              </button>
-            ))}
+          <div className="flex items-center gap-3 text-sm text-gray-600">
+            <span className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-sm bg-blue-600 inline-block"></span> Current
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-sm bg-green-100 border border-green-300 inline-block"></span> Answered ({answeredCount})
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-sm bg-gray-100 border border-gray-300 inline-block"></span> Skipped ({totalQuestions - answeredCount})
+            </span>
           </div>
 
           <button
@@ -156,10 +153,10 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
       <div className="flex justify-center">
         <button
           onClick={handleSubmit}
-          disabled={answeredCount !== totalQuestions || isSubmitting}
+          disabled={isSubmitting}
           className="px-8 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          {isSubmitting ? 'Submitting...' : `Submit Answers (${answeredCount}/${totalQuestions})`}
+          {isSubmitting ? 'Submitting...' : `Submit (${answeredCount}/${totalQuestions} answered)`}
         </button>
       </div>
     </div>
