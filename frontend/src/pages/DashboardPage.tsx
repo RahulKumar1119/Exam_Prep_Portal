@@ -22,8 +22,9 @@ const DashboardPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-700">{error}</p>
+      <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-blue-700 font-medium">{error}</p>
+        <p className="text-blue-600 text-sm mt-2">The dashboard endpoint will be available once the backend is fully deployed.</p>
       </div>
     );
   }

@@ -26,12 +26,21 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
       if (response.success && response.data) {
         setDashboardData(response.data);
       } else {
-        throw new Error(response.error || 'Failed to fetch dashboard data');
+        // If endpoint not found, show friendly message instead of error
+        if (response.error?.includes('404') || response.error?.includes('not found')) {
+          setError('Dashboard data is not available yet. Start practicing to see your progress!');
+        } else {
+          throw new Error(response.error || 'Failed to fetch dashboard data');
+        }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch dashboard data';
-      setError(errorMessage);
-      throw err;
+      // If it's a network error for missing endpoint, show friendly message
+      if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+        setError('Dashboard data is not available yet. Start practicing to see your progress!');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
