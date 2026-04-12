@@ -108,7 +108,9 @@ const PracticePage: React.FC = () => {
             </div>
             <div className="bg-green-50 rounded-lg p-6 text-center">
               <p className="text-gray-600 text-sm mb-2">Time Taken</p>
-              <p className="text-4xl font-bold text-green-600">{session_result.time_taken}s</p>
+              <p className="text-4xl font-bold text-green-600">
+                {Math.floor(session_result.time_taken / 60)}m {session_result.time_taken % 60}s
+              </p>
             </div>
             <div className={`rounded-lg p-6 text-center ${session_result.passed ? 'bg-green-50' : 'bg-red-50'}`}>
               <p className="text-gray-600 text-sm mb-2">Status</p>

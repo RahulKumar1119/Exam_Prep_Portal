@@ -15,8 +15,9 @@ const PerformanceOverview: React.FC<PerformanceOverviewProps> = ({
   total_study_time,
   last_session_date,
 }) => {
-  const study_hours = Math.floor(total_study_time / 60);
-  const study_minutes = total_study_time % 60;
+  // total_study_time is in seconds
+  const study_hours = Math.floor(total_study_time / 3600);
+  const study_minutes = Math.floor((total_study_time % 3600) / 60);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

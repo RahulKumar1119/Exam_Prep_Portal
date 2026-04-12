@@ -199,17 +199,27 @@ def handler(event, context):
                 passed = score >= 60
                 submitted_at = datetime.utcnow().isoformat()
 
-                # Save score and status back to the session record
+                # Calculate time taken in seconds from session start
+                try:
+                    created_at_str = session.get('created_at', submitted_at)
+                    created_dt = datetime.fromisoformat(created_at_str)
+                    submitted_dt = datetime.fromisoformat(submitted_at)
+                    time_taken = int((submitted_dt - created_dt).total_seconds())
+                except Exception:
+                    time_taken = 0
+
+                # Save score, status and time back to the session record
                 try:
                     sessions_table.update_item(
                         Key={'session_id': session_id},
-                        UpdateExpression='SET #s = :status, score = :score, passed = :passed, submitted_at = :submitted_at',
+                        UpdateExpression='SET #s = :status, score = :score, passed = :passed, submitted_at = :submitted_at, time_taken = :time_taken',
                         ExpressionAttributeNames={'#s': 'status'},
                         ExpressionAttributeValues={
                             ':status': 'completed',
                             ':score': score,
                             ':passed': passed,
                             ':submitted_at': submitted_at,
+                            ':time_taken': time_taken,
                         }
                     )
                 except Exception as update_err:
@@ -220,7 +230,7 @@ def handler(event, context):
                     'user_id': user_id,
                     'score': score,
                     'results': results,
-                    'time_taken': 0,
+                    'time_taken': time_taken,
                     'passed': passed,
                     'submitted_at': submitted_at
                 })
