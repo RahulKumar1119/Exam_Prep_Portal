@@ -12,7 +12,7 @@ from typing import List, Dict, Any
 import boto3
 
 # Constants
-QUESTIONS_PER_SET = 4
+QUESTIONS_PER_SET = 100
 
 
 def get_dynamodb_tables():
@@ -197,7 +197,24 @@ def handler(event, context):
                 total_questions = len(questions)
                 score = int((correct_count / total_questions * 100)) if total_questions > 0 else 0
                 passed = score >= 60
-                
+                submitted_at = datetime.utcnow().isoformat()
+
+                # Save score and status back to the session record
+                try:
+                    sessions_table.update_item(
+                        Key={'session_id': session_id},
+                        UpdateExpression='SET #s = :status, score = :score, passed = :passed, submitted_at = :submitted_at',
+                        ExpressionAttributeNames={'#s': 'status'},
+                        ExpressionAttributeValues={
+                            ':status': 'completed',
+                            ':score': score,
+                            ':passed': passed,
+                            ':submitted_at': submitted_at,
+                        }
+                    )
+                except Exception as update_err:
+                    print(f"Warning: failed to update session record: {update_err}")
+
                 return success_response({
                     'session_id': session_id,
                     'user_id': user_id,
@@ -205,7 +222,7 @@ def handler(event, context):
                     'results': results,
                     'time_taken': 0,
                     'passed': passed,
-                    'submitted_at': datetime.utcnow().isoformat()
+                    'submitted_at': submitted_at
                 })
                 
             except Exception as e:

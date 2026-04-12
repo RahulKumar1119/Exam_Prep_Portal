@@ -8,9 +8,17 @@ import json
 import os
 from datetime import datetime, timedelta
 from typing import Dict, Any
+from decimal import Decimal
 
 import boto3
 from botocore.exceptions import ClientError
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        return super().default(obj)
 
 # Initialize AWS clients
 dynamodb = boto3.resource('dynamodb')
@@ -135,15 +143,49 @@ def get_paper_performance(user_id: str) -> list:
 
 
 def get_weak_areas(user_id: str) -> list:
-    """Get weak areas for the user."""
-    # Placeholder implementation
-    return ['Monetary Policy', 'Banking Regulation', 'Risk Management']
+    """Get weak areas based on actual session topic scores."""
+    try:
+        response = sessions_table.query(
+            IndexName='user-id-index',
+            KeyConditionExpression='user_id = :user_id',
+            ExpressionAttributeValues={':user_id': user_id}
+        )
+        sessions = response.get('Items', [])
+        topic_scores: Dict[str, list] = {}
+        for session in sessions:
+            if session.get('status') == 'completed':
+                topic = session.get('paper_name', 'General')
+                score = float(session.get('score', 0))
+                topic_scores.setdefault(topic, []).append(score)
+        weak = [t for t, scores in topic_scores.items()
+                if (sum(scores) / len(scores)) < 70]
+        return weak or []
+    except ClientError as e:
+        print(f"Error getting weak areas: {e}")
+        return []
 
 
 def get_strong_areas(user_id: str) -> list:
-    """Get strong areas for the user."""
-    # Placeholder implementation
-    return ['General Banking', 'Customer Service', 'Compliance']
+    """Get strong areas based on actual session topic scores."""
+    try:
+        response = sessions_table.query(
+            IndexName='user-id-index',
+            KeyConditionExpression='user_id = :user_id',
+            ExpressionAttributeValues={':user_id': user_id}
+        )
+        sessions = response.get('Items', [])
+        topic_scores: Dict[str, list] = {}
+        for session in sessions:
+            if session.get('status') == 'completed':
+                topic = session.get('paper_name', 'General')
+                score = float(session.get('score', 0))
+                topic_scores.setdefault(topic, []).append(score)
+        strong = [t for t, scores in topic_scores.items()
+                  if (sum(scores) / len(scores)) >= 85]
+        return strong or []
+    except ClientError as e:
+        print(f"Error getting strong areas: {e}")
+        return []
 
 
 def get_trend_data(user_id: str) -> list:
@@ -192,7 +234,7 @@ def success_response(status_code: int, data: Dict[str, Any]) -> Dict[str, Any]:
     """Return success response."""
     return {
         'statusCode': status_code,
-        'body': json.dumps(data),
+        'body': json.dumps(data, cls=DecimalEncoder),
         'headers': {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -239,11 +281,28 @@ def handler(event, context):
         # Get user ID from multiple sources
         user_id = None
         
+        # Try decoding JWT from Authorization header
+        auth_header = (event.get('headers') or {}).get('Authorization', '') or \
+                      (event.get('headers') or {}).get('authorization', '')
+        if auth_header.startswith('Bearer '):
+            try:
+                import base64
+                token = auth_header.split(' ')[1]
+                # Decode payload without verification (API Gateway handles auth)
+                payload_b64 = token.split('.')[1]
+                # Add padding
+                payload_b64 += '=' * (4 - len(payload_b64) % 4)
+                payload = json.loads(base64.b64decode(payload_b64).decode('utf-8'))
+                user_id = payload.get('sub') or payload.get('user_id')
+            except Exception:
+                pass
+
         # Try from request context (API Gateway authorizer)
-        request_context = event.get('requestContext', {})
-        authorizer = request_context.get('authorizer', {})
-        if isinstance(authorizer, dict):
-            user_id = authorizer.get('claims', {}).get('sub')
+        if not user_id:
+            request_context = event.get('requestContext', {})
+            authorizer = request_context.get('authorizer', {})
+            if isinstance(authorizer, dict):
+                user_id = authorizer.get('claims', {}).get('sub')
         
         # Try from query parameters
         if not user_id:
@@ -255,10 +314,8 @@ def handler(event, context):
             path_params = event.get('pathParameters', {}) or {}
             user_id = path_params.get('user_id')
         
-        # For now, allow requests without user_id and return default data
-        # In production, this should require authentication
         if not user_id:
-            user_id = 'anonymous'
+            return error_response(401, 'User ID required')
         
         # Route to appropriate handler
         if (path == '/dashboard/performance' or path == '/dashboard') and http_method == 'GET':
