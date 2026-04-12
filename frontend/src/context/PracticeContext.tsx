@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { PracticeSession, SessionResult } from '../types/index';
 import { apiClient } from '../services/api';
 import { useAuth } from './AuthContext';
+import { useDashboard } from './DashboardContext';
 
 interface PracticeContextType {
   current_session: PracticeSession | null;
@@ -19,6 +20,7 @@ const PracticeContext = createContext<PracticeContextType | undefined>(undefined
 
 export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const { fetchDashboardData } = useDashboard();
   const [current_session, setCurrentSession] = useState<PracticeSession | null>(null);
   const [session_result, setSessionResult] = useState<SessionResult | null>(null);
   const [is_loading, setIsLoading] = useState(false);
@@ -75,6 +77,8 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       if (response.success && response.data) {
         setSessionResult(response.data);
+        // Refresh dashboard so new scores appear immediately
+        fetchDashboardData().catch(() => {});
       } else {
         throw new Error(response.error || 'Failed to submit practice set');
       }

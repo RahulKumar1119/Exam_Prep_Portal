@@ -29,7 +29,7 @@ def get_user_performance(user_id: str) -> Dict[str, Any]:
     try:
         # Query practice sessions for this user
         response = sessions_table.query(
-            IndexName='user_id-index',
+            IndexName='user-id-index',
             KeyConditionExpression='user_id = :user_id',
             ExpressionAttributeValues={':user_id': user_id}
         )
@@ -94,7 +94,7 @@ def get_paper_performance(user_id: str) -> list:
     """Get performance by paper."""
     try:
         response = sessions_table.query(
-            IndexName='user_id-index',
+            IndexName='user-id-index',
             KeyConditionExpression='user_id = :user_id',
             ExpressionAttributeValues={':user_id': user_id}
         )
@@ -150,7 +150,7 @@ def get_trend_data(user_id: str) -> list:
     """Get score trend data over time."""
     try:
         response = sessions_table.query(
-            IndexName='user_id-index',
+            IndexName='user-id-index',
             KeyConditionExpression='user_id = :user_id',
             ExpressionAttributeValues={':user_id': user_id}
         )
