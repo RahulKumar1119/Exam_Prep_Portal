@@ -55,6 +55,8 @@ export interface SessionResult {
 
 export interface QuestionResult {
   question_id: string;
+  question_text: string;
+  options: Record<string, string>;
   correct: boolean;
   user_answer: string;
   correct_answer: string;

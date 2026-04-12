@@ -7,22 +7,61 @@ import json
 import uuid
 import logging
 from datetime import datetime
+import boto3
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+# AWS Bedrock client
+bedrock = boto3.client('bedrock-runtime', region_name='ap-south-1')
+
+# Model ID for Claude 4.5 Haiku
+MODEL_ID = 'anthropic.claude-3-5-haiku-20241022-v1:0'
+
 
 def generate_explanation(question_text: str, correct_answer: str, user_answer: str, options: dict) -> str:
-    """Generate explanation for the answer"""
+    """Generate AI explanation using AWS Bedrock Claude"""
     try:
-        # For now, return a simple explanation
-        # In production, this would call Bedrock
-        correct_option = options.get(correct_answer, '')
-        return f"The correct answer is {correct_answer}: {correct_option}. This is the most accurate response based on banking regulations and financial principles."
+        prompt = f"""You are an expert banking and finance educator specializing in JAIIB and CAIIB exams.
+
+A student answered a question incorrectly. Provide a brief, clear explanation (2-3 sentences) of why the correct answer is right.
+
+Question: {question_text}
+
+Options:
+A. {options.get('A', '')}
+B. {options.get('B', '')}
+C. {options.get('C', '')}
+D. {options.get('D', '')}
+
+Correct Answer: {correct_answer}
+
+Explanation:"""
+
+        response = bedrock.invoke_model(
+            modelId=MODEL_ID,
+            contentType='application/json',
+            accept='application/json',
+            body=json.dumps({
+                'anthropic_version': 'bedrock-2023-06-01',
+                'max_tokens': 300,
+                'messages': [
+                    {
+                        'role': 'user',
+                        'content': prompt
+                    }
+                ]
+            })
+        )
+        
+        result = json.loads(response['body'].read())
+        explanation = result['content'][0]['text'].strip()
+        return explanation
         
     except Exception as e:
-        logger.error(f"Error generating explanation: {str(e)}")
-        return "Explanation not available"
+        logger.error(f"Error generating explanation with Bedrock: {str(e)}")
+        # Fallback explanation
+        return f"The correct answer is {correct_answer}. This is the most accurate response based on banking regulations and financial principles."
 
 
 def validate_request(event: dict) -> tuple:
@@ -86,7 +125,10 @@ def lambda_handler(event, context):
     {
         "body": {
             "question_id": "q123",
-            "user_id": "u456"
+            "user_id": "u456",
+            "question_text": "...",
+            "correct_answer": "B",
+            "options": {"A": "...", "B": "...", "C": "...", "D": "..."}
         }
     }
     """
@@ -120,15 +162,19 @@ def lambda_handler(event, context):
         
         question_id = body.get('question_id')
         user_id = body.get('user_id')
+        question_text = body.get('question_text', '')
+        correct_answer = body.get('correct_answer', '')
+        options = body.get('options', {})
         
         logger.info(f"Processing explanation request for question {question_id} by user {user_id}")
         
-        # Generate a simple explanation
+        # Generate explanation using Bedrock
+        logger.info("Generating explanation with AWS Bedrock Claude...")
         explanation = generate_explanation(
-            "Banking question",
-            "B",
-            "A",
-            {"A": "Option A", "B": "Option B", "C": "Option C", "D": "Option D"}
+            question_text,
+            correct_answer,
+            '',
+            options
         )
         
         logger.info(f"Explanation generated successfully")

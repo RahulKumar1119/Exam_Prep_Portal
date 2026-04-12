@@ -4,12 +4,18 @@ import { useAuth } from '../../context/AuthContext';
 
 interface ExplanationDisplayProps {
   questionId: string;
+  questionText: string;
+  correctAnswer: string;
+  options: Record<string, string>;
   isCorrect: boolean;
   onExplanationLoaded?: (explanation: string) => void;
 }
 
 export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
   questionId,
+  questionText,
+  correctAnswer,
+  options,
   isCorrect,
   onExplanationLoaded
 }) => {
@@ -33,7 +39,10 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
       try {
         const response = await apiClient.post<{ explanation: string }>('/ai/explain', {
           question_id: questionId,
-          user_id: user.user_id
+          user_id: user.user_id,
+          question_text: questionText,
+          correct_answer: correctAnswer,
+          options: options
         });
 
         if (response.success && response.data) {
@@ -52,7 +61,7 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
     };
 
     loadExplanation();
-  }, [questionId, isCorrect, isExpanded, user, onExplanationLoaded]);
+  }, [questionId, isCorrect, isExpanded, user, onExplanationLoaded, questionText, correctAnswer, options]);
 
   if (isCorrect) {
     return null; // Don't show explanation for correct answers

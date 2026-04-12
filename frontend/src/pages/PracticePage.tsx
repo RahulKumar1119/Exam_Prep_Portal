@@ -141,6 +141,9 @@ const PracticePage: React.FC = () => {
                         </p>
                         <ExplanationDisplay
                           questionId={result.question_id}
+                          questionText={result.question_text}
+                          correctAnswer={result.correct_answer}
+                          options={result.options}
                           isCorrect={result.correct}
                         />
                       </>

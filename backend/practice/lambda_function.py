@@ -193,6 +193,8 @@ def handler(event, context):
                     
                     results.append({
                         'question_id': question_id,
+                        'question_text': question.get('question_text', ''),
+                        'options': question.get('options', {}),
                         'correct': is_correct,
                         'user_answer': user_answer or '',
                         'correct_answer': correct_answer
