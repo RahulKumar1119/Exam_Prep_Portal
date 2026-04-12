@@ -126,34 +126,65 @@ const PracticePage: React.FC = () => {
                 key={index}
                 className={`p-4 rounded-lg border-l-4 ${
                   result.correct
-                    ? 'border-green-600 bg-green-50'
-                    : 'border-red-600 bg-red-50'
+                    ? 'border-green-500 bg-green-50'
+                    : 'border-red-500 bg-red-50'
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">Question {index + 1}</p>
-                    <p className={`text-sm mt-1 ${result.correct ? 'text-green-700' : 'text-red-700'}`}>
-                      {result.correct ? '✓ Correct' : '✗ Incorrect'}
-                    </p>
-                    {!result.correct && (
-                      <>
-                        <p className="text-sm text-gray-600 mt-2">
-                          Your answer: <span className="font-medium">{result.user_answer}</span>
-                          <br />
-                          Correct answer: <span className="font-medium">{result.correct_answer}</span>
-                        </p>
-                        <ExplanationDisplay
-                          questionId={result.question_id}
-                          questionText={result.question_text}
-                          correctAnswer={result.correct_answer}
-                          options={result.options}
-                          isCorrect={result.correct}
-                        />
-                      </>
-                    )}
-                  </div>
+                {/* Question number + status */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    Question {index + 1}
+                  </span>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    result.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {result.correct ? '✓ Correct' : '✗ Incorrect'}
+                  </span>
                 </div>
+
+                {/* Question text */}
+                <p className="text-gray-900 font-medium text-sm mb-3">{result.question_text}</p>
+
+                {/* Options */}
+                <div className="space-y-1 mb-3">
+                  {Object.entries(result.options || {}).map(([key, val]) => {
+                    const isCorrect = key === result.correct_answer;
+                    const isUserAnswer = key === result.user_answer;
+                    return (
+                      <div
+                        key={key}
+                        className={`flex items-start gap-2 px-3 py-1.5 rounded text-sm ${
+                          isCorrect
+                            ? 'bg-green-100 text-green-800 font-medium'
+                            : isUserAnswer && !result.correct
+                            ? 'bg-red-100 text-red-800'
+                            : 'text-gray-600'
+                        }`}
+                      >
+                        <span className="font-semibold shrink-0">{key}.</span>
+                        <span>{val as string}</span>
+                        {isCorrect && <span className="ml-auto shrink-0 text-green-600">✓</span>}
+                        {isUserAnswer && !result.correct && <span className="ml-auto shrink-0 text-red-500">✗ Your answer</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Unanswered note */}
+                {!result.user_answer && (
+                  <p className="text-xs text-gray-500 italic mb-2">Not attempted</p>
+                )}
+
+                {/* AI Explanation for wrong answers */}
+                {!result.correct && (
+                  <ExplanationDisplay
+                    questionId={result.question_id}
+                    questionText={result.question_text}
+                    correctAnswer={result.correct_answer}
+                    options={result.options}
+                    isCorrect={result.correct}
+                  />
+                )}
               </div>
             ))}
           </div>
