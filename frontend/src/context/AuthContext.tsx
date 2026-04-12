@@ -1,6 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback, ReactNode } from 'react';
 import { User, AuthState } from '../types/index';
 import { apiClient } from '../services/api';
+
+const IDLE_TIMEOUT_MS = 5 * 60 * 1000;       // 5 minutes
+const WARN_BEFORE_MS  = 1 * 60 * 1000;        // warn 1 minute before logout
+const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
@@ -10,6 +14,8 @@ interface AuthContextType extends AuthState {
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (token: string, new_password: string) => Promise<void>;
   clearError: () => void;
+  sessionWarning: boolean;
+  extendSession: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +29,49 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     is_loading: true,
     error: null,
   });
+  const [sessionWarning, setSessionWarning] = useState(false);
+  const idleTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const warnTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isAuthRef  = useRef(false);
+
+  // Keep ref in sync so event listeners always see latest value
+  useEffect(() => { isAuthRef.current = authState.is_authenticated; }, [authState.is_authenticated]);
+
+  const clearTimers = () => {
+    if (idleTimer.current)  clearTimeout(idleTimer.current);
+    if (warnTimer.current)  clearTimeout(warnTimer.current);
+  };
+
+  const doLogout = useCallback(async () => {
+    clearTimers();
+    setSessionWarning(false);
+    try { await apiClient.post('/auth/logout', {}); } catch {}
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    setAuthState({ user: null, access_token: null, refresh_token: null, is_authenticated: false, is_loading: false, error: null });
+  }, []);
+
+  const resetIdleTimer = useCallback(() => {
+    if (!isAuthRef.current) return;
+    clearTimers();
+    setSessionWarning(false);
+    warnTimer.current = setTimeout(() => setSessionWarning(true), IDLE_TIMEOUT_MS - WARN_BEFORE_MS);
+    idleTimer.current = setTimeout(() => doLogout(), IDLE_TIMEOUT_MS);
+  }, [doLogout]);
+
+  const extendSession = useCallback(() => { resetIdleTimer(); }, [resetIdleTimer]);
+
+  // Attach / detach activity listeners when auth state changes
+  useEffect(() => {
+    if (!authState.is_authenticated) { clearTimers(); setSessionWarning(false); return; }
+    resetIdleTimer();
+    ACTIVITY_EVENTS.forEach(e => window.addEventListener(e, resetIdleTimer, { passive: true }));
+    return () => {
+      clearTimers();
+      ACTIVITY_EVENTS.forEach(e => window.removeEventListener(e, resetIdleTimer));
+    };
+  }, [authState.is_authenticated, resetIdleTimer]);
 
   // Initialize auth state from localStorage
   useEffect(() => {
@@ -143,39 +192,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const logout = async () => {
-    setAuthState((prev) => ({ ...prev, is_loading: true }));
-    try {
-      await apiClient.post('/auth/logout', {});
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-
-      setAuthState({
-        user: null,
-        access_token: null,
-        refresh_token: null,
-        is_authenticated: false,
-        is_loading: false,
-        error: null,
-      });
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Clear local state even if API call fails
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-
-      setAuthState({
-        user: null,
-        access_token: null,
-        refresh_token: null,
-        is_authenticated: false,
-        is_loading: false,
-        error: null,
-      });
-    }
-  };
+  const logout = async () => { await doLogout(); };
 
   const verifyEmail = async (token: string) => {
     setAuthState((prev) => ({ ...prev, is_loading: true, error: null }));
@@ -276,6 +293,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         requestPasswordReset,
         resetPassword,
         clearError,
+        sessionWarning,
+        extendSession,
       }}
     >
       {children}

@@ -20,6 +20,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoadingSpinner from './components/LoadingSpinner';
+import { SessionTimeoutWarning } from './components/SessionTimeoutWarning';
 
 const queryClient = new QueryClient();
 
@@ -31,7 +32,9 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <Routes>
+    <>
+      <SessionTimeoutWarning />
+      <Routes>
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -71,6 +74,7 @@ const AppContent: React.FC = () => {
       {/* Catch-all */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
+    </>
   );
 };
 
