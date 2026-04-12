@@ -1,7 +1,6 @@
 """
-Simplified Practice Set Generator Lambda Function
-
-Returns practice questions from the question bank without session management.
+Practice Set Generator Lambda Function
+Handles practice set generation and submission.
 """
 
 import json
@@ -12,13 +11,14 @@ from typing import List, Dict, Any
 
 import boto3
 
-# AWS clients
-dynamodb = boto3.resource('dynamodb')
-questions_table = dynamodb.Table('jaiib-question-bank')
-sessions_table = dynamodb.Table('jaiib-practice-sessions')
-
 # Constants
 QUESTIONS_PER_SET = 4
+
+
+def get_dynamodb_tables():
+    """Get DynamoDB table references."""
+    dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+    return dynamodb.Table('jaiib-question-bank'), dynamodb.Table('jaiib-practice-sessions')
 
 
 def success_response(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -28,7 +28,9 @@ def success_response(data: Dict[str, Any]) -> Dict[str, Any]:
         'body': json.dumps(data),
         'headers': {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
         }
     }
 
@@ -40,15 +42,16 @@ def error_response(status_code: int, message: str) -> Dict[str, Any]:
         'body': json.dumps({'error': message}),
         'headers': {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
         }
     }
 
 
-def get_questions_by_paper(paper_name: str, count: int) -> List[Dict[str, Any]]:
+def get_questions_by_paper(questions_table, paper_name: str, count: int) -> List[Dict[str, Any]]:
     """Get random questions from a specific paper."""
     try:
-        # Query questions by paper using GSI
         response = questions_table.query(
             IndexName='paper-topic-index',
             KeyConditionExpression='paper_name = :paper',
@@ -60,7 +63,6 @@ def get_questions_by_paper(paper_name: str, count: int) -> List[Dict[str, Any]]:
         if len(questions) < count:
             return questions
         
-        # Randomly select without replacement
         selected = random.sample(questions, count)
         return selected
         
@@ -86,41 +88,41 @@ def handler(event, context):
                 'body': json.dumps({})
             }
         
-        # Parse body if it's a string (from API Gateway)
-        body = event.get('body', {})
-        if isinstance(body, str):
-            body = json.loads(body) if body else {}
+        # Parse body - it comes as a JSON string from API Gateway
+        body_str = event.get('body', '{}')
+        if isinstance(body_str, str):
+            body = json.loads(body_str) if body_str else {}
+        else:
+            body = body_str if isinstance(body_str, dict) else {}
         
-        # Merge body into event
-        event.update(body)
-        
-        # Get parameters
-        user_id = event.get('user_id')
-        paper_name = event.get('paper_name')
-        action = event.get('action', 'generate')
+        # Extract parameters
+        user_id = body.get('user_id')
+        paper_name = body.get('paper_name')
+        action = body.get('action', 'generate')
+        session_id = body.get('session_id')
+        answers = body.get('answers', {})
         
         if not user_id:
             return error_response(400, "user_id is required")
+        
+        # Get DynamoDB tables
+        questions_table, sessions_table = get_dynamodb_tables()
         
         if action == 'generate':
             if not paper_name:
                 return error_response(400, "paper_name is required")
             
-            # Validate paper name
             valid_papers = ['IE & IFS', 'PPB', 'AFB', 'RBWM']
             if paper_name not in valid_papers:
                 return error_response(400, f"Invalid paper_name. Must be one of: {', '.join(valid_papers)}")
             
-            # Get questions
-            questions = get_questions_by_paper(paper_name, QUESTIONS_PER_SET)
+            questions = get_questions_by_paper(questions_table, paper_name, QUESTIONS_PER_SET)
             
             if not questions or len(questions) < QUESTIONS_PER_SET:
                 return error_response(500, "Insufficient questions available in question bank")
             
-            # Create session
             session_id = str(uuid.uuid4())
             
-            # Format questions for response
             formatted_questions = []
             for q in questions:
                 formatted_questions.append({
@@ -132,7 +134,6 @@ def handler(event, context):
                     'correct_answer': q.get('correct_answer')
                 })
             
-            # Store session in DynamoDB
             try:
                 sessions_table.put_item(
                     Item={
@@ -141,12 +142,11 @@ def handler(event, context):
                         'paper_name': paper_name,
                         'questions': formatted_questions,
                         'created_at': datetime.utcnow().isoformat(),
-                        'ttl': int(datetime.utcnow().timestamp()) + 86400  # 24 hour TTL
+                        'ttl': int(datetime.utcnow().timestamp()) + 86400
                     }
                 )
             except Exception as e:
                 print(f"Error storing session: {str(e)}")
-                # Continue anyway, session won't be stored but practice can still work
             
             return success_response({
                 'session_id': session_id,
@@ -158,17 +158,12 @@ def handler(event, context):
             })
         
         elif action == 'submit':
-            # Handle practice set submission
-            session_id = event.get('session_id')
-            answers = event.get('answers', {})
-            
             if not session_id:
                 return error_response(400, "session_id is required")
             
             if not answers:
                 return error_response(400, "answers are required")
             
-            # Retrieve session from DynamoDB
             try:
                 response = sessions_table.get_item(Key={'session_id': session_id})
                 session = response.get('Item')
@@ -178,7 +173,6 @@ def handler(event, context):
                 
                 questions = session.get('questions', [])
                 
-                # Score the answers
                 results = []
                 correct_count = 0
                 
@@ -200,10 +194,9 @@ def handler(event, context):
                         'correct_answer': correct_answer
                     })
                 
-                # Calculate score (percentage)
                 total_questions = len(questions)
                 score = int((correct_count / total_questions * 100)) if total_questions > 0 else 0
-                passed = score >= 60  # 60% pass threshold
+                passed = score >= 60
                 
                 return success_response({
                     'session_id': session_id,

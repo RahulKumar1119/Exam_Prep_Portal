@@ -45,8 +45,9 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
           options: options
         });
 
-        if (response.success && response.data) {
-          const explanation = response.data.explanation || 'Explanation not available';
+        if (response.success) {
+          // The response might have explanation at top level or in data
+          const explanation = (response as any).explanation || response.data?.explanation || 'Explanation not available';
           setExplanation(explanation);
           onExplanationLoaded?.(explanation);
         } else {
