@@ -1,3 +1,4 @@
-boto3==1.26.137
-bcrypt==4.0.1
-PyJWT==2.12.1
+boto3==1.17.53
+botocore==1.20.53
+passlib==1.7.4
+PyJWT==2.9.0

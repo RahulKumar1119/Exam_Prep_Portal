@@ -14,14 +14,17 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, Tuple
 
 import boto3
-import bcrypt
 import jwt
+from passlib.context import CryptContext
 from botocore.exceptions import ClientError
 
 # Initialize AWS clients
 dynamodb = boto3.resource('dynamodb')
 ses_client = boto3.client('ses')
 kms_client = boto3.client('kms')
+
+# Password hashing context using PBKDF2 (pure Python, no C extensions)
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 # Environment variables
 USERS_TABLE = os.environ.get('USERS_TABLE', 'jaiib-users')
@@ -38,14 +41,13 @@ users_table = dynamodb.Table(USERS_TABLE)
 
 
 def hash_password(password: str) -> str:
-    """Hash password using bcrypt with 12-character salt rounds."""
-    salt = bcrypt.gensalt(rounds=12)
-    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+    """Hash password using PBKDF2 (pure Python, no C extensions required)."""
+    return pwd_context.hash(password)
 
 
 def verify_password(password: str, password_hash: str) -> bool:
-    """Verify password against bcrypt hash."""
-    return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
+    """Verify password against PBKDF2 hash."""
+    return pwd_context.verify(password, password_hash)
 
 
 def generate_jwt_token(user_id: str, email: str, role: str) -> str:
