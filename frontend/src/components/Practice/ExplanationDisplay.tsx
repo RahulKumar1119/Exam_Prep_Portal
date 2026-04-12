@@ -31,7 +31,7 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
       setError(null);
 
       try {
-        const response = await apiClient.post<{ explanation: string }>('/ai-tutor/explain', {
+        const response = await apiClient.post<{ explanation: string }>('/ai/explain', {
           question_id: questionId,
           user_id: user.user_id
         });
