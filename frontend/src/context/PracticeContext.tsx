@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { PracticeSession, SessionResult } from '../types/index';
 import { apiClient } from '../services/api';
+import { useAuth } from './AuthContext';
 
 interface PracticeContextType {
   current_session: PracticeSession | null;
@@ -17,6 +18,7 @@ interface PracticeContextType {
 const PracticeContext = createContext<PracticeContextType | undefined>(undefined);
 
 export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [current_session, setCurrentSession] = useState<PracticeSession | null>(null);
   const [session_result, setSessionResult] = useState<SessionResult | null>(null);
   const [is_loading, setIsLoading] = useState(false);
@@ -26,9 +28,17 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     setIsLoading(true);
     setError(null);
     try {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const response = await apiClient.post<PracticeSession>(
         '/practice/generate',
-        { paper_name }
+        { 
+          paper_name,
+          user_id: user.user_id,
+          action: 'generate'
+        }
       );
 
       if (response.success && response.data) {
@@ -49,9 +59,18 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     setIsLoading(true);
     setError(null);
     try {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const response = await apiClient.post<SessionResult>(
         '/practice/submit',
-        { session_id, answers }
+        { 
+          session_id, 
+          answers,
+          user_id: user.user_id,
+          action: 'submit'
+        }
       );
 
       if (response.success && response.data) {
@@ -72,6 +91,10 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     setIsLoading(true);
     setError(null);
     try {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const response = await apiClient.get<PracticeSession>(
         `/practice/session/${session_id}`
       );
