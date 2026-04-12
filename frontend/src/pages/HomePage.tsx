@@ -6,15 +6,16 @@ import { useNotification } from '../context/NotificationContext';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { is_authenticated, user } = useAuth();
+  const { is_authenticated, is_loading, user } = useAuth();
   const { dashboard_data } = useDashboard();
   const { unread_count } = useNotification();
 
   useEffect(() => {
+    if (is_loading) return; // wait for auth to initialize
     if (!is_authenticated) {
       navigate('/login');
     }
-  }, [is_authenticated, navigate]);
+  }, [is_authenticated, is_loading, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

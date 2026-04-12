@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface FormErrors {
@@ -9,6 +9,8 @@ interface FormErrors {
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as any)?.from || '/dashboard';
   const { login, error, is_loading, clearError, is_authenticated } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -18,9 +20,9 @@ const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (is_authenticated) {
-      navigate('/dashboard');
+      navigate(from, { replace: true });
     }
-  }, [is_authenticated, navigate]);
+  }, [is_authenticated, navigate, from]);
 
   const validateForm = (): boolean => {
     const errors: FormErrors = {};
@@ -65,7 +67,7 @@ const LoginPage: React.FC = () => {
     try {
       await login(formData.email, formData.password);
       setSuccess('Login successful! Redirecting...');
-      setTimeout(() => navigate('/dashboard'), 1500);
+      setTimeout(() => navigate(from, { replace: true }), 1500);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Login failed. Please try again.';
       setLocalError(errorMsg);

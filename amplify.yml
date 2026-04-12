@@ -53,6 +53,6 @@ applications:
             - key: 'Cache-Control'
               value: 'max-age=31536000, immutable'
       rewrites:
-        - source: '^[^.]+$|\.(?!js$|css$|gif$|jpg$|jpeg$|png$|svg$|woff$|woff2$|eot$|ttf$|otf$)([^.]+)$'
+        - source: '</^[^.]+$|\.(?!(css|gif|ico|jpg|jpeg|js|png|svg|woff|woff2|ttf|eot|otf)$)([^.]+$)/'
           target: '/index.html'
-          status: 200
+          status: '200'
