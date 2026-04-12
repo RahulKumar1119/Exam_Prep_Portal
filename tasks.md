@@ -35,7 +35,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 ### Task 2: Implement User Authentication Service
 
 - [x] 2.1 Create authentication Lambda function with registration and login
-  - Implement user registration endpoint with email, password, full name, bank affiliation validation
+  - Implement user registration endpoint with email, password, full name validation
   - Hash passwords using bcrypt with 12-character salt rounds
   - Generate and send verification emails with 24-hour valid links
   - Implement login endpoint with JWT token generation (30-min expiry)
@@ -245,7 +245,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 - [x] 10.2 Implement authentication UI components
   - Create LoginPage component with email/password form
-  - Create RegisterPage component with email, password, full name, bank affiliation fields
+  - Create RegisterPage component with email, password, full name fields
   - Create PasswordResetPage component with email and reset link handling
   - Implement form validation and error messages
   - Add loading states and success messages

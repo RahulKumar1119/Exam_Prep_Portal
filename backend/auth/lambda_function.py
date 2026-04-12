@@ -213,7 +213,6 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
     email = body.get('email', '').strip().lower()
     password = body.get('password', '')
     full_name = body.get('full_name', '').strip()
-    bank_affiliation = body.get('bank_affiliation', '').strip()
     
     # Validation
     if not email or not validate_email(email):
@@ -228,9 +227,6 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
     
     if not full_name:
         return error_response(400, 'Full name is required')
-    
-    if not bank_affiliation:
-        return error_response(400, 'Bank affiliation is required')
     
     # Check if user exists
     if user_exists(email):
@@ -247,7 +243,6 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
                 'user_id': user_id,
                 'email': email,
                 'full_name': full_name,
-                'bank_affiliation': bank_affiliation,
                 'password_hash': password_hash,
                 'email_verified': False,
                 'created_at': int(datetime.utcnow().timestamp()),

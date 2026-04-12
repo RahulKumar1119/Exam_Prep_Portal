@@ -4,7 +4,7 @@ import { apiClient } from '../services/api';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, full_name: string, bank_affiliation: string) => Promise<void>;
+  register: (email: string, password: string, full_name: string) => Promise<void>;
   logout: () => Promise<void>;
   verifyEmail: (token: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
@@ -98,14 +98,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (
     email: string,
     password: string,
-    full_name: string,
-    bank_affiliation: string
+    full_name: string
   ) => {
     setAuthState((prev) => ({ ...prev, is_loading: true, error: null }));
     try {
       const response = await apiClient.post<{ message: string }>(
         '/auth/register',
-        { email, password, full_name, bank_affiliation }
+        { email, password, full_name }
       );
 
       if (!response.success) {

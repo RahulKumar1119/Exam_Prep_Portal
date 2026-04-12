@@ -7,7 +7,6 @@ interface FormErrors {
   password?: string;
   confirm_password?: string;
   full_name?: string;
-  bank_affiliation?: string;
 }
 
 const RegisterPage: React.FC = () => {
@@ -18,7 +17,6 @@ const RegisterPage: React.FC = () => {
     password: '',
     confirm_password: '',
     full_name: '',
-    bank_affiliation: '',
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [localError, setLocalError] = useState('');
@@ -54,10 +52,6 @@ const RegisterPage: React.FC = () => {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
-    }
-
-    if (!formData.bank_affiliation.trim()) {
-      errors.bank_affiliation = 'Bank affiliation is required';
     }
 
     if (!formData.password) {
@@ -107,8 +101,7 @@ const RegisterPage: React.FC = () => {
       await register(
         formData.email,
         formData.password,
-        formData.full_name,
-        formData.bank_affiliation
+        formData.full_name
       );
       setSuccess('Registration successful! Please check your email to verify your account. Redirecting to login...');
       setTimeout(() => navigate('/login'), 3000);
@@ -206,27 +199,6 @@ const RegisterPage: React.FC = () => {
               />
               {formErrors.email && (
                 <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
-              )}
-            </div>
-
-            {/* Bank Affiliation Field */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Bank Affiliation
-              </label>
-              <input
-                type="text"
-                name="bank_affiliation"
-                value={formData.bank_affiliation}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  formErrors.bank_affiliation ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                } disabled:bg-gray-100 disabled:cursor-not-allowed`}
-                placeholder="Your Bank Name"
-                disabled={is_loading}
-              />
-              {formErrors.bank_affiliation && (
-                <p className="mt-1 text-sm text-red-600">{formErrors.bank_affiliation}</p>
               )}
             </div>
 
