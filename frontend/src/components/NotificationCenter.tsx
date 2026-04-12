@@ -12,7 +12,6 @@ import LoadingSpinner from './LoadingSpinner';
  */
 export const NotificationCenter: React.FC = () => {
   const { notifications, is_loading, error, fetchNotifications, markAsRead, deleteNotification, clearError } = useNotification();
-  const [selectedNotification, setSelectedNotification] = useState<string | null>(null);
 
   useEffect(() => {
     fetchNotifications().catch(err => console.error('Failed to fetch notifications:', err));
@@ -138,7 +137,6 @@ export const NotificationCenter: React.FC = () => {
                   ? 'bg-white border-gray-200'
                   : 'bg-blue-50 border-blue-200'
               }`}
-              onClick={() => setSelectedNotification(notification.notification_id)}
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 mt-1">
