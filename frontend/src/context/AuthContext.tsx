@@ -64,11 +64,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await apiClient.post<{
         access_token: string;
         refresh_token: string;
-        user: User;
+        user_id: string;
+        email: string;
+        role: string;
+        full_name: string;
       }>('/auth/login', { email, password });
 
       if (response.success && response.data) {
-        const { access_token, refresh_token, user } = response.data;
+        const { access_token, refresh_token, user_id, email: userEmail, role, full_name } = response.data;
+        
+        // Construct user object from response with default values for missing fields
+        const user: User = {
+          user_id,
+          email: userEmail,
+          role: role as 'bank_officer' | 'trainer' | 'admin',
+          full_name,
+          bank_affiliation: '',
+          email_verified: true,
+          created_at: new Date().toISOString(),
+          status: 'active',
+        };
+        
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('refresh_token', refresh_token);
         localStorage.setItem('user', JSON.stringify(user));

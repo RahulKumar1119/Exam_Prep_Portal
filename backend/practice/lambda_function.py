@@ -43,8 +43,27 @@ def handler(event, context):
     }
     """
     try:
-        action = event.get('action', 'generate')
-        user_id = event.get('user_id')
+        # Handle CORS preflight requests
+        http_method = event.get('httpMethod', 'POST')
+        if http_method == 'OPTIONS':
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+                    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+                },
+                'body': json.dumps({})
+            }
+        
+        # Parse body if it's a string (from API Gateway)
+        body = event.get('body', {})
+        if isinstance(body, str):
+            body = json.loads(body) if body else {}
+        
+        action = body.get('action', 'generate')
+        user_id = body.get('user_id')
         
         if not user_id:
             return error_response(400, "user_id is required")

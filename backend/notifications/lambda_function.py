@@ -28,23 +28,42 @@ def handler(event, context):
     }
     """
     try:
-        action = event.get('action', 'create')
-        user_id = event.get('user_id')
+        # Handle CORS preflight requests
+        http_method = event.get('httpMethod', 'POST')
+        if http_method == 'OPTIONS':
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+                    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+                },
+                'body': json.dumps({})
+            }
+        
+        # Parse body if it's a string (from API Gateway)
+        body = event.get('body', {})
+        if isinstance(body, str):
+            body = json.loads(body) if body else {}
+        
+        action = body.get('action', 'create')
+        user_id = body.get('user_id')
         
         if action == 'create':
-            return create_notification(event)
+            return create_notification(body)
         elif action == 'get_notifications':
-            return get_notifications(event)
+            return get_notifications(body)
         elif action == 'mark_read':
-            return mark_notification_as_read(event)
+            return mark_notification_as_read(body)
         elif action == 'check_milestones':
-            return check_milestone_notifications(event)
+            return check_milestone_notifications(body)
         elif action == 'check_mastery':
-            return check_mastery_notifications(event)
+            return check_mastery_notifications(body)
         elif action == 'check_reminders':
-            return check_reminder_notifications(event)
+            return check_reminder_notifications(body)
         elif action == 'send_update':
-            return send_question_bank_update(event)
+            return send_question_bank_update(body)
         else:
             return error_response(400, f"Unknown action: {action}")
             
@@ -186,7 +205,11 @@ def success_response(data: Dict[str, Any]) -> Dict[str, Any]:
         'body': json.dumps({
             'success': True,
             'data': data
-        })
+        }),
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        }
     }
 
 
@@ -197,5 +220,9 @@ def error_response(status_code: int, message: str) -> Dict[str, Any]:
         'body': json.dumps({
             'success': False,
             'error': message
-        })
+        }),
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        }
     }

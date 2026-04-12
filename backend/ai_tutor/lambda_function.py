@@ -140,10 +140,29 @@ def lambda_handler(event, context):
     }
     """
     try:
+        # Handle CORS preflight requests
+        http_method = event.get('httpMethod', 'POST')
+        if http_method == 'OPTIONS':
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+                    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+                },
+                'body': json.dumps({})
+            }
+        
         logger.info(f"Received event: {json.dumps(event)}")
         
+        # Parse body if it's a string (from API Gateway)
+        body = event.get('body', {})
+        if isinstance(body, str):
+            body = json.loads(body) if body else {}
+        
         # Validate request
-        is_valid, error_msg = validate_request(event)
+        is_valid, error_msg = validate_request({'body': body})
         if not is_valid:
             logger.warning(f"Invalid request: {error_msg}")
             return error_response(400, error_msg)

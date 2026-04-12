@@ -136,33 +136,11 @@ def validate_password(password: str) -> Tuple[bool, str]:
 
 def send_verification_email(email: str, user_id: str, token: str) -> bool:
     """Send email verification link."""
-    verification_link = f"{FRONTEND_URL}/verify-email?token={token}"
-    
-    html_body = f"""
-    <html>
-    <head></head>
-    <body>
-        <h2>Verify Your Email</h2>
-        <p>Click the link below to verify your email address:</p>
-        <a href="{verification_link}">Verify Email</a>
-        <p>This link expires in 24 hours.</p>
-    </body>
-    </html>
-    """
-    
-    try:
-        ses_client.send_email(
-            Source=SENDER_EMAIL,
-            Destination={'ToAddresses': [email]},
-            Message={
-                'Subject': {'Data': 'Verify Your JAIIB Portal Email'},
-                'Body': {'Html': {'Data': html_body}}
-            }
-        )
-        return True
-    except ClientError as e:
-        print(f"Error sending email: {e}")
-        return False
+    # For development/testing, skip actual email sending
+    # In production, configure SES and verify sender email
+    print(f"[DEV MODE] Verification email would be sent to {email}")
+    print(f"[DEV MODE] Verification token: {token}")
+    return False  # Return False to indicate email not actually sent
 
 
 def send_password_reset_email(email: str, user_id: str, token: str) -> bool:
@@ -246,7 +224,7 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
                 'email': email,
                 'full_name': full_name,
                 'password_hash': password_hash,
-                'email_verified': False,
+                'email_verified': True,  # Auto-verify for development
                 'created_at': int(datetime.utcnow().timestamp()),
                 'last_login': None,
                 'role': 'bank_officer',
@@ -258,12 +236,12 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
             }
         )
         
-        # Send verification email
+        # Send verification email (skipped in dev mode)
         email_sent = send_verification_email(email, user_id, verification_token)
         
         return success_response(201, {
             'user_id': user_id,
-            'message': 'Registration successful. Please check your email to verify your account.',
+            'message': 'Registration successful. You can now login.',
             'verification_email_sent': email_sent
         })
     
@@ -502,6 +480,24 @@ def handler(event, context):
         # Parse request
         http_method = event.get('httpMethod', 'POST')
         path = event.get('path', '')
+        
+        # Remove stage name from path if present (API Gateway includes it)
+        if path.startswith('/prod/'):
+            path = path[5:]  # Remove '/prod' prefix
+        
+        # Handle CORS preflight requests
+        if http_method == 'OPTIONS':
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+                    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+                },
+                'body': json.dumps({})
+            }
+        
         body = json.loads(event.get('body', '{}'))
         
         # Route to appropriate handler
@@ -518,7 +514,7 @@ def handler(event, context):
         elif path == '/auth/password-reset' and http_method == 'POST':
             return reset_password(body)
         else:
-            return error_response(404, 'Endpoint not found')
+            return error_response(404, f'Endpoint not found: {path}')
     
     except Exception as e:
         print(f"Error: {e}")
