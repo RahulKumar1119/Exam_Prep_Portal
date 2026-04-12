@@ -30,13 +30,13 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
   const currentQuestion = current_session.questions[currentQuestionIndex];
   const totalQuestions = current_session.questions.length;
   const allQuestionsAnswered = current_session.questions.every(
-    (q) => answers[q.id]
+    (q) => answers[q.question_id]
   );
 
   const handleSelectOption = (option: string) => {
     setAnswers((prev) => ({
       ...prev,
-      [currentQuestion.id]: option,
+      [currentQuestion.question_id]: option,
     }));
   };
 
@@ -107,8 +107,8 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
         {/* Options */}
         <div className="bg-white rounded-lg p-6 shadow-md mb-6">
           <OptionButtons
-            options={currentQuestion.options}
-            selectedOption={answers[currentQuestion.id] || null}
+            options={Object.values(currentQuestion.options)}
+            selectedOption={answers[currentQuestion.question_id] || null}
             onSelectOption={handleSelectOption}
           />
         </div>

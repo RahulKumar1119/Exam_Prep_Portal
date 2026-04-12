@@ -14,10 +14,6 @@ export const QuestionReview: React.FC<QuestionReviewProps> = ({
   questionNumber,
   totalQuestions,
 }) => {
-  const optionLabels = ['A', 'B', 'C', 'D'];
-  const correctIndex = optionLabels.indexOf(result.correct_answer);
-  const userIndex = optionLabels.indexOf(result.user_answer);
-
   const difficultyColors = {
     easy: 'bg-green-100 text-green-800',
     medium: 'bg-yellow-100 text-yellow-800',
@@ -71,8 +67,7 @@ export const QuestionReview: React.FC<QuestionReviewProps> = ({
 
       {/* Options */}
       <div className="space-y-3 mb-6">
-        {question.options.map((option, index) => {
-          const label = optionLabels[index];
+        {Object.entries(question.options).map(([label, option]) => {
           const isCorrect = label === result.correct_answer;
           const isUserAnswer = label === result.user_answer;
           const isWrongAnswer = isUserAnswer && !isCorrect;
@@ -88,7 +83,7 @@ export const QuestionReview: React.FC<QuestionReviewProps> = ({
 
           return (
             <div
-              key={index}
+              key={label}
               className={`p-4 rounded-lg border transition-all ${optionStyle}`}
             >
               <div className="flex items-center justify-between">
@@ -127,13 +122,13 @@ export const QuestionReview: React.FC<QuestionReviewProps> = ({
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Your Answer:</span>
           <span className="font-semibold text-gray-900">
-            {result.user_answer ? `${result.user_answer}. ${question.options[userIndex]}` : 'Not answered'}
+            {result.user_answer ? `${result.user_answer}. ${question.options[result.user_answer]}` : 'Not answered'}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Correct Answer:</span>
           <span className="font-semibold text-green-700">
-            {result.correct_answer}. {question.options[correctIndex]}
+            {result.correct_answer}. {question.options[result.correct_answer]}
           </span>
         </div>
       </div>

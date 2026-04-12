@@ -100,7 +100,7 @@ const QuestionBankPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiClient.put(`/questions/${editing_question.id}`, data);
+      const response = await apiClient.put(`/questions/${editing_question.question_id}`, data);
 
       if (response.success) {
         setSuccessMessage('Question updated successfully!');
@@ -246,7 +246,12 @@ const QuestionBankPage: React.FC = () => {
             editing_question
               ? {
                   question_text: editing_question.question_text,
-                  options: editing_question.options as [string, string, string, string],
+                  options: [
+                    editing_question.options['A'] || '',
+                    editing_question.options['B'] || '',
+                    editing_question.options['C'] || '',
+                    editing_question.options['D'] || '',
+                  ] as [string, string, string, string],
                   correct_answer: editing_question.correct_answer as 'A' | 'B' | 'C' | 'D',
                   topic: editing_question.topic,
                   difficulty: editing_question.difficulty,

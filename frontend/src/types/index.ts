@@ -22,12 +22,12 @@ export interface AuthState {
 
 // Practice types
 export interface Question {
-  id: string;
+  question_id: string;
   paper_name: string;
   topic: string;
   difficulty: 'easy' | 'medium' | 'hard';
   question_text: string;
-  options: string[];
+  options: Record<string, string>;  // Changed from array to object with A, B, C, D keys
   correct_answer: string;
   rbi_reference?: string;
   iibf_reference?: string;

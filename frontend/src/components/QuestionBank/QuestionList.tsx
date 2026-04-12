@@ -33,7 +33,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ questions, onEdit, onDelete
   return (
     <div className="space-y-4">
       {questions.map((question) => (
-        <div key={question.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+        <div key={question.question_id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-grow">
               <p className="text-sm text-gray-600 mb-2">
@@ -43,16 +43,16 @@ const QuestionList: React.FC<QuestionListProps> = ({ questions, onEdit, onDelete
 
               {/* Options */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
-                {question.options.map((option, index) => {
-                  const is_correct = String.fromCharCode(65 + index) === question.correct_answer;
+                {Object.entries(question.options).map(([key, value]) => {
+                  const is_correct = key === question.correct_answer;
                   return (
                     <div
-                      key={index}
+                      key={key}
                       className={`p-2 rounded text-sm ${
                         is_correct ? 'bg-green-50 border border-green-200 text-green-900' : 'bg-gray-50 border border-gray-200 text-gray-700'
                       }`}
                     >
-                      <span className="font-bold">{String.fromCharCode(65 + index)}.</span> {option}
+                      <span className="font-bold">{key}.</span> {value}
                       {is_correct && <span className="ml-2 text-green-600 font-bold">✓</span>}
                     </div>
                   );
@@ -84,7 +84,7 @@ const QuestionList: React.FC<QuestionListProps> = ({ questions, onEdit, onDelete
                 )}
                 {onDelete && (
                   <button
-                    onClick={() => onDelete(question.id)}
+                    onClick={() => onDelete(question.question_id)}
                     disabled={is_loading}
                     className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 text-sm font-medium disabled:opacity-50"
                   >

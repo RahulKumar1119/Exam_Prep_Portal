@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import QuestionDisplay from '../components/Practice/QuestionDisplay';
 
 const PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM'];
 
 const PracticePage: React.FC = () => {
-  const { current_session, is_loading, error, generatePracticeSet, clearSession } = usePractice();
+  const { current_session, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
   const [selectedPaper, setSelectedPaper] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleGeneratePracticeSet = async () => {
     if (!selectedPaper) {
@@ -17,6 +19,26 @@ const PracticePage: React.FC = () => {
       await generatePracticeSet(selectedPaper);
     } catch (err) {
       console.error('Failed to generate practice set:', err);
+    }
+  };
+
+  const handleAnswerQuestion = (questionId: string, answer: string) => {
+    // This will be handled by the context
+    console.log(`Question ${questionId} answered with ${answer}`);
+  };
+
+  const handleSubmitPracticeSet = async () => {
+    if (!current_session) return;
+    
+    setIsSubmitting(true);
+    try {
+      // Answers are tracked in the PracticeSetInterface component
+      // and passed directly to submitPracticeSet
+      await submitPracticeSet(current_session.session_id, {});
+    } catch (err) {
+      console.error('Failed to submit practice set:', err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -64,9 +86,9 @@ const PracticePage: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="card">
+        <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold">{current_session.paper_name}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{current_session.paper_name}</h2>
             <button
               onClick={clearSession}
               className="btn-secondary"
@@ -74,7 +96,12 @@ const PracticePage: React.FC = () => {
               Back
             </button>
           </div>
-          <p className="text-gray-600">Practice set loaded. Questions will be displayed here.</p>
+          <QuestionDisplay
+            session={current_session}
+            onAnswer={handleAnswerQuestion}
+            onSubmit={handleSubmitPracticeSet}
+            isSubmitting={isSubmitting}
+          />
         </div>
       )}
     </div>
