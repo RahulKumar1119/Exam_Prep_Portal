@@ -27,14 +27,12 @@ const PracticePage: React.FC = () => {
     console.log(`Question ${questionId} answered with ${answer}`);
   };
 
-  const handleSubmitPracticeSet = async () => {
+  const handleSubmitPracticeSet = async (answers: Record<string, string>) => {
     if (!current_session) return;
     
     setIsSubmitting(true);
     try {
-      // Answers are tracked in the PracticeSetInterface component
-      // and passed directly to submitPracticeSet
-      await submitPracticeSet(current_session.session_id, {});
+      await submitPracticeSet(current_session.session_id, answers);
     } catch (err) {
       console.error('Failed to submit practice set:', err);
     } finally {

@@ -4,7 +4,7 @@ import { PracticeSession } from '../../types/index';
 interface QuestionDisplayProps {
   session: PracticeSession;
   onAnswer: (questionId: string, answer: string) => void;
-  onSubmit: () => void;
+  onSubmit: (answers: Record<string, string>) => void;
   isSubmitting?: boolean;
 }
 
@@ -44,7 +44,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
   const handleSubmit = () => {
     if (answeredCount === totalQuestions) {
-      onSubmit();
+      onSubmit(answers);
     } else {
       alert(`Please answer all ${totalQuestions} questions before submitting.`);
     }

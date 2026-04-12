@@ -139,6 +139,34 @@ def handler(event, context):
                 'created_at': datetime.utcnow().isoformat()
             })
         
+        elif action == 'submit':
+            # Handle practice set submission
+            session_id = event.get('session_id')
+            answers = event.get('answers', {})
+            
+            if not session_id:
+                return error_response(400, "session_id is required")
+            
+            if not answers:
+                return error_response(400, "answers are required")
+            
+            # For now, return a simple result
+            # In a real implementation, you would:
+            # 1. Retrieve the session from DynamoDB
+            # 2. Get the questions for that session
+            # 3. Score the answers
+            # 4. Store the results
+            
+            return success_response({
+                'session_id': session_id,
+                'user_id': user_id,
+                'score': 0,
+                'results': [],
+                'time_taken': 0,
+                'passed': False,
+                'submitted_at': datetime.utcnow().isoformat()
+            })
+        
         else:
             return error_response(400, f"Unknown action: {action}")
     
