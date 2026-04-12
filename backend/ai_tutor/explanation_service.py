@@ -26,9 +26,14 @@ def _init_aws_clients():
     if bedrock_client is None:
         try:
             import boto3
-            bedrock_client = boto3.client('bedrock-runtime', region_name='us-east-1')
-            dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-            explanations_table = dynamodb.Table('AI_Explanations')
+            from botocore.config import Config
+            bedrock_client = boto3.client(
+                'bedrock-runtime',
+                region_name='ap-south-1',
+                config=Config(read_timeout=30, connect_timeout=10)
+            )
+            dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
+            explanations_table = dynamodb.Table('jaiib-ai-explanations')
             questions_table = dynamodb.Table('Question_Bank')
         except Exception as e:
             logger.warning(f"Failed to initialize AWS clients: {str(e)}")
@@ -38,7 +43,7 @@ def _init_aws_clients():
 class ExplanationGenerator:
     """Generates AI explanations using AWS Bedrock Claude 4.5 Haiku"""
     
-    MODEL_ID = "anthropic.claude-3-5-haiku-20241022"
+    MODEL_ID = "arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0"
     MAX_TOKENS = 1024
     TIMEOUT_SECONDS = 5
     
@@ -112,7 +117,7 @@ EXPLANATION:"""
             
             # Prepare request
             request_body = {
-                "anthropic_version": "bedrock-2023-06-01",
+                "anthropic_version": "bedrock-2023-05-31",
                 "max_tokens": ExplanationGenerator.MAX_TOKENS,
                 "messages": [
                     {

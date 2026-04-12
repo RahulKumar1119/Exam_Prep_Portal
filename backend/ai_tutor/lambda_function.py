@@ -8,24 +8,35 @@ import uuid
 import logging
 import time
 import re
+import threading
 from datetime import datetime
 from typing import Dict, Tuple, Optional
+from decimal import Decimal
 import boto3
+from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# AWS clients
-bedrock = boto3.client('bedrock-runtime', region_name='ap-south-1')
+# AWS clients - configure with read timeout matching our explanation timeout
+bedrock = boto3.client(
+    'bedrock-runtime',
+    region_name='ap-south-1',
+    config=Config(read_timeout=30, connect_timeout=10)
+)
 dynamodb = boto3.resource('dynamodb', region_name='ap-south-1')
 explanations_table = dynamodb.Table('jaiib-ai-explanations')
 
-# Model ID for Claude 3.5 Haiku
-MODEL_ID = 'anthropic.claude-3-5-haiku-20241022-v1:0'
+# Model ID for Claude using inference profile - prefer env var if set
+import os
+MODEL_ID = os.environ.get(
+    'BEDROCK_MODEL_ID',
+    'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0'
+)
 
 # Constants
-EXPLANATION_TIMEOUT = 5  # seconds
+EXPLANATION_TIMEOUT = 25  # seconds - Bedrock can take 10-20s for detailed responses
 MIN_WORD_COUNT = 150
 MAX_WORD_COUNT = 1000
 
@@ -45,36 +56,13 @@ def extract_citations(text: str) -> list:
 
 def validate_explanation(explanation: str) -> Tuple[bool, Optional[str]]:
     """
-    Validate explanation quality
+    Validate explanation quality - accept any non-empty response
     
     Returns:
         Tuple of (is_valid, error_message)
     """
-    if not explanation:
-        return False, "Explanation is empty"
-    
-    # Check word count - allow 50+ words minimum for Bedrock responses
-    word_count = len(explanation.split())
-    if word_count < 50:
-        return False, f"Explanation too short ({word_count} words, minimum 50)"
-    
-    if word_count > MAX_WORD_COUNT:
-        return False, f"Explanation too long ({word_count} words, maximum {MAX_WORD_COUNT})"
-    
-    # Check for required elements
-    required_elements = {
-        'correct_answer': r'(?:correct|answer|is\s+[A-D])',
-        'reasoning': r'(?:because|reason|therefore|thus|since)',
-        'concepts': r'(?:concept|principle|rule|regulation|guideline)',
-    }
-    
-    found_elements = []
-    for element, pattern in required_elements.items():
-        if re.search(pattern, explanation, re.IGNORECASE):
-            found_elements.append(element)
-    
-    if len(found_elements) < 1:
-        return False, f"Explanation missing required elements. Found: {', '.join(found_elements)}"
+    if not explanation or len(explanation.strip()) < 10:
+        return False, "Explanation is empty or too short"
     
     return True, None
 
@@ -86,17 +74,18 @@ def generate_explanation_with_timeout(
     timeout: int = EXPLANATION_TIMEOUT
 ) -> Tuple[str, bool]:
     """
-    Generate AI explanation with timeout handling
+    Generate AI explanation with timeout handling using threading.
     
     Returns:
         Tuple of (explanation, is_timeout)
     """
-    start_time = time.time()
-    
-    try:
-        prompt = f"""You are an expert banking and finance educator specializing in JAIIB and CAIIB exams.
+    result_container = {'explanation': None, 'error': None}
 
-A student answered a question incorrectly. Provide a comprehensive explanation (800-1000 words) of why the correct answer is right.
+    def _call_bedrock():
+        try:
+            prompt = f"""You are an expert banking and finance educator specializing in JAIIB and CAIIB exams.
+
+A student answered a question incorrectly. Provide a DETAILED and COMPREHENSIVE explanation of why the correct answer is right.
 
 Question: {question_text}
 
@@ -108,72 +97,88 @@ D. {options.get('D', '')}
 
 Correct Answer: {correct_answer}
 
-Your explanation should:
-1. State the correct answer clearly and explain why it is correct
-2. Provide detailed reasoning with examples from banking practice
-3. Reference relevant RBI circulars, guidelines, and IIBF standards
-4. Explain the concepts and principles underlying the correct answer
-5. Clarify common misconceptions and why other options are incorrect
-6. Provide practical applications and real-world scenarios
-7. Include regulatory framework and compliance requirements
-8. Suggest resources for further learning
+Your explanation MUST include ALL of the following:
 
-Explanation:"""
+1. CORRECT ANSWER STATEMENT: Clearly state that {correct_answer} is the correct answer and why it is correct.
 
-        response = bedrock.invoke_model(
-            modelId=MODEL_ID,
-            contentType='application/json',
-            accept='application/json',
-            body=json.dumps({
-                'anthropic_version': 'bedrock-2023-06-01',
-                'max_tokens': 2000,
-                'messages': [
-                    {
-                        'role': 'user',
-                        'content': prompt
-                    }
-                ]
-            })
-        )
-        
-        elapsed = time.time() - start_time
-        
-        if elapsed > timeout:
-            logger.warning(f"Explanation generation took {elapsed:.2f}s, exceeding {timeout}s timeout")
-            return None, True
-        
-        result = json.loads(response['body'].read())
-        explanation = result['content'][0]['text'].strip()
-        
-        # Validate explanation quality
-        is_valid, error_msg = validate_explanation(explanation)
-        if not is_valid:
-            logger.warning(f"Explanation validation failed: {error_msg}")
-            return None, False
-        
-        logger.info(f"Explanation generated successfully in {elapsed:.2f}s")
-        return explanation, False
-        
-    except (BotoCoreError, ClientError) as e:
-        logger.error(f"Bedrock API error: {str(e)}")
+2. DETAILED REASONING: Provide 2-3 paragraphs explaining the banking/financial principles behind the correct answer.
+
+3. WHY OTHER OPTIONS ARE WRONG: For each incorrect option, explain why it is wrong and what misconception it represents.
+
+4. REGULATORY REFERENCES: Include specific references to:
+   - RBI guidelines, circulars, or master directions
+   - IIBF standards or frameworks
+   - Banking regulations or acts
+   - Any relevant regulatory body guidelines
+
+5. PRACTICAL EXAMPLES: Provide 1-2 real-world banking scenarios or examples that illustrate the concept.
+
+6. KEY CONCEPTS: List and explain 3-4 key banking/financial concepts related to this question.
+
+7. COMMON MISCONCEPTIONS: Explain 2-3 common misconceptions students have about this topic.
+
+Write a comprehensive, detailed explanation with multiple paragraphs. Aim for 300-500 words minimum."""
+
+            logger.info(f"Calling Bedrock with model: {MODEL_ID}")
+
+            response = bedrock.invoke_model(
+                modelId=MODEL_ID,
+                contentType='application/json',
+                accept='application/json',
+                body=json.dumps({
+                    'anthropic_version': 'bedrock-2023-05-31',
+                    'max_tokens': 2000,
+                    'messages': [
+                        {
+                            'role': 'user',
+                            'content': prompt
+                        }
+                    ]
+                })
+            )
+
+            parsed = json.loads(response['body'].read())
+            result_container['explanation'] = parsed['content'][0]['text'].strip()
+
+        except Exception as e:
+            result_container['error'] = str(e)
+            logger.error(f"Bedrock call error: {str(e)}")
+
+    start_time = time.time()
+    thread = threading.Thread(target=_call_bedrock, daemon=True)
+    thread.start()
+    thread.join(timeout=timeout)
+
+    elapsed = time.time() - start_time
+
+    if thread.is_alive():
+        logger.warning(f"Bedrock call timed out after {elapsed:.2f}s")
+        return None, True  # is_timeout=True
+
+    if result_container['error'] or not result_container['explanation']:
+        logger.error(f"Bedrock call failed: {result_container['error']}")
         return None, False
-    except Exception as e:
-        logger.error(f"Error generating explanation: {str(e)}")
+
+    explanation = result_container['explanation']
+    logger.info(f"Bedrock returned {len(explanation.split())} words in {elapsed:.2f}s")
+
+    is_valid, error_msg = validate_explanation(explanation)
+    if not is_valid:
+        logger.warning(f"Explanation validation failed: {error_msg}")
         return None, False
+
+    return explanation, False
 
 
 def get_fallback_explanation(correct_answer: str) -> str:
     """Get fallback explanation for timeout scenarios"""
-    return f"""The correct answer is {correct_answer}. 
-
-This is the most accurate response based on banking regulations and financial principles. To understand why this answer is correct, please refer to the relevant RBI guidelines and IIBF standards for banking operations.
-
-Key concepts to remember:
-- Banking regulations are established by the Reserve Bank of India (RBI)
-- The Indian Institute of Banking and Finance (IIBF) provides professional standards
-- Always refer to the latest circulars and guidelines for current regulations
-
-For more detailed explanations, please consult the official RBI website and IIBF resources."""
+    return (
+        f"The correct answer is {correct_answer}. "
+        "Our AI explanation service is taking longer than expected to respond. "
+        "Please try requesting the explanation again in a moment. "
+        "If the issue persists, refer to your JAIIB/CAIIB study materials or "
+        "the official RBI and IIBF resources for detailed guidance on this topic."
+    )
 
 
 def save_explanation(
@@ -193,7 +198,7 @@ def save_explanation(
                 'user_id': user_id,
                 'explanation': explanation,
                 'citations': citations,
-                'generation_time': generation_time,
+                'generation_time': Decimal(str(generation_time)),
                 'is_fallback': is_fallback,
                 'created_at': datetime.utcnow().isoformat(),
                 'word_count': len(explanation.split()),

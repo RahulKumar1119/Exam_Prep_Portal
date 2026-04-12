@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { ExplanationDisplay as ExplanationRenderer } from '../ExplanationDisplay';
 
 interface ExplanationDisplayProps {
   questionId: string;
@@ -79,13 +80,13 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
       </button>
 
       {isExpanded && (
-        <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mt-3">
           {isLoading ? (
-            <p className="text-gray-600 text-sm">Generating explanation with AI...</p>
+            <ExplanationRenderer explanation="" isLoading={true} />
           ) : error ? (
-            <p className="text-red-600 text-sm">{error}</p>
+            <p className="text-red-600 text-sm p-3 bg-red-50 rounded-lg">{error}</p>
           ) : explanation ? (
-            <p className="text-gray-700 text-sm leading-relaxed">{explanation}</p>
+            <ExplanationRenderer explanation={explanation} />
           ) : (
             <p className="text-gray-600 text-sm">No explanation available</p>
           )}
