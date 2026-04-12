@@ -4,13 +4,16 @@ import { ApiResponse } from '../types/index';
 // API Base URL - uses environment variable or defaults to localhost for development
 const API_BASE_URL = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:5000/api';
 
-// Log API configuration in development
-if (process.env.NODE_ENV === 'development') {
-  console.log('API Configuration:', {
-    baseURL: API_BASE_URL,
-    environment: process.env.REACT_APP_ENVIRONMENT || 'development',
-  });
-}
+// Log API configuration
+console.log('API Configuration:', {
+  baseURL: API_BASE_URL,
+  environment: process.env.REACT_APP_ENVIRONMENT || 'development',
+  nodeEnv: process.env.NODE_ENV,
+  allEnvVars: {
+    REACT_APP_API_ENDPOINT: process.env.REACT_APP_API_ENDPOINT,
+    REACT_APP_ENVIRONMENT: process.env.REACT_APP_ENVIRONMENT,
+  }
+});
 
 class ApiClient {
   private client: AxiosInstance;
