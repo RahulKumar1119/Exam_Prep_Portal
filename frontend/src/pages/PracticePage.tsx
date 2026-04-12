@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
+import { useDashboard } from '../context/DashboardContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
@@ -8,6 +9,7 @@ const PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM'];
 
 const PracticePage: React.FC = () => {
   const { current_session, session_result, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
+  const { fetchDashboardData } = useDashboard();
   const [selectedPaper, setSelectedPaper] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,7 +35,9 @@ const PracticePage: React.FC = () => {
     
     setIsSubmitting(true);
     try {
-      await submitPracticeSet(current_session.session_id, answers);
+      await submitPracticeSet(current_session.session_id, answers, () => {
+        fetchDashboardData().catch(() => {});
+      });
     } catch (err) {
       console.error('Failed to submit practice set:', err);
     } finally {

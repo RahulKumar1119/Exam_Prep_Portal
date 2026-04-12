@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { PracticeSession, SessionResult } from '../types/index';
 import { apiClient } from '../services/api';
 import { useAuth } from './AuthContext';
-import { useDashboard } from './DashboardContext';
 
 interface PracticeContextType {
   current_session: PracticeSession | null;
@@ -10,7 +9,7 @@ interface PracticeContextType {
   is_loading: boolean;
   error: string | null;
   generatePracticeSet: (paper_name: string) => Promise<void>;
-  submitPracticeSet: (session_id: string, answers: Record<string, string>) => Promise<void>;
+  submitPracticeSet: (session_id: string, answers: Record<string, string>, onComplete?: () => void) => Promise<void>;
   getSession: (session_id: string) => Promise<void>;
   clearSession: () => void;
   clearError: () => void;
@@ -20,7 +19,6 @@ const PracticeContext = createContext<PracticeContextType | undefined>(undefined
 
 export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const { fetchDashboardData } = useDashboard();
   const [current_session, setCurrentSession] = useState<PracticeSession | null>(null);
   const [session_result, setSessionResult] = useState<SessionResult | null>(null);
   const [is_loading, setIsLoading] = useState(false);
@@ -57,7 +55,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   };
 
-  const submitPracticeSet = async (session_id: string, answers: Record<string, string>) => {
+  const submitPracticeSet = async (session_id: string, answers: Record<string, string>, onComplete?: () => void) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -77,8 +75,8 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       if (response.success && response.data) {
         setSessionResult(response.data);
-        // Refresh dashboard so new scores appear immediately
-        fetchDashboardData().catch(() => {});
+        // Notify caller so dashboard can refresh
+        onComplete?.();
       } else {
         throw new Error(response.error || 'Failed to submit practice set');
       }
