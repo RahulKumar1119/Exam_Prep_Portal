@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (is_authenticated) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [is_authenticated, navigate]);
 
@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
     try {
       await login(formData.email, formData.password);
       setSuccess('Login successful! Redirecting...');
-      setTimeout(() => navigate('/'), 1500);
+      setTimeout(() => navigate('/dashboard'), 1500);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Login failed. Please try again.';
       setLocalError(errorMsg);
