@@ -87,7 +87,6 @@ PK: user_id (UUID)
 SK: email (GSI)
 Attributes:
   - full_name: string
-  - bank_affiliation: string
   - password_hash: string (bcrypt)
   - email_verified: boolean
   - created_at: timestamp
@@ -177,7 +176,7 @@ Attributes:
 
 ```
 POST /api/auth/register
-  Request: { email, password, full_name, bank_affiliation }
+  Request: { email, password, full_name }
   Response: { user_id, message, verification_email_sent }
   
 POST /api/auth/verify-email
@@ -557,7 +556,7 @@ def retry_with_backoff(func, max_retries=3):
 
 ### Property 1: User Registration Creates Verified Account
 
-*For any* valid user registration with email, password, full name, and bank affiliation, submitting the registration form should create a user account in the database and send a verification email.
+*For any* valid user registration with email, password, and full name, submitting the registration form should create a user account in the database and send a verification email.
 
 **Validates: Requirements 1.2**
 
