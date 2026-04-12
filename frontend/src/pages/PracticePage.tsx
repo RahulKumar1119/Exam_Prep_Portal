@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import QuestionDisplay from '../components/Practice/QuestionDisplay';
+import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 
 const PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM'];
 
@@ -132,11 +133,17 @@ const PracticePage: React.FC = () => {
                       {result.correct ? '✓ Correct' : '✗ Incorrect'}
                     </p>
                     {!result.correct && (
-                      <p className="text-sm text-gray-600 mt-2">
-                        Your answer: <span className="font-medium">{result.user_answer}</span>
-                        <br />
-                        Correct answer: <span className="font-medium">{result.correct_answer}</span>
-                      </p>
+                      <>
+                        <p className="text-sm text-gray-600 mt-2">
+                          Your answer: <span className="font-medium">{result.user_answer}</span>
+                          <br />
+                          Correct answer: <span className="font-medium">{result.correct_answer}</span>
+                        </p>
+                        <ExplanationDisplay
+                          questionId={result.question_id}
+                          isCorrect={result.correct}
+                        />
+                      </>
                     )}
                   </div>
                 </div>
