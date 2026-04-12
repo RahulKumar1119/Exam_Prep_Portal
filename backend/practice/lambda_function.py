@@ -68,6 +68,9 @@ def handler(event, context):
         if not user_id:
             return error_response(400, "user_id is required")
         
+        # Merge body into event for downstream functions
+        event.update(body)
+        
         if action == 'generate':
             return generate_practice_set(event)
         elif action == 'get_session':

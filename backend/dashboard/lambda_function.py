@@ -261,7 +261,7 @@ def handler(event, context):
             user_id = 'anonymous'
         
         # Route to appropriate handler
-        if path == '/dashboard/performance' and http_method == 'GET':
+        if (path == '/dashboard/performance' or path == '/dashboard') and http_method == 'GET':
             dashboard_data = get_dashboard_data(user_id)
             return success_response(200, dashboard_data)
         else:
