@@ -101,18 +101,36 @@ class ApiClient {
     config?: any
   ): Promise<ApiResponse<T>> {
     try {
-      const response: AxiosResponse<ApiResponse<T>> = await this.client({
+      const response: AxiosResponse<any> = await this.client({
         method,
         url,
         data,
         ...config,
       });
-      return response.data;
+      
+      // Check if response has success field (wrapped response)
+      if ('success' in response.data) {
+        return response.data as ApiResponse<T>;
+      }
+      
+      // Otherwise, treat the entire response as data (unwrapped response)
+      return {
+        success: true,
+        data: response.data as T,
+      };
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        // Check if error response has error field
+        const errorData = error.response?.data;
+        if (errorData && 'error' in errorData) {
+          return {
+            success: false,
+            error: errorData.error,
+          };
+        }
         return {
           success: false,
-          error: error.response?.data?.error || error.message,
+          error: error.message,
         };
       }
       return {
