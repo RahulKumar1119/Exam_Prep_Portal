@@ -6,7 +6,7 @@ import QuestionDisplay from '../components/Practice/QuestionDisplay';
 const PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM'];
 
 const PracticePage: React.FC = () => {
-  const { current_session, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
+  const { current_session, session_result, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
   const [selectedPaper, setSelectedPaper] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -82,6 +82,67 @@ const PracticePage: React.FC = () => {
           >
             Generate Practice Set
           </button>
+        </div>
+      ) : session_result ? (
+        <div className="card">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Results</h2>
+            <button
+              onClick={clearSession}
+              className="btn-secondary"
+            >
+              Back to Papers
+            </button>
+          </div>
+          
+          {/* Score Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-blue-50 rounded-lg p-6 text-center">
+              <p className="text-gray-600 text-sm mb-2">Your Score</p>
+              <p className="text-4xl font-bold text-blue-600">{session_result.score}</p>
+            </div>
+            <div className="bg-green-50 rounded-lg p-6 text-center">
+              <p className="text-gray-600 text-sm mb-2">Time Taken</p>
+              <p className="text-4xl font-bold text-green-600">{session_result.time_taken}s</p>
+            </div>
+            <div className={`rounded-lg p-6 text-center ${session_result.passed ? 'bg-green-50' : 'bg-red-50'}`}>
+              <p className="text-gray-600 text-sm mb-2">Status</p>
+              <p className={`text-4xl font-bold ${session_result.passed ? 'text-green-600' : 'text-red-600'}`}>
+                {session_result.passed ? 'PASSED' : 'FAILED'}
+              </p>
+            </div>
+          </div>
+
+          {/* Results Details */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-gray-900">Question Review</h3>
+            {session_result.results.map((result, index) => (
+              <div
+                key={index}
+                className={`p-4 rounded-lg border-l-4 ${
+                  result.correct
+                    ? 'border-green-600 bg-green-50'
+                    : 'border-red-600 bg-red-50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">Question {index + 1}</p>
+                    <p className={`text-sm mt-1 ${result.correct ? 'text-green-700' : 'text-red-700'}`}>
+                      {result.correct ? '✓ Correct' : '✗ Incorrect'}
+                    </p>
+                    {!result.correct && (
+                      <p className="text-sm text-gray-600 mt-2">
+                        Your answer: <span className="font-medium">{result.user_answer}</span>
+                        <br />
+                        Correct answer: <span className="font-medium">{result.correct_answer}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div>
