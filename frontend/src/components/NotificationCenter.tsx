@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNotification } from '../context/NotificationContext';
 import { Notification } from '../types/index';
 import LoadingSpinner from './LoadingSpinner';
