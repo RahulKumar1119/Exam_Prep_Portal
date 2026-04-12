@@ -21,7 +21,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiClient.get<DashboardData>('/dashboard/performance');
+      const response = await apiClient.get<DashboardData>('/dashboard');
 
       if (response.success && response.data) {
         setDashboardData(response.data);
