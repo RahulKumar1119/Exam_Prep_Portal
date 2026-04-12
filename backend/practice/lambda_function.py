@@ -15,6 +15,7 @@ import boto3
 # AWS clients
 dynamodb = boto3.resource('dynamodb')
 questions_table = dynamodb.Table('jaiib-question-bank')
+sessions_table = dynamodb.Table('jaiib-practice-sessions')
 
 # Constants
 QUESTIONS_PER_SET = 4
@@ -127,8 +128,25 @@ def handler(event, context):
                     'question_text': q['question_text'],
                     'options': q['options'],
                     'difficulty': q.get('difficulty', 'medium'),
-                    'topic': q.get('topic', 'General')
+                    'topic': q.get('topic', 'General'),
+                    'correct_answer': q.get('correct_answer')
                 })
+            
+            # Store session in DynamoDB
+            try:
+                sessions_table.put_item(
+                    Item={
+                        'session_id': session_id,
+                        'user_id': user_id,
+                        'paper_name': paper_name,
+                        'questions': formatted_questions,
+                        'created_at': datetime.utcnow().isoformat(),
+                        'ttl': int(datetime.utcnow().timestamp()) + 86400  # 24 hour TTL
+                    }
+                )
+            except Exception as e:
+                print(f"Error storing session: {str(e)}")
+                # Continue anyway, session won't be stored but practice can still work
             
             return success_response({
                 'session_id': session_id,
@@ -150,22 +168,54 @@ def handler(event, context):
             if not answers:
                 return error_response(400, "answers are required")
             
-            # For now, return a simple result
-            # In a real implementation, you would:
-            # 1. Retrieve the session from DynamoDB
-            # 2. Get the questions for that session
-            # 3. Score the answers
-            # 4. Store the results
-            
-            return success_response({
-                'session_id': session_id,
-                'user_id': user_id,
-                'score': 0,
-                'results': [],
-                'time_taken': 0,
-                'passed': False,
-                'submitted_at': datetime.utcnow().isoformat()
-            })
+            # Retrieve session from DynamoDB
+            try:
+                response = sessions_table.get_item(Key={'session_id': session_id})
+                session = response.get('Item')
+                
+                if not session:
+                    return error_response(404, "Session not found")
+                
+                questions = session.get('questions', [])
+                
+                # Score the answers
+                results = []
+                correct_count = 0
+                
+                for question in questions:
+                    question_id = question['question_id']
+                    user_answer = answers.get(question_id)
+                    correct_answer = question.get('correct_answer')
+                    
+                    is_correct = user_answer == correct_answer
+                    if is_correct:
+                        correct_count += 1
+                    
+                    results.append({
+                        'question_id': question_id,
+                        'correct': is_correct,
+                        'user_answer': user_answer or '',
+                        'correct_answer': correct_answer
+                    })
+                
+                # Calculate score (percentage)
+                total_questions = len(questions)
+                score = int((correct_count / total_questions * 100)) if total_questions > 0 else 0
+                passed = score >= 60  # 60% pass threshold
+                
+                return success_response({
+                    'session_id': session_id,
+                    'user_id': user_id,
+                    'score': score,
+                    'results': results,
+                    'time_taken': 0,
+                    'passed': passed,
+                    'submitted_at': datetime.utcnow().isoformat()
+                })
+                
+            except Exception as e:
+                print(f"Error processing submission: {str(e)}")
+                return error_response(500, f"Error processing submission: {str(e)}")
         
         else:
             return error_response(400, f"Unknown action: {action}")
