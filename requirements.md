@@ -37,7 +37,7 @@ The JAIIB-CAIIB Exam Prep Portal is a full-stack web application designed to hel
 
 #### Acceptance Criteria
 
-1. WHEN a new user accesses the Portal, THE Portal SHALL display a registration form requesting email, password, full name, and bank affiliation
+1. WHEN a new user accesses the Portal, THE Portal SHALL display a registration form requesting email, password, and full name
 2. WHEN a user submits the registration form with valid data, THE Authentication_Service SHALL create a user account and send a verification email
 3. WHEN a user clicks the verification link in the email, THE Authentication_Service SHALL mark the account as verified
 4. WHEN a verified user enters valid credentials on the login page, THE Authentication_Service SHALL authenticate the user and create a session token
