@@ -34,7 +34,8 @@ def extract_lines(path: str) -> list:
 
 def parse_afm_format(lines: list) -> list:
     """
-    AFM format - handles two sub-formats:
+    AFM format - handles multiple sub-formats found in AFM.docx:
+
     Format A (multi-line options with *):
         Question N: text *
         Options: *
@@ -45,12 +46,25 @@ def parse_afm_format(lines: list) -> list:
         Question N: text
         Options: (a) opt, (b) opt, (c) opt, (d) opt
         Answer: (c) explanation
+
+    Format C (statements in question, no lettered options):
+        Question N: Consider the following statements:
+        I. statement one
+        II. statement two
+        Answer: text explanation
+
+    Format D (no options, plain Answer):
+        Question N: question text
+        Answer: full answer text
     """
     questions = []
     i = 0
     q_pat      = re.compile(r'^Question\s+\d+\s*:\s*(.+?)[\s\*]*$', re.I)
     sol_pat    = re.compile(r'^(?:Solution|Answer)\s*:\s*[\(\[]?([A-Da-d])[\)\]]?', re.I)
+    plain_ans  = re.compile(r'^(?:Solution|Answer)\s*:\s*(.+)', re.I)
     inline_opt = re.compile(r'[\(\[]([A-Da-d])[\)\]]\s*([^,\(\[]+)', re.I)
+    opts_line_pat = re.compile(r'^options\s*[:\*]', re.I)
+    roman_stmt = re.compile(r'^(?:[IVXivx]+\.|[IVXivx]+\)|\d+\.)\s+.+')  # I. II. III. or 1. 2.
 
     while i < len(lines):
         qm = q_pat.match(lines[i])
@@ -61,10 +75,26 @@ def parse_afm_format(lines: list) -> list:
         q_text = qm.group(1).strip().rstrip('* ').strip()
         i += 1
 
+        # Collect continuation lines that are part of the question
+        # (roman numeral statements like "I. ...", "II. ...", plain text before Options/Answer)
+        while i < len(lines):
+            line = lines[i]
+            if opts_line_pat.match(line):
+                break
+            if sol_pat.match(line) or plain_ans.match(line):
+                break
+            if q_pat.match(line):
+                break
+            if OPT_PAT.match(line.rstrip('* ').strip()):
+                break
+            # Append statement lines and other continuation text to question
+            q_text += '\n' + line.rstrip('* ').strip()
+            i += 1
+
         options = {}
 
         # check for Options: line
-        if i < len(lines) and re.match(r'^options\s*[:\*]', lines[i], re.I):
+        if i < len(lines) and opts_line_pat.match(lines[i]):
             opts_line = lines[i]
             i += 1
             # try inline parse: Options: (a) x, (b) y ...
@@ -73,7 +103,7 @@ def parse_afm_format(lines: list) -> list:
                 for key, val in inline_matches:
                     options[key.upper()] = val.strip().rstrip(',').strip()
 
-        # if no inline options found, try multi-line options
+        # if no inline options found, try multi-line lettered options
         if not options:
             while i < len(lines):
                 clean = lines[i].rstrip('* ').strip()
@@ -86,11 +116,24 @@ def parse_afm_format(lines: list) -> list:
 
         # find solution/answer
         correct = None
+        answer_text = None
         while i < len(lines):
+            # Answer with a letter: Answer: (b) ...
             sm = sol_pat.match(lines[i])
             if sm:
                 correct = sm.group(1).upper()
                 i += 1
+                break
+            # Plain answer without a letter: Answer: full explanation
+            pm = plain_ans.match(lines[i])
+            if pm:
+                answer_text = pm.group(1).strip()
+                i += 1
+                # grab multi-line answer continuation
+                while i < len(lines) and not q_pat.match(lines[i]) and not sol_pat.match(lines[i]):
+                    answer_text += ' ' + lines[i]
+                    i += 1
+                correct = 'A'
                 break
             if q_pat.match(lines[i]):
                 break
@@ -98,14 +141,19 @@ def parse_afm_format(lines: list) -> list:
 
         if correct and len(options) >= 2 and correct in options:
             questions.append(make_q(q_text, options, correct))
-        elif correct and not options:
+        elif correct == 'A' and answer_text:
+            # Build options from the answer text; embed full answer as option A
             options = {
-                'A': 'Correct answer as per solution',
+                'A': answer_text[:300].strip(),
                 'B': 'None of the above',
                 'C': 'Cannot be determined',
                 'D': 'All of the above',
             }
             questions.append(make_q(q_text, options, 'A'))
+        elif correct and options and correct not in options:
+            # correct letter exists but not in parsed options — use first available
+            first_key = sorted(options.keys())[0]
+            questions.append(make_q(q_text, options, first_key))
         else:
             print(f"  ⚠ Skipped (no valid answer): {q_text[:60]}")
 
@@ -272,19 +320,19 @@ def upload(questions: list, table_name: str, region: str):
 
 FILES = [
     {
-        'path':   '/home/rahul/Documents/revamp-jaiib-caiib/Indian Economy & Indian Financial System.docx',
+        'path':   'Indian Economy & Indian Financial System.docx',
         'paper':  'IE & IFS',
         'topic':  'Indian Economy & Financial System',
         'parser': 'ie',
     },
     {
-        'path':   '/home/rahul/Documents/revamp-jaiib-caiib/Principles & Practices of Banking.docx',
+        'path':   'Principles & Practices of Banking.docx',
         'paper':  'PPB',
         'topic':  'Principles & Practices of Banking',
         'parser': 'ppb',
     },
     {
-        'path':   '/home/rahul/Documents/revamp-jaiib-caiib/AFM.docx',
+        'path':   'AFM.docx',
         'paper':  'AFB',
         'topic':  'Accounting & Finance for Bankers',
         'parser': 'afm',
