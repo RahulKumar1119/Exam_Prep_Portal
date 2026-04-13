@@ -28,24 +28,45 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     setIsLoading(true);
     setError(null);
     try {
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
+      if (!user) throw new Error('User not authenticated');
 
-      const response = await apiClient.post<PracticeSession>(
+      // Step 1: kick off async generation — returns immediately with session_id
+      const initResp = await apiClient.post<{ session_id: string; status: string }>(
         '/practice/generate',
-        { 
-          paper_name,
-          user_id: user.user_id,
-          action: 'generate'
-        }
+        { paper_name, user_id: user.user_id, action: 'generate' }
       );
 
-      if (response.success && response.data) {
-        setCurrentSession(response.data);
-      } else {
-        throw new Error(response.error || 'Failed to generate practice set');
+      if (!initResp.success || !initResp.data?.session_id) {
+        throw new Error(initResp.error || 'Failed to start practice set generation');
       }
+
+      const { session_id } = initResp.data;
+
+      // Step 2: poll /practice/status/{session_id} until ready
+      const MAX_POLLS = 40;   // 40 × 3s = 120s max wait
+      const INTERVAL  = 3000;
+
+      for (let i = 0; i < MAX_POLLS; i++) {
+        await new Promise(r => setTimeout(r, INTERVAL));
+
+        const statusResp = await apiClient.get<PracticeSession>(
+          `/practice/status/${session_id}`
+        );
+
+        if (!statusResp.success) continue;
+
+        const data = statusResp.data as any;
+        if (data?.status === 'ready') {
+          setCurrentSession(data as PracticeSession);
+          return;
+        }
+        if (data?.status === 'failed') {
+          throw new Error('Question generation failed. Please try again.');
+        }
+        // status === 'generating' — keep polling
+      }
+
+      throw new Error('Timed out waiting for questions. Please try again.');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to generate practice set';
       setError(errorMessage);

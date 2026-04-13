@@ -1,6 +1,12 @@
 """
 Practice Set Generator Lambda Function
-Handles practice set generation (AI-powered via Bedrock) and submission.
+
+Flow:
+  1. POST /practice/generate  → stores session with status='generating',
+                                 invokes THIS Lambda async to do Bedrock work,
+                                 returns {session_id, status:'generating'} immediately (<1s)
+  2. GET  /practice/status/{session_id} → returns {status, questions} once ready
+  3. POST /practice/submit    → scores the session
 """
 
 import json
@@ -12,12 +18,13 @@ from typing import List, Dict, Any, Optional
 
 import boto3
 
-# Constants
+# ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
-BEDROCK_MODEL_ID = 'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0'
-REGION = 'ap-south-1'
+BEDROCK_MODEL_ID  = 'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0'
+REGION            = 'ap-south-1'
+LAMBDA_FUNC_NAME  = 'jaiib-practice'   # self-invoke for async generation
 
-# JAIIB syllabus topics per paper (based on IIBF / EduTap strategy)
+# ── JAIIB syllabus ────────────────────────────────────────────────────────────
 PAPER_SYLLABUS = {
     'IE & IFS': {
         'modules': {
@@ -122,72 +129,61 @@ PAPER_SYLLABUS = {
     }
 }
 
-# JAIIB marking scheme: 25 easy (0.5 mark) + 15 medium (1 mark) + 10 hard (2 mark) = 50 questions
+CORS_HEADERS = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
+    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
+}
 
 
-def get_dynamodb_tables():
-    dynamodb = boto3.resource('dynamodb', region_name=REGION)
-    return dynamodb.Table('jaiib-question-bank'), dynamodb.Table('jaiib-practice-sessions')
+# ── AWS clients ───────────────────────────────────────────────────────────────
+def _dynamodb():
+    r = boto3.resource('dynamodb', region_name=REGION)
+    return r.Table('jaiib-question-bank'), r.Table('jaiib-practice-sessions')
 
-
-def get_bedrock_client():
+def _bedrock():
     return boto3.client('bedrock-runtime', region_name=REGION)
 
-
-def success_response(data: Dict[str, Any]) -> Dict[str, Any]:
-    return {
-        'statusCode': 200,
-        'body': json.dumps(data),
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
-            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
-        }
-    }
+def _lambda():
+    return boto3.client('lambda', region_name=REGION)
 
 
-def error_response(status_code: int, message: str) -> Dict[str, Any]:
-    return {
-        'statusCode': status_code,
-        'body': json.dumps({'error': message}),
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
-            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
-        }
-    }
+# ── Response helpers ──────────────────────────────────────────────────────────
+def ok(data):
+    return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps(data)}
+
+def err(code, msg):
+    return {'statusCode': code, 'headers': CORS_HEADERS, 'body': json.dumps({'error': msg})}
 
 
-def build_question_prompt(paper_name: str, syllabus: dict) -> str:
-    """Build a single prompt to generate all 50 JAIIB MCQs in one Bedrock call."""
+# ── Bedrock question generation ───────────────────────────────────────────────
+def _build_prompt(paper_name: str) -> str:
+    syllabus = PAPER_SYLLABUS.get(paper_name, {})
     modules_text = ''
     for module, topics in syllabus.get('modules', {}).items():
         modules_text += f"\n{module}:\n" + '\n'.join(f'  - {t}' for t in topics)
 
-    return f"""You are an expert JAIIB exam question setter for the Institute of Indian Banking & Finance (IIBF).
+    return f"""You are an expert JAIIB exam question setter for IIBF (Institute of Indian Banking & Finance).
 
 Generate exactly 50 multiple-choice questions for the JAIIB paper: {paper_name}
 
-JAIIB marking scheme — generate this exact distribution:
-- 25 EASY questions (0.5 mark each): test recall of facts, definitions, acts, and regulations
-- 15 MEDIUM questions (1 mark each): test understanding and application of concepts
-- 10 HARD questions (2 marks each): involve calculations, case-based reasoning, or multi-step application
+Distribution (JAIIB marking scheme):
+- 25 EASY questions (0.5 mark): recall of facts, definitions, acts, regulations
+- 15 MEDIUM questions (1 mark): concept understanding and application
+- 10 HARD questions (2 marks): calculations, case-based or multi-step reasoning
 
-Syllabus topics to draw from (spread questions across all modules):
+Syllabus (spread questions across ALL modules):
 {modules_text}
 
-STRICT RULES:
-1. Each question must have exactly 4 options: A, B, C, D
-2. Only one option is correct
-3. All questions must be factually accurate and relevant to Indian banking
-4. Hard questions must involve numerical calculations or scenario-based application
-5. Do NOT repeat questions or topics
-6. Cover all modules — do not focus on just one area
+Rules:
+1. Each question has exactly 4 options: A, B, C, D — only one correct
+2. All facts must be accurate and relevant to Indian banking
+3. Hard questions must involve numbers or scenario reasoning
+4. Cover all modules evenly — do not cluster on one topic
+5. No repeated questions
 
-Return ONLY a valid JSON array with exactly 50 items. No explanation, no markdown fences, no extra text.
-Format:
+Return ONLY a valid JSON array of exactly 50 objects. No markdown, no explanation.
 [
   {{
     "question_text": "...",
@@ -199,92 +195,105 @@ Format:
 ]"""
 
 
-def invoke_bedrock_for_questions(prompt: str) -> Optional[List[Dict]]:
-    """Call Bedrock Claude and parse the JSON response."""
+def _call_bedrock(paper_name: str) -> List[Dict]:
     try:
-        client = get_bedrock_client()
+        client = _bedrock()
         body = {
             "anthropic_version": "bedrock-2023-05-31",
             "max_tokens": 16000,
-            "messages": [{"role": "user", "content": prompt}]
+            "messages": [{"role": "user", "content": _build_prompt(paper_name)}]
         }
-        response = client.invoke_model(
-            modelId=BEDROCK_MODEL_ID,
-            body=json.dumps(body)
-        )
-        text = json.loads(response['body'].read())['content'][0]['text'].strip()
+        resp = client.invoke_model(modelId=BEDROCK_MODEL_ID, body=json.dumps(body))
+        text = json.loads(resp['body'].read())['content'][0]['text'].strip()
 
-        # Strip markdown fences if present
+        # Strip markdown fences
         text = re.sub(r'^```(?:json)?\s*', '', text)
         text = re.sub(r'\s*```$', '', text)
 
-        match = re.search(r'\[.*\]', text, re.DOTALL)
-        if not match:
-            print(f"No JSON array found in Bedrock response: {text[:200]}")
-            return None
-
-        questions = json.loads(match.group())
-        return questions if isinstance(questions, list) else None
-
+        m = re.search(r'\[.*\]', text, re.DOTALL)
+        if not m:
+            print("No JSON array in Bedrock response")
+            return []
+        qs = json.loads(m.group())
+        return qs if isinstance(qs, list) else []
     except Exception as e:
-        print(f"Bedrock invocation error: {str(e)}")
-        return None
-
-
-def generate_questions_via_bedrock(paper_name: str) -> List[Dict[str, Any]]:
-    """Generate 50 JAIIB questions using a single Bedrock call."""
-    syllabus = PAPER_SYLLABUS.get(paper_name, {})
-    prompt = build_question_prompt(paper_name, syllabus)
-    questions = invoke_bedrock_for_questions(prompt)
-
-    if not questions:
+        print(f"Bedrock error: {e}")
         return []
 
-    for q in questions:
-        q['question_id'] = str(uuid.uuid4())
-        q['version'] = '1'
-        q['paper_name'] = paper_name
-        q.setdefault('topic', paper_name)
-        q.setdefault('difficulty', 'medium')
 
-    return questions
-
-
-def get_questions_by_paper(questions_table, paper_name: str, count: int) -> List[Dict[str, Any]]:
-    """Get random questions from DynamoDB for a specific paper."""
+def _db_fallback(questions_table, paper_name: str, count: int) -> List[Dict]:
     try:
-        response = questions_table.query(
+        resp = questions_table.query(
             IndexName='paper-topic-index',
-            KeyConditionExpression='paper_name = :paper',
-            ExpressionAttributeValues={':paper': paper_name}
+            KeyConditionExpression='paper_name = :p',
+            ExpressionAttributeValues={':p': paper_name}
         )
-        questions = response.get('Items', [])
-        if len(questions) < count:
-            return questions
-        return random.sample(questions, count)
+        items = resp.get('Items', [])
+        return random.sample(items, min(count, len(items)))
     except Exception as e:
-        print(f"Error getting questions from DB: {str(e)}")
+        print(f"DB fallback error: {e}")
         return []
 
 
-def handler(event, context):
-    """Lambda handler for practice set generation."""
-    try:
-        http_method = event.get('httpMethod', 'POST')
-        if http_method == 'OPTIONS':
-            return {
-                'statusCode': 200,
-                'headers': {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
-                    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'
-                },
-                'body': json.dumps({})
-            }
+# ── Async worker (invoked by itself) ─────────────────────────────────────────
+def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table):
+    """Called asynchronously — does the Bedrock work and updates the session."""
+    questions = _call_bedrock(paper_name)
 
-        body_str = event.get('body', '{}')
-        body = json.loads(body_str) if isinstance(body_str, str) and body_str else (body_str or {})
+    if len(questions) < QUESTIONS_PER_SET:
+        needed = QUESTIONS_PER_SET - len(questions)
+        questions += _db_fallback(questions_table, paper_name, needed)
+
+    questions = questions[:QUESTIONS_PER_SET]
+
+    formatted = [
+        {
+            'question_id':   q.get('question_id', str(uuid.uuid4())),
+            'question_text': q['question_text'],
+            'options':       q['options'],
+            'difficulty':    q.get('difficulty', 'medium'),
+            'topic':         q.get('topic', 'General'),
+            'correct_answer': q.get('correct_answer')
+        }
+        for q in questions
+    ]
+
+    status = 'ready' if formatted else 'failed'
+
+    sessions_table.update_item(
+        Key={'session_id': session_id},
+        UpdateExpression='SET #st = :s, questions = :q',
+        ExpressionAttributeNames={'#st': 'status'},
+        ExpressionAttributeValues={':s': status, ':q': formatted}
+    )
+    print(f"Session {session_id} updated to {status} with {len(formatted)} questions")
+
+
+# ── Main handler ──────────────────────────────────────────────────────────────
+def handler(event, context):
+    try:
+        # CORS preflight
+        if event.get('httpMethod') == 'OPTIONS':
+            return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': '{}'}
+
+        questions_table, sessions_table = _dynamodb()
+
+        # ── Internal async worker call (no httpMethod) ────────────────────────
+        if 'async_action' in event:
+            _do_generate(
+                event['session_id'],
+                event['paper_name'],
+                sessions_table,
+                questions_table
+            )
+            return {'statusCode': 200}
+
+        # ── Parse HTTP request ────────────────────────────────────────────────
+        method = event.get('httpMethod', 'POST')
+        path   = event.get('path', '')
+
+        body_raw = event.get('body', '{}')
+        body = json.loads(body_raw) if isinstance(body_raw, str) and body_raw else (body_raw or {})
 
         user_id    = body.get('user_id')
         paper_name = body.get('paper_name')
@@ -292,148 +301,132 @@ def handler(event, context):
         session_id = body.get('session_id')
         answers    = body.get('answers', {})
 
+        # ── GET /practice/status/{session_id} ─────────────────────────────────
+        if method == 'GET' and '/status/' in path:
+            sid = path.split('/status/')[-1].strip('/')
+            resp = sessions_table.get_item(Key={'session_id': sid})
+            session = resp.get('Item')
+            if not session:
+                return err(404, 'Session not found')
+            status = session.get('status', 'generating')
+            if status == 'ready':
+                return ok({
+                    'status': 'ready',
+                    'session_id': sid,
+                    'paper_name': session.get('paper_name'),
+                    'questions': session.get('questions', []),
+                    'total_questions': len(session.get('questions', [])),
+                    'created_at': session.get('created_at')
+                })
+            return ok({'status': status, 'session_id': sid})
+
         if not user_id:
-            return error_response(400, "user_id is required")
+            return err(400, 'user_id is required')
 
-        questions_table, sessions_table = get_dynamodb_tables()
-
-        # ── GENERATE ──────────────────────────────────────────────────────────
+        # ── POST generate ─────────────────────────────────────────────────────
         if action == 'generate':
             if not paper_name:
-                return error_response(400, "paper_name is required")
-
-            valid_papers = ['IE & IFS', 'PPB', 'AFB', 'RBWM']
-            if paper_name not in valid_papers:
-                return error_response(400, f"Invalid paper_name. Must be one of: {', '.join(valid_papers)}")
-
-            # Try AI generation first; fall back to DB if Bedrock fails
-            questions = generate_questions_via_bedrock(paper_name)
-
-            if not questions or len(questions) < QUESTIONS_PER_SET:
-                print(f"Bedrock returned {len(questions)} questions, falling back to DB")
-                db_questions = get_questions_by_paper(questions_table, paper_name, QUESTIONS_PER_SET)
-                # Merge: fill remaining slots from DB
-                needed = QUESTIONS_PER_SET - len(questions)
-                questions.extend(db_questions[:needed])
-
-            if not questions:
-                return error_response(500, "Unable to generate questions. Please try again.")
-
-            # Trim to exactly 50
-            questions = questions[:QUESTIONS_PER_SET]
+                return err(400, 'paper_name is required')
+            valid = ['IE & IFS', 'PPB', 'AFB', 'RBWM']
+            if paper_name not in valid:
+                return err(400, f"paper_name must be one of: {', '.join(valid)}")
 
             session_id = str(uuid.uuid4())
-            formatted_questions = [
-                {
-                    'question_id': q.get('question_id', str(uuid.uuid4())),
-                    'question_text': q['question_text'],
-                    'options': q['options'],
-                    'difficulty': q.get('difficulty', 'medium'),
-                    'topic': q.get('topic', 'General'),
-                    'correct_answer': q.get('correct_answer')
-                }
-                for q in questions
-            ]
+            now = datetime.utcnow().isoformat()
 
-            try:
-                sessions_table.put_item(Item={
-                    'session_id': session_id,
-                    'user_id': user_id,
-                    'paper_name': paper_name,
-                    'questions': formatted_questions,
-                    'created_at': datetime.utcnow().isoformat(),
-                    'ttl': int(datetime.utcnow().timestamp()) + 86400
-                })
-            except Exception as e:
-                print(f"Error storing session: {str(e)}")
-
-            return success_response({
+            # Store placeholder session immediately
+            sessions_table.put_item(Item={
                 'session_id': session_id,
-                'user_id': user_id,
+                'user_id':    user_id,
                 'paper_name': paper_name,
-                'questions': formatted_questions,
-                'total_questions': len(formatted_questions),
-                'created_at': datetime.utcnow().isoformat()
+                'status':     'generating',
+                'questions':  [],
+                'created_at': now,
+                'ttl':        int(datetime.utcnow().timestamp()) + 86400
             })
 
-        # ── SUBMIT ────────────────────────────────────────────────────────────
+            # Fire-and-forget async Lambda self-invoke
+            _lambda().invoke(
+                FunctionName=LAMBDA_FUNC_NAME,
+                InvocationType='Event',          # async — returns immediately
+                Payload=json.dumps({
+                    'async_action': 'generate',
+                    'session_id':   session_id,
+                    'paper_name':   paper_name
+                })
+            )
+
+            return ok({
+                'session_id': session_id,
+                'status':     'generating',
+                'message':    'Practice set is being generated. Poll /practice/status/{session_id} to check progress.'
+            })
+
+        # ── POST submit ───────────────────────────────────────────────────────
         elif action == 'submit':
             if not session_id:
-                return error_response(400, "session_id is required")
+                return err(400, 'session_id is required')
             if not answers:
-                return error_response(400, "answers are required")
+                return err(400, 'answers are required')
 
-            try:
-                response = sessions_table.get_item(Key={'session_id': session_id})
-                session = response.get('Item')
-                if not session:
-                    return error_response(404, "Session not found")
+            resp = sessions_table.get_item(Key={'session_id': session_id})
+            session = resp.get('Item')
+            if not session:
+                return err(404, 'Session not found')
 
-                questions = session.get('questions', [])
-                results = []
-                correct_count = 0
+            questions = session.get('questions', [])
+            correct_count = 0
+            results = []
 
-                for question in questions:
-                    question_id  = question['question_id']
-                    user_answer  = answers.get(question_id)
-                    correct_answer = question.get('correct_answer')
-                    is_correct   = user_answer == correct_answer
-                    if is_correct:
-                        correct_count += 1
-                    results.append({
-                        'question_id':    question_id,
-                        'question_text':  question.get('question_text', ''),
-                        'options':        question.get('options', {}),
-                        'correct':        is_correct,
-                        'user_answer':    user_answer or '',
-                        'correct_answer': correct_answer
-                    })
-
-                total_questions = len(questions)
-                score = int((correct_count / total_questions * 100)) if total_questions > 0 else 0
-                passed = score >= 60
-                submitted_at = datetime.utcnow().isoformat()
-
-                try:
-                    created_dt   = datetime.fromisoformat(session.get('created_at', submitted_at))
-                    submitted_dt = datetime.fromisoformat(submitted_at)
-                    time_taken   = int((submitted_dt - created_dt).total_seconds())
-                except Exception:
-                    time_taken = 0
-
-                try:
-                    sessions_table.update_item(
-                        Key={'session_id': session_id},
-                        UpdateExpression='SET #s = :status, score = :score, passed = :passed, submitted_at = :submitted_at, time_taken = :time_taken',
-                        ExpressionAttributeNames={'#s': 'status'},
-                        ExpressionAttributeValues={
-                            ':status':       'completed',
-                            ':score':        score,
-                            ':passed':       passed,
-                            ':submitted_at': submitted_at,
-                            ':time_taken':   time_taken,
-                        }
-                    )
-                except Exception as e:
-                    print(f"Warning: failed to update session: {e}")
-
-                return success_response({
-                    'session_id':  session_id,
-                    'user_id':     user_id,
-                    'score':       score,
-                    'results':     results,
-                    'time_taken':  time_taken,
-                    'passed':      passed,
-                    'submitted_at': submitted_at
+            for q in questions:
+                qid          = q['question_id']
+                user_ans     = answers.get(qid)
+                correct_ans  = q.get('correct_answer')
+                is_correct   = user_ans == correct_ans
+                if is_correct:
+                    correct_count += 1
+                results.append({
+                    'question_id':    qid,
+                    'question_text':  q.get('question_text', ''),
+                    'options':        q.get('options', {}),
+                    'correct':        is_correct,
+                    'user_answer':    user_ans or '',
+                    'correct_answer': correct_ans
                 })
 
-            except Exception as e:
-                print(f"Error processing submission: {str(e)}")
-                return error_response(500, f"Error processing submission: {str(e)}")
+            total      = len(questions)
+            score      = int(correct_count / total * 100) if total else 0
+            passed     = score >= 60
+            submitted  = datetime.utcnow().isoformat()
 
-        else:
-            return error_response(400, f"Unknown action: {action}")
+            try:
+                created_dt  = datetime.fromisoformat(session.get('created_at', submitted))
+                time_taken  = int((datetime.fromisoformat(submitted) - created_dt).total_seconds())
+            except Exception:
+                time_taken = 0
+
+            sessions_table.update_item(
+                Key={'session_id': session_id},
+                UpdateExpression='SET #s = :s, score = :sc, passed = :p, submitted_at = :sa, time_taken = :tt',
+                ExpressionAttributeNames={'#s': 'status'},
+                ExpressionAttributeValues={
+                    ':s': 'completed', ':sc': score,
+                    ':p': passed, ':sa': submitted, ':tt': time_taken
+                }
+            )
+
+            return ok({
+                'session_id':  session_id,
+                'user_id':     user_id,
+                'score':       score,
+                'results':     results,
+                'time_taken':  time_taken,
+                'passed':      passed,
+                'submitted_at': submitted
+            })
+
+        return err(400, f"Unknown action: {action}")
 
     except Exception as e:
-        print(f"Error: {str(e)}")
-        return error_response(500, "Internal server error")
+        print(f"Handler error: {e}")
+        return err(500, 'Internal server error')

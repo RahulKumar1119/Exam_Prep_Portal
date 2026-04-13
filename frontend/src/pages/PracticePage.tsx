@@ -46,7 +46,13 @@ const PracticePage: React.FC = () => {
   };
 
   if (is_loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-64 space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p className="text-gray-600 font-medium">Generating your practice set with AI...</p>
+        <p className="text-gray-400 text-sm">This takes about 30–60 seconds</p>
+      </div>
+    );
   }
 
   return (
