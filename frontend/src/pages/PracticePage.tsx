@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
 import { useDashboard } from '../context/DashboardContext';
-import LoadingSpinner from '../components/LoadingSpinner';
 import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 
