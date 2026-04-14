@@ -3,7 +3,6 @@ import { PracticeSession } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
 import { Progress } from '../ui/Progress';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/Tooltip';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
