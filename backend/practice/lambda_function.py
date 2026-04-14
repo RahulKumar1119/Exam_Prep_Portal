@@ -19,7 +19,7 @@ from typing import List, Dict, Any, Optional
 import boto3
 
 # ── Constants ─────────────────────────────────────────────────────────────────
-QUESTIONS_PER_SET = 50
+QUESTIONS_PER_SET = 100
 BEDROCK_MODEL_ID  = 'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0'
 REGION            = 'ap-south-1'
 LAMBDA_FUNC_NAME = 'jaiib-practice'   # self-invoke for async generation
@@ -166,7 +166,7 @@ def _build_prompt(paper_name: str) -> str:
 
     if paper_name == 'AFB':
         hard_style = (
-            "20 HARD questions (2 marks): MUST be numerical calculation-based "
+            "40 HARD questions (2 marks): MUST be numerical calculation-based "
             "(e.g. compute NPV, IRR, depreciation, ratio, cash flow, NPBT, break-even, "
             "capital budgeting, working capital, leverage ratios). "
             "Give all required figures in the question. Options must be 4 different numeric values."
@@ -178,7 +178,7 @@ def _build_prompt(paper_name: str) -> str:
         )
     else:
         hard_style = (
-            "20 HARD questions (2 marks): Present 3-4 statements (labelled I, II, III, IV) "
+            "40 HARD questions (2 marks): Present 3-4 statements (labelled I, II, III, IV) "
             "and ask which are correct/incorrect. "
             "Format: 'Consider the following statements:\\nI. ...\\nII. ...\\nIII. ...\\n"
             "Which of the above statements is/are correct?' "
@@ -191,11 +191,11 @@ def _build_prompt(paper_name: str) -> str:
 
 {source_instruction}
 
-Generate exactly 50 challenging multiple-choice questions for JAIIB paper: {paper_name}
+Generate exactly 100 challenging multiple-choice questions for JAIIB paper: {paper_name}
 
 STRICT distribution:
-- 10 EASY questions (0.5 mark): basic definitions and acts only — keep these minimal
-- 20 MEDIUM questions (1 mark): application of concepts, exceptions, comparisons, regulatory limits,
+- 20 EASY questions (0.5 mark): basic definitions and acts only — keep these minimal
+- 40 MEDIUM questions (1 mark): application of concepts, exceptions, comparisons, regulatory limits,
   specific provisions of acts, case-based scenarios. NOT simple definitions.
 - {hard_style}
 
@@ -214,7 +214,7 @@ QUALITY RULES — strictly follow:
 8. For medium questions, prefer: "Which of the following is CORRECT/INCORRECT?",
    "As per [Act/RBI guideline], which...", "In case of [scenario], what..."
 
-Return ONLY a valid JSON array of exactly 50 objects. No markdown, no explanation.
+Return ONLY a valid JSON array of exactly 100 objects. No markdown, no explanation.
 [
   {{
     "question_text": "...",

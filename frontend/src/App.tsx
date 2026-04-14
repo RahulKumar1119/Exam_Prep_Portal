@@ -5,6 +5,8 @@ import { PracticeProvider } from './context/PracticeContext';
 import { DashboardProvider } from './context/DashboardContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { QueryClientProvider, QueryClient } from 'react-query';
+import { ToastProvider, ToastViewport } from './components/ui/Toast';
+import { TooltipProvider } from './components/ui/Tooltip';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -81,17 +83,22 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PracticeProvider>
-          <DashboardProvider>
-            <NotificationProvider>
-              <Router>
-                <AppContent />
-              </Router>
-            </NotificationProvider>
-          </DashboardProvider>
-        </PracticeProvider>
-      </AuthProvider>
+      <ToastProvider>
+        <TooltipProvider>
+          <AuthProvider>
+            <PracticeProvider>
+              <DashboardProvider>
+                <NotificationProvider>
+                  <Router>
+                    <AppContent />
+                  </Router>
+                  <ToastViewport />
+                </NotificationProvider>
+              </DashboardProvider>
+            </PracticeProvider>
+          </AuthProvider>
+        </TooltipProvider>
+      </ToastProvider>
     </QueryClientProvider>
   );
 };

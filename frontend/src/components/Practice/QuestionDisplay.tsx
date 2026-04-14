@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PracticeSession } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
+import { Progress } from '../ui/Progress';
+import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/Tooltip';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
@@ -30,6 +33,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     isRestoredSession ? persisted!.timeLeft : TIMER_DURATION
   );
   const [timedOut, setTimedOut] = useState(false);
+  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const answersRef = useRef(answers);
 
   // Keep ref in sync so the timer callback always has latest answers
@@ -102,12 +106,10 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   const handleSubmit = () => {
     const unanswered = totalQuestions - answeredCount;
     if (unanswered > 0) {
-      const confirmed = window.confirm(
-        `You have ${unanswered} unanswered question${unanswered > 1 ? 's' : ''}. Unanswered questions will be marked incorrect. Submit anyway?`
-      );
-      if (!confirmed) return;
+      setShowSubmitDialog(true);
+    } else {
+      onSubmit(answers);
     }
-    onSubmit(answers);
   };
 
   const isAnswered = answers[currentQuestion.question_id];
@@ -148,12 +150,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             </div>
           </div>
         </div>
-        <div className="w-full bg-gray-300 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
-          />
-        </div>
+        <Progress value={((currentQuestionIndex + 1) / totalQuestions) * 100} color="blue" />
         {isWarning && !isCritical && (
           <p className="text-red-600 text-xs mt-2 font-medium">⚠ Less than 5 minutes remaining!</p>
         )}
@@ -273,6 +270,32 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           {isSubmitting ? 'Submitting...' : `Submit (${answeredCount}/${totalQuestions} answered)`}
         </button>
       </div>
+
+      {/* Submit confirmation dialog */}
+      <Dialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Submit Practice Set?</DialogTitle>
+            <DialogDescription>
+              You have {totalQuestions - answeredCount} unanswered question{totalQuestions - answeredCount > 1 ? 's' : ''}.
+              Unanswered questions will be marked incorrect.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 justify-end mt-6">
+            <DialogClose asChild>
+              <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+                Continue Answering
+              </button>
+            </DialogClose>
+            <button
+              onClick={() => { setShowSubmitDialog(false); onSubmit(answers); }}
+              className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg"
+            >
+              Submit Anyway
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

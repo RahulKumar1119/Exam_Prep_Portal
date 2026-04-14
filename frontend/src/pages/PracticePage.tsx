@@ -3,6 +3,7 @@ import { usePractice } from '../context/PracticeContext';
 import { useDashboard } from '../context/DashboardContext';
 import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 
 const PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM'];
 
@@ -68,23 +69,18 @@ const PracticePage: React.FC = () => {
       )}
 
       {!current_session ? (
-        <div className="card max-w-md">
+      <div className="card max-w-md">
           <h2 className="text-xl font-bold mb-4">Select a Paper</h2>
-          <div className="space-y-3">
-            {PAPERS.map((paper) => (
-              <label key={paper} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input
-                  type="radio"
-                  name="paper"
-                  value={paper}
-                  checked={selectedPaper === paper}
-                  onChange={(e) => setSelectedPaper(e.target.value)}
-                  className="w-4 h-4"
-                />
-                <span className="ml-3 font-medium text-gray-700">{paper}</span>
-              </label>
-            ))}
-          </div>
+          <Select value={selectedPaper} onValueChange={setSelectedPaper}>
+            <SelectTrigger>
+              <SelectValue placeholder="Choose a paper..." />
+            </SelectTrigger>
+            <SelectContent>
+              {PAPERS.map((paper) => (
+                <SelectItem key={paper} value={paper}>{paper}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <button
             onClick={handleGeneratePracticeSet}
             disabled={!selectedPaper || is_loading}
