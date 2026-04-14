@@ -43,8 +43,8 @@ def _init_aws_clients():
 class ExplanationGenerator:
     """Generates AI explanations using AWS Bedrock Claude 4.5 Haiku"""
     
-    MODEL_ID = "arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0"
-    MAX_TOKENS = 1024
+    MODEL_ID = "google.gemma-3-27b-it"
+    MAX_TOKENS = 512
     TIMEOUT_SECONDS = 5
     
     @staticmethod
@@ -137,7 +137,11 @@ EXPLANATION:"""
             
             # Parse response
             response_body = json.loads(response['body'].read())
-            explanation = response_body['content'][0]['text'].strip()
+            # Gemma uses OpenAI-compatible format: choices[0].message.content
+            if 'choices' in response_body:
+                explanation = response_body['choices'][0]['message']['content'].strip()
+            else:
+                explanation = response_body['content'][0]['text'].strip()
             
             logger.info(f"Bedrock invocation successful in {elapsed:.2f}s")
             return explanation, True

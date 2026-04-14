@@ -32,11 +32,11 @@ explanations_table = dynamodb.Table('jaiib-ai-explanations')
 import os
 MODEL_ID = os.environ.get(
     'BEDROCK_MODEL_ID',
-    'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0'
+    'google.gemma-3-27b-it'
 )
 
 # Constants
-EXPLANATION_TIMEOUT = 25  # seconds - Bedrock can take 10-20s for detailed responses
+EXPLANATION_TIMEOUT = 25  # seconds - increased for Gemma 3 27B cold start
 MIN_WORD_COUNT = 150
 MAX_WORD_COUNT = 1000
 
@@ -83,9 +83,7 @@ def generate_explanation_with_timeout(
 
     def _call_bedrock():
         try:
-            prompt = f"""You are an expert banking and finance educator specializing in JAIIB and CAIIB exams.
-
-A student answered a question incorrectly. Provide a DETAILED and COMPREHENSIVE explanation of why the correct answer is right.
+            prompt = f"""You are an expert JAIIB/CAIIB exam tutor. Explain this question clearly in 150-200 words.
 
 Question: {question_text}
 
@@ -97,27 +95,14 @@ D. {options.get('D', '')}
 
 Correct Answer: {correct_answer}
 
-Your explanation MUST include ALL of the following:
+Your explanation must include:
+1. Why {correct_answer} is correct
+2. Why the other options are wrong
+3. The key banking/financial concept
+4. Any relevant RBI/SEBI/IIBF regulatory reference
+5. 2 detailed practical real-world examples that illustrate the concept - each example must include specific numbers, names, and a step-by-step scenario showing how the concept applies in real banking practice
 
-1. CORRECT ANSWER STATEMENT: Clearly state that {correct_answer} is the correct answer and why it is correct.
-
-2. DETAILED REASONING: Provide 2-3 paragraphs explaining the banking/financial principles behind the correct answer.
-
-3. WHY OTHER OPTIONS ARE WRONG: For each incorrect option, explain why it is wrong and what misconception it represents.
-
-4. REGULATORY REFERENCES: Include specific references to:
-   - RBI guidelines, circulars, or master directions
-   - IIBF standards or frameworks
-   - Banking regulations or acts
-   - Any relevant regulatory body guidelines
-
-5. PRACTICAL EXAMPLES: Provide 1-2 real-world banking scenarios or examples that illustrate the concept.
-
-6. KEY CONCEPTS: List and explain 3-4 key banking/financial concepts related to this question.
-
-7. COMMON MISCONCEPTIONS: Explain 2-3 common misconceptions students have about this topic.
-
-Write a comprehensive, detailed explanation with multiple paragraphs. Aim for 300-500 words minimum."""
+Keep it clear and well-structured, 250-300 words."""
 
             logger.info(f"Calling Bedrock with model: {MODEL_ID}")
 
@@ -127,7 +112,7 @@ Write a comprehensive, detailed explanation with multiple paragraphs. Aim for 30
                 accept='application/json',
                 body=json.dumps({
                     'anthropic_version': 'bedrock-2023-05-31',
-                    'max_tokens': 2000,
+                    'max_tokens': 900,
                     'messages': [
                         {
                             'role': 'user',
@@ -138,7 +123,11 @@ Write a comprehensive, detailed explanation with multiple paragraphs. Aim for 30
             )
 
             parsed = json.loads(response['body'].read())
-            result_container['explanation'] = parsed['content'][0]['text'].strip()
+            # Gemma uses OpenAI-compatible format: choices[0].message.content
+            if 'choices' in parsed:
+                result_container['explanation'] = parsed['choices'][0]['message']['content'].strip()
+            else:
+                result_container['explanation'] = parsed['content'][0]['text'].strip()
 
         except Exception as e:
             result_container['error'] = str(e)
@@ -179,6 +168,26 @@ def get_fallback_explanation(correct_answer: str) -> str:
         "If the issue persists, refer to your JAIIB/CAIIB study materials or "
         "the official RBI and IIBF resources for detailed guidance on this topic."
     )
+
+
+def get_cached_explanation(question_id: str) -> dict:
+    """
+    Look up a previously generated explanation for this question.
+    Returns the cached item or None if not found.
+    """
+    try:
+        response = explanations_table.query(
+            IndexName='question_id-index',
+            KeyConditionExpression='question_id = :qid',
+            ExpressionAttributeValues={':qid': question_id, ':false': False},
+            FilterExpression='is_fallback = :false',
+            Limit=1
+        )
+        items = response.get('Items', [])
+        return items[0] if items else None
+    except Exception as e:
+        logger.warning(f"Cache lookup failed for question {question_id}: {str(e)}")
+        return None
 
 
 def save_explanation(
@@ -298,8 +307,23 @@ def lambda_handler(event, context):
             return error_response(400, "correct_answer is required")
         
         logger.info(f"Processing explanation request for question {question_id} by user {user_id}")
-        
-        # Generate explanation with timeout
+
+        # Check cache first — same question gets the same explanation for all users
+        cached = get_cached_explanation(question_id)
+        if cached:
+            logger.info(f"Cache hit for question {question_id}, skipping Bedrock call")
+            return success_response({
+                'success': True,
+                'explanation': cached['explanation'],
+                'question_id': question_id,
+                'citations': cached.get('citations', []),
+                'generation_time': 0,
+                'is_fallback': False,
+                'from_cache': True,
+                'word_count': cached.get('word_count', len(cached['explanation'].split()))
+            })
+
+        # Cache miss — call Bedrock
         start_time = time.time()
         explanation, is_timeout = generate_explanation_with_timeout(
             question_text,
@@ -320,7 +344,7 @@ def lambda_handler(event, context):
         # Extract citations
         citations = extract_citations(explanation)
         
-        # Save explanation
+        # Save explanation (only non-fallback responses are worth caching)
         save_explanation(
             question_id,
             user_id,
@@ -338,6 +362,7 @@ def lambda_handler(event, context):
             'citations': citations,
             'generation_time': generation_time,
             'is_fallback': is_fallback,
+            'from_cache': False,
             'word_count': len(explanation.split())
         })
         

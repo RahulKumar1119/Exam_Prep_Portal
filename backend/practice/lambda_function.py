@@ -22,7 +22,7 @@ import boto3
 QUESTIONS_PER_SET = 50
 BEDROCK_MODEL_ID  = 'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0'
 REGION            = 'ap-south-1'
-LAMBDA_FUNC_NAME  = 'jaiib-practice'   # self-invoke for async generation
+LAMBDA_FUNC_NAME = 'jaiib-practice'   # self-invoke for async generation
 
 # ── JAIIB syllabus ────────────────────────────────────────────────────────────
 PAPER_SYLLABUS = {
@@ -164,24 +164,55 @@ def _build_prompt(paper_name: str) -> str:
     for module, topics in syllabus.get('modules', {}).items():
         modules_text += f"\n{module}:\n" + '\n'.join(f'  - {t}' for t in topics)
 
-    return f"""You are an expert JAIIB exam question setter for IIBF (Institute of Indian Banking & Finance).
+    if paper_name == 'AFB':
+        hard_style = (
+            "20 HARD questions (2 marks): MUST be numerical calculation-based "
+            "(e.g. compute NPV, IRR, depreciation, ratio, cash flow, NPBT, break-even, "
+            "capital budgeting, working capital, leverage ratios). "
+            "Give all required figures in the question. Options must be 4 different numeric values."
+        )
+        source_instruction = (
+            "Base ALL questions strictly on the content of the provided AFM textbook PDF. "
+            "Use actual examples, figures, concepts, and terminology from the book. "
+            "Questions must reflect the depth and style of the IIBF Macmillan AFM textbook."
+        )
+    else:
+        hard_style = (
+            "20 HARD questions (2 marks): Present 3-4 statements (labelled I, II, III, IV) "
+            "and ask which are correct/incorrect. "
+            "Format: 'Consider the following statements:\\nI. ...\\nII. ...\\nIII. ...\\n"
+            "Which of the above statements is/are correct?' "
+            "Options: combinations like 'Only I', 'I and II', 'II and III', 'All of the above'. "
+            "Statements must test deep knowledge — include tricky/misleading statements."
+        )
+        source_instruction = "Base questions on the JAIIB syllabus topics listed below."
 
-Generate exactly 50 multiple-choice questions for the JAIIB paper: {paper_name}
+    return f"""You are a senior JAIIB exam question setter for IIBF with 15 years of experience.
 
-Distribution (JAIIB marking scheme):
-- 25 EASY questions (0.5 mark): recall of facts, definitions, acts, regulations
-- 15 MEDIUM questions (1 mark): concept understanding and application
-- 10 HARD questions (2 marks): calculations, case-based or multi-step reasoning
+{source_instruction}
 
-Syllabus (spread questions across ALL modules):
+Generate exactly 50 challenging multiple-choice questions for JAIIB paper: {paper_name}
+
+STRICT distribution:
+- 10 EASY questions (0.5 mark): basic definitions and acts only — keep these minimal
+- 20 MEDIUM questions (1 mark): application of concepts, exceptions, comparisons, regulatory limits,
+  specific provisions of acts, case-based scenarios. NOT simple definitions.
+- {hard_style}
+
+Syllabus (cover ALL modules evenly):
 {modules_text}
 
-Rules:
-1. Each question has exactly 4 options: A, B, C, D — only one correct
-2. All facts must be accurate and relevant to Indian banking
-3. Hard questions must involve numbers or scenario reasoning
-4. Cover all modules evenly — do not cluster on one topic
-5. No repeated questions
+QUALITY RULES — strictly follow:
+1. NO trivial questions like "What does KYC stand for?" or "What is a cheque?"
+2. Medium questions must test specific knowledge: exact thresholds, regulatory limits,
+   exceptions to rules, differences between similar concepts, practical application
+3. Options must be plausible — all 4 options should look correct to someone who hasn't studied deeply
+4. Avoid questions with obvious answers — a well-prepared student should find these challenging
+5. Each question has exactly 4 options A, B, C, D — only one correct
+6. All facts must be accurate and current for Indian banking
+7. No repeated questions — cover diverse topics across all modules
+8. For medium questions, prefer: "Which of the following is CORRECT/INCORRECT?",
+   "As per [Act/RBI guideline], which...", "In case of [scenario], what..."
 
 Return ONLY a valid JSON array of exactly 50 objects. No markdown, no explanation.
 [
@@ -190,12 +221,13 @@ Return ONLY a valid JSON array of exactly 50 objects. No markdown, no explanatio
     "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
     "correct_answer": "A",
     "topic": "...",
-    "difficulty": "easy"
+    "difficulty": "easy|medium|hard"
   }}
 ]"""
 
 
 def _call_bedrock(paper_name: str) -> List[Dict]:
+    """Call Bedrock Claude with a text-only prompt."""
     try:
         client = _bedrock()
         body = {
@@ -206,7 +238,6 @@ def _call_bedrock(paper_name: str) -> List[Dict]:
         resp = client.invoke_model(modelId=BEDROCK_MODEL_ID, body=json.dumps(body))
         text = json.loads(resp['body'].read())['content'][0]['text'].strip()
 
-        # Strip markdown fences
         text = re.sub(r'^```(?:json)?\s*', '', text)
         text = re.sub(r'\s*```$', '', text)
 
@@ -237,12 +268,19 @@ def _db_fallback(questions_table, paper_name: str, count: int) -> List[Dict]:
 
 # ── Async worker (invoked by itself) ─────────────────────────────────────────
 def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table):
-    """Called asynchronously — does the Bedrock work and updates the session."""
-    questions = _call_bedrock(paper_name)
+    """Called asynchronously — generates questions and updates the session."""
 
-    if len(questions) < QUESTIONS_PER_SET:
-        needed = QUESTIONS_PER_SET - len(questions)
-        questions += _db_fallback(questions_table, paper_name, needed)
+    # AFB and IE & IFS: pull from DynamoDB (questions imported from docx/pdf)
+    # Other papers: generate via Bedrock
+    if paper_name in ('AFB', 'IE & IFS'):
+        questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
+        if not questions:
+            questions = _call_bedrock(paper_name)
+    else:
+        questions = _call_bedrock(paper_name)
+        if len(questions) < QUESTIONS_PER_SET:
+            needed = QUESTIONS_PER_SET - len(questions)
+            questions += _db_fallback(questions_table, paper_name, needed)
 
     questions = questions[:QUESTIONS_PER_SET]
 

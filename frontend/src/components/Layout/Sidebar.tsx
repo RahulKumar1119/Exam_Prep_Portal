@@ -14,7 +14,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: 'dashboard' },
+    { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     { path: '/practice', label: 'Practice', icon: 'practice' },
   ];
 

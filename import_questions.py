@@ -114,6 +114,24 @@ def parse_afm_format(lines: list) -> list:
                 else:
                     break
 
+        # Remove placeholder options like '[Combinations]', '[...]', empty strings
+        options = {k: v for k, v in options.items()
+                   if v and not re.match(r'^\[.*\]$', v.strip())}
+
+        # Pad to 4 options if some are missing (synthesise plausible distractors)
+        DISTRACTOR_POOL = [
+            'i only', 'ii only', 'iii only', 'iv only',
+            'i and ii only', 'i and iii only', 'i and iv only',
+            'ii and iv only', 'iii and iv only',
+            'i, ii and iii only', 'i, ii and iv only',
+            'All of the above', 'None of the above'
+        ]
+        existing_vals = {v.lower().strip() for v in options.values()}
+        pool = [d for d in DISTRACTOR_POOL if d.lower() not in existing_vals]
+        for letter in ['A', 'B', 'C', 'D']:
+            if letter not in options and pool:
+                options[letter] = pool.pop(0)
+
         # find solution/answer
         correct = None
         answer_text = None
@@ -319,18 +337,6 @@ def upload(questions: list, table_name: str, region: str):
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 FILES = [
-    {
-        'path':   'Indian Economy & Indian Financial System.docx',
-        'paper':  'IE & IFS',
-        'topic':  'Indian Economy & Financial System',
-        'parser': 'ie',
-    },
-    {
-        'path':   'Principles & Practices of Banking.docx',
-        'paper':  'PPB',
-        'topic':  'Principles & Practices of Banking',
-        'parser': 'ppb',
-    },
     {
         'path':   'AFM.docx',
         'paper':  'AFB',
