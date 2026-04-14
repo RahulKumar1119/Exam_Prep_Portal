@@ -214,18 +214,6 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             ← Previous
           </button>
 
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-sm bg-blue-600 inline-block"></span> Current
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-sm bg-green-100 border border-green-300 inline-block"></span> Answered ({answeredCount})
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-sm bg-gray-100 border border-gray-300 inline-block"></span> Skipped ({totalQuestions - answeredCount})
-            </span>
-          </div>
-
           <button
             onClick={handleNext}
             disabled={currentQuestionIndex === totalQuestions - 1}
@@ -233,6 +221,45 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           >
             Next →
           </button>
+        </div>
+      </div>
+
+      {/* Question Palette — click any number to jump directly */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-gray-700">Question Palette</p>
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <span className="flex items-center gap-1">
+              <span className="w-5 h-5 rounded bg-blue-600 inline-block"></span> Current
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-5 h-5 rounded bg-green-500 inline-block"></span> Answered
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-5 h-5 rounded bg-gray-200 inline-block"></span> Skipped
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {session.questions.map((q, idx) => {
+            const isActive = idx === currentQuestionIndex;
+            const isAns = !!answers[q.question_id];
+            return (
+              <button
+                key={q.question_id}
+                onClick={() => setCurrentQuestionIndex(idx)}
+                className={`w-9 h-9 rounded text-sm font-semibold transition-all ${
+                  isActive
+                    ? 'bg-blue-600 text-white ring-2 ring-blue-300'
+                    : isAns
+                    ? 'bg-green-500 text-white hover:bg-green-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {idx + 1}
+              </button>
+            );
+          })}
         </div>
       </div>
 
