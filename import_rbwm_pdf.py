@@ -1,16 +1,6 @@
 #!/usr/bin/env python3
 """
-Parse PPB.pdf and upload all MCQs to jaiib-question-bank DynamoDB.
-
-PDF format:
-  Question text (may span multiple lines)
-  (optional roman numeral statements)
-  a. option text
-  b. option text
-  c. option text
-  d. option text
-  Ans - x  (or Ans – x  or Ans: x)
-  .....  (separator)
+Parse RBWM.pdf and upload all MCQs to jaiib-question-bank DynamoDB.
 """
 
 import re
@@ -19,7 +9,7 @@ import sys
 from datetime import datetime
 
 try:
-    import fitz  # PyMuPDF
+    import fitz
 except ImportError:
     print("Run: pip3 install pymupdf"); sys.exit(1)
 
@@ -30,18 +20,17 @@ except ImportError:
 
 TABLE  = 'jaiib-question-bank'
 REGION = 'ap-south-1'
-PAPER  = 'PPB'
-TOPIC  = 'Principles & Practices of Banking'
+PAPER  = 'RBWM'
+TOPIC  = 'Retail Banking & Wealth Management'
 
-# ── Patterns ──────────────────────────────────────────────────────────────────
 OPT_PAT = re.compile(r'^([a-dA-D])[.\)]\s+(.+)')
 ANS_PAT = re.compile(r'^Ans\s*[-–:]\s*([a-dA-D])', re.I)
-SEP_PAT = re.compile(r'^[.\s]{5,}$')          # dotted separator line
-HEADER  = re.compile(                          # page header/footer noise
+SEP_PAT = re.compile(r'^[.\s]{5,}$')
+HEADER  = re.compile(
     r'www\.|facebook|murugan|admin@|09994|jaiibcaiib|bankpromotion|onlyforbankers'
     r'|JAIIB CAIIB STUDY|BANK PROMOTION|ONLY FOR BANKERS'
-    r'|^\d{1,3}$'                              # lone page numbers
-    r'|^[…\.]{10,}$',                          # long dot lines
+    r'|^\d{1,3}$'
+    r'|^[…\.]{10,}$',
     re.I
 )
 
@@ -49,12 +38,10 @@ LETTER_MAP = {'a': 'A', 'b': 'B', 'c': 'C', 'd': 'D'}
 
 
 def extract_lines(path: str) -> list:
-    # Skip pages before question content starts (cover, index, general info)
-    # Questions start from page 13 onwards per the PDF index
     doc = fitz.open(path)
     lines = []
     for page in doc:
-        if page.number < 12:   # 0-indexed, skip first 12 pages
+        if page.number < 12:
             continue
         for line in page.get_text().splitlines():
             line = line.strip()
@@ -72,13 +59,9 @@ def parse(lines: list) -> list:
     n = len(lines)
 
     while i < n:
-        # ── collect question text ─────────────────────────────────────────────
-        # Skip separators and blank-ish lines
         if SEP_PAT.match(lines[i]) or ANS_PAT.match(lines[i]):
             i += 1
             continue
-
-        # Stop collecting q_text when we hit an option line
         if OPT_PAT.match(lines[i]):
             i += 1
             continue
@@ -92,23 +75,20 @@ def parse(lines: list) -> list:
             i += 1
 
         q_text = ' '.join(q_lines).strip()
-        # Strip common section headings that bleed into question text
         q_text = re.sub(
-            r'^(Principles\s*&\s*Practices\s*of\s*Banking|'
+            r'^(Retail Banking\s*&\s*Wealth Management|'
             r'Important Sample Questions|Recollected Questions.*?)\s*',
             '', q_text, flags=re.I
         ).strip()
         if not q_text or len(q_text) < 10:
             continue
 
-        # ── collect options ───────────────────────────────────────────────────
         options = {}
         while i < n:
             om = OPT_PAT.match(lines[i])
             if om:
                 key = LETTER_MAP.get(om.group(1).lower(), om.group(1).upper())
                 val = om.group(2).strip()
-                # option may continue on next line if next line is not opt/ans/sep
                 i += 1
                 while i < n and not OPT_PAT.match(lines[i]) and not ANS_PAT.match(lines[i]) and not SEP_PAT.match(lines[i]):
                     options[key] = options.get(key, val) + ' ' + lines[i].strip()
@@ -118,7 +98,6 @@ def parse(lines: list) -> list:
             else:
                 break
 
-        # ── find answer ───────────────────────────────────────────────────────
         correct = None
         while i < n:
             am = ANS_PAT.match(lines[i])
@@ -133,7 +112,6 @@ def parse(lines: list) -> list:
                 break
             i += 1
 
-        # ── validate and store ────────────────────────────────────────────────
         if correct and len(options) >= 2 and correct in options:
             questions.append({
                 'question_id':    str(uuid.uuid4()),
@@ -147,8 +125,6 @@ def parse(lines: list) -> list:
                 'created_at':     datetime.utcnow().isoformat(),
                 'updated_at':     datetime.utcnow().isoformat(),
             })
-        elif q_text and len(q_text) > 10:
-            pass  # silently skip incomplete questions
 
     return questions
 
@@ -163,7 +139,7 @@ def upload(questions: list):
 
 
 if __name__ == '__main__':
-    path = '/home/rahul/Downloads/PPB.pdf'
+    path = '/home/rahul/Downloads/RBWM.pdf'
     print(f"Extracting lines from {path}...")
     lines = extract_lines(path)
     print(f"  {len(lines)} lines extracted")
@@ -173,10 +149,9 @@ if __name__ == '__main__':
     print(f"  {len(qs)} questions parsed")
 
     if not qs:
-        print("No questions found — check PDF format")
+        print("No questions found — check PDF format or page skip offset")
         sys.exit(1)
 
-    # Show sample
     print("\nSample (first 3 questions):")
     for q in qs[:3]:
         print(f"  Q: {q['question_text'][:80]}")

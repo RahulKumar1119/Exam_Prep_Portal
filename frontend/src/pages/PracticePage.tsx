@@ -5,7 +5,7 @@ import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 
-const PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM'];
+const PAPERS = ['IE & IFS', 'PPB', 'AFM', 'RBWM'];
 
 const PracticePage: React.FC = () => {
   const { current_session, session_result, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();

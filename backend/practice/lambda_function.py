@@ -270,9 +270,10 @@ def _db_fallback(questions_table, paper_name: str, count: int) -> List[Dict]:
 def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table):
     """Called asynchronously — generates questions and updates the session."""
 
-    # AFB and IE & IFS: pull from DynamoDB (questions imported from docx/pdf)
-    # Other papers: generate via Bedrock
-    if paper_name in ('AFB', 'IE & IFS'):
+    # Papers with questions in DynamoDB: pull from DB first, fallback to Bedrock
+    # All papers now have questions imported from PDF/docx
+    DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM')
+    if paper_name in DB_PAPERS:
         questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
         if not questions:
             questions = _call_bedrock(paper_name)
@@ -365,7 +366,7 @@ def handler(event, context):
         if action == 'generate':
             if not paper_name:
                 return err(400, 'paper_name is required')
-            valid = ['IE & IFS', 'PPB', 'AFB', 'RBWM']
+            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM']
             if paper_name not in valid:
                 return err(400, f"paper_name must be one of: {', '.join(valid)}")
 
