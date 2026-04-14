@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PracticeSession } from '../../types/index';
+import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
@@ -17,8 +18,17 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   isSubmitting = false
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
+
+  // Restore answers + timer from localStorage if available
+  const persisted = loadSessionState();
+  const isRestoredSession = persisted?.session?.session_id === session.session_id;
+
+  const [answers, setAnswers] = useState<Record<string, string>>(
+    isRestoredSession ? persisted!.answers : {}
+  );
+  const [timeLeft, setTimeLeft] = useState(
+    isRestoredSession ? persisted!.timeLeft : TIMER_DURATION
+  );
   const [timedOut, setTimedOut] = useState(false);
   const answersRef = useRef(answers);
 
@@ -26,6 +36,9 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   useEffect(() => {
     answersRef.current = answers;
   }, [answers]);
+
+  // Persist to localStorage on every answers/timeLeft change
+  useSessionPersistence(session, answers, timeLeft);
 
   // Countdown timer
   useEffect(() => {
@@ -101,6 +114,15 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Restored session banner */}
+      {isRestoredSession && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center gap-2 text-sm text-blue-700">
+          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Session restored — your answers and timer have been recovered from your last visit.
+        </div>
+      )}
       {/* Progress Bar + Timer */}
       <div className="bg-gray-100 rounded-lg p-4">
         <div className="flex justify-between items-center mb-2">

@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { PracticeSession, SessionResult } from '../types/index';
 import { apiClient } from '../services/api';
 import { useAuth } from './AuthContext';
+import { loadSessionState, clearSessionState } from '../hooks/useSessionPersistence';
 
 interface PracticeContextType {
   current_session: PracticeSession | null;
@@ -23,6 +24,14 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [session_result, setSessionResult] = useState<SessionResult | null>(null);
   const [is_loading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Restore in-progress session from localStorage on mount
+  useEffect(() => {
+    const persisted = loadSessionState();
+    if (persisted && persisted.session.status === 'in_progress') {
+      setCurrentSession(persisted.session);
+    }
+  }, []);
 
   const generatePracticeSet = async (paper_name: string) => {
     setIsLoading(true);
@@ -96,7 +105,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
       if (response.success && response.data) {
         setSessionResult(response.data);
-        // Notify caller so dashboard can refresh
+        clearSessionState(); // clear persisted session on successful submit
         onComplete?.();
       } else {
         throw new Error(response.error || 'Failed to submit practice set');
@@ -140,6 +149,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     setCurrentSession(null);
     setSessionResult(null);
     setError(null);
+    clearSessionState(); // clear persisted session
   };
 
   const clearError = () => {
