@@ -85,6 +85,7 @@ const DashboardPage: React.FC = () => {
           <RecommendedPractice
             weak_areas={dashboard_data.weak_areas}
             total_sessions={dashboard_data.metrics.total_sessions}
+            paper_performance={dashboard_data.paper_performance}
           />
         </>
       ) : (
