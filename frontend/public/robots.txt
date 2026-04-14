@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /practice
+Disallow: /home
+Disallow: /admin
+
+Sitemap: https://mockmaster.fun/sitemap.xml
