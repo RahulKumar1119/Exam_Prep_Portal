@@ -3,3 +3,42 @@
 frontend/node_modules
 .hypothesis/
 infrastructure/node_modules/
+
+# Environment files — never commit secrets
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+.env.test
+**/.env
+**/.env.local
+**/.env.development
+**/.env.staging
+**/.env.production
+**/.env.test
+
+# AWS credentials
+.aws/
+aws-exports.js
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Zip artifacts
+*.zip
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
