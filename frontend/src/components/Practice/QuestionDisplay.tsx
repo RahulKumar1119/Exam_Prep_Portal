@@ -9,7 +9,7 @@ interface QuestionDisplayProps {
   isSubmitting?: boolean;
 }
 
-const TIMER_DURATION = 60 * 60; // 1 hour in seconds
+const TIMER_DURATION = 40 * 60; // 40 minutes in seconds
 
 const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   session,
