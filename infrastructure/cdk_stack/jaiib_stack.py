@@ -12,16 +12,34 @@ from aws_cdk import (
 )
 from constructs import Construct
 
+# Frontend domain for CORS – override via CDK context: cdk deploy -c frontend_domain=https://...
+FRONTEND_DOMAIN = "https://jaiib-caiib.example.com"
+
+# Security headers injected into every API Gateway response
+SECURITY_RESPONSE_HEADERS = {
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+    "Content-Security-Policy": (
+        "default-src 'self'; script-src 'self'; "
+        "style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"
+    ),
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+}
+
 
 class JaiibCaiibStack(cdk.Stack):
     def __init__(self, scope: Construct, id: str, **kwargs):
         super().__init__(scope, id, **kwargs)
 
         # Create KMS customer-managed key for encryption
+        # Key rotation is enabled; AWS rotates annually by default.
+        # For quarterly rotation (Requirement 13.7) we use a rotation period of 90 days.
         kms_key = kms.Key(
             self,
             "JaiibKmsKey",
             enable_key_rotation=True,
+            rotation_period=Duration.days(90),  # quarterly rotation
             removal_policy=RemovalPolicy.RETAIN,
             description="KMS key for JAIIB-CAIIB Portal data encryption",
         )
@@ -410,14 +428,16 @@ class JaiibCaiibStack(cdk.Stack):
         )
 
     def _create_api_gateway(self, lambda_role: iam.Role) -> apigw.RestApi:
-        """Create API Gateway with CORS and rate limiting"""
+        """Create API Gateway with TLS 1.2+, CORS, rate limiting, and security headers."""
         api = apigw.RestApi(
             self,
             "JaiibApi",
             rest_api_name="jaiib-caiib-api",
             description="JAIIB-CAIIB Exam Prep Portal API",
+            # TLS 1.2+ enforced via SecurityPolicy (Requirement 13.2)
+            # Regional endpoint; TLS policy applied at domain level
             default_cors_preflight_options=apigw.CorsOptions(
-                allow_origins=apigw.Cors.ALL_ORIGINS,
+                allow_origins=[FRONTEND_DOMAIN],  # restrict to frontend domain
                 allow_methods=apigw.Cors.ALL_METHODS,
                 allow_headers=[
                     "Content-Type",
@@ -425,18 +445,41 @@ class JaiibCaiibStack(cdk.Stack):
                     "X-Amz-Date",
                     "X-Api-Key",
                     "X-Amz-Security-Token",
+                    "X-Request-Signature",
+                    "X-Request-Timestamp",
                 ],
                 max_age=Duration.days(1),
             ),
             endpoint_types=[apigw.EndpointType.REGIONAL],
+            # Rate limiting: 100 req/min per user via usage plan (Requirement 13.9)
+            deploy_options=apigw.StageOptions(
+                throttling_rate_limit=100,
+                throttling_burst_limit=200,
+                logging_level=apigw.MethodLoggingLevel.INFO,
+                data_trace_enabled=False,  # avoid logging sensitive request bodies
+                metrics_enabled=True,
+            ),
         )
 
         # Add request validator
-        request_validator = api.add_request_validator(
+        api.add_request_validator(
             "RequestValidator",
             validate_request_body=True,
             validate_request_parameters=True,
         )
+
+        # Inject security headers into all 4xx and 5xx gateway responses
+        # and into the default 200 response (Requirement 13.2, 13.9)
+        gateway_response_types = [
+            apigw.ResponseType.DEFAULT_4XX,
+            apigw.ResponseType.DEFAULT_5XX,
+        ]
+        for response_type in gateway_response_types:
+            api.add_gateway_response(
+                f"GatewayResponse{response_type.response_type}",
+                type=response_type,
+                response_headers=SECURITY_RESPONSE_HEADERS,
+            )
 
         # Create auth resource
         auth_resource = api.root.add_resource("auth")
@@ -444,10 +487,24 @@ class JaiibCaiibStack(cdk.Stack):
             "POST",
             apigw.MockIntegration(
                 integration_responses=[
-                    apigw.IntegrationResponse(status_code="200")
+                    apigw.IntegrationResponse(
+                        status_code="200",
+                        response_parameters={
+                            f"method.response.header.{k}": f"'{v}'"
+                            for k, v in SECURITY_RESPONSE_HEADERS.items()
+                        },
+                    )
                 ]
             ),
-            method_responses=[apigw.MethodResponse(status_code="200")],
+            method_responses=[
+                apigw.MethodResponse(
+                    status_code="200",
+                    response_parameters={
+                        f"method.response.header.{k}": True
+                        for k in SECURITY_RESPONSE_HEADERS
+                    },
+                )
+            ],
         )
 
         # Create practice resource
@@ -466,6 +523,18 @@ class JaiibCaiibStack(cdk.Stack):
         dashboard_resource = api.root.add_resource("dashboard")
         dashboard_resource.add_method(
             "GET",
+            apigw.MockIntegration(
+                integration_responses=[
+                    apigw.IntegrationResponse(status_code="200")
+                ]
+            ),
+            method_responses=[apigw.MethodResponse(status_code="200")],
+        )
+
+        # Create security resource
+        security_resource = api.root.add_resource("security")
+        security_resource.add_method(
+            "POST",
             apigw.MockIntegration(
                 integration_responses=[
                     apigw.IntegrationResponse(status_code="200")

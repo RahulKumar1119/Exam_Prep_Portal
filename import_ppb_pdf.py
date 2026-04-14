@@ -1,15 +1,6 @@
 #!/usr/bin/env python3
 """
-Parse RBWM.pdf (Edutap format) and upload all MCQs to jaiib-question-bank DynamoDB.
-
-PDF format:
-  Q1. Question text (may span multiple lines)
-  A. option text
-  B. option text
-  C. option text
-  D. option text
-  Answer: A
-  Explanation: ...  (skipped)
+Parse PPB.pdf (Edutap format) and upload all MCQs to jaiib-question-bank DynamoDB.
 """
 
 import re
@@ -29,16 +20,14 @@ except ImportError:
 
 TABLE  = 'jaiib-question-bank'
 REGION = 'ap-south-1'
-PAPER  = 'RBWM'
-TOPIC  = 'Retail Banking & Wealth Management'
+PAPER  = 'PPB'
+TOPIC  = 'Principles & Practices of Banking'
 
-# Patterns for Edutap format
 Q_PAT   = re.compile(r'^Q\d+\.\s*(.+)', re.I)
 OPT_PAT = re.compile(r'^([A-D])\.\s+(.+)')
 ANS_PAT = re.compile(r'^Answer\s*:\s*([A-D])', re.I)
 HEADER  = re.compile(
-    r'www\.edutap|edutap\.co\.in|hello@edutap|81462|P\s*a\s*g\s*e'
-    r'|^\d{1,3}\s*\|\s*P',
+    r'www\.edutap|edutap\.co\.in|hello@edutap|81462|P\s*a\s*g\s*e|^\d{1,3}\s*\|\s*P',
     re.I
 )
 
@@ -49,11 +38,8 @@ def extract_lines(path: str) -> list:
     for page in doc:
         for line in page.get_text().splitlines():
             line = line.strip()
-            if not line:
-                continue
-            if HEADER.search(line):
-                continue
-            lines.append(line)
+            if line and not HEADER.search(line):
+                lines.append(line)
     return lines
 
 
@@ -63,13 +49,11 @@ def parse(lines: list) -> list:
     n = len(lines)
 
     while i < n:
-        # Look for question start: Q1. Q2. etc.
         qm = Q_PAT.match(lines[i])
         if not qm:
             i += 1
             continue
 
-        # Collect question text (may span multiple lines until first option)
         q_lines = [qm.group(1).strip()]
         i += 1
         while i < n and not OPT_PAT.match(lines[i]) and not Q_PAT.match(lines[i]):
@@ -82,7 +66,6 @@ def parse(lines: list) -> list:
         if not q_text or len(q_text) < 10:
             continue
 
-        # Collect options A B C D
         options = {}
         while i < n:
             om = OPT_PAT.match(lines[i])
@@ -90,7 +73,6 @@ def parse(lines: list) -> list:
                 key = om.group(1).upper()
                 val = om.group(2).strip()
                 i += 1
-                # option may continue on next line
                 while i < n and not OPT_PAT.match(lines[i]) and not ANS_PAT.match(lines[i]) and not Q_PAT.match(lines[i]):
                     val += ' ' + lines[i].strip()
                     i += 1
@@ -98,7 +80,6 @@ def parse(lines: list) -> list:
             else:
                 break
 
-        # Find answer
         correct = None
         while i < n:
             am = ANS_PAT.match(lines[i])
@@ -110,7 +91,7 @@ def parse(lines: list) -> list:
                 break
             i += 1
 
-        # Skip explanation lines until next question
+        # Skip explanation until next question
         while i < n and not Q_PAT.match(lines[i]):
             i += 1
 
@@ -141,7 +122,7 @@ def upload(questions: list):
 
 
 if __name__ == '__main__':
-    path = '/home/rahul/Downloads/RBWM.pdf'
+    path = '/home/rahul/Downloads/PPB.pdf'
     print(f"Extracting lines from {path}...")
     lines = extract_lines(path)
     print(f"  {len(lines)} lines extracted")
@@ -151,7 +132,7 @@ if __name__ == '__main__':
     print(f"  {len(qs)} questions parsed")
 
     if not qs:
-        print("No questions found — check PDF format or page skip offset")
+        print("No questions found — check PDF format")
         sys.exit(1)
 
     print("\nSample (first 3 questions):")

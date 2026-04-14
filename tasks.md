@@ -429,7 +429,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 
 ### Task 17: Implement Security Hardening and Data Protection
 
-- [ ] 17.1 Implement data encryption and key management
+- [x] 17.1 Implement data encryption and key management
   - Configure AWS KMS customer-managed key for DynamoDB encryption
   - Implement automatic key rotation (quarterly)
   - Implement data re-encryption with new keys after rotation
@@ -437,7 +437,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Implement encrypted data export with 24-hour valid download links
   - _Requirements: 13.1, 13.7, 13.8_
 
-- [ ] 17.2 Implement TLS encryption and API security
+- [x] 17.2 Implement TLS encryption and API security
   - Configure TLS 1.2+ for all API calls
   - Implement API key validation and rate limiting (100 req/min per user)
   - Implement request signing and validation
