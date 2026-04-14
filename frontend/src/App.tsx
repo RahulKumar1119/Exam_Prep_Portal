@@ -17,6 +17,8 @@ import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
 import PracticePage from './pages/PracticePage';
 import NotFoundPage from './pages/NotFoundPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -42,6 +44,8 @@ const AppContent: React.FC = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/password-reset" element={<PasswordResetPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
       {/* Protected Routes */}
       <Route
