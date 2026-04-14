@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PracticeSession } from '../../types/index';
 
 interface QuestionDisplayProps {
@@ -8,6 +8,8 @@ interface QuestionDisplayProps {
   isSubmitting?: boolean;
 }
 
+const TIMER_DURATION = 60 * 60; // 1 hour in seconds
+
 const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   session,
   onAnswer,
@@ -16,6 +18,48 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
+  const [timedOut, setTimedOut] = useState(false);
+  const answersRef = useRef(answers);
+
+  // Keep ref in sync so the timer callback always has latest answers
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
+
+  // Countdown timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setTimedOut(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Auto-submit when time runs out
+  useEffect(() => {
+    if (timedOut) {
+      onSubmit(answersRef.current);
+    }
+  }, [timedOut, onSubmit]);
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return h > 0
+      ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+      : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
+
+  const isWarning = timeLeft <= 5 * 60; // last 5 minutes
+  const isCritical = timeLeft <= 60;    // last 1 minute
 
   const currentQuestion = session.questions[currentQuestionIndex];
   const totalQuestions = session.questions.length;
@@ -57,15 +101,30 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Progress Bar */}
+      {/* Progress Bar + Timer */}
       <div className="bg-gray-100 rounded-lg p-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium text-gray-700">
             Question {currentQuestionIndex + 1} of {totalQuestions}
           </span>
-          <span className="text-sm font-medium text-gray-700">
-            Answered: {answeredCount}/{totalQuestions}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-gray-700">
+              Answered: {answeredCount}/{totalQuestions}
+            </span>
+            {/* Timer */}
+            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-mono font-bold text-sm ${
+              isCritical
+                ? 'bg-red-600 text-white animate-pulse'
+                : isWarning
+                ? 'bg-red-100 text-red-700 border border-red-300'
+                : 'bg-white text-gray-800 border border-gray-300'
+            }`}>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {formatTime(timeLeft)}
+            </div>
+          </div>
         </div>
         <div className="w-full bg-gray-300 rounded-full h-2">
           <div
@@ -73,6 +132,12 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
           />
         </div>
+        {isWarning && !isCritical && (
+          <p className="text-red-600 text-xs mt-2 font-medium">⚠ Less than 5 minutes remaining!</p>
+        )}
+        {isCritical && (
+          <p className="text-red-700 text-xs mt-2 font-bold">🚨 Less than 1 minute! Auto-submitting soon.</p>
+        )}
       </div>
 
       {/* Question Card */}
