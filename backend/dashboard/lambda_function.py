@@ -220,13 +220,78 @@ def get_trend_data(user_id: str) -> list:
 
 
 def get_dashboard_data(user_id: str) -> Dict[str, Any]:
-    """Get complete dashboard data for user."""
+    """Get complete dashboard data for user — single DynamoDB query."""
+    try:
+        # ONE query, reused for all metrics
+        response = sessions_table.query(
+            IndexName='user-id-index',
+            KeyConditionExpression='user_id = :user_id',
+            ExpressionAttributeValues={':user_id': user_id}
+        )
+        sessions = response.get('Items', [])
+    except ClientError as e:
+        print(f"Error fetching sessions: {e}")
+        sessions = []
+
+    completed = [s for s in sessions if s.get('status') == 'completed']
+
+    # --- Metrics ---
+    if not completed:
+        metrics = {
+            'overall_score': 0, 'total_sessions': 0,
+            'average_score': 0, 'total_study_time': 0,
+            'last_session_date': None,
+        }
+    else:
+        total_score = sum(s.get('score', 0) for s in completed)
+        avg = total_score / len(completed)
+        last_date = max((s.get('submitted_at', '') for s in completed), default=None)
+        total_time = sum(s.get('time_taken', 0) for s in sessions)
+        metrics = {
+            'overall_score': int(avg),
+            'total_sessions': len(sessions),
+            'average_score': int(avg),
+            'total_study_time': total_time,
+            'last_session_date': last_date,
+        }
+
+    # --- Paper performance ---
+    paper_stats: Dict[str, list] = {}
+    for s in completed:
+        paper = s.get('paper_name', 'Unknown')
+        paper_stats.setdefault(paper, []).append(s.get('score', 0))
+
+    paper_performance = [
+        {
+            'paper_name': paper,
+            'average_score': int(sum(scores) / len(scores)),
+            'sessions_completed': len(scores),
+            'accuracy_by_topic': {},
+        }
+        for paper, scores in paper_stats.items()
+    ]
+
+    # --- Weak / Strong areas ---
+    topic_avg = {
+        paper: sum(scores) / len(scores)
+        for paper, scores in paper_stats.items()
+    }
+    weak_areas  = [t for t, avg in topic_avg.items() if avg < 70]
+    strong_areas = [t for t, avg in topic_avg.items() if avg >= 85]
+
+    # --- Trend data (last 10 completed sessions) ---
+    sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
+    trend_data = [
+        {'date': s.get('submitted_at', ''), 'score': s.get('score', 0)}
+        for s in sorted_sessions[-10:]
+    ]
+
     return {
-        'metrics': get_user_performance(user_id),
-        'paper_performance': get_paper_performance(user_id),
-        'weak_areas': get_weak_areas(user_id),
-        'strong_areas': get_strong_areas(user_id),
-        'trend_data': get_trend_data(user_id),
+        'metrics': metrics,
+        'paper_performance': paper_performance,
+        'weak_areas': weak_areas,
+        'strong_areas': strong_areas,
+        'trend_data': trend_data,
     }
 
 

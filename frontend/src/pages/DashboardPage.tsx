@@ -59,7 +59,10 @@ const DashboardPage: React.FC = () => {
               weak_areas={dashboard_data.weak_areas}
               accuracy_by_topic={
                 dashboard_data.paper_performance.reduce(
-                  (acc, paper) => ({ ...acc, ...paper.accuracy_by_topic }),
+                  (acc: Record<string, number>, paper: any) => ({
+                    ...acc,
+                    [paper.paper_name]: paper.average_score
+                  }),
                   {}
                 )
               }
@@ -68,7 +71,10 @@ const DashboardPage: React.FC = () => {
               strong_areas={dashboard_data.strong_areas}
               accuracy_by_topic={
                 dashboard_data.paper_performance.reduce(
-                  (acc, paper) => ({ ...acc, ...paper.accuracy_by_topic }),
+                  (acc: Record<string, number>, paper: any) => ({
+                    ...acc,
+                    [paper.paper_name]: paper.average_score
+                  }),
                   {}
                 )
               }
