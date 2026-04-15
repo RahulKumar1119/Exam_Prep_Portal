@@ -179,12 +179,13 @@ def get_cached_explanation(question_id: str) -> dict:
         response = explanations_table.query(
             IndexName='question_id-index',
             KeyConditionExpression='question_id = :qid',
-            ExpressionAttributeValues={':qid': question_id, ':false': False},
-            FilterExpression='is_fallback = :false',
-            Limit=1
+            ExpressionAttributeValues={':qid': question_id},
+            Limit=10
         )
         items = response.get('Items', [])
-        return items[0] if items else None
+        # Filter out fallback explanations in Python to avoid GSI projection issues
+        non_fallback = [item for item in items if not item.get('is_fallback', False)]
+        return non_fallback[0] if non_fallback else None
     except Exception as e:
         logger.warning(f"Cache lookup failed for question {question_id}: {str(e)}")
         return None

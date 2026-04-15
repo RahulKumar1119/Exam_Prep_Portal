@@ -27,13 +27,12 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    if (isCorrect || !isExpanded) {
-      return; // Don't load explanation for correct answers or if not expanded
+    // Don't fetch if already loaded, not expanded, correct answer, or no user
+    if (isCorrect || !isExpanded || explanation || !user) {
+      return;
     }
 
     const loadExplanation = async () => {
-      if (!user) return;
-
       setIsLoading(true);
       setError(null);
 
@@ -47,10 +46,9 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
         });
 
         if (response.success) {
-          // The response might have explanation at top level or in data
-          const explanation = (response as any).explanation || response.data?.explanation || 'Explanation not available';
-          setExplanation(explanation);
-          onExplanationLoaded?.(explanation);
+          const text = (response as any).explanation || response.data?.explanation || 'Explanation not available';
+          setExplanation(text);
+          onExplanationLoaded?.(text);
         } else {
           setError('Failed to load explanation');
         }
@@ -63,7 +61,8 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
     };
 
     loadExplanation();
-  }, [questionId, isCorrect, isExpanded, user, onExplanationLoaded, questionText, correctAnswer, options]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questionId, isCorrect, isExpanded, user]);
 
   if (isCorrect) {
     return null; // Don't show explanation for correct answers
