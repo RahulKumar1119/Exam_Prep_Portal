@@ -18,6 +18,8 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [timerStopped, setTimerStopped] = useState(false);
+  const [stoppedAtTime, setStoppedAtTime] = useState<number | null>(null);
 
   if (!current_session || current_session.questions.length === 0) {
     return (
@@ -53,8 +55,15 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
   };
 
   const handleTimeUp = async () => {
+    // Skip auto-submit if the timer was manually stopped (req 3.11)
+    if (timerStopped) return;
     console.log('Time is up! Submitting your practice set...');
     await handleSubmit();
+  };
+
+  const handleTimerStop = (stoppedAt: number) => {
+    setTimerStopped(true);
+    setStoppedAtTime(stoppedAt);
   };
 
   const handleSubmit = async () => {
@@ -68,6 +77,12 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const formatStoppedTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -84,6 +99,7 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
               <Timer
                 duration={600}
                 onTimeUp={handleTimeUp}
+                onStop={handleTimerStop}
               />
             </div>
           </div>
@@ -92,6 +108,17 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-800">{error}</p>
+          </div>
+        )}
+
+        {/* Timer Stopped Banner — reminds user to submit manually (req 3.10, 3.12) */}
+        {timerStopped && stoppedAtTime !== null && (
+          <div className="mb-6 p-4 bg-yellow-50 border border-yellow-300 rounded-lg flex items-center gap-3">
+            <span className="text-yellow-700 text-lg">⏹</span>
+            <div>
+              <p className="text-yellow-800 font-semibold">Timer stopped at {formatStoppedTime(stoppedAtTime)}</p>
+              <p className="text-yellow-700 text-sm">The timer has been stopped. Please submit your answers manually when ready.</p>
+            </div>
           </div>
         )}
 

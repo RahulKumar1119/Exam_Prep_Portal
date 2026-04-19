@@ -7,10 +7,13 @@
  * - Warning messages
  * - Auto-submission at timeout
  * - Session expiration handling
+ * - Stop Timer button behavior (Property 9a)
  */
 
+import '@testing-library/jest-dom';
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Timer } from '../components/Timer';
 
 describe('Timer Component', () => {
@@ -294,5 +297,176 @@ describe('Timer Component', () => {
         expect(onWarning).toHaveBeenCalledWith('1 minute remaining!');
       });
     });
+  });
+
+  /**
+   * Property 9a: Stopped Timer Prevents Auto-Submit
+   * 
+   * For any practice session where the user has clicked "Stop Timer",
+   * the timer should remain paused and the system should NOT auto-submit
+   * when the displayed time reaches 0, requiring the user to submit manually.
+   *
+   * Feature: jaiib-caiib-exam-prep-portal, Property 9a: Stopped timer prevents auto-submit
+   * Validates: Requirements 3.9, 3.10, 3.11
+   */
+  describe('Stop Timer Button (Property 9a)', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    // Helper: create a userEvent instance that advances fake timers
+    const setup = () => userEvent.setup({ advanceTimers: jest.advanceTimersByTime.bind(jest) });
+
+    it('should render the Stop Timer button while the timer is running', () => {
+      render(<Timer duration={600} onTimeUp={() => {}} />);
+      expect(screen.getByRole('button', { name: /stop timer/i })).toBeInTheDocument();
+    });
+
+    it('should NOT render the Stop Timer button when timer is paused', () => {
+      render(<Timer duration={600} onTimeUp={() => {}} isPaused={true} />);
+      expect(screen.queryByRole('button', { name: /stop timer/i })).not.toBeInTheDocument();
+    });
+
+    it('should NOT render the Stop Timer button when session is expired', () => {
+      render(<Timer duration={600} onTimeUp={() => {}} sessionExpired={true} />);
+      expect(screen.queryByRole('button', { name: /stop timer/i })).not.toBeInTheDocument();
+    });
+
+    it('should freeze the countdown when Stop Timer is clicked (req 3.9)', async () => {
+      const user = setup();
+      const { container } = render(<Timer duration={30} onTimeUp={() => {}} />);
+
+      // Advance 5 seconds so timer reads 00:25
+      act(() => { jest.advanceTimersByTime(5000); });
+
+      const timerDisplay = container.querySelector('.font-mono.text-5xl');
+      const timeBefore = timerDisplay?.textContent;
+
+      // Click stop
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      // Advance another 5 seconds — countdown should NOT move
+      act(() => { jest.advanceTimersByTime(5000); });
+
+      expect(timerDisplay?.textContent).toBe(timeBefore);
+    });
+
+    it('should hide the Stop Timer button after it is clicked', async () => {
+      const user = setup();
+      render(<Timer duration={60} onTimeUp={() => {}} />);
+
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      expect(screen.queryByRole('button', { name: /stop timer/i })).not.toBeInTheDocument();
+    });
+
+    it('should display "Timer Stopped" badge after clicking stop (req 3.9)', async () => {
+      const user = setup();
+      render(<Timer duration={60} onTimeUp={() => {}} />);
+
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      expect(screen.getByText(/timer stopped/i)).toBeInTheDocument();
+    });
+
+    it('should display the time at which the timer was stopped (req 3.12)', async () => {
+      const user = setup();
+      const { container } = render(<Timer duration={30} onTimeUp={() => {}} />);
+
+      // Advance 10 seconds so timer is at 00:20
+      act(() => { jest.advanceTimersByTime(10000); });
+
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      // The stopped badge should show "at 00:20"
+      expect(screen.getByText(/at 00:20/i)).toBeInTheDocument();
+    });
+
+    it('should call onStop callback with the remaining time when stopped (req 3.9)', async () => {
+      const user = setup();
+      const onStop = jest.fn();
+      render(<Timer duration={30} onTimeUp={() => {}} onStop={onStop} />);
+
+      act(() => { jest.advanceTimersByTime(5000); });
+
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      expect(onStop).toHaveBeenCalledTimes(1);
+      // Should be called with a value between 24 and 26 (timing tolerance)
+      const stoppedAt = onStop.mock.calls[0][0] as number;
+      expect(stoppedAt).toBeGreaterThanOrEqual(24);
+      expect(stoppedAt).toBeLessThanOrEqual(26);
+    });
+
+    it('should NOT call onTimeUp after stop even when time runs out (req 3.11)', async () => {
+      const user = setup();
+      const onTimeUp = jest.fn();
+      render(<Timer duration={5} onTimeUp={onTimeUp} />);
+
+      // Stop immediately
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      // Advance well past the original duration
+      act(() => { jest.advanceTimersByTime(10000); });
+
+      expect(onTimeUp).not.toHaveBeenCalled();
+    });
+
+    it('should use gray color scheme after timer is stopped', async () => {
+      const user = setup();
+      const { container } = render(<Timer duration={600} onTimeUp={() => {}} />);
+
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      const timerDisplay = container.querySelector('.font-mono.text-5xl');
+      expect(timerDisplay?.className).toContain('text-gray-500');
+    });
+
+    it('should use gray progress bar after timer is stopped', async () => {
+      const user = setup();
+      const { container } = render(<Timer duration={600} onTimeUp={() => {}} />);
+
+      await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+      const progressBar = container.querySelector('[style*="width"]');
+      expect(progressBar?.className).toContain('bg-gray-400');
+    });
+
+    /**
+     * Property-based style: for any valid duration (10–600s), stopping the timer
+     * at any point should always freeze the display and suppress auto-submit.
+     * We sample several representative durations to approximate this property.
+     */
+    it.each([10, 30, 60, 120, 300, 600])(
+      'property: stopping at duration=%is always freezes countdown and suppresses auto-submit',
+      async (duration: number) => {
+        const user = setup();
+        const onTimeUp = jest.fn();
+        const onStop = jest.fn();
+        const { container } = render(
+          <Timer duration={duration} onTimeUp={onTimeUp} onStop={onStop} />
+        );
+
+        // Advance a representative 30% of the duration
+        const elapsed = Math.floor(duration * 0.3) * 1000;
+        act(() => { jest.advanceTimersByTime(elapsed); });
+
+        const timerDisplay = container.querySelector('.font-mono.text-5xl');
+        const frozenTime = timerDisplay?.textContent;
+
+        await user.click(screen.getByRole('button', { name: /stop timer/i }));
+
+        // Advance the full remaining duration — nothing should change
+        act(() => { jest.advanceTimersByTime(duration * 1000); });
+
+        expect(timerDisplay?.textContent).toBe(frozenTime);
+        expect(onTimeUp).not.toHaveBeenCalled();
+        expect(onStop).toHaveBeenCalledTimes(1);
+      }
+    );
   });
 });

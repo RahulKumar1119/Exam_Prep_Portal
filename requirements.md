@@ -92,6 +92,10 @@ The JAIIB-CAIIB Exam Prep Portal is a full-stack web application designed to hel
 6. WHEN a user navigates away from the practice set page, THE Timer SHALL pause and resume when the user returns within 5 minutes
 7. IF a user's session is inactive for more than 5 minutes, THEN THE Timer SHALL expire the session and display a "Session Expired" message
 8. WHEN the timer is running, THE Portal SHALL update the display every second with no perceptible lag
+9. WHEN a user clicks the "Stop Timer" button during a practice session, THE Timer SHALL pause and display a "Timer Stopped" visual indicator
+10. WHEN the timer is stopped, THE Portal SHALL allow the user to continue answering questions and manually submit the practice set
+11. WHEN the timer is stopped, THE Timer SHALL NOT auto-submit the practice set when it reaches 0 seconds
+12. WHEN the timer is stopped, THE Portal SHALL display the time at which the timer was stopped
 
 #### Success Metrics
 

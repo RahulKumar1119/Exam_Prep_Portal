@@ -123,7 +123,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Implement 10-minute countdown timer (600 seconds)
   - Display timer in MM:SS format with real-time updates every second
   - Implement color changes: yellow at 5 minutes, red at 1 minute
-  - Implement auto-submission when timer reaches 0 seconds
+  - Implement auto-submission when timer reaches 0 seconds (only when not stopped)
   - Handle timer pause/resume when user navigates away (5-min window)
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.6, 3.7_
 
@@ -134,14 +134,28 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
   - Ensure timer updates with <100ms latency
   - _Requirements: 3.1, 3.2, 3.3, 3.8_
 
+- [x] 5.4 Implement Stop Timer button in Timer component
+  - Add `isStopped` state and `onStop` callback prop to `Timer` component in `frontend/src/components/Timer.tsx`
+  - Render a "Stop Timer" button that is visible while the timer is running and not yet stopped
+  - When clicked, set `isStopped` to true, freeze the countdown, and display a "Timer Stopped" badge showing the time at which it was stopped
+  - When `isStopped` is true, skip the auto-submit `onTimeUp` callback so the user must submit manually
+  - Update `PracticeSetInterface.tsx` to pass an `onStop` handler and surface the stopped state to the UI
+  - _Requirements: 3.9, 3.10, 3.11, 3.12_
+
+- [x]* 5.5 Write property test for stopped timer behavior
+  - **Property 9a: Stopped timer prevents auto-submit**
+  - **Validates: Requirements 3.9, 3.10, 3.11**
+  - Test that clicking "Stop Timer" freezes the countdown and suppresses the auto-submit callback
+  - Test that the user can still answer questions and manually submit after stopping the timer
+
 - [x]* 5.3 Write property tests for timer accuracy
   - **Property 9: Timer accuracy within tolerance**
   - **Validates: Requirements 3.1, 3.8**
   - Test that timer displays MM:SS format and updates every second with ±1s accuracy
   
   - **Property 10: Auto-submit at timeout**
-  - **Validates: Requirements 3.4**
-  - Test that timer reaching 0 automatically submits practice set
+  - **Validates: Requirements 3.4, 3.11**
+  - Test that timer reaching 0 automatically submits practice set when timer has not been stopped
 
 ### Task 6: Implement MCQ Scoring Engine
 
@@ -588,7 +602,7 @@ This implementation plan breaks down the JAIIB-CAIIB Exam Prep Portal into 17 ma
 |-------------|-------|--------|
 | 1. User Authentication | 2, 3 | Implementation + Testing |
 | 2. Practice Set Generation | 4 | Implementation + Testing |
-| 3. Session Timer Management | 5 | Implementation + Testing |
+| 3. Session Timer Management | 5 | Implementation + Testing (incl. Stop Timer) |
 | 4. MCQ Scoring Engine | 6 | Implementation + Testing |
 | 5. AI-Powered Tutoring | 8 | Implementation + Testing |
 | 6. Performance Dashboard | 11 | Implementation + Testing |

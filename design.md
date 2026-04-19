@@ -406,6 +406,7 @@ App/
 │   │   ├── QuestionDisplay
 │   │   ├── OptionButtons
 │   │   ├── Timer
+│   │   │   └── StopTimerButton
 │   │   └── SubmitButton
 │   └── ResultsDisplay
 │       ├── ScoreCard
@@ -604,9 +605,15 @@ def retry_with_backoff(func, max_retries=3):
 
 ### Property 9: Auto-Submit at Timeout
 
-*For any* practice session where the timer reaches 0 seconds, the system should automatically submit the practice set and display results without user intervention.
+*For any* practice session where the timer reaches 0 seconds and has NOT been stopped by the user, the system should automatically submit the practice set and display results without user intervention.
 
-**Validates: Requirements 3.4**
+**Validates: Requirements 3.4, 3.11**
+
+### Property 9a: Stopped Timer Prevents Auto-Submit
+
+*For any* practice session where the user has clicked "Stop Timer", the timer should remain paused and the system should NOT auto-submit when the displayed time reaches 0, requiring the user to manually submit.
+
+**Validates: Requirements 3.9, 3.10, 3.11**
 
 ### Property 10: Score Calculation Accuracy
 
@@ -742,7 +749,7 @@ Unit tests focus on specific examples, edge cases, and error conditions:
 
 - Authentication: Valid/invalid credentials, password reset flow, token expiration
 - Scoring: Score calculation with 0-4 correct answers, edge cases (0%, 25%, 50%, 75%, 100%)
-- Timer: Timer display format, color changes at thresholds, auto-submission
+- Timer: Timer display format, color changes at thresholds, auto-submission, stop timer behavior
 - Question selection: Random selection for new users, adaptive selection for experienced users
 - Error handling: Retry logic, fallback messages, error logging
 

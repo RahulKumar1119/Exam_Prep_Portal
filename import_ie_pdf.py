@@ -23,11 +23,11 @@ REGION = 'ap-south-1'
 PAPER  = 'IE & IFS'
 TOPIC  = 'Indian Economy & Financial System'
 
-Q_PAT   = re.compile(r'^Q\d+\.\s*(.+)', re.I)
-OPT_PAT = re.compile(r'^([A-D])\.\s+(.+)')
-ANS_PAT = re.compile(r'^Answer\s*:\s*([A-D])', re.I)
+Q_PAT   = re.compile(r'^Q(\d+)\.\s*(.+)', re.I)
+OPT_PAT = re.compile(r'^\(([a-d])\)\s+(.+)', re.I)
+ANS_PAT = re.compile(r'^S(\d+)\.\s*Ans\.\(([a-d])\)', re.I)
 HEADER  = re.compile(
-    r'www\.edutap|edutap\.co\.in|hello@edutap|81462|P\s*a\s*g\s*e|^\d{1,3}\s*\|\s*P',
+    r'www\.|teachersadda|sscadda|bankersadda|adda247|^\d{1,3}$',
     re.I
 )
 
@@ -44,6 +44,14 @@ def extract_lines(path: str) -> list:
 
 
 def parse(lines: list) -> list:
+    # Pass 1: collect answer key from "Solutions" section
+    answer_key = {}
+    for line in lines:
+        am = ANS_PAT.match(line)
+        if am:
+            answer_key[int(am.group(1))] = am.group(2).upper()
+
+    # Pass 2: parse questions and options
     questions = []
     i = 0
     n = len(lines)
@@ -54,48 +62,33 @@ def parse(lines: list) -> list:
             i += 1
             continue
 
-        q_lines = [qm.group(1).strip()]
+        q_num = int(qm.group(1))
+        q_lines = [qm.group(2).strip()]
         i += 1
+
+        # Collect continuation lines until first option or next question
         while i < n and not OPT_PAT.match(lines[i]) and not Q_PAT.match(lines[i]):
-            if ANS_PAT.match(lines[i]):
-                break
             q_lines.append(lines[i])
             i += 1
 
         q_text = ' '.join(q_lines).strip()
-        if not q_text or len(q_text) < 10:
-            continue
 
+        # Collect options (a-d), merging wrapped lines
         options = {}
         while i < n:
             om = OPT_PAT.match(lines[i])
-            if om:
-                key = om.group(1).upper()
-                val = om.group(2).strip()
-                i += 1
-                while i < n and not OPT_PAT.match(lines[i]) and not ANS_PAT.match(lines[i]) and not Q_PAT.match(lines[i]):
-                    val += ' ' + lines[i].strip()
-                    i += 1
-                options[key] = val.strip()
-            else:
+            if not om:
                 break
-
-        correct = None
-        while i < n:
-            am = ANS_PAT.match(lines[i])
-            if am:
-                correct = am.group(1).upper()
-                i += 1
-                break
-            if Q_PAT.match(lines[i]):
-                break
+            key = om.group(1).upper()
+            val = om.group(2).strip()
             i += 1
+            while i < n and not OPT_PAT.match(lines[i]) and not Q_PAT.match(lines[i]):
+                val += ' ' + lines[i].strip()
+                i += 1
+            options[key] = val.strip()
 
-        # Skip explanation until next question
-        while i < n and not Q_PAT.match(lines[i]):
-            i += 1
-
-        if correct and len(options) >= 2 and correct in options:
+        correct = answer_key.get(q_num)
+        if correct and len(options) >= 2 and correct in options and len(q_text) >= 10:
             questions.append({
                 'question_id':    str(uuid.uuid4()),
                 'version':        '1',
