@@ -25,7 +25,7 @@ export const ReportQuestionButton: React.FC<ReportQuestionButtonProps> = ({
   const handleSubmit = async () => {
     setStatus('submitting');
     try {
-      await apiClient.post('/question-bank', {
+      await apiClient.post('/questions', {
         action: 'report_question',
         question_id: questionId,
         user_id: userId || 'anonymous',
