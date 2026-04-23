@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
+import { useAuth } from '../context/AuthContext';
 import { QuestionDisplay } from './QuestionDisplay';
 import { OptionButtons } from './OptionButtons';
 import { Timer } from './Timer';
@@ -14,6 +15,7 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
   onResultsReady,
 }) => {
   const { current_session, submitPracticeSet, is_loading, error } = usePractice();
+  const { user } = useAuth();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -128,6 +130,7 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
             question={currentQuestion}
             questionNumber={currentQuestionIndex + 1}
             totalQuestions={totalQuestions}
+            userId={user?.user_id}
           />
         </div>
 

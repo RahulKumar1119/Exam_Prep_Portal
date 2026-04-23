@@ -209,4 +209,13 @@ export interface QuestionBankSearchParams {
   keyword?: string;
   page?: number;
   page_size?: number;
+
+
+  // Question Report types
+  export interface QuestionReport {
+    question_id: string;
+    reason: 'wrong_answer' | 'incomplete_question' | 'wrong_options' | 'other';
+    comment?: string;
+  }
+
 }

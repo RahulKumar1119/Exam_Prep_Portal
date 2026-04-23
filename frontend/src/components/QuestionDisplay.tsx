@@ -1,16 +1,19 @@
 import React from 'react';
 import { Question } from '../types/index';
+import { ReportQuestionButton } from './ReportQuestionButton';
 
 interface QuestionDisplayProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
+  userId?: string;
 }
 
 export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   question,
   questionNumber,
   totalQuestions,
+  userId,
 }) => {
   const difficultyColors = {
     easy: 'bg-green-100 text-green-800',
@@ -24,7 +27,8 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         <h2 className="text-lg font-semibold text-gray-900">
           Question {questionNumber} of {totalQuestions}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <ReportQuestionButton questionId={question.question_id} userId={userId} />
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${difficultyColors[question.difficulty]}`}>
             {question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)}
           </span>

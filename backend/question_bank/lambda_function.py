@@ -11,6 +11,9 @@ Handles API requests for question bank operations:
 
 import json
 import os
+import uuid
+import boto3
+from datetime import datetime
 from typing import Dict, Any, Tuple
 from version_manager import (
     create_version,
@@ -117,6 +120,12 @@ def validate_request(event: dict) -> Tuple[bool, str]:
     elif action == 'get_mcq_versions':
         if not event.get('question_id'):
             return False, "Missing 'question_id'"
+    
+    elif action == 'report_question':
+        if not event.get('question_id'):
+            return False, "Missing 'question_id'"
+        if not event.get('reason'):
+            return False, "Missing 'reason'"
     
     else:
         return False, f"Unknown action: {action}"
@@ -364,6 +373,36 @@ def handler(event, context):
                 return error_response(400, result.get('error'))
             
             return success_response(result)
+        
+        # Handle report_question action
+        elif action == 'report_question':
+            try:
+                table_name = os.environ.get('REPORTS_TABLE', 'jaiib-question-reports')
+                region = os.environ.get('AWS_REGION', 'ap-south-1')
+                dynamodb = boto3.resource('dynamodb', region_name=region)
+                table = dynamodb.Table(table_name)
+                
+                report_id = str(uuid.uuid4())
+                now = datetime.utcnow().isoformat()
+                
+                table.put_item(Item={
+                    'report_id': report_id,
+                    'question_id': body.get('question_id'),
+                    'user_id': body.get('user_id', 'anonymous'),
+                    'reason': body.get('reason'),
+                    'comment': body.get('comment', ''),
+                    'status': 'pending',
+                    'created_at': now,
+                })
+                
+                return success_response({
+                    'success': True,
+                    'report_id': report_id,
+                    'message': 'Report submitted successfully'
+                })
+            except Exception as e:
+                print(f"Report question error: {str(e)}")
+                return error_response(500, f"Failed to submit report: {str(e)}")
         
         else:
             return error_response(400, f"Unknown action: {action}")
