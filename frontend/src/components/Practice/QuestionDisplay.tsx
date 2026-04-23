@@ -3,6 +3,7 @@ import { PracticeSession } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
 import { Progress } from '../ui/Progress';
+import { ReportQuestionButton } from '../ReportQuestionButton';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
@@ -166,9 +167,12 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             <h3 className="text-lg font-bold text-gray-900 flex-1">
               {currentQuestion.question_text}
             </h3>
-            <span className="ml-4 px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full whitespace-nowrap">
-              {currentQuestion.difficulty}
-            </span>
+            <div className="ml-4 flex items-center gap-2">
+              <ReportQuestionButton questionId={currentQuestion.question_id} />
+              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full whitespace-nowrap">
+                {currentQuestion.difficulty}
+              </span>
+            </div>
           </div>
           <p className="text-sm text-gray-500">Topic: {currentQuestion.topic}</p>
         </div>
