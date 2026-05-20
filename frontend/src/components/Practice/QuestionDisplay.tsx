@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PracticeSession } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
+import { ExplanationDisplay } from './ExplanationDisplay';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
@@ -248,7 +249,6 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                   value={key}
                   checked={isSelected}
                   onChange={() => handleSelectAnswer(key)}
-                  disabled={isChecked}
                   className="w-4 h-4 text-indigo-600 flex-shrink-0"
                 />
                 <span className="ml-3 text-gray-800">
@@ -264,6 +264,19 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             );
           })}
         </div>
+
+        {/* Explanation after Check */}
+        {checkedQuestions.has(currentQuestion.question_id) && (
+          <div className="mt-4">
+            <ExplanationDisplay
+              questionId={currentQuestion.question_id}
+              questionText={currentQuestion.question_text}
+              options={currentQuestion.options}
+              correctAnswer={currentQuestion.correct_answer}
+              isCorrect={isAnswered === currentQuestion.correct_answer}
+            />
+          </div>
+        )}
 
         {/* Bottom action buttons */}
         <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-200">
