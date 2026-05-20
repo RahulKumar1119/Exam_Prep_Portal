@@ -24,6 +24,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   const [showSummary, setShowSummary] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
 
   // Restore answers + timer from localStorage if available
   const persisted = loadSessionState();
@@ -194,7 +195,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             onClick={() => setShowSummary(true)}
             className="px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-all"
           >
-            Summary
+            {isSubmitting ? 'Submitting...' : 'Summary'}
           </button>
         </div>
       </div>
@@ -218,28 +219,50 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
         {/* Options */}
         <div className="space-y-2">
-          {Object.entries(currentQuestion.options).map(([key, value]) => (
-            <label
-              key={key}
-              className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
-                isAnswered === key
-                  ? 'border-indigo-500 bg-indigo-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              <input
-                type="radio"
-                name={`question-${currentQuestion.question_id}`}
-                value={key}
-                checked={isAnswered === key}
-                onChange={() => handleSelectAnswer(key)}
-                className="w-4 h-4 text-indigo-600 flex-shrink-0"
-              />
-              <span className="ml-3 text-gray-800">
-                <span className="font-medium">{key}.</span> {value}
-              </span>
-            </label>
-          ))}
+          {Object.entries(currentQuestion.options).map(([key, value]) => {
+            const isChecked = checkedQuestions.has(currentQuestion.question_id);
+            const isSelected = isAnswered === key;
+            const isCorrectOption = key === currentQuestion.correct_answer;
+
+            let optionStyle = 'border-gray-200 hover:border-gray-300 hover:bg-gray-50';
+            if (isChecked) {
+              if (isCorrectOption) {
+                optionStyle = 'border-green-500 bg-green-50';
+              } else if (isSelected && !isCorrectOption) {
+                optionStyle = 'border-red-500 bg-red-50';
+              } else {
+                optionStyle = 'border-gray-200 bg-white';
+              }
+            } else if (isSelected) {
+              optionStyle = 'border-indigo-500 bg-indigo-50';
+            }
+
+            return (
+              <label
+                key={key}
+                className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}
+              >
+                <input
+                  type="radio"
+                  name={`question-${currentQuestion.question_id}`}
+                  value={key}
+                  checked={isSelected}
+                  onChange={() => handleSelectAnswer(key)}
+                  disabled={isChecked}
+                  className="w-4 h-4 text-indigo-600 flex-shrink-0"
+                />
+                <span className="ml-3 text-gray-800">
+                  <span className="font-medium">{key}.</span> {value}
+                </span>
+                {isChecked && isCorrectOption && (
+                  <span className="ml-auto text-green-600 font-bold text-sm">✓ Correct</span>
+                )}
+                {isChecked && isSelected && !isCorrectOption && (
+                  <span className="ml-auto text-red-600 font-bold text-sm">✗ Wrong</span>
+                )}
+              </label>
+            );
+          })}
         </div>
 
         {/* Bottom action buttons */}
@@ -271,11 +294,19 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           {/* Right buttons */}
           <div className="flex items-center gap-2">
             <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="px-4 py-2 text-sm font-semibold bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all"
+              onClick={() => {
+                // "Check" reveals the correct answer for current question
+                const qid = currentQuestion.question_id;
+                if (!answers[qid]) {
+                  // If not answered, just highlight — user needs to select first
+                  return;
+                }
+                setCheckedQuestions(prev => new Set(prev).add(qid));
+              }}
+              disabled={!isAnswered}
+              className="px-4 py-2 text-sm font-semibold bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
+              Check
             </button>
             <button
               onClick={handleNext}
@@ -342,7 +373,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               </button>
             </DialogClose>
             <button
-              onClick={() => { setShowSummary(false); onSubmit(answers); }}
+              onClick={() => { setShowSummary(false); handleSubmit(); }}
               className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg"
             >
               Submit Test
