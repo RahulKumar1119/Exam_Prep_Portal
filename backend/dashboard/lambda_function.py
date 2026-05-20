@@ -243,14 +243,15 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
             'last_session_date': None,
         }
     else:
-        total_score = sum(s.get('score', 0) for s in completed)
-        avg = total_score / len(completed)
+        scores = [float(s.get('score', 0)) for s in completed]
+        avg = sum(scores) / len(scores)
+        best = max(scores)
         last_date = max((s.get('submitted_at', '') for s in completed), default=None)
-        total_time = sum(s.get('time_taken', 0) for s in sessions)
+        total_time = sum(int(s.get('time_taken', 0)) for s in sessions)
         metrics = {
-            'overall_score': int(avg),
-            'total_sessions': len(sessions),
-            'average_score': int(avg),
+            'overall_score': round(best, 1),
+            'total_sessions': len(completed),
+            'average_score': round(avg, 1),
             'total_study_time': total_time,
             'last_session_date': last_date,
         }
@@ -259,12 +260,12 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
     paper_stats: Dict[str, list] = {}
     for s in completed:
         paper = s.get('paper_name', 'Unknown')
-        paper_stats.setdefault(paper, []).append(s.get('score', 0))
+        paper_stats.setdefault(paper, []).append(float(s.get('score', 0)))
 
     paper_performance = [
         {
             'paper_name': paper,
-            'average_score': int(sum(scores) / len(scores)),
+            'average_score': round(sum(scores) / len(scores), 1),
             'sessions_completed': len(scores),
             'accuracy_by_topic': {},
         }
@@ -276,13 +277,13 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         paper: sum(scores) / len(scores)
         for paper, scores in paper_stats.items()
     }
-    weak_areas  = [t for t, avg in topic_avg.items() if avg < 70]
-    strong_areas = [t for t, avg in topic_avg.items() if avg >= 85]
+    weak_areas  = [t for t, avg in topic_avg.items() if avg < 50]
+    strong_areas = [t for t, avg in topic_avg.items() if avg >= 50]
 
     # --- Trend data (last 10 completed sessions) ---
     sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
     trend_data = [
-        {'date': s.get('submitted_at', ''), 'score': s.get('score', 0)}
+        {'date': s.get('submitted_at', ''), 'score': float(s.get('score', 0))}
         for s in sorted_sessions[-10:]
     ]
 
