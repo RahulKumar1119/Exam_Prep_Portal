@@ -88,11 +88,41 @@ def has_options_ahead(lines, start, limit=25):
     return False
 
 
-def is_question_start(line, idx, lines, mode='auto'):
+def _looks_like_sub_item(text):
+    """Return True if the text after the number looks like a data sub-item
+    rather than a real question.  E.g. 'Depreciation = ₹200 crore'."""
+    # Data-point patterns: contains '=' with a value, currency symbols, units
+    if re.search(r'=\s*[₹$€£\d]', text):
+        return True
+    # Short fragments ending with '?' that are clearly sub-parts
+    # e.g. "National Income = ?" — but only when preceded by similar sub-items
+    if re.search(r'=\s*\?', text):
+        return True
+    return False
+
+
+def _count_preceding_sub_items(lines, idx):
+    """Count how many consecutive plain-numbered lines (counting backwards)
+    appear before index `idx`.  E.g. if lines[idx-3..idx-1] are '1. ...', '2. ...', '3. ...'
+    this returns 3."""
+    count = 0
+    j = idx - 1
+    while j >= 0:
+        m = Q_PLAIN.match(lines[j])
+        if m:
+            count += 1
+            j -= 1
+        else:
+            break
+    return count
+
+
+def is_question_start(line, idx, lines, mode='auto', last_q_num=None):
     """Detect a question start line.
     mode='q_prefix' — only match Q1. Q2. etc.
     mode='plain'    — only match 1. 2. etc. (with lookahead)
     mode='auto'     — try Q-prefix first, then plain with lookahead
+    last_q_num      — number of the last accepted question (for sub-item detection)
     """
     if mode in ('q_prefix', 'auto'):
         m = Q_PREFIX.match(line)
@@ -101,6 +131,25 @@ def is_question_start(line, idx, lines, mode='auto'):
     if mode in ('plain', 'auto'):
         m = Q_PLAIN.match(line)
         if m and has_options_ahead(lines, idx + 1):
+            candidate_num = int(m.group(1))
+            candidate_text = m.group(2).strip()
+
+            # Only apply sub-item heuristics when we're already inside a question
+            # AND the candidate number looks like a sub-item reset (not a natural
+            # progression from the previous question number)
+            if last_q_num is not None and candidate_num <= last_q_num:
+                # Heuristic 1: if the text looks like a data sub-item (has '= value'),
+                # it's part of the previous question, not a new one.
+                if _looks_like_sub_item(candidate_text):
+                    return None
+
+                # Heuristic 2: if there are preceding consecutive numbered lines,
+                # these are sub-items inside a question stem
+                # (e.g. "48. GDPmp=..." then "1. Dep..  2. NFIA..")
+                preceding = _count_preceding_sub_items(lines, idx)
+                if preceding >= 1:
+                    return None
+
             return m
     return None
 
@@ -154,9 +203,10 @@ def parse(lines, mode='auto'):
     questions = []
     i = 0
     n = len(lines)
+    last_q_num = None   # track last accepted question number for sub-item detection
 
     while i < n:
-        qm = is_question_start(lines[i], i, lines, mode)
+        qm = is_question_start(lines[i], i, lines, mode, last_q_num=last_q_num)
         if not qm:
             i += 1
             continue
@@ -170,7 +220,7 @@ def parse(lines, mode='auto'):
         while i < n:
             if opt_match(lines[i]):
                 break
-            if is_question_start(lines[i], i, lines, mode):
+            if is_question_start(lines[i], i, lines, mode, last_q_num=q_num):
                 break
             if ANS_PAT.match(lines[i]):
                 break
@@ -187,7 +237,7 @@ def parse(lines, mode='auto'):
                 break
             key, val = om
             i += 1
-            while i < n and not opt_match(lines[i]) and not ANS_PAT.match(lines[i]) and not is_question_start(lines[i], i, lines, mode):
+            while i < n and not opt_match(lines[i]) and not ANS_PAT.match(lines[i]) and not is_question_start(lines[i], i, lines, mode, last_q_num=q_num):
                 val += ' ' + lines[i].strip()
                 i += 1
             options[key] = val.strip()
@@ -204,7 +254,7 @@ def parse(lines, mode='auto'):
         if not correct:
             scan = i
             while scan < n:
-                if is_question_start(lines[scan], scan, lines, mode):
+                if is_question_start(lines[scan], scan, lines, mode, last_q_num=q_num):
                     break
                 am = ANS_PAT.match(lines[scan])
                 if am:
@@ -214,7 +264,7 @@ def parse(lines, mode='auto'):
                 scan += 1
 
         # Skip remaining lines until next question
-        while i < n and not is_question_start(lines[i], i, lines, mode):
+        while i < n and not is_question_start(lines[i], i, lines, mode, last_q_num=q_num):
             i += 1
 
         if len(options) >= 2 and len(q_text) >= 10:
@@ -224,6 +274,7 @@ def parse(lines, mode='auto'):
                 'options':        options,
                 'correct_answer': correct or '',
             })
+            last_q_num = q_num
 
     return questions
 

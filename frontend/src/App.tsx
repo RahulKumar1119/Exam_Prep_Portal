@@ -16,6 +16,7 @@ import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
 import PracticePage from './pages/PracticePage';
+import MockTestPage from './pages/MockTestPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
@@ -72,6 +73,16 @@ const AppContent: React.FC = () => {
           <ProtectedRoute>
             <Layout>
               <PracticePage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mock-test"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <MockTestPage />
             </Layout>
           </ProtectedRoute>
         }

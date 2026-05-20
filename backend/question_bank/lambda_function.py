@@ -209,7 +209,7 @@ def handler(event, context):
             body = json.loads(body) if body else {}
         
         # Validate request
-        is_valid, error_msg = validate_request({'body': body})
+        is_valid, error_msg = validate_request(body)
         if not is_valid:
             return error_response(400, error_msg)
         

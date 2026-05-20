@@ -44,6 +44,15 @@ export interface PracticeSession {
   submitted_at?: string;
   status: 'in_progress' | 'completed' | 'expired';
   version: string;
+  mode?: 'practice' | 'mock_test';
+  duration_minutes?: number;
+  total_marks?: number;
+  pass_marks?: number;
+  marks_config?: {
+    easy: { count: number; marks: number };
+    medium: { count: number; marks: number };
+    hard: { count: number; marks: number };
+  };
 }
 
 export interface SessionResult {
@@ -51,6 +60,17 @@ export interface SessionResult {
   results: QuestionResult[];
   time_taken: number;
   passed: boolean;
+  mode?: 'mock_test' | 'practice';
+  marks_earned?: number;
+  total_marks?: number;
+  pass_marks?: number;
+  correct_count?: number;
+  total_questions?: number;
+  breakdown?: {
+    easy: { total: number; correct: number; marks_per_q: number };
+    medium: { total: number; correct: number; marks_per_q: number };
+    hard: { total: number; correct: number; marks_per_q: number };
+  };
 }
 
 export interface QuestionResult {
@@ -60,6 +80,9 @@ export interface QuestionResult {
   correct: boolean;
   user_answer: string;
   correct_answer: string;
+  difficulty?: string;
+  marks?: number;
+  max_marks?: number;
 }
 
 // Dashboard types

@@ -24,6 +24,17 @@ BEDROCK_MODEL_ID  = 'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/a
 REGION            = 'ap-south-1'
 LAMBDA_FUNC_NAME = 'jaiib-practice'   # self-invoke for async generation
 
+# Mock Test weightage as per real JAIIB exam
+MOCK_TEST_CONFIG = {
+    'easy':   {'count': 50, 'marks': '0.5'},   # 50 × 0.5 = 25 marks
+    'medium': {'count': 25, 'marks': '1.0'},   # 25 × 1.0 = 25 marks
+    'hard':   {'count': 25, 'marks': '2.0'},   # 25 × 2.0 = 50 marks
+}
+MOCK_TEST_MARKS = {'easy': 0.5, 'medium': 1.0, 'hard': 2.0}  # For scoring calculations
+MOCK_TEST_TOTAL_MARKS = 100  # 25 + 25 + 50
+MOCK_TEST_PASS_MARKS = 50    # 50% of 100 = 50 marks
+MOCK_TEST_DURATION = 120     # 120 minutes
+
 # ── JAIIB syllabus ────────────────────────────────────────────────────────────
 PAPER_SYLLABUS = {
     'IE & IFS': {
@@ -252,7 +263,8 @@ def _call_bedrock(paper_name: str) -> List[Dict]:
         return []
 
 
-def _db_fallback(questions_table, paper_name: str, count: int) -> List[Dict]:
+def _db_fallback(questions_table, paper_name: str, count: int, difficulty: Optional[str] = None) -> List[Dict]:
+    """Fetch questions from DynamoDB, optionally filtered by difficulty."""
     try:
         resp = questions_table.query(
             IndexName='paper-topic-index',
@@ -260,30 +272,69 @@ def _db_fallback(questions_table, paper_name: str, count: int) -> List[Dict]:
             ExpressionAttributeValues={':p': paper_name}
         )
         items = resp.get('Items', [])
+        
+        # Filter by difficulty if specified
+        if difficulty:
+            items = [q for q in items if q.get('difficulty', 'medium') == difficulty]
+        
         return random.sample(items, min(count, len(items)))
     except Exception as e:
         print(f"DB fallback error: {e}")
         return []
 
 
+def _db_fetch_by_difficulty(questions_table, paper_name: str) -> Dict[str, List[Dict]]:
+    """Fetch all questions for a paper, grouped by difficulty."""
+    try:
+        # Handle pagination for large result sets
+        items = []
+        kwargs = {
+            'IndexName': 'paper-topic-index',
+            'KeyConditionExpression': 'paper_name = :p',
+            'ExpressionAttributeValues': {':p': paper_name}
+        }
+        
+        while True:
+            resp = questions_table.query(**kwargs)
+            items.extend(resp.get('Items', []))
+            if 'LastEvaluatedKey' not in resp:
+                break
+            kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+        
+        grouped = {'easy': [], 'medium': [], 'hard': []}
+        for q in items:
+            diff = q.get('difficulty', 'medium')
+            if diff in grouped:
+                grouped[diff].append(q)
+            else:
+                grouped['medium'].append(q)
+        
+        return grouped
+    except Exception as e:
+        print(f"DB fetch by difficulty error: {e}")
+        return {'easy': [], 'medium': [], 'hard': []}
+
+
 # ── Async worker (invoked by itself) ─────────────────────────────────────────
-def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table):
+def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table, mode: str = 'practice'):
     """Called asynchronously — generates questions and updates the session."""
 
-    # Papers with questions in DynamoDB: pull from DB first, fallback to Bedrock
-    # All papers now have questions imported from PDF/docx
-    DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM')
-    if paper_name in DB_PAPERS:
-        questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
-        if not questions:
-            questions = _call_bedrock(paper_name)
+    if mode == 'mock_test':
+        questions = _generate_mock_test(paper_name, questions_table)
     else:
-        questions = _call_bedrock(paper_name)
-        if len(questions) < QUESTIONS_PER_SET:
-            needed = QUESTIONS_PER_SET - len(questions)
-            questions += _db_fallback(questions_table, paper_name, needed)
+        # Original practice mode — pull from DB first, fallback to Bedrock
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM')
+        if paper_name in DB_PAPERS:
+            questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
+            if not questions:
+                questions = _call_bedrock(paper_name)
+        else:
+            questions = _call_bedrock(paper_name)
+            if len(questions) < QUESTIONS_PER_SET:
+                needed = QUESTIONS_PER_SET - len(questions)
+                questions += _db_fallback(questions_table, paper_name, needed)
 
-    questions = questions[:QUESTIONS_PER_SET]
+        questions = questions[:QUESTIONS_PER_SET]
 
     formatted = [
         {
@@ -299,13 +350,120 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
 
     status = 'ready' if formatted else 'failed'
 
+    update_expr = 'SET #st = :s, questions = :q'
+    expr_values = {':s': status, ':q': formatted}
+    
+    # For mock test, store the mode and marks config
+    if mode == 'mock_test':
+        update_expr += ', #mode = :m, marks_config = :mc, total_marks = :tm, pass_marks = :pm, duration_minutes = :dm'
+        expr_values[':m'] = 'mock_test'
+        expr_values[':mc'] = MOCK_TEST_CONFIG
+        expr_values[':tm'] = MOCK_TEST_TOTAL_MARKS
+        expr_values[':pm'] = MOCK_TEST_PASS_MARKS
+        expr_values[':dm'] = MOCK_TEST_DURATION
+
     sessions_table.update_item(
         Key={'session_id': session_id},
-        UpdateExpression='SET #st = :s, questions = :q',
-        ExpressionAttributeNames={'#st': 'status'},
-        ExpressionAttributeValues={':s': status, ':q': formatted}
+        UpdateExpression=update_expr,
+        ExpressionAttributeNames={'#st': 'status', **(
+            {'#mode': 'mode'} if mode == 'mock_test' else {}
+        )},
+        ExpressionAttributeValues=expr_values
     )
-    print(f"Session {session_id} updated to {status} with {len(formatted)} questions")
+    print(f"Session {session_id} [{mode}] updated to {status} with {len(formatted)} questions")
+
+
+def _generate_mock_test(paper_name: str, questions_table) -> List[Dict]:
+    """
+    Generate a mock test with proper JAIIB exam weightage:
+    - 50 easy questions (0.5 marks each = 25 marks)
+    - 25 medium questions (1 mark each = 25 marks)
+    - 25 hard questions (2 marks each = 50 marks)
+    Total: 100 questions, 100 marks
+    
+    Strategy: Try DB first for each difficulty, fill gaps with Bedrock.
+    """
+    needed = {
+        'easy': MOCK_TEST_CONFIG['easy']['count'],    # 50
+        'medium': MOCK_TEST_CONFIG['medium']['count'], # 25
+        'hard': MOCK_TEST_CONFIG['hard']['count'],     # 25
+    }
+    
+    # Try to fetch from DB grouped by difficulty
+    db_grouped = _db_fetch_by_difficulty(questions_table, paper_name)
+    
+    selected = {'easy': [], 'medium': [], 'hard': []}
+    
+    for diff in ['easy', 'medium', 'hard']:
+        available = db_grouped.get(diff, [])
+        count_needed = needed[diff]
+        if len(available) >= count_needed:
+            selected[diff] = random.sample(available, count_needed)
+        else:
+            selected[diff] = available  # take all available
+    
+    # Check what's missing
+    missing_easy = needed['easy'] - len(selected['easy'])
+    missing_medium = needed['medium'] - len(selected['medium'])
+    missing_hard = needed['hard'] - len(selected['hard'])
+    
+    total_missing = missing_easy + missing_medium + missing_hard
+    
+    if total_missing > 0:
+        # Generate missing questions via Bedrock
+        print(f"Mock test: need {missing_easy} easy, {missing_medium} medium, {missing_hard} hard from Bedrock")
+        bedrock_questions = _call_bedrock(paper_name)
+        
+        # Sort Bedrock questions by difficulty
+        bedrock_grouped = {'easy': [], 'medium': [], 'hard': []}
+        for q in bedrock_questions:
+            diff = q.get('difficulty', 'medium')
+            if diff in bedrock_grouped:
+                bedrock_grouped[diff].append(q)
+        
+        # Fill gaps
+        if missing_easy > 0:
+            selected['easy'] += bedrock_grouped['easy'][:missing_easy]
+        if missing_medium > 0:
+            selected['medium'] += bedrock_grouped['medium'][:missing_medium]
+        if missing_hard > 0:
+            selected['hard'] += bedrock_grouped['hard'][:missing_hard]
+        
+        # If still short on any difficulty, redistribute from medium (most available)
+        # This handles the case where DB has all medium but no easy/hard
+        still_missing_easy = needed['easy'] - len(selected['easy'])
+        still_missing_hard = needed['hard'] - len(selected['hard'])
+        
+        if still_missing_easy > 0 or still_missing_hard > 0:
+            # Use remaining medium questions as easy (they're close enough for now)
+            remaining_medium = [q for q in db_grouped.get('medium', []) 
+                              if q not in selected['medium']]
+            
+            if still_missing_easy > 0 and remaining_medium:
+                fill = remaining_medium[:still_missing_easy]
+                for q in fill:
+                    q_copy = dict(q)
+                    q_copy['difficulty'] = 'easy'
+                    selected['easy'].append(q_copy)
+                remaining_medium = remaining_medium[still_missing_easy:]
+            
+            if still_missing_hard > 0 and remaining_medium:
+                fill = remaining_medium[:still_missing_hard]
+                for q in fill:
+                    q_copy = dict(q)
+                    q_copy['difficulty'] = 'hard'
+                    selected['hard'].append(q_copy)
+    
+    # Combine all questions in order: easy first, then medium, then hard
+    all_questions = selected['easy'] + selected['medium'] + selected['hard']
+    
+    # Shuffle within each section for variety but keep sections together
+    # so the student experiences increasing difficulty
+    random.shuffle(selected['easy'])
+    random.shuffle(selected['medium'])
+    random.shuffle(selected['hard'])
+    
+    return selected['easy'] + selected['medium'] + selected['hard']
 
 
 # ── Main handler ──────────────────────────────────────────────────────────────
@@ -323,7 +481,8 @@ def handler(event, context):
                 event['session_id'],
                 event['paper_name'],
                 sessions_table,
-                questions_table
+                questions_table,
+                mode=event.get('mode', 'practice')
             )
             return {'statusCode': 200}
 
@@ -339,6 +498,7 @@ def handler(event, context):
         action     = body.get('action', 'generate')
         session_id = body.get('session_id')
         answers    = body.get('answers', {})
+        mode       = body.get('mode', 'practice')  # 'practice' or 'mock_test'
 
         # ── GET /practice/status/{session_id} ─────────────────────────────────
         if method == 'GET' and '/status/' in path:
@@ -349,14 +509,22 @@ def handler(event, context):
                 return err(404, 'Session not found')
             status = session.get('status', 'generating')
             if status == 'ready':
-                return ok({
+                response_data = {
                     'status': 'ready',
                     'session_id': sid,
                     'paper_name': session.get('paper_name'),
                     'questions': session.get('questions', []),
                     'total_questions': len(session.get('questions', [])),
                     'created_at': session.get('created_at')
-                })
+                }
+                # Include mock test metadata
+                if session.get('mode') == 'mock_test':
+                    response_data['mode'] = 'mock_test'
+                    response_data['duration_minutes'] = session.get('duration_minutes', MOCK_TEST_DURATION)
+                    response_data['total_marks'] = session.get('total_marks', MOCK_TEST_TOTAL_MARKS)
+                    response_data['pass_marks'] = session.get('pass_marks', MOCK_TEST_PASS_MARKS)
+                    response_data['marks_config'] = session.get('marks_config', MOCK_TEST_CONFIG)
+                return ok(response_data)
             return ok({'status': status, 'session_id': sid})
 
         if not user_id:
@@ -374,7 +542,7 @@ def handler(event, context):
             now = datetime.utcnow().isoformat()
 
             # Store placeholder session immediately
-            sessions_table.put_item(Item={
+            session_item = {
                 'session_id': session_id,
                 'user_id':    user_id,
                 'paper_name': paper_name,
@@ -382,7 +550,13 @@ def handler(event, context):
                 'questions':  [],
                 'created_at': now,
                 'ttl':        int(datetime.utcnow().timestamp()) + 86400
-            })
+            }
+            
+            if mode == 'mock_test':
+                session_item['mode'] = 'mock_test'
+                session_item['duration_minutes'] = MOCK_TEST_DURATION
+            
+            sessions_table.put_item(Item=session_item)
 
             # Fire-and-forget async Lambda self-invoke
             _lambda().invoke(
@@ -391,13 +565,15 @@ def handler(event, context):
                 Payload=json.dumps({
                     'async_action': 'generate',
                     'session_id':   session_id,
-                    'paper_name':   paper_name
+                    'paper_name':   paper_name,
+                    'mode':         mode
                 })
             )
 
             return ok({
                 'session_id': session_id,
                 'status':     'generating',
+                'mode':       mode,
                 'message':    'Practice set is being generated. Poll /practice/status/{session_id} to check progress.'
             })
 
@@ -414,29 +590,57 @@ def handler(event, context):
                 return err(404, 'Session not found')
 
             questions = session.get('questions', [])
+            session_mode = session.get('mode', 'practice')
             correct_count = 0
             results = []
+            
+            # Weighted scoring for mock test
+            total_marks_earned = 0
+            total_marks_possible = 0
 
             for q in questions:
                 qid          = q['question_id']
                 user_ans     = answers.get(qid)
                 correct_ans  = q.get('correct_answer')
                 is_correct   = user_ans == correct_ans
+                difficulty   = q.get('difficulty', 'medium')
+                
+                # Calculate marks based on difficulty
+                if session_mode == 'mock_test':
+                    marks_for_q = MOCK_TEST_MARKS.get(difficulty, 1.0)
+                else:
+                    marks_for_q = 1.0
+                
+                total_marks_possible += marks_for_q
+                
                 if is_correct:
                     correct_count += 1
+                    total_marks_earned += marks_for_q
+                    
                 results.append({
                     'question_id':    qid,
                     'question_text':  q.get('question_text', ''),
                     'options':        q.get('options', {}),
                     'correct':        is_correct,
                     'user_answer':    user_ans or '',
-                    'correct_answer': correct_ans
+                    'correct_answer': correct_ans,
+                    'difficulty':     difficulty,
+                    'marks':          marks_for_q if is_correct else 0,
+                    'max_marks':      marks_for_q
                 })
 
-            total      = len(questions)
-            score      = int(correct_count / total * 100) if total else 0
-            passed     = score >= 60
-            submitted  = datetime.utcnow().isoformat()
+            total = len(questions)
+            
+            if session_mode == 'mock_test':
+                # Weighted score based on marks
+                score = round((total_marks_earned / total_marks_possible * 100), 1) if total_marks_possible else 0
+                passed = total_marks_earned >= MOCK_TEST_PASS_MARKS
+            else:
+                # Simple percentage for practice mode
+                score = int(correct_count / total * 100) if total else 0
+                passed = score >= 60
+                
+            submitted = datetime.utcnow().isoformat()
 
             try:
                 created_dt  = datetime.fromisoformat(session.get('created_at', submitted))
@@ -454,7 +658,7 @@ def handler(event, context):
                 }
             )
 
-            return ok({
+            response_data = {
                 'session_id':  session_id,
                 'user_id':     user_id,
                 'score':       score,
@@ -462,7 +666,35 @@ def handler(event, context):
                 'time_taken':  time_taken,
                 'passed':      passed,
                 'submitted_at': submitted
-            })
+            }
+            
+            # Add mock test specific data
+            if session_mode == 'mock_test':
+                response_data['mode'] = 'mock_test'
+                response_data['marks_earned'] = total_marks_earned
+                response_data['total_marks'] = total_marks_possible
+                response_data['pass_marks'] = MOCK_TEST_PASS_MARKS
+                response_data['correct_count'] = correct_count
+                response_data['total_questions'] = total
+                response_data['breakdown'] = {
+                    'easy': {
+                        'total': sum(1 for q in questions if q.get('difficulty') == 'easy'),
+                        'correct': sum(1 for r in results if r['correct'] and r['difficulty'] == 'easy'),
+                        'marks_per_q': 0.5
+                    },
+                    'medium': {
+                        'total': sum(1 for q in questions if q.get('difficulty') == 'medium'),
+                        'correct': sum(1 for r in results if r['correct'] and r['difficulty'] == 'medium'),
+                        'marks_per_q': 1.0
+                    },
+                    'hard': {
+                        'total': sum(1 for q in questions if q.get('difficulty') == 'hard'),
+                        'correct': sum(1 for r in results if r['correct'] and r['difficulty'] == 'hard'),
+                        'marks_per_q': 2.0
+                    }
+                }
+
+            return ok(response_data)
 
         return err(400, f"Unknown action: {action}")
 

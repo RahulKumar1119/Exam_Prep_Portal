@@ -9,7 +9,7 @@ interface PracticeContextType {
   session_result: SessionResult | null;
   is_loading: boolean;
   error: string | null;
-  generatePracticeSet: (paper_name: string) => Promise<void>;
+  generatePracticeSet: (paper_name: string, mode?: 'practice' | 'mock_test') => Promise<void>;
   submitPracticeSet: (session_id: string, answers: Record<string, string>, onComplete?: () => void) => Promise<void>;
   getSession: (session_id: string) => Promise<void>;
   clearSession: () => void;
@@ -33,7 +33,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   }, []);
 
-  const generatePracticeSet = async (paper_name: string) => {
+  const generatePracticeSet = async (paper_name: string, mode: 'practice' | 'mock_test' = 'practice') => {
     setIsLoading(true);
     setError(null);
     try {
@@ -42,7 +42,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
       // Step 1: kick off async generation — returns immediately with session_id
       const initResp = await apiClient.post<{ session_id: string; status: string }>(
         '/practice/generate',
-        { paper_name, user_id: user.user_id, action: 'generate' }
+        { paper_name, user_id: user.user_id, action: 'generate', mode }
       );
 
       if (!initResp.success || !initResp.data?.session_id) {

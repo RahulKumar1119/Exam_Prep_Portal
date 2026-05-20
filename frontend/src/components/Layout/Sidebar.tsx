@@ -16,6 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     { path: '/practice', label: 'Practice', icon: 'practice' },
+    { path: '/mock-test', label: 'Mock Test', icon: 'mock-test' },
   ];
 
   // Add admin items if user is admin or trainer

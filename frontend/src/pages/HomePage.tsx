@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Start Practice */}
           <div
             onClick={() => navigate('/practice')}
@@ -140,6 +140,27 @@ const HomePage: React.FC = () => {
             </div>
             <button className="mt-4 bg-white text-blue-600 font-semibold py-2 px-6 rounded-lg hover:bg-blue-50 transition">
               Start Now
+            </button>
+          </div>
+
+          {/* Mock Test */}
+          <div
+            onClick={() => navigate('/mock-test')}
+            className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow-lg p-8 cursor-pointer hover:shadow-xl hover:scale-105 transition transform"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-2">Mock Test</h2>
+                <p className="text-purple-100">
+                  Real exam simulation with proper weightage (100 marks)
+                </p>
+              </div>
+              <svg className="w-12 h-12 text-purple-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+            </div>
+            <button className="mt-4 bg-white text-indigo-600 font-semibold py-2 px-6 rounded-lg hover:bg-indigo-50 transition">
+              Take Test
             </button>
           </div>
 
