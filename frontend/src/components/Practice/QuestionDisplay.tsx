@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PracticeSession } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
-import { Progress } from '../ui/Progress';
-import { ReportQuestionButton } from '../ReportQuestionButton';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
@@ -21,6 +19,11 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   isSubmitting = false
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [reviewedQuestions, setReviewedQuestions] = useState<Set<string>>(new Set());
+  const [showSummary, setShowSummary] = useState(false);
+  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   // Restore answers + timer from localStorage if available
   const persisted = loadSessionState();
@@ -33,37 +36,26 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     isRestoredSession ? persisted!.timeLeft : TIMER_DURATION
   );
   const [timedOut, setTimedOut] = useState(false);
-  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const answersRef = useRef(answers);
 
-  // Keep ref in sync so the timer callback always has latest answers
-  useEffect(() => {
-    answersRef.current = answers;
-  }, [answers]);
-
-  // Persist to localStorage on every answers/timeLeft change
+  useEffect(() => { answersRef.current = answers; }, [answers]);
   useSessionPersistence(session, answers, timeLeft);
 
   // Countdown timer
   useEffect(() => {
+    if (isPaused) return;
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setTimedOut(true);
-          return 0;
-        }
+        if (prev <= 1) { clearInterval(interval); setTimedOut(true); return 0; }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isPaused]);
 
   // Auto-submit when time runs out
   useEffect(() => {
-    if (timedOut) {
-      onSubmit(answersRef.current);
-    }
+    if (timedOut) onSubmit(answersRef.current);
   }, [timedOut, onSubmit]);
 
   const formatTime = (seconds: number) => {
@@ -75,8 +67,8 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
       : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  const isWarning = timeLeft <= 5 * 60; // last 5 minutes
-  const isCritical = timeLeft <= 60;    // last 1 minute
+  const isWarning = timeLeft <= 5 * 60;
+  const isCritical = timeLeft <= 60;
 
   const currentQuestion = session.questions[currentQuestionIndex];
   const totalQuestions = session.questions.length;
@@ -84,108 +76,155 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
   const handleSelectAnswer = (optionKey: string) => {
     const questionId = currentQuestion.question_id;
-    setAnswers({
-      ...answers,
-      [questionId]: optionKey
-    });
+    setAnswers({ ...answers, [questionId]: optionKey });
     onAnswer(questionId, optionKey);
   };
 
+  const handleClearAnswer = () => {
+    const questionId = currentQuestion.question_id;
+    const newAnswers = { ...answers };
+    delete newAnswers[questionId];
+    setAnswers(newAnswers);
+  };
+
   const handleNext = () => {
-    if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
+    if (currentQuestionIndex < totalQuestions - 1) setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
 
   const handlePrevious = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
+    if (currentQuestionIndex > 0) setCurrentQuestionIndex(currentQuestionIndex - 1);
+  };
+
+  const handleReviewQuestion = () => {
+    const qid = currentQuestion.question_id;
+    setReviewedQuestions(prev => {
+      const next = new Set(prev);
+      if (next.has(qid)) next.delete(qid);
+      else next.add(qid);
+      return next;
+    });
   };
 
   const handleSubmit = () => {
     const unanswered = totalQuestions - answeredCount;
-    if (unanswered > 0) {
-      setShowSubmitDialog(true);
-    } else {
-      onSubmit(answers);
-    }
+    if (unanswered > 0) setShowSubmitDialog(true);
+    else onSubmit(answers);
   };
 
   const isAnswered = answers[currentQuestion.question_id];
+  const isReviewed = reviewedQuestions.has(currentQuestion.question_id);
 
   return (
-    <div className="space-y-6">
-      {/* Restored session banner */}
-      {isRestoredSession && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center gap-2 text-sm text-blue-700">
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          Session restored — your answers and timer have been recovered from your last visit.
+    <div className="space-y-4">
+      {/* Question Palette at top */}
+      <div className="bg-white rounded-lg shadow p-4 border">
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {session.questions.map((q, idx) => {
+            const isActive = idx === currentQuestionIndex;
+            const isAns = !!answers[q.question_id];
+            const isRev = reviewedQuestions.has(q.question_id);
+            return (
+              <button
+                key={q.question_id}
+                onClick={() => setCurrentQuestionIndex(idx)}
+                className={`w-8 h-8 rounded text-xs font-bold transition-all border ${
+                  isActive
+                    ? 'bg-indigo-600 text-white border-indigo-700 ring-2 ring-indigo-300'
+                    : isRev
+                    ? 'bg-orange-400 text-white border-orange-500 hover:bg-orange-500'
+                    : isAns
+                    ? 'bg-green-500 text-white border-green-600 hover:bg-green-600'
+                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                }`}
+              >
+                {idx + 1}
+              </button>
+            );
+          })}
         </div>
-      )}
-      {/* Progress Bar + Timer */}
-      <div className="bg-gray-100 rounded-lg p-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">
-            Question {currentQuestionIndex + 1} of {totalQuestions}
+
+        {/* Legend */}
+        <div className="flex items-center gap-4 text-xs text-gray-600 mb-3">
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-3 rounded bg-green-500 inline-block"></span> Answer
           </span>
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700">
-              Answered: {answeredCount}/{totalQuestions}
-            </span>
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-3 rounded bg-orange-400 inline-block"></span> Review
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-3 h-3 rounded bg-gray-100 border border-gray-300 inline-block"></span> Unattempted
+          </span>
+        </div>
+
+        {/* Action buttons row: Review question, Pause, Timer, Summary */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleReviewQuestion}
+              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                isReviewed
+                  ? 'bg-orange-500 text-white hover:bg-orange-600'
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
+              }`}
+            >
+              {isReviewed ? '✓ Reviewed' : 'Review question'}
+            </button>
+            <button
+              onClick={() => setIsPaused(!isPaused)}
+              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                isPaused
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
+              }`}
+            >
+              {isPaused ? '▶ Resume' : '⏸ Pause'}
+            </button>
             {/* Timer */}
-            <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-mono font-bold text-sm ${
+            <div className={`flex items-center gap-1.5 px-3 py-2 rounded-lg font-mono font-bold text-sm ${
               isCritical
                 ? 'bg-red-600 text-white animate-pulse'
                 : isWarning
                 ? 'bg-red-100 text-red-700 border border-red-300'
-                : 'bg-white text-gray-800 border border-gray-300'
+                : 'bg-gray-100 text-gray-800 border border-gray-300'
             }`}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {formatTime(timeLeft)}
+              ⏱ {formatTime(timeLeft)}
             </div>
           </div>
+          <button
+            onClick={() => setShowSummary(true)}
+            className="px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-all"
+          >
+            Summary
+          </button>
         </div>
-        <Progress value={((currentQuestionIndex + 1) / totalQuestions) * 100} color="blue" />
-        {isWarning && !isCritical && (
-          <p className="text-red-600 text-xs mt-2 font-medium">⚠ Less than 5 minutes remaining!</p>
-        )}
-        {isCritical && (
-          <p className="text-red-700 text-xs mt-2 font-bold">🚨 Less than 1 minute! Auto-submitting soon.</p>
-        )}
       </div>
 
+      {/* Question counter */}
+      <p className="text-sm text-indigo-600 font-medium">
+        Question {currentQuestionIndex + 1} of {totalQuestions}
+      </p>
+
       {/* Question Card */}
-      <div className="card">
-        {/* Question Header */}
+      <div className="bg-white rounded-lg shadow border p-6">
+        {/* Question text */}
         <div className="mb-6">
-          <div className="flex items-start justify-between mb-2">
-            <h3 className="text-lg font-bold text-gray-900 flex-1">
-              {currentQuestion.question_text}
-            </h3>
-            <div className="ml-4 flex items-center gap-2">
-              <ReportQuestionButton questionId={currentQuestion.question_id} />
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full whitespace-nowrap">
-                {currentQuestion.difficulty}
-              </span>
-            </div>
-          </div>
-          <p className="text-sm text-gray-500">Topic: {currentQuestion.topic}</p>
+          <h3 className="text-base font-bold text-gray-900">
+            {currentQuestionIndex + 1}. Question
+          </h3>
+          <p className="mt-2 text-gray-800 leading-relaxed whitespace-pre-wrap">
+            {currentQuestion.question_text}
+          </p>
         </div>
 
         {/* Options */}
-        <div className="space-y-3 mb-8">
+        <div className="space-y-2">
           {Object.entries(currentQuestion.options).map(([key, value]) => (
             <label
               key={key}
-              className={`flex items-start p-4 border-2 rounded-lg cursor-pointer transition-all ${
+              className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
                 isAnswered === key
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300 bg-white'
+                  ? 'border-indigo-500 bg-indigo-50'
+                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
               }`}
             >
               <input
@@ -194,91 +233,129 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 value={key}
                 checked={isAnswered === key}
                 onChange={() => handleSelectAnswer(key)}
-                className="w-4 h-4 mt-1 flex-shrink-0"
+                className="w-4 h-4 text-indigo-600 flex-shrink-0"
               />
-              <div className="ml-3 flex-1">
-                <span className="font-medium text-gray-900">{key}.</span>
-                <span className="ml-2 text-gray-700">{value}</span>
-              </div>
+              <span className="ml-3 text-gray-800">
+                <span className="font-medium">{key}.</span> {value}
+              </span>
             </label>
           ))}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex items-center justify-between pt-6 border-t border-gray-200">
-          <button
-            onClick={handlePrevious}
-            disabled={currentQuestionIndex === 0}
-            className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            ← Previous
-          </button>
+        {/* Bottom action buttons */}
+        <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-200">
+          {/* Left buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrevious}
+              disabled={currentQuestionIndex === 0}
+              className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
+              Back
+            </button>
+            <button
+              onClick={handleClearAnswer}
+              disabled={!isAnswered}
+              className="px-4 py-2 text-sm font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
+              Clear Answer
+            </button>
+            <button
+              onClick={() => setShowReportDialog(true)}
+              className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
+            >
+              Report Question
+            </button>
+          </div>
 
-          <button
-            onClick={handleNext}
-            disabled={currentQuestionIndex === totalQuestions - 1}
-            className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next →
-          </button>
-        </div>
-      </div>
-
-      {/* Question Palette — click any number to jump directly */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-semibold text-gray-700">Question Palette</p>
-          <div className="flex items-center gap-3 text-xs text-gray-500">
-            <span className="flex items-center gap-1">
-              <span className="w-5 h-5 rounded bg-blue-600 inline-block"></span> Current
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-5 h-5 rounded bg-green-500 inline-block"></span> Answered
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-5 h-5 rounded bg-gray-200 inline-block"></span> Skipped
-            </span>
+          {/* Right buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-4 py-2 text-sm font-semibold bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-all"
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={currentQuestionIndex === totalQuestions - 1}
+              className="px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            >
+              Next
+            </button>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {session.questions.map((q, idx) => {
-            const isActive = idx === currentQuestionIndex;
-            const isAns = !!answers[q.question_id];
-            return (
-              <button
-                key={q.question_id}
-                onClick={() => setCurrentQuestionIndex(idx)}
-                className={`w-9 h-9 rounded text-sm font-semibold transition-all ${
-                  isActive
-                    ? 'bg-blue-600 text-white ring-2 ring-blue-300'
-                    : isAns
-                    ? 'bg-green-500 text-white hover:bg-green-600'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {idx + 1}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
-      {/* Submit Button */}
-      <div className="flex justify-center">
-        <button
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className="px-8 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          {isSubmitting ? 'Submitting...' : `Submit (${answeredCount}/${totalQuestions} answered)`}
-        </button>
-      </div>
+      {/* Paused overlay */}
+      {isPaused && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-8 text-center shadow-2xl">
+            <p className="text-2xl font-bold text-gray-900 mb-2">⏸ Test Paused</p>
+            <p className="text-gray-600 mb-6">Click resume to continue your test</p>
+            <button
+              onClick={() => setIsPaused(false)}
+              className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all"
+            >
+              ▶ Resume Test
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Summary Dialog */}
+      <Dialog open={showSummary} onOpenChange={setShowSummary}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Test Summary</DialogTitle>
+            <DialogDescription>
+              Overview of your progress
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 mt-4">
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Total Questions</span>
+              <span className="font-bold">{totalQuestions}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Answered</span>
+              <span className="font-bold text-green-600">{answeredCount}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Unattempted</span>
+              <span className="font-bold text-gray-500">{totalQuestions - answeredCount}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-gray-600">Marked for Review</span>
+              <span className="font-bold text-orange-500">{reviewedQuestions.size}</span>
+            </div>
+            <div className="flex justify-between py-2">
+              <span className="text-gray-600">Time Remaining</span>
+              <span className="font-bold">{formatTime(timeLeft)}</span>
+            </div>
+          </div>
+          <div className="flex gap-3 justify-end mt-6">
+            <DialogClose asChild>
+              <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                Continue
+              </button>
+            </DialogClose>
+            <button
+              onClick={() => { setShowSummary(false); onSubmit(answers); }}
+              className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg"
+            >
+              Submit Test
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Submit confirmation dialog */}
       <Dialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Submit Practice Set?</DialogTitle>
+            <DialogTitle>Submit Mock Test?</DialogTitle>
             <DialogDescription>
               You have {totalQuestions - answeredCount} unanswered question{totalQuestions - answeredCount > 1 ? 's' : ''}.
               Unanswered questions will be marked incorrect.
@@ -286,7 +363,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           </DialogHeader>
           <div className="flex gap-3 justify-end mt-6">
             <DialogClose asChild>
-              <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+              <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
                 Continue Answering
               </button>
             </DialogClose>
@@ -296,6 +373,38 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             >
               Submit Anyway
             </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Report Question Dialog */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Report Question</DialogTitle>
+            <DialogDescription>
+              Report an issue with question {currentQuestionIndex + 1}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 mt-4">
+            {['Wrong answer marked as correct', 'Question is incomplete', 'Options are wrong', 'Duplicate question', 'Other'].map((reason) => (
+              <label key={reason} className="flex items-center gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                <input type="radio" name="report-reason" className="w-4 h-4 text-indigo-600" />
+                <span className="text-sm text-gray-700">{reason}</span>
+              </label>
+            ))}
+          </div>
+          <div className="flex gap-3 justify-end mt-6">
+            <DialogClose asChild>
+              <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                Cancel
+              </button>
+            </DialogClose>
+            <DialogClose asChild>
+              <button className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg">
+                Submit Report
+              </button>
+            </DialogClose>
           </div>
         </DialogContent>
       </Dialog>
