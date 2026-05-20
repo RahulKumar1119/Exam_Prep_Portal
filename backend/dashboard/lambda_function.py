@@ -272,13 +272,62 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         for paper, scores in paper_stats.items()
     ]
 
-    # --- Weak / Strong areas ---
-    topic_avg = {
-        paper: sum(scores) / len(scores)
-        for paper, scores in paper_stats.items()
-    }
-    weak_areas  = [t for t, avg in topic_avg.items() if avg < 50]
-    strong_areas = [t for t, avg in topic_avg.items() if avg >= 50]
+    # --- Topic-level analysis from questions in sessions ---
+    topic_correct: Dict[str, int] = {}
+    topic_total: Dict[str, int] = {}
+    
+    for s in completed:
+        questions = s.get('questions', [])
+        user_answers = s.get('user_answers', {})
+        
+        # If answers are stored at session level
+        if not user_answers:
+            # Try to reconstruct from the results if available
+            continue
+            
+        for q in questions:
+            topic = q.get('topic', 'General')
+            qid = q.get('question_id', '')
+            correct_answer = q.get('correct_answer', '')
+            user_answer = user_answers.get(qid, '')
+            
+            topic_total.setdefault(topic, 0)
+            topic_correct.setdefault(topic, 0)
+            topic_total[topic] += 1
+            
+            if user_answer and user_answer == correct_answer:
+                topic_correct[topic] += 1
+
+    # Calculate topic accuracy
+    topic_accuracy: Dict[str, float] = {}
+    for topic in topic_total:
+        if topic_total[topic] > 0:
+            topic_accuracy[topic] = round(
+                (topic_correct.get(topic, 0) / topic_total[topic]) * 100, 1
+            )
+        else:
+            topic_accuracy[topic] = 0.0
+
+    # Weak areas: topics with < 50% accuracy (at least 2 questions attempted)
+    weak_areas = [
+        t for t, acc in sorted(topic_accuracy.items(), key=lambda x: x[1])
+        if acc < 50 and topic_total.get(t, 0) >= 2
+    ][:8]  # Top 8 weakest
+
+    # Strong areas: topics with >= 70% accuracy (at least 2 questions attempted)
+    strong_areas = [
+        t for t, acc in sorted(topic_accuracy.items(), key=lambda x: -x[1])
+        if acc >= 70 and topic_total.get(t, 0) >= 2
+    ][:5]  # Top 5 strongest
+
+    # If no topic-level data, fall back to paper-level
+    if not weak_areas and not strong_areas:
+        paper_avg = {
+            paper: sum(scores) / len(scores)
+            for paper, scores in paper_stats.items()
+        }
+        weak_areas = [t for t, avg in paper_avg.items() if avg < 50]
+        strong_areas = [t for t, avg in paper_avg.items() if avg >= 50]
 
     # --- Trend data (last 10 completed sessions) ---
     sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
@@ -293,6 +342,7 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         'weak_areas': weak_areas,
         'strong_areas': strong_areas,
         'trend_data': trend_data,
+        'topic_accuracy': topic_accuracy,  # Send full topic data to frontend
     }
 
 

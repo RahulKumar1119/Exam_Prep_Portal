@@ -661,11 +661,12 @@ def handler(event, context):
 
             sessions_table.update_item(
                 Key={'session_id': session_id},
-                UpdateExpression='SET #s = :s, score = :sc, passed = :p, submitted_at = :sa, time_taken = :tt',
+                UpdateExpression='SET #s = :s, score = :sc, passed = :p, submitted_at = :sa, time_taken = :tt, user_answers = :ua',
                 ExpressionAttributeNames={'#s': 'status'},
                 ExpressionAttributeValues={
                     ':s': 'completed', ':sc': Decimal(str(score)),
-                    ':p': passed, ':sa': submitted, ':tt': time_taken
+                    ':p': passed, ':sa': submitted, ':tt': time_taken,
+                    ':ua': answers
                 }
             )
 

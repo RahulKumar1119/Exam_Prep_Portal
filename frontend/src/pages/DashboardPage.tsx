@@ -57,27 +57,11 @@ const DashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <WeakAreas
               weak_areas={dashboard_data.weak_areas}
-              accuracy_by_topic={
-                dashboard_data.paper_performance.reduce(
-                  (acc: Record<string, number>, paper: any) => ({
-                    ...acc,
-                    [paper.paper_name]: paper.average_score
-                  }),
-                  {}
-                )
-              }
+              accuracy_by_topic={dashboard_data.topic_accuracy || {}}
             />
             <StrongAreas
               strong_areas={dashboard_data.strong_areas}
-              accuracy_by_topic={
-                dashboard_data.paper_performance.reduce(
-                  (acc: Record<string, number>, paper: any) => ({
-                    ...acc,
-                    [paper.paper_name]: paper.average_score
-                  }),
-                  {}
-                )
-              }
+              accuracy_by_topic={dashboard_data.topic_accuracy || {}}
             />
           </div>
 

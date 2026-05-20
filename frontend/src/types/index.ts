@@ -107,6 +107,7 @@ export interface DashboardData {
   weak_areas: string[];
   strong_areas: string[];
   trend_data: TrendPoint[];
+  topic_accuracy?: Record<string, number>;
 }
 
 export interface TrendPoint {
