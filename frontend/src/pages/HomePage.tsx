@@ -121,28 +121,7 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Start Practice */}
-          <div
-            onClick={() => navigate('/practice')}
-            className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-8 cursor-pointer hover:shadow-xl hover:scale-105 transition transform"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Start Practice</h2>
-                <p className="text-blue-100">
-                  Generate a new practice set and test your knowledge
-                </p>
-              </div>
-              <svg className="w-12 h-12 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <button className="mt-4 bg-white text-blue-600 font-semibold py-2 px-6 rounded-lg hover:bg-blue-50 transition">
-              Start Now
-            </button>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Mock Test */}
           <div
             onClick={() => navigate('/mock-test')}

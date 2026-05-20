@@ -14,9 +14,20 @@ import uuid
 import random
 import re
 from datetime import datetime
+from decimal import Decimal
 from typing import List, Dict, Any, Optional
 
 import boto3
+
+
+class DecimalEncoder(json.JSONEncoder):
+    """Custom JSON encoder that handles Decimal types from DynamoDB."""
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            if obj % 1 == 0:
+                return int(obj)
+            return float(obj)
+        return super().default(obj)
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 100
@@ -162,7 +173,7 @@ def _lambda():
 
 # ── Response helpers ──────────────────────────────────────────────────────────
 def ok(data):
-    return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps(data)}
+    return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': json.dumps(data, cls=DecimalEncoder)}
 
 def err(code, msg):
     return {'statusCode': code, 'headers': CORS_HEADERS, 'body': json.dumps({'error': msg})}
@@ -653,7 +664,7 @@ def handler(event, context):
                 UpdateExpression='SET #s = :s, score = :sc, passed = :p, submitted_at = :sa, time_taken = :tt',
                 ExpressionAttributeNames={'#s': 'status'},
                 ExpressionAttributeValues={
-                    ':s': 'completed', ':sc': score,
+                    ':s': 'completed', ':sc': Decimal(str(score)),
                     ':p': passed, ':sa': submitted, ':tt': time_taken
                 }
             )
