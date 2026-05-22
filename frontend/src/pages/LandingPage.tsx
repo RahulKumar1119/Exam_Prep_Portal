@@ -198,6 +198,113 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* AI Demo Preview Section */}
+      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">See AI Explanations in Action</h2>
+            <p className="text-xl text-gray-600">Not just answers — deep understanding with official references</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            {/* Question Mock-up */}
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-white font-medium text-sm">PPB • Question 14 of 100</span>
+                  <span className="text-blue-100 text-sm">⏱ 1:23 remaining</span>
+                </div>
+              </div>
+              <div className="p-6">
+                <p className="text-gray-900 font-medium mb-6 leading-relaxed">
+                  As per RBI guidelines, what is the maximum period for which a bank can classify a restructured advance as a "standard asset" after the restructuring date?
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
+                    <span className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600">A</span>
+                    <span className="text-gray-700">6 months</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-red-300 bg-red-50">
+                    <span className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-sm font-semibold text-white">B</span>
+                    <span className="text-red-800 font-medium">12 months</span>
+                    <span className="ml-auto text-red-600 text-sm font-medium">✗ Your answer</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-green-300 bg-green-50">
+                    <span className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-sm font-semibold text-white">C</span>
+                    <span className="text-green-800 font-medium">1 year from the date of first payment of interest/principal</span>
+                    <span className="ml-auto text-green-600 text-sm font-medium">✓ Correct</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
+                    <span className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600">D</span>
+                    <span className="text-gray-700">2 years</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Explanation Mock-up */}
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4 flex items-center gap-2">
+                <span className="text-xl">🤖</span>
+                <span className="text-white font-medium">AI Explanation</span>
+              </div>
+              <div className="p-6 space-y-5">
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Why Option C is Correct</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    A restructured account is classified as a standard asset only if it demonstrates satisfactory performance for <strong>1 year from the date of first payment of interest or principal</strong> (whichever is later) after the restructuring. This is known as the "specified period" under RBI's prudential framework.
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Why Option B is Wrong</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">
+                    12 months is a common misconception. The period is not a fixed calendar duration — it starts from the <em>first payment date post-restructuring</em>, not from the restructuring date itself.
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                    <span className="text-sm">📖</span> Official References
+                  </h4>
+                  <ul className="space-y-2 text-sm text-blue-800">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-0.5">•</span>
+                      <span><strong>RBI Master Circular</strong> — Prudential Norms on Income Recognition, Asset Classification and Provisioning (DOR.STR.REC.55/21.04.048/2023-24), Para 10.3.2</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-0.5">•</span>
+                      <span><strong>IIBF PPB Textbook</strong> — Chapter 12: "Credit Management", Section 12.7 (Restructuring of Advances), Page 287</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-500 mt-0.5">•</span>
+                      <span><strong>RBI Framework</strong> — Resolution of Stressed Assets (June 7, 2019), Clause 17</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                  <h4 className="font-semibold text-amber-900 mb-1 text-sm">💡 Exam Tip</h4>
+                  <p className="text-amber-800 text-sm">
+                    IIBF frequently tests the distinction between "restructuring date" vs "first payment date" — always remember the clock starts at first payment, not at approval.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-gray-600 mb-4">Every question comes with detailed AI explanations citing official RBI circulars, IIBF textbooks, and relevant Acts</p>
+            <button
+              onClick={() => navigate('/register')}
+              className="px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition"
+            >
+              Try It Free →
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Papers Section */}
       <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
