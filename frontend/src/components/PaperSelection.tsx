@@ -6,7 +6,7 @@ const PAPERS = [
   {
     id: 'IE & IFS',
     name: 'IE & IFS',
-    description: 'Indian Economy & International Financial System',
+    description: 'Indian Economy & Indian Financial System',
   },
   {
     id: 'PPB',
@@ -14,9 +14,9 @@ const PAPERS = [
     description: 'Principles & Practices of Banking',
   },
   {
-    id: 'AFB',
-    name: 'AFB',
-    description: 'Advanced Financial Banking',
+    id: 'AFM',
+    name: 'AFM',
+    description: 'Accounting & Financial Management for Bankers',
   },
   {
     id: 'RBWM',

@@ -1,0 +1,102 @@
+# Implementation Plan
+
+- [x] 1. Write bug condition exploration test
+  - **Property 1: Bug Condition** - Paper-Level Weak/Strong Areas Instead of Granular Topics
+  - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
+  - **DO NOT attempt to fix the test or the code when it fails**
+  - **NOTE**: This test encodes the expected behavior - it will validate the fix when it passes after implementation
+  - **GOAL**: Surface counterexamples that demonstrate the bug exists
+  - **Scoped PBT Approach**: Scope the property to concrete failing cases: user with completed sessions containing question-level topic data (e.g., "SEBI", "Money supply and monetary policy") where weak/strong areas should be granular topics but are returned as paper names
+  - Create test file `tests/test_syllabus_tracking_properties.py`
+  - Mock DynamoDB sessions with completed sessions containing questions with varied topic performance within "IE & IFS" paper (e.g., "SEBI" at 20% accuracy, "Banking Regulation Act 1949" at 90%)
+  - Test that `get_dashboard_data(user_id)` returns `weak_areas` containing syllabus-aligned topic names (not paper names like "IE & IFS")
+  - Test that `get_dashboard_data(user_id)` returns `recommended_areas` key with non-empty list when coverage gaps exist
+  - Test that topics in `weak_areas` and `strong_areas` exist in `PAPER_SYLLABUS` structure
+  - Use Hypothesis with `@given` to generate varied session data with different topic distributions
+  - Run test on UNFIXED code
+  - **EXPECTED OUTCOME**: Test FAILS (this is correct - it proves the bug exists: weak_areas contains "IE & IFS" instead of specific topics, recommended_areas is missing)
+  - Document counterexamples found (e.g., "weak_areas=['IE & IFS'] instead of ['SEBI', 'Money supply and monetary policy']")
+  - Mark task complete when test is written, run, and failure is documented
+  - _Requirements: 1.1, 1.2, 1.3, 1.4_
+
+- [x] 2. Write preservation property tests (BEFORE implementing fix)
+  - **Property 2: Preservation** - Unchanged Metrics, Paper Performance, and Trend Data
+  - **IMPORTANT**: Follow observation-first methodology
+  - Observe: `get_dashboard_data(user_id)` for user with no sessions returns default zeros/empty values on unfixed code
+  - Observe: `get_dashboard_data(user_id)` for user with completed sessions returns correct `metrics` (overall_score, total_sessions, average_score, total_study_time, last_session_date) on unfixed code
+  - Observe: `get_dashboard_data(user_id)` returns correct `paper_performance` (per-paper average scores and session counts) on unfixed code
+  - Observe: `get_dashboard_data(user_id)` returns correct `trend_data` (last 10 sessions sorted by submitted_at) on unfixed code
+  - Write property-based tests using Hypothesis:
+    - Property: For all users with no completed sessions, metrics are all zero/None and lists are empty
+    - Property: For all session configurations, overall_score equals the max score, average_score equals mean of scores, total_sessions equals count of completed sessions
+    - Property: For all session configurations, paper_performance groups correctly by paper_name with correct averages
+    - Property: For all session configurations, trend_data contains at most 10 entries sorted by submitted_at
+  - Verify tests PASS on UNFIXED code (confirms baseline behavior to preserve)
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+
+- [x] 3. Implement the syllabus tracking fix
+  - [x] 3.1 Create `backend/shared/__init__.py` package file
+    - Create empty `__init__.py` to make `backend/shared/` a Python package
+    - _Requirements: 2.3, 2.5_
+
+  - [x] 3.2 Create `backend/shared/syllabus.py` with shared syllabus module
+    - Extract `PAPER_SYLLABUS` dict from `backend/practice/lambda_function.py` into shared module
+    - Expand IE & IFS syllabus with full Module A-D topics from user input (46 topics total):
+      - Module A - Indian Economic Architecture: Indian Economy overview, GDP and National Income, Economic planning, Agriculture sector, Industrial sector, Service sector, Inflation and price indices, Fiscal policy, Union Budget, International trade, Economic reforms
+      - Module B - Economic Concepts Related to Banking: Money supply and monetary policy, RBI functions and role, Credit creation, Interest rates, Foreign exchange, Balance of payments, Capital account convertibility
+      - Module C - Indian Financial Architecture: Banking Regulation Act 1949, RBI Act 1934, SEBI, IRDAI, PFRDA, Financial markets, Money market instruments, Capital market, Debt market, Forex market, NABARD, SIDBI
+      - Module D - Financial Products and Services: Retail banking products, Corporate banking, Priority sector lending, Financial inclusion, Digital banking, Payment systems, NEFT RTGS IMPS UPI, Insurance products, Mutual funds, Pension funds, Derivatives, Securitization, Factoring, Venture capital, Leasing and hire purchase, Credit rating agencies
+    - Implement `normalize_topic(topic_str, paper_name)` function:
+      - Exact match first (case-insensitive)
+      - Substring match (topic_str is substring of syllabus entry or vice versa)
+      - Return canonical syllabus entry or original string if no match
+    - Implement `get_coverage_gaps(attempted_topics, paper_name)` function:
+      - Compare attempted topics against full syllabus for the paper
+      - Return list of syllabus topics not yet attempted
+    - _Bug_Condition: isBugCondition(input) where input.has_completed_sessions=true AND analysis_type IN ('weak_areas', 'strong_areas', 'recommended_areas')_
+    - _Expected_Behavior: normalize_topic maps free-form strings to canonical syllabus entries; get_coverage_gaps identifies unattempted topics_
+    - _Preservation: All existing papers (AFB, IE & IFS, PPB, RBWM) continue to work_
+    - _Requirements: 2.3, 2.4, 2.5_
+
+  - [x] 3.3 Update `backend/practice/lambda_function.py` to import from shared module
+    - Replace inline `PAPER_SYLLABUS` dict with import from `backend.shared.syllabus`
+    - Ensure practice lambda continues to work identically with the shared syllabus data
+    - _Preservation: Practice session generation unchanged for all papers_
+    - _Requirements: 3.5_
+
+  - [x] 3.4 Update `backend/dashboard/lambda_function.py` with granular topic analysis
+    - Import `PAPER_SYLLABUS`, `normalize_topic`, `get_coverage_gaps` from shared module
+    - In `get_dashboard_data()`, normalize topics during question iteration: map each `q.get('topic')` through `normalize_topic(topic, paper_name)` before accumulating accuracy stats
+    - Update weak_areas logic: use normalized topic accuracy (topics with < 50% accuracy and >= 2 questions), include module context (e.g., "Module A - Indian Economic Architecture: Indian Economy overview")
+    - Update strong_areas logic: use normalized topic accuracy (topics with >= 70% accuracy and >= 2 questions), include module context
+    - Add `recommended_areas` computation: call `get_coverage_gaps()` for each paper the user has attempted, combine unattempted topics with low-accuracy topics, prioritize unattempted first then lowest-performing
+    - Remove paper-level fallback for weak/strong areas (the bug condition)
+    - Mark standalone `get_weak_areas()` and `get_strong_areas()` as deprecated
+    - _Bug_Condition: isBugCondition(input) where weak_areas_are_paper_level OR recommended_areas_not_provided_
+    - _Expected_Behavior: weak_areas and strong_areas contain syllabus-aligned topic names; recommended_areas identifies coverage gaps_
+    - _Preservation: metrics, paper_performance, trend_data calculations unchanged_
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.2, 3.3, 3.4_
+
+  - [x] 3.5 Verify bug condition exploration test now passes
+    - **Property 1: Expected Behavior** - Granular Topic-Level Weak/Strong Areas
+    - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
+    - The test from task 1 encodes the expected behavior (syllabus-aligned topics in weak/strong areas, recommended_areas present)
+    - When this test passes, it confirms the expected behavior is satisfied
+    - Run bug condition exploration test from step 1
+    - **EXPECTED OUTCOME**: Test PASSES (confirms bug is fixed)
+    - _Requirements: 2.1, 2.2, 2.3, 2.4_
+
+  - [x] 3.6 Verify preservation tests still pass
+    - **Property 2: Preservation** - Unchanged Metrics, Paper Performance, and Trend Data
+    - **IMPORTANT**: Re-run the SAME tests from task 2 - do NOT write new tests
+    - Run preservation property tests from step 2
+    - **EXPECTED OUTCOME**: Tests PASS (confirms no regressions)
+    - Confirm all preservation tests still pass after fix (metrics, paper_performance, trend_data unchanged)
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+
+- [x] 4. Checkpoint - Ensure all tests pass
+  - Run full test suite: `pytest tests/test_syllabus_tracking_properties.py -v`
+  - Ensure Property 1 (bug condition / expected behavior) passes
+  - Ensure Property 2 (preservation) passes
+  - Run existing tests to confirm no regressions: `pytest tests/ -v --ignore=tests/infrastructure`
+  - Ensure all tests pass, ask the user if questions arise

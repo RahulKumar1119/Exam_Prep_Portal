@@ -10,6 +10,8 @@ Flow:
 """
 
 import json
+import os
+import sys
 import uuid
 import random
 import re
@@ -18,6 +20,13 @@ from decimal import Decimal
 from typing import List, Dict, Any, Optional
 
 import boto3
+
+# Add current directory and parent directory to path for shared module access
+# In Lambda runtime, shared/ is at the same level as lambda_function.py (/var/task/shared/)
+# In local dev, shared/ is one level up (backend/shared/)
+sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from shared.syllabus import PAPER_SYLLABUS
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -47,109 +56,7 @@ MOCK_TEST_PASS_MARKS = 50    # 50% of 100 = 50 marks
 MOCK_TEST_DURATION = 120     # 120 minutes
 
 # ── JAIIB syllabus ────────────────────────────────────────────────────────────
-PAPER_SYLLABUS = {
-    'IE & IFS': {
-        'modules': {
-            'Module A - Indian Economic Architecture': [
-                'Indian Economy overview', 'GDP and National Income', 'Economic planning',
-                'Agriculture sector', 'Industrial sector', 'Service sector',
-                'Inflation and price indices', 'Fiscal policy', 'Union Budget'
-            ],
-            'Module B - Economic Concepts Related to Banking': [
-                'Money supply and monetary policy', 'RBI functions and role',
-                'Credit creation', 'Interest rates', 'Foreign exchange',
-                'Balance of payments', 'Capital account convertibility'
-            ],
-            'Module C - Indian Financial Architecture': [
-                'Banking Regulation Act 1949', 'RBI Act 1934', 'SEBI', 'IRDAI',
-                'PFRDA', 'Financial markets', 'Money market instruments',
-                'Capital market', 'Debt market', 'Forex market'
-            ],
-            'Module D - Financial Products and Services': [
-                'Retail banking products', 'Corporate banking', 'Priority sector lending',
-                'Financial inclusion', 'Digital banking', 'Payment systems',
-                'NEFT RTGS IMPS UPI', 'Insurance products', 'Mutual funds'
-            ]
-        }
-    },
-    'PPB': {
-        'modules': {
-            'Module A - General Banking Operations': [
-                'Types of bank accounts', 'KYC norms', 'Account opening',
-                'Nomination facility', 'Cheque and its types', 'Crossing of cheques',
-                'Negotiable Instruments Act 1881', 'Promissory note', 'Bill of exchange',
-                'Banker customer relationship'
-            ],
-            'Module B - Functions of Banks': [
-                'Loans and advances', 'Secured and unsecured loans', 'Mortgage',
-                'Pledge and hypothecation', 'Priority sector lending', 'MSME lending',
-                'Agricultural loans', 'NPA classification', 'SARFAESI Act',
-                'Recovery of debts', 'Credit appraisal'
-            ],
-            'Module C - Banking Technology': [
-                'Core banking solution', 'Internet banking', 'Mobile banking',
-                'ATM operations', 'RTGS NEFT IMPS', 'UPI', 'Cheque truncation system',
-                'Cyber security', 'IT Act 2000', 'Digital payments'
-            ],
-            'Module D - Ethics in Banking': [
-                'Banking codes and standards', 'Customer grievance redressal',
-                'Banking ombudsman', 'Fair practices code', 'Anti-money laundering',
-                'PMLA 2002', 'KYC AML CFT', 'Corporate governance',
-                'Whistle blower policy', 'Code of conduct'
-            ]
-        }
-    },
-    'AFB': {
-        'modules': {
-            'Module A - Accounting Principles and Processes': [
-                'Accounting concepts and conventions', 'Double entry system',
-                'Journal and ledger', 'Trial balance', 'Depreciation methods',
-                'Provisions and reserves', 'Rectification of errors',
-                'Bank reconciliation statement'
-            ],
-            'Module B - Financial Statements and Core Banking': [
-                'Trading and P&L account', 'Balance sheet', 'Cash flow statement AS-3',
-                'Fund flow statement', 'Ratio analysis', 'Working capital management',
-                'NPBT calculation TIPP', 'Financing activities', 'Operating activities'
-            ],
-            'Module C - Financial Management': [
-                'Time value of money', 'Capital budgeting NPV IRR', 'Cost of capital',
-                'Capital structure', 'Leverage', 'Dividend policy',
-                'Working capital financing', 'Risk and return', 'CAPM'
-            ],
-            'Module D - Taxation and Costing': [
-                'Income tax basics', 'TDS provisions', 'GST overview',
-                'Cost accounting concepts', 'Marginal costing', 'Break even analysis',
-                'Standard costing', 'Budgetary control'
-            ]
-        }
-    },
-    'RBWM': {
-        'modules': {
-            'Module A - Retail Banking': [
-                'Retail banking overview', 'Retail products', 'Home loans',
-                'Auto loans', 'Personal loans', 'Credit cards', 'Debit cards',
-                'Retail deposits', 'NRI banking', 'Priority banking'
-            ],
-            'Module B - Retail Products and Recovery': [
-                'Loan against property', 'Education loans', 'Gold loans',
-                'Microfinance', 'Self help groups', 'Recovery management',
-                'Lok adalat', 'DRT', 'SARFAESI in retail', 'One time settlement'
-            ],
-            'Module C - Marketing of Banking Services': [
-                'Marketing concepts', 'Market segmentation', 'CRM',
-                'Digital marketing', 'Cross selling', 'Customer lifecycle',
-                'Service quality', 'Brand management', 'Distribution channels'
-            ],
-            'Module D - Wealth Management': [
-                'Wealth management overview', 'Financial planning', 'Investment products',
-                'Mutual funds types', 'Portfolio management', 'Risk profiling',
-                'Insurance planning', 'Retirement planning', 'Tax planning',
-                'Estate planning', 'High net worth individuals'
-            ]
-        }
-    }
-}
+# PAPER_SYLLABUS is imported from shared.syllabus (see imports above)
 
 CORS_HEADERS = {
     'Content-Type': 'application/json',
@@ -242,7 +149,7 @@ Return ONLY a valid JSON array of exactly 100 objects. No markdown, no explanati
     "question_text": "...",
     "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
     "correct_answer": "A",
-    "topic": "...",
+    "topic": "<MUST be one of the specific syllabus topics listed above, e.g. 'Banking Regulation Act 1949', 'SEBI', 'Money supply and monetary policy' — NOT the paper name>",
     "difficulty": "easy|medium|hard"
   }}
 ]"""

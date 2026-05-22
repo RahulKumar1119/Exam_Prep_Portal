@@ -203,49 +203,125 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Exam Papers Covered</h2>
-            <p className="text-xl text-gray-600">Comprehensive practice for all JAIIB papers</p>
+            <p className="text-xl text-gray-600">Comprehensive practice for all JAIIB & CAIIB papers</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-8 border-2 border-blue-200">
-              <h3 className="text-2xl font-bold text-blue-900 mb-3">IE & IFS</h3>
-              <p className="text-blue-800 mb-4">Indian Economy & International Financial System</p>
-              <ul className="space-y-2 text-blue-700">
-                <li>✓ 250+ practice questions</li>
-                <li>✓ Topic-wise breakdown</li>
-                <li>✓ Previous year papers</li>
-              </ul>
+          {/* JAIIB Papers */}
+          <div className="mb-12">
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <span className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">J</span>
+              JAIIB — Compulsory Papers
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-8 border-2 border-blue-200">
+                <h3 className="text-2xl font-bold text-blue-900 mb-3">IE & IFS</h3>
+                <p className="text-blue-800 mb-4">Indian Economy & Indian Financial System</p>
+                <ul className="space-y-2 text-blue-700">
+                  <li>✓ 250+ practice questions</li>
+                  <li>✓ Topic-wise breakdown</li>
+                  <li>✓ Previous year papers</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-8 border-2 border-indigo-200">
+                <h3 className="text-2xl font-bold text-indigo-900 mb-3">PPB</h3>
+                <p className="text-indigo-800 mb-4">Principles & Practices of Banking</p>
+                <ul className="space-y-2 text-indigo-700">
+                  <li>✓ 250+ practice questions</li>
+                  <li>✓ Topic-wise breakdown</li>
+                  <li>✓ Previous year papers</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-8 border-2 border-purple-200">
+                <h3 className="text-2xl font-bold text-purple-900 mb-3">AFM</h3>
+                <p className="text-purple-800 mb-4">Accounting & Financial Management for Bankers</p>
+                <ul className="space-y-2 text-purple-700">
+                  <li>✓ 250+ practice questions</li>
+                  <li>✓ Topic-wise breakdown</li>
+                  <li>✓ Previous year papers</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-8 border-2 border-pink-200">
+                <h3 className="text-2xl font-bold text-pink-900 mb-3">RBWM</h3>
+                <p className="text-pink-800 mb-4">Retail Banking & Wealth Management</p>
+                <ul className="space-y-2 text-pink-700">
+                  <li>✓ 250+ practice questions</li>
+                  <li>✓ Topic-wise breakdown</li>
+                  <li>✓ Previous year papers</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* CAIIB Papers */}
+          <div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <span className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold">C</span>
+              CAIIB — Compulsory Papers
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-8 border-2 border-emerald-200">
+                <h3 className="text-2xl font-bold text-emerald-900 mb-3">ABM</h3>
+                <p className="text-emerald-800 mb-4">Advanced Bank Management</p>
+                <ul className="space-y-2 text-emerald-700">
+                  <li>✓ Economic analysis & credit management</li>
+                  <li>✓ NPA & risk management</li>
+                  <li>✓ Organizational behaviour</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-8 border-2 border-teal-200">
+                <h3 className="text-2xl font-bold text-teal-900 mb-3">BFM</h3>
+                <p className="text-teal-800 mb-4">Bank Financial Management</p>
+                <ul className="space-y-2 text-teal-700">
+                  <li>✓ Treasury & international banking</li>
+                  <li>✓ Risk management & Basel norms</li>
+                  <li>✓ Balance sheet management</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl p-8 border-2 border-cyan-200">
+                <h3 className="text-2xl font-bold text-cyan-900 mb-3">ABF</h3>
+                <p className="text-cyan-800 mb-4">Advanced Business & Financial Management</p>
+                <ul className="space-y-2 text-cyan-700">
+                  <li>✓ Corporate finance & project appraisal</li>
+                  <li>✓ Financial services & fintech</li>
+                  <li>✓ Strategic management</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl p-8 border-2 border-sky-200">
+                <h3 className="text-2xl font-bold text-sky-900 mb-3">BRBL</h3>
+                <p className="text-sky-800 mb-4">Banking Regulations & Business Laws</p>
+                <ul className="space-y-2 text-sky-700">
+                  <li>✓ Banking Regulation Act & RBI Act</li>
+                  <li>✓ Contract Act & NI Act</li>
+                  <li>✓ Consumer protection & cyber laws</li>
+                </ul>
+              </div>
             </div>
 
-            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-8 border-2 border-indigo-200">
-              <h3 className="text-2xl font-bold text-indigo-900 mb-3">PPB</h3>
-              <p className="text-indigo-800 mb-4">Principles & Practices of Banking</p>
-              <ul className="space-y-2 text-indigo-700">
-                <li>✓ 250+ practice questions</li>
-                <li>✓ Topic-wise breakdown</li>
-                <li>✓ Previous year papers</li>
-              </ul>
+            <h4 className="text-lg font-semibold text-gray-700 mb-4">Popular Electives</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {[
+                { code: 'RBCB', name: 'Retail Banking & Consumer Banking' },
+                { code: 'CRCM', name: 'Credit Management' },
+                { code: 'ITK', name: 'Information Technology & Digital Banking' },
+                { code: 'RISKM', name: 'Risk Management' },
+                { code: 'CBBO', name: 'Central Banking & Business Operations' },
+                { code: 'HRM', name: 'Human Resource Management' },
+              ].map((elective) => (
+                <div key={elective.code} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <p className="font-semibold text-gray-800">{elective.code}</p>
+                  <p className="text-sm text-gray-600">{elective.name}</p>
+                </div>
+              ))}
             </div>
-
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-8 border-2 border-purple-200">
-              <h3 className="text-2xl font-bold text-purple-900 mb-3">AFB</h3>
-              <p className="text-purple-800 mb-4">Advanced Financial Banking</p>
-              <ul className="space-y-2 text-purple-700">
-                <li>✓ 250+ practice questions</li>
-                <li>✓ Topic-wise breakdown</li>
-                <li>✓ Previous year papers</li>
-              </ul>
-            </div>
-
-            <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-8 border-2 border-pink-200">
-              <h3 className="text-2xl font-bold text-pink-900 mb-3">RBWM</h3>
-              <p className="text-pink-800 mb-4">Retail Banking & Wealth Management</p>
-              <ul className="space-y-2 text-pink-700">
-                <li>✓ 250+ practice questions</li>
-                <li>✓ Topic-wise breakdown</li>
-                <li>✓ Previous year papers</li>
-              </ul>
-            </div>
+            <p className="text-sm text-gray-500 mt-4 italic">
+              CAIIB content coming soon — sign up to get notified when it launches.
+            </p>
           </div>
         </div>
       </section>

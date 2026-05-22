@@ -45,7 +45,7 @@ const QuestionSearchFilter: React.FC<QuestionSearchFilterProps> = ({ onSearch, i
             <option value="">All Papers</option>
             <option value="IE & IFS">IE & IFS</option>
             <option value="PPB">PPB</option>
-            <option value="AFB">AFB</option>
+            <option value="AFM">AFM</option>
             <option value="RBWM">RBWM</option>
           </select>
         </div>

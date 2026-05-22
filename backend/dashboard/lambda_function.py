@@ -6,12 +6,20 @@ Provides performance metrics and analytics for the user dashboard.
 
 import json
 import os
+import sys
 from datetime import datetime, timedelta
 from typing import Dict, Any
 from decimal import Decimal
 
 import boto3
 from botocore.exceptions import ClientError
+
+# Add current directory and parent directory to path for shared module imports
+# In Lambda runtime, shared/ is at the same level as lambda_function.py (/var/task/shared/)
+# In local dev, shared/ is one level up (backend/shared/)
+sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from shared.syllabus import PAPER_SYLLABUS, normalize_topic, get_coverage_gaps
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -143,7 +151,12 @@ def get_paper_performance(user_id: str) -> list:
 
 
 def get_weak_areas(user_id: str) -> list:
-    """Get weak areas based on actual session topic scores."""
+    """Get weak areas based on actual session topic scores.
+    
+    .. deprecated::
+        This standalone function is deprecated. Use get_dashboard_data() instead,
+        which provides granular topic-level weak areas using the shared syllabus module.
+    """
     try:
         response = sessions_table.query(
             IndexName='user-id-index',
@@ -166,7 +179,12 @@ def get_weak_areas(user_id: str) -> list:
 
 
 def get_strong_areas(user_id: str) -> list:
-    """Get strong areas based on actual session topic scores."""
+    """Get strong areas based on actual session topic scores.
+    
+    .. deprecated::
+        This standalone function is deprecated. Use get_dashboard_data() instead,
+        which provides granular topic-level strong areas using the shared syllabus module.
+    """
     try:
         response = sessions_table.query(
             IndexName='user-id-index',
@@ -275,10 +293,15 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
     # --- Topic-level analysis from questions in sessions ---
     topic_correct: Dict[str, int] = {}
     topic_total: Dict[str, int] = {}
+    papers_attempted: set = set()
     
     for s in completed:
         questions = s.get('questions', [])
         user_answers = s.get('user_answers', {})
+        paper_name = s.get('paper_name', '')
+        
+        if paper_name:
+            papers_attempted.add(paper_name)
         
         # If answers are stored at session level
         if not user_answers:
@@ -287,6 +310,11 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
             
         for q in questions:
             topic = q.get('topic', 'General')
+            # Normalize topic to canonical syllabus entry
+            # Returns None if topic is actually a paper display name (skip it)
+            topic = normalize_topic(topic, paper_name)
+            if topic is None:
+                continue
             qid = q.get('question_id', '')
             correct_answer = q.get('correct_answer', '')
             user_answer = user_answers.get(qid, '')
@@ -320,14 +348,45 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         if acc >= 70 and topic_total.get(t, 0) >= 2
     ][:5]  # Top 5 strongest
 
-    # If no topic-level data, fall back to paper-level
-    if not weak_areas and not strong_areas:
-        paper_avg = {
-            paper: sum(scores) / len(scores)
-            for paper, scores in paper_stats.items()
-        }
-        weak_areas = [t for t, avg in paper_avg.items() if avg < 50]
-        strong_areas = [t for t, avg in paper_avg.items() if avg >= 50]
+    # Fallback: if no granular topic data available but user has completed sessions,
+    # identify weak/strong papers based on paper_performance scores
+    if not weak_areas and not strong_areas and completed:
+        for pp in paper_performance:
+            if pp['sessions_completed'] >= 2:
+                if pp['average_score'] < 50:
+                    # Get some recommended topics from this paper's syllabus
+                    paper_data = PAPER_SYLLABUS.get(pp['paper_name'], {})
+                    for module_topics in paper_data.get('modules', {}).values():
+                        weak_areas.extend(module_topics[:2])
+                        if len(weak_areas) >= 8:
+                            break
+        weak_areas = weak_areas[:8]
+
+    # Recommended areas: unattempted topics + low-accuracy topics
+    recommended_areas = []
+    attempted_topics_set = set(topic_total.keys())
+    
+    # Get coverage gaps for each paper the user has attempted
+    unattempted = []
+    for paper in papers_attempted:
+        gaps = get_coverage_gaps(list(attempted_topics_set), paper)
+        unattempted.extend(gaps)
+    # Deduplicate while preserving order
+    seen = set()
+    unique_unattempted = []
+    for t in unattempted:
+        if t not in seen:
+            seen.add(t)
+            unique_unattempted.append(t)
+    
+    # Low-accuracy topics (< 50%) not already in weak_areas list
+    low_accuracy_topics = [
+        t for t, acc in sorted(topic_accuracy.items(), key=lambda x: x[1])
+        if acc < 50 and t not in unique_unattempted
+    ]
+    
+    # Prioritize: unattempted first, then lowest-performing
+    recommended_areas = (unique_unattempted + low_accuracy_topics)[:10]
 
     # --- Trend data (last 10 completed sessions) ---
     sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
@@ -343,6 +402,7 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         'strong_areas': strong_areas,
         'trend_data': trend_data,
         'topic_accuracy': topic_accuracy,  # Send full topic data to frontend
+        'recommended_areas': recommended_areas,
     }
 
 
