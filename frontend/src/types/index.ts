@@ -111,6 +111,7 @@ export interface DashboardData {
   recommended_areas?: string[];
   exam_readiness?: Record<string, ExamReadinessData>;
   study_streak?: StudyStreakData;
+  percentile_ranking?: Record<string, PercentileData>;
 }
 
 export interface ExamReadinessData {
@@ -133,6 +134,13 @@ export interface Badge {
   name: string;
   icon: string;
   description: string;
+}
+
+export interface PercentileData {
+  percentile: number | null;
+  total_users: number;
+  your_avg: number;
+  message: string;
 }
 
 export interface TrendPoint {

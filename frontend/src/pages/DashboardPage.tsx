@@ -9,6 +9,7 @@ import StrongAreas from '../components/Dashboard/StrongAreas';
 import RecommendedPractice from '../components/Dashboard/RecommendedPractice';
 import ExamReadiness from '../components/Dashboard/ExamReadiness';
 import StudyStreak from '../components/Dashboard/StudyStreak';
+import PercentileRanking from '../components/Dashboard/PercentileRanking';
 
 const DashboardPage: React.FC = () => {
   const { dashboard_data, is_loading, error, fetchDashboardData } = useDashboard();
@@ -72,6 +73,9 @@ const DashboardPage: React.FC = () => {
               accuracy_by_topic={dashboard_data.topic_accuracy || {}}
             />
           </div>
+
+          {/* Percentile Ranking */}
+          <PercentileRanking percentile_ranking={dashboard_data.percentile_ranking || {}} />
 
           {/* Recommended Practice */}
           <RecommendedPractice

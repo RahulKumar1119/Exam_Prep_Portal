@@ -559,6 +559,74 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         
         streak['badges'] = badges
 
+    # --- Percentile Ranking (per paper) ---
+    # Compare this user's average score against all other users
+    percentile_ranking = {}
+    if paper_stats:
+        try:
+            # Scan all completed sessions (projection: user_id, paper_name, score)
+            all_sessions_resp = sessions_table.scan(
+                FilterExpression='#s = :completed',
+                ExpressionAttributeNames={'#s': 'status'},
+                ExpressionAttributeValues={':completed': 'completed'},
+                ProjectionExpression='user_id, paper_name, score'
+            )
+            all_items = all_sessions_resp.get('Items', [])
+            
+            # Handle pagination
+            while 'LastEvaluatedKey' in all_sessions_resp:
+                all_sessions_resp = sessions_table.scan(
+                    FilterExpression='#s = :completed',
+                    ExpressionAttributeNames={'#s': 'status'},
+                    ExpressionAttributeValues={':completed': 'completed'},
+                    ProjectionExpression='user_id, paper_name, score',
+                    ExclusiveStartKey=all_sessions_resp['LastEvaluatedKey']
+                )
+                all_items.extend(all_sessions_resp.get('Items', []))
+            
+            # Group by (user_id, paper_name) → average score
+            user_paper_scores: Dict[str, Dict[str, list]] = {}
+            for item in all_items:
+                uid = item.get('user_id', '')
+                paper = item.get('paper_name', '')
+                score = float(item.get('score', 0))
+                if uid and paper:
+                    user_paper_scores.setdefault(paper, {}).setdefault(uid, []).append(score)
+            
+            # Calculate percentile for each paper
+            for paper, user_scores in paper_stats.items():
+                my_avg = sum(user_scores) / len(user_scores)
+                
+                # Get all users' averages for this paper
+                paper_users = user_paper_scores.get(paper, {})
+                all_averages = [
+                    sum(scores) / len(scores)
+                    for scores in paper_users.values()
+                ]
+                
+                if len(all_averages) >= 2:
+                    # Percentile = % of users scoring below this user
+                    users_below = sum(1 for avg in all_averages if avg < my_avg)
+                    percentile = round((users_below / len(all_averages)) * 100)
+                    
+                    percentile_ranking[paper] = {
+                        'percentile': percentile,
+                        'total_users': len(all_averages),
+                        'your_avg': round(my_avg, 1),
+                        'message': f'You scored better than {percentile}% of candidates',
+                    }
+                else:
+                    percentile_ranking[paper] = {
+                        'percentile': None,
+                        'total_users': len(all_averages),
+                        'your_avg': round(my_avg, 1),
+                        'message': 'Not enough users for comparison yet',
+                    }
+        except ClientError as e:
+            print(f"Error computing percentile: {e}")
+            # Graceful fallback — don't break the dashboard
+            percentile_ranking = {}
+
     return {
         'metrics': metrics,
         'paper_performance': paper_performance,
@@ -569,6 +637,7 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         'recommended_areas': recommended_areas,
         'exam_readiness': exam_readiness,
         'study_streak': streak,
+        'percentile_ranking': percentile_ranking,
     }
 
 
