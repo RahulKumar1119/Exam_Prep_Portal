@@ -7,6 +7,8 @@ import PaperBreakdown from '../components/Dashboard/PaperBreakdown';
 import WeakAreas from '../components/Dashboard/WeakAreas';
 import StrongAreas from '../components/Dashboard/StrongAreas';
 import RecommendedPractice from '../components/Dashboard/RecommendedPractice';
+import ExamReadiness from '../components/Dashboard/ExamReadiness';
+import StudyStreak from '../components/Dashboard/StudyStreak';
 
 const DashboardPage: React.FC = () => {
   const { dashboard_data, is_loading, error, fetchDashboardData } = useDashboard();
@@ -46,6 +48,12 @@ const DashboardPage: React.FC = () => {
             total_study_time={dashboard_data.metrics.total_study_time}
             last_session_date={dashboard_data.metrics.last_session_date}
           />
+
+          {/* Exam Readiness & Study Streak */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ExamReadiness exam_readiness={dashboard_data.exam_readiness || {}} />
+            <StudyStreak study_streak={dashboard_data.study_streak || { current_streak: 0, longest_streak: 0, badges: [] }} />
+          </div>
 
           {/* Score Trends Chart */}
           <ScoreTrends trend_data={dashboard_data.trend_data} />

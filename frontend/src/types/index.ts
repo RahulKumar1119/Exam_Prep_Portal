@@ -108,6 +108,31 @@ export interface DashboardData {
   strong_areas: string[];
   trend_data: TrendPoint[];
   topic_accuracy?: Record<string, number>;
+  recommended_areas?: string[];
+  exam_readiness?: Record<string, ExamReadinessData>;
+  study_streak?: StudyStreakData;
+}
+
+export interface ExamReadinessData {
+  score: number;
+  label: string;
+  recent_avg?: number;
+  sessions_completed?: number;
+  sessions_needed?: number;
+  trend?: 'improving' | 'declining' | 'stable';
+}
+
+export interface StudyStreakData {
+  current_streak: number;
+  longest_streak: number;
+  badges: Badge[];
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
 }
 
 export interface TrendPoint {

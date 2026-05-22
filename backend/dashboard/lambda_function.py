@@ -7,7 +7,7 @@ Provides performance metrics and analytics for the user dashboard.
 import json
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import Dict, Any
 from decimal import Decimal
 
@@ -395,14 +395,180 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         for s in sorted_sessions[-10:]
     ]
 
+    # --- Exam Readiness Score (per paper) ---
+    # Algorithm: weighted combination of recent performance, consistency, and coverage
+    exam_readiness = {}
+    for paper, scores in paper_stats.items():
+        if len(scores) < 2:
+            # Not enough data
+            exam_readiness[paper] = {
+                'score': 0,
+                'label': 'Not enough data',
+                'sessions_needed': max(0, 5 - len(scores)),
+            }
+            continue
+        
+        # Factor 1: Recent performance (last 5 sessions, weighted toward recent)
+        recent_scores = scores[-5:]
+        weights = list(range(1, len(recent_scores) + 1))  # [1,2,3,4,5]
+        weighted_avg = sum(s * w for s, w in zip(recent_scores, weights)) / sum(weights)
+        
+        # Factor 2: Consistency (low variance = more predictable)
+        if len(scores) >= 3:
+            mean_score = sum(scores) / len(scores)
+            variance = sum((s - mean_score) ** 2 for s in scores) / len(scores)
+            std_dev = variance ** 0.5
+            # Consistency score: 100 if std_dev=0, decreases as variance increases
+            consistency = max(0, 100 - std_dev * 2)
+        else:
+            consistency = 50  # neutral if not enough data
+        
+        # Factor 3: Improvement trend (are scores going up?)
+        if len(scores) >= 3:
+            first_half = scores[:len(scores)//2]
+            second_half = scores[len(scores)//2:]
+            first_avg = sum(first_half) / len(first_half)
+            second_avg = sum(second_half) / len(second_half)
+            trend_bonus = min(15, max(-10, (second_avg - first_avg) * 0.5))
+        else:
+            trend_bonus = 0
+        
+        # Factor 4: Volume bonus (more practice = more confidence)
+        volume_bonus = min(10, len(scores) * 0.5)
+        
+        # Combined readiness score (pass mark is 50 out of 100)
+        # Scale weighted_avg to percentage of pass threshold
+        pass_threshold = 50  # JAIIB pass mark
+        raw_readiness = (weighted_avg / pass_threshold) * 60  # 60% weight on score
+        raw_readiness += consistency * 0.2  # 20% weight on consistency
+        raw_readiness += trend_bonus  # trend bonus/penalty
+        raw_readiness += volume_bonus  # volume bonus
+        
+        readiness_score = max(0, min(100, round(raw_readiness, 0)))
+        
+        # Label
+        if readiness_score >= 80:
+            label = 'Likely to pass'
+        elif readiness_score >= 60:
+            label = 'On track'
+        elif readiness_score >= 40:
+            label = 'Needs more practice'
+        else:
+            label = 'At risk'
+        
+        exam_readiness[paper] = {
+            'score': int(readiness_score),
+            'label': label,
+            'recent_avg': round(weighted_avg, 1),
+            'sessions_completed': len(scores),
+            'trend': 'improving' if trend_bonus > 2 else ('declining' if trend_bonus < -2 else 'stable'),
+        }
+
+    # --- Study Streak & Gamification ---
+    streak = {'current_streak': 0, 'longest_streak': 0, 'badges': []}
+    
+    if completed:
+        # Extract unique practice dates (YYYY-MM-DD)
+        practice_dates = set()
+        for s in completed:
+            submitted = s.get('submitted_at', '')
+            if submitted:
+                # Handle both ISO format and date-only
+                date_str = submitted[:10]  # YYYY-MM-DD
+                practice_dates.add(date_str)
+        
+        if practice_dates:
+            sorted_dates = sorted(practice_dates, reverse=True)
+            
+            # Calculate current streak (consecutive days ending today or yesterday)
+            today = date.today()
+            today_str = today.isoformat()
+            yesterday_str = (today - timedelta(days=1)).isoformat()
+            
+            # Start counting from today or yesterday
+            if sorted_dates[0] == today_str or sorted_dates[0] == yesterday_str:
+                current_streak = 1
+                check_date = date.fromisoformat(sorted_dates[0])
+                
+                for i in range(1, len(sorted_dates)):
+                    prev_date = date.fromisoformat(sorted_dates[i])
+                    if (check_date - prev_date).days == 1:
+                        current_streak += 1
+                        check_date = prev_date
+                    elif (check_date - prev_date).days == 0:
+                        continue  # same day, skip
+                    else:
+                        break
+            else:
+                current_streak = 0
+            
+            # Calculate longest streak
+            all_dates_sorted = sorted(practice_dates)
+            longest = 1
+            current_run = 1
+            for i in range(1, len(all_dates_sorted)):
+                d1 = date.fromisoformat(all_dates_sorted[i-1])
+                d2 = date.fromisoformat(all_dates_sorted[i])
+                if (d2 - d1).days == 1:
+                    current_run += 1
+                    longest = max(longest, current_run)
+                elif (d2 - d1).days > 1:
+                    current_run = 1
+            longest = max(longest, current_run)
+            
+            streak['current_streak'] = current_streak
+            streak['longest_streak'] = longest
+        
+        # --- Badges ---
+        badges = []
+        total = len(completed)
+        best_score = max(float(s.get('score', 0)) for s in completed) if completed else 0
+        papers_done = set(s.get('paper_name', '') for s in completed)
+        
+        # Session milestones
+        if total >= 1:
+            badges.append({'id': 'first_session', 'name': 'First Steps', 'icon': '🎯', 'description': 'Completed your first practice session'})
+        if total >= 10:
+            badges.append({'id': 'ten_sessions', 'name': 'Dedicated Learner', 'icon': '📚', 'description': 'Completed 10 practice sessions'})
+        if total >= 25:
+            badges.append({'id': 'twentyfive_sessions', 'name': 'Consistent Performer', 'icon': '💪', 'description': 'Completed 25 practice sessions'})
+        if total >= 50:
+            badges.append({'id': 'fifty_sessions', 'name': 'Practice Champion', 'icon': '🏆', 'description': 'Completed 50 practice sessions'})
+        
+        # Score milestones
+        if best_score >= 50:
+            badges.append({'id': 'pass_mark', 'name': 'Pass Mark Achieved', 'icon': '✅', 'description': 'Scored 50+ (passing threshold)'})
+        if best_score >= 70:
+            badges.append({'id': 'high_scorer', 'name': 'High Scorer', 'icon': '⭐', 'description': 'Scored 70+ in a session'})
+        if best_score >= 90:
+            badges.append({'id': 'top_performer', 'name': 'Top Performer', 'icon': '🌟', 'description': 'Scored 90+ in a session'})
+        
+        # Paper coverage
+        if len(papers_done) >= 2:
+            badges.append({'id': 'multi_paper', 'name': 'Well Rounded', 'icon': '📋', 'description': 'Practiced 2+ different papers'})
+        if len(papers_done) >= 4:
+            badges.append({'id': 'all_papers', 'name': 'Complete Coverage', 'icon': '🎓', 'description': 'Practiced all 4 JAIIB papers'})
+        
+        # Streak badges
+        if streak['current_streak'] >= 3:
+            badges.append({'id': 'streak_3', 'name': 'On Fire', 'icon': '🔥', 'description': '3-day practice streak'})
+        if streak['current_streak'] >= 7:
+            badges.append({'id': 'streak_7', 'name': 'Week Warrior', 'icon': '⚡', 'description': '7-day practice streak'})
+        if streak['longest_streak'] >= 14:
+            badges.append({'id': 'streak_14', 'name': 'Unstoppable', 'icon': '💎', 'description': '14-day practice streak'})
+        
+        streak['badges'] = badges
+
     return {
         'metrics': metrics,
         'paper_performance': paper_performance,
         'weak_areas': weak_areas,
         'strong_areas': strong_areas,
         'trend_data': trend_data,
-        'topic_accuracy': topic_accuracy,  # Send full topic data to frontend
+        'topic_accuracy': topic_accuracy,
         'recommended_areas': recommended_areas,
+        'exam_readiness': exam_readiness,
+        'study_streak': streak,
     }
 
 
