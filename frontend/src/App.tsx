@@ -19,6 +19,7 @@ import MockTestPage from './pages/MockTestPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
+import BlogPage from './pages/BlogPage';
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -46,6 +47,8 @@ const AppContent: React.FC = () => {
       <Route path="/password-reset" element={<PasswordResetPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/blog/:slug" element={<BlogPage />} />
 
       {/* Protected Routes */}
       <Route

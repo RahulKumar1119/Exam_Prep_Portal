@@ -520,6 +520,7 @@ const LandingPage: React.FC = () => {
               <ul className="space-y-2 text-sm">
                 <li><a href="#" className="hover:text-white transition">Features</a></li>
                 <li><a href="#" className="hover:text-white transition">Pricing</a></li>
+                <li><a href="/blog" className="hover:text-white transition">Blog</a></li>
                 <li><a href="#" className="hover:text-white transition">FAQ</a></li>
               </ul>
             </div>
