@@ -9,6 +9,7 @@ interface QuestionDisplayProps {
   onAnswer: (questionId: string, answer: string) => void;
   onSubmit: (answers: Record<string, string>) => void;
   isSubmitting?: boolean;
+  isMockTest?: boolean;
 }
 
 const TIMER_DURATION = 120 * 60; // 120 minutes in seconds
@@ -17,7 +18,8 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   session,
   onAnswer,
   onSubmit,
-  isSubmitting = false
+  isSubmitting = false,
+  isMockTest = false
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -26,6 +28,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
+  const [showFinalReview, setShowFinalReview] = useState(false);
 
   // Restore answers + timer from localStorage if available
   const persisted = loadSessionState();
@@ -193,10 +196,10 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             </div>
           </div>
           <button
-            onClick={() => setShowSummary(true)}
+            onClick={() => isMockTest ? setShowFinalReview(true) : setShowSummary(true)}
             className="px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-all"
           >
-            {isSubmitting ? 'Submitting...' : 'Summary'}
+            {isSubmitting ? 'Submitting...' : isMockTest ? 'Final Review & Submit' : 'Summary'}
           </button>
         </div>
       </div>
@@ -306,21 +309,23 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
           {/* Right buttons */}
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                // "Check" reveals the correct answer for current question
-                const qid = currentQuestion.question_id;
-                if (!answers[qid]) {
-                  // If not answered, just highlight — user needs to select first
-                  return;
-                }
-                setCheckedQuestions(prev => new Set(prev).add(qid));
-              }}
-              disabled={!isAnswered}
-              className="px-4 py-2 text-sm font-semibold bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-            >
-              Check
-            </button>
+            {!isMockTest && (
+              <button
+                onClick={() => {
+                  // "Check" reveals the correct answer for current question
+                  const qid = currentQuestion.question_id;
+                  if (!answers[qid]) {
+                    // If not answered, just highlight — user needs to select first
+                    return;
+                  }
+                  setCheckedQuestions(prev => new Set(prev).add(qid));
+                }}
+                disabled={!isAnswered}
+                className="px-4 py-2 text-sm font-semibold bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                Check
+              </button>
+            )}
             <button
               onClick={handleNext}
               disabled={currentQuestionIndex === totalQuestions - 1}
@@ -416,6 +421,134 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg"
             >
               Submit Anyway
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Final Review Dialog (Mock Test mode) */}
+      <Dialog open={showFinalReview} onOpenChange={setShowFinalReview}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>📋 Final Review — Mock Test</DialogTitle>
+            <DialogDescription>
+              Review your answers before submitting. You cannot change answers after submission.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            {/* Stats summary */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                <p className="text-2xl font-bold text-green-700">{answeredCount}</p>
+                <p className="text-xs text-green-600">Answered</p>
+              </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                <p className="text-2xl font-bold text-gray-700">{totalQuestions - answeredCount}</p>
+                <p className="text-xs text-gray-600">Unattempted</p>
+              </div>
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+                <p className="text-2xl font-bold text-orange-700">{reviewedQuestions.size}</p>
+                <p className="text-xs text-orange-600">Marked for Review</p>
+              </div>
+            </div>
+
+            {/* Time remaining */}
+            <div className="flex items-center justify-center gap-2 py-2">
+              <span className="text-sm text-gray-600">Time remaining:</span>
+              <span className={`font-mono font-bold ${isWarning ? 'text-red-600' : 'text-gray-900'}`}>
+                {formatTime(timeLeft)}
+              </span>
+            </div>
+
+            {/* Question-by-question review */}
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                <p className="text-sm font-semibold text-gray-700">Question Status</p>
+              </div>
+              <div className="max-h-60 overflow-y-auto p-3">
+                <div className="grid grid-cols-10 gap-1.5">
+                  {session.questions.map((q, idx) => {
+                    const isAns = !!answers[q.question_id];
+                    const isRev = reviewedQuestions.has(q.question_id);
+                    return (
+                      <button
+                        key={q.question_id}
+                        onClick={() => { setShowFinalReview(false); setCurrentQuestionIndex(idx); }}
+                        title={`Q${idx + 1}: ${isAns ? 'Answered' : 'Unattempted'}${isRev ? ' (Review)' : ''}`}
+                        className={`w-8 h-8 rounded text-xs font-bold transition-all border ${
+                          isRev
+                            ? 'bg-orange-400 text-white border-orange-500 hover:bg-orange-500'
+                            : isAns
+                            ? 'bg-green-500 text-white border-green-600 hover:bg-green-600'
+                            : 'bg-red-100 text-red-700 border-red-300 hover:bg-red-200'
+                        }`}
+                      >
+                        {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Unanswered questions list */}
+            {totalQuestions - answeredCount > 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-sm font-medium text-yellow-800 mb-2">
+                  ⚠️ {totalQuestions - answeredCount} unanswered question{totalQuestions - answeredCount > 1 ? 's' : ''} — these will score 0 marks
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {session.questions.map((q, idx) => {
+                    if (answers[q.question_id]) return null;
+                    return (
+                      <button
+                        key={q.question_id}
+                        onClick={() => { setShowFinalReview(false); setCurrentQuestionIndex(idx); }}
+                        className="px-2 py-1 text-xs bg-yellow-200 text-yellow-800 rounded hover:bg-yellow-300 font-medium"
+                      >
+                        Q{idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Review-marked questions */}
+            {reviewedQuestions.size > 0 && (
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <p className="text-sm font-medium text-orange-800 mb-2">
+                  🔖 {reviewedQuestions.size} question{reviewedQuestions.size > 1 ? 's' : ''} marked for review
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {session.questions.map((q, idx) => {
+                    if (!reviewedQuestions.has(q.question_id)) return null;
+                    return (
+                      <button
+                        key={q.question_id}
+                        onClick={() => { setShowFinalReview(false); setCurrentQuestionIndex(idx); }}
+                        className="px-2 py-1 text-xs bg-orange-200 text-orange-800 rounded hover:bg-orange-300 font-medium"
+                      >
+                        Q{idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3 justify-end mt-6 pt-4 border-t">
+            <DialogClose asChild>
+              <button className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                ← Continue Test
+              </button>
+            </DialogClose>
+            <button
+              onClick={() => { setShowFinalReview(false); onSubmit(answers); }}
+              className="px-5 py-2.5 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg"
+            >
+              ✓ Submit Mock Test
             </button>
           </div>
         </DialogContent>

@@ -150,6 +150,7 @@ const MockTestPage: React.FC = () => {
           onAnswer={handleAnswerQuestion}
           onSubmit={handleSubmitMockTest}
           isSubmitting={isSubmitting}
+          isMockTest={true}
         />
       )}
     </div>
