@@ -16,7 +16,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     { path: '/practice', label: 'Practice Sets', icon: 'practice' },
-    { path: '/mock-test', label: 'Mock Test', icon: 'mock-test' },
     { path: '/previous-attempts', label: 'Previous Attempts', icon: 'history' },
   ];
 

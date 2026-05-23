@@ -74,8 +74,12 @@ const PreviousAttemptsPage: React.FC = () => {
     return d.toLocaleString('en-IN', {
       day: '2-digit', month: 'short', year: 'numeric',
       hour: '2-digit', minute: '2-digit',
-    });
+      hour12: true,
+      timeZone: 'Asia/Kolkata',
+    }) + ' IST';
   };
+
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -168,33 +172,72 @@ const PreviousAttemptsPage: React.FC = () => {
               <tbody>
                 {pageData.length > 0 ? (
                   pageData.map((attempt, idx) => (
-                    <tr key={attempt.session_id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-600">{startIdx + idx + 1}</td>
-                      <td className="py-3 px-4">
-                        <span className="font-medium text-gray-900">{attempt.paper_name}</span>
-                        <span className="text-gray-500 text-xs ml-2">
-                          ({attempt.mode === 'mock_test' ? 'Mock Test' : 'Practice Set'})
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-gray-600">{formatDate(attempt.submitted_at)}</td>
-                      <td className="py-3 px-4 text-center">
-                        <span className="font-semibold text-gray-900">{attempt.score}</span>
-                        <span className="text-gray-500">/{attempt.total_questions}</span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <span className={`font-bold ${
-                          (attempt.score / attempt.total_questions) * 100 >= 50
-                            ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {((attempt.score / attempt.total_questions) * 100).toFixed(1)}%
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <button className="text-indigo-600 hover:text-indigo-800 text-xs font-medium hover:underline">
-                          View Details
-                        </button>
-                      </td>
-                    </tr>
+                    <React.Fragment key={attempt.session_id}>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-3 px-4 text-gray-600">{startIdx + idx + 1}</td>
+                        <td className="py-3 px-4">
+                          <span className="font-medium text-gray-900">{attempt.paper_name}</span>
+                          <span className="text-gray-500 text-xs ml-2">
+                            ({attempt.mode === 'mock_test' ? 'Mock Test' : 'Practice Set'})
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-gray-600">{formatDate(attempt.submitted_at)}</td>
+                        <td className="py-3 px-4 text-center">
+                          <span className="font-semibold text-gray-900">{attempt.score}</span>
+                          <span className="text-gray-500">/{attempt.total_questions}</span>
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <span className={`font-bold ${
+                            (attempt.score / attempt.total_questions) * 100 >= 50
+                              ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {((attempt.score / attempt.total_questions) * 100).toFixed(1)}%
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <button
+                            onClick={() => setExpandedRow(expandedRow === attempt.session_id ? null : attempt.session_id)}
+                            className="text-indigo-600 hover:text-indigo-800 text-xs font-medium hover:underline"
+                          >
+                            {expandedRow === attempt.session_id ? 'Hide' : 'View Details'}
+                          </button>
+                        </td>
+                      </tr>
+                      {expandedRow === attempt.session_id && (
+                        <tr>
+                          <td colSpan={6} className="px-4 py-4 bg-gray-50 border-b border-gray-200">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
+                                <p className="text-xs text-gray-500">Paper</p>
+                                <p className="font-bold text-gray-900">{attempt.paper_name}</p>
+                              </div>
+                              <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
+                                <p className="text-xs text-gray-500">Score</p>
+                                <p className="font-bold text-gray-900">{attempt.score}/{attempt.total_questions}</p>
+                              </div>
+                              <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
+                                <p className="text-xs text-gray-500">Percentage</p>
+                                <p className={`font-bold ${(attempt.score / attempt.total_questions) * 100 >= 50 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {((attempt.score / attempt.total_questions) * 100).toFixed(1)}%
+                                </p>
+                              </div>
+                              <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
+                                <p className="text-xs text-gray-500">Result</p>
+                                <p className={`font-bold ${(attempt.score / attempt.total_questions) * 100 >= 50 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {(attempt.score / attempt.total_questions) * 100 >= 50 ? '✅ PASS' : '❌ FAIL'}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-3 text-xs text-gray-500">
+                              <span>Attempted: {formatDate(attempt.submitted_at)}</span>
+                              {attempt.time_taken > 0 && (
+                                <span className="ml-4">Time: {Math.floor(attempt.time_taken / 60)}m {attempt.time_taken % 60}s</span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))
                 ) : (
                   <tr>
