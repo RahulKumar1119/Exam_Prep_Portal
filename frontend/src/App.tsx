@@ -21,6 +21,8 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import BlogPage from './pages/BlogPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
+import PracticeTestsPage from './pages/PracticeTestsPage';
+import PracticeTestDetailPage from './pages/PracticeTestDetailPage';
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -51,6 +53,8 @@ const AppContent: React.FC = () => {
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/blog/:slug" element={<BlogPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/practice-tests" element={<PracticeTestsPage />} />
+      <Route path="/practice-tests/:slug" element={<PracticeTestDetailPage />} />
 
       {/* Protected Routes */}
       <Route

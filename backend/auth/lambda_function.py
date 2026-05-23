@@ -159,7 +159,7 @@ def send_verification_email(email: str, user_id: str, token: str) -> bool:
             <h2 style="color: #1a1a1a;">Verify Your Email Address</h2>
             <p>Welcome to MockMaster! Please verify your email address to activate your account and start practicing.</p>
             <p style="text-align: center; margin: 30px 0;">
-                <a href="{verification_link}" class="btn">Verify Email</a>
+                <a href="{verification_link}" style="display: inline-block; padding: 14px 28px; background-color: #4F46E5; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; mso-padding-alt: 0; text-align: center;"><!--[if mso]><i style="letter-spacing: 28px; mso-font-width: -100%; mso-text-raise: 26pt;">&nbsp;</i><![endif]--><span style="color: #ffffff;">Verify Email</span><!--[if mso]><i style="letter-spacing: 28px; mso-font-width: -100%;">&nbsp;</i><![endif]--></a>
             </p>
             <p style="font-size: 14px; color: #666;">If the button doesn't work, copy and paste this link into your browser:</p>
             <p style="font-size: 13px; word-break: break-all; color: #4F46E5;">{verification_link}</p>
@@ -228,7 +228,7 @@ def send_password_reset_email(email: str, user_id: str, token: str) -> bool:
             <h2 style="color: #1a1a1a;">Reset Your Password</h2>
             <p>We received a request to reset your password. Click the button below to create a new password:</p>
             <p style="text-align: center; margin: 30px 0;">
-                <a href="{reset_link}" class="btn">Reset Password</a>
+                <a href="{reset_link}" style="display: inline-block; padding: 14px 28px; background-color: #4F46E5; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;"><span style="color: #ffffff;">Reset Password</span></a>
             </p>
             <p style="font-size: 14px; color: #666;">If the button doesn't work, copy and paste this link:</p>
             <p style="font-size: 13px; word-break: break-all; color: #4F46E5;">{reset_link}</p>
