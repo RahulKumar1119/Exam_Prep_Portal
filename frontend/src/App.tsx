@@ -23,6 +23,8 @@ import BlogPage from './pages/BlogPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import PracticeTestsPage from './pages/PracticeTestsPage';
 import PracticeTestDetailPage from './pages/PracticeTestDetailPage';
+import PracticePage from './pages/PracticePage';
+import PreviousAttemptsPage from './pages/PreviousAttemptsPage';
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -81,6 +83,26 @@ const AppContent: React.FC = () => {
           <ProtectedRoute>
             <Layout>
               <MockTestPage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/practice"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <PracticePage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/previous-attempts"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <PreviousAttemptsPage />
             </Layout>
           </ProtectedRoute>
         }
