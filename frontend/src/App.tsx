@@ -24,6 +24,7 @@ import PracticeTestsPage from './pages/PracticeTestsPage';
 import PracticeTestDetailPage from './pages/PracticeTestDetailPage';
 import PracticePage from './pages/PracticePage';
 import PreviousAttemptsPage from './pages/PreviousAttemptsPage';
+import ContactPage from './pages/ContactPage';
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -56,6 +57,7 @@ const AppContent: React.FC = () => {
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/practice-tests" element={<PracticeTestsPage />} />
       <Route path="/practice-tests/:slug" element={<PracticeTestDetailPage />} />
+      <Route path="/contact" element={<ContactPage />} />
 
       {/* Protected Routes */}
       <Route
