@@ -6,7 +6,7 @@ import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 
 const PAPERS = [
-  { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 698, sets: 14 },
+  { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 738, sets: 15 },
   { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 536, sets: 11 },
   { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 535, sets: 11 },
   { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 299, sets: 6 },
