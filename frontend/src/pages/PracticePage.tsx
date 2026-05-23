@@ -5,28 +5,36 @@ import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 
-const PAPERS = ['IE & IFS', 'PPB', 'AFM', 'RBWM'];
+const PAPERS = [
+  { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 698, sets: 14 },
+  { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 536, sets: 11 },
+  { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 535, sets: 11 },
+  { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 299, sets: 6 },
+];
 
 const PracticePage: React.FC = () => {
   const { current_session, session_result, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
   const { fetchDashboardData } = useDashboard();
   const [selectedPaper, setSelectedPaper] = useState('');
+  const [selectedSet, setSelectedSet] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleGeneratePracticeSet = async () => {
+  const currentPaperInfo = PAPERS.find(p => p.id === selectedPaper);
+
+  const handleStartPracticeSet = async () => {
     if (!selectedPaper) {
       alert('Please select a paper');
       return;
     }
     try {
       await generatePracticeSet(selectedPaper);
+      setSelectedSet(selectedSet || 1);
     } catch (err) {
       console.error('Failed to generate practice set:', err);
     }
   };
 
   const handleAnswerQuestion = (questionId: string, answer: string) => {
-    // This will be handled by the context
     console.log(`Question ${questionId} answered with ${answer}`);
   };
 
@@ -49,8 +57,8 @@ const PracticePage: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-64 space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p className="text-gray-600 font-medium">Generating your practice set with AI...</p>
-        <p className="text-gray-400 text-sm">This takes about 30–60 seconds</p>
+        <p className="text-gray-600 font-medium">Generating Practice Set...</p>
+        <p className="text-gray-400 text-sm">Preparing 50 questions for you</p>
       </div>
     );
   }
@@ -59,7 +67,7 @@ const PracticePage: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Practice Sets</h1>
-        <p className="text-gray-600 mt-2">Select a paper and start practicing</p>
+        <p className="text-gray-600 mt-2">50 questions per set • No time limit • Instant feedback</p>
       </div>
 
       {error && (
@@ -69,25 +77,100 @@ const PracticePage: React.FC = () => {
       )}
 
       {!current_session ? (
-      <div className="card max-w-md">
-          <h2 className="text-xl font-bold mb-4">Select a Paper</h2>
-          <Select value={selectedPaper} onValueChange={setSelectedPaper}>
-            <SelectTrigger>
-              <SelectValue placeholder="Choose a paper..." />
-            </SelectTrigger>
-            <SelectContent>
-              {PAPERS.map((paper) => (
-                <SelectItem key={paper} value={paper}>{paper}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <button
-            onClick={handleGeneratePracticeSet}
-            disabled={!selectedPaper || is_loading}
-            className="w-full btn-primary mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Generate Practice Set
-          </button>
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Paper Info Banner */}
+          {selectedPaper && currentPaperInfo && (
+            <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-6 text-white text-center">
+              <h2 className="text-2xl font-bold">{currentPaperInfo.name} Full Practice Tests</h2>
+              <p className="text-green-100 mt-1">
+                Total Questions: {currentPaperInfo.totalQuestions} — {currentPaperInfo.sets} Practice Sets
+              </p>
+            </div>
+          )}
+
+          {/* Practice Set Selection */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Select Paper</h2>
+            <Select value={selectedPaper} onValueChange={(val) => { setSelectedPaper(val); setSelectedSet(null); }}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a paper..." />
+              </SelectTrigger>
+              <SelectContent>
+                {PAPERS.map((paper) => (
+                  <SelectItem key={paper.id} value={paper.id}>
+                    {paper.name} — {paper.fullName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Practice Set Grid */}
+            {selectedPaper && currentPaperInfo && (
+              <div className="mt-8">
+                <div className="bg-sky-100 rounded-lg p-4 text-center mb-6">
+                  <h3 className="text-lg font-bold text-sky-800">
+                    Practice Set {selectedSet || '—'}
+                  </h3>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                  <p className="text-gray-700 mb-4">Click on Start Quiz.</p>
+                  <button
+                    onClick={handleStartPracticeSet}
+                    disabled={is_loading}
+                    className="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+                  >
+                    Start Test
+                  </button>
+                </div>
+
+                {/* Page Numbers */}
+                <div className="bg-sky-100 rounded-lg p-4 text-center mb-4">
+                  <p className="text-sky-800 font-medium">Use Page numbers below to navigate to other practice sets</p>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm text-gray-600 font-medium">Pages:</span>
+                  {Array.from({ length: currentPaperInfo.sets }, (_, i) => i + 1).map((setNum) => (
+                    <button
+                      key={setNum}
+                      onClick={() => setSelectedSet(setNum)}
+                      className={`w-9 h-9 rounded border text-sm font-medium transition-all ${
+                        selectedSet === setNum
+                          ? 'bg-indigo-600 text-white border-indigo-600'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-400 hover:bg-indigo-50'
+                      }`}
+                    >
+                      {setNum}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Practice Set Info */}
+          <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-3">📝 Practice Set Format</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <p className="text-xl font-bold text-blue-600">50</p>
+                <p className="text-xs text-gray-600">Questions</p>
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <p className="text-xl font-bold text-green-600">No Limit</p>
+                <p className="text-xs text-gray-600">Time</p>
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <p className="text-xl font-bold text-purple-600">Instant</p>
+                <p className="text-xs text-gray-600">Feedback</p>
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <p className="text-xl font-bold text-orange-600">AI</p>
+                <p className="text-xs text-gray-600">Explanations</p>
+              </div>
+            </div>
+          </div>
         </div>
       ) : session_result ? (
         <div className="card">
