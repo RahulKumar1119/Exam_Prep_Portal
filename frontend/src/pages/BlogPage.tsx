@@ -8,6 +8,7 @@ interface BlogPost {
   date: string;
   readTime: string;
   category: string;
+  coverImage: string;
   content: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ const BLOG_POSTS: BlogPost[] = [
     date: '2026-05-15',
     readTime: '12 min read',
     category: 'Study Strategy',
+    coverImage: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=400&fit=crop',
     content: (
       <div className="prose prose-lg max-w-none">
         <p className="lead text-xl text-gray-700 mb-8">
@@ -26,15 +28,58 @@ const BLOG_POSTS: BlogPost[] = [
         </p>
 
         <h2>Understanding the Exam Pattern</h2>
+
+        {/* Visual Exam Pattern Card */}
+        <div className="not-prose bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 my-6">
+          <h3 className="text-lg font-bold text-blue-900 mb-4">📝 IE & IFS Exam at a Glance</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-blue-600">100</p>
+              <p className="text-xs text-gray-600">Questions</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-indigo-600">2 hrs</p>
+              <p className="text-xs text-gray-600">Duration</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-green-600">50/100</p>
+              <p className="text-xs text-gray-600">Pass Marks</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-purple-600">Zero</p>
+              <p className="text-xs text-gray-600">Negative Marking</p>
+            </div>
+          </div>
+        </div>
+
         <ul>
-          <li><strong>Total Questions:</strong> 100 MCQs</li>
-          <li><strong>Duration:</strong> 2 hours</li>
-          <li><strong>Passing Marks:</strong> 50/100 (aggregate across all papers: 45 minimum per paper)</li>
-          <li><strong>Negative Marking:</strong> None</li>
           <li><strong>Marking Scheme:</strong> 0.5 marks (Easy), 1 mark (Medium), 2 marks (Hard/Statement-based)</li>
         </ul>
 
         <h2>Module-Wise Weightage & Strategy</h2>
+
+        {/* Visual Weightage Bars */}
+        <div className="not-prose bg-white rounded-xl border border-gray-200 p-6 my-6 shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">Module Weightage in Exam</h3>
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Module A — Indian Economic Architecture</span><span className="text-blue-600 font-bold">25-30%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-blue-500 rounded-full" style={{width: '28%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Module B — Economic Concepts</span><span className="text-indigo-600 font-bold">20-25%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-indigo-500 rounded-full" style={{width: '22%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Module C — Financial Architecture</span><span className="text-purple-600 font-bold">25-30%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-purple-500 rounded-full" style={{width: '28%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Module D — Financial Products</span><span className="text-pink-600 font-bold">20-25%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-pink-500 rounded-full" style={{width: '22%'}}></div></div>
+            </div>
+          </div>
+        </div>
 
         <h3>Module A — Indian Economic Architecture (25-30%)</h3>
         <p>
@@ -49,6 +94,38 @@ const BLOG_POSTS: BlogPost[] = [
         </p>
         <p><strong>Key Topics:</strong> Money multiplier, credit creation process, RBI's functions (Section 21, 22 of RBI Act), LAF/MSF/SDF rates, forex reserves management, BoP components.</p>
         <p><strong>Pro Tip:</strong> Know the current rates — Repo, Reverse Repo, CRR, SLR, MSF, Bank Rate. These are guaranteed questions.</p>
+
+        {/* Visual Rate Card */}
+        <div className="not-prose bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200 my-6">
+          <h4 className="text-sm font-bold text-green-800 mb-3">📌 Current RBI Policy Rates (Memorize These!)</h4>
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm border border-green-100">
+              <p className="text-lg font-bold text-green-700">6.5%</p>
+              <p className="text-xs text-gray-600">Repo Rate</p>
+            </div>
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm border border-green-100">
+              <p className="text-lg font-bold text-green-700">3.35%</p>
+              <p className="text-xs text-gray-600">Rev. Repo</p>
+            </div>
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm border border-green-100">
+              <p className="text-lg font-bold text-green-700">4.5%</p>
+              <p className="text-xs text-gray-600">CRR</p>
+            </div>
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm border border-green-100">
+              <p className="text-lg font-bold text-green-700">18%</p>
+              <p className="text-xs text-gray-600">SLR</p>
+            </div>
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm border border-green-100">
+              <p className="text-lg font-bold text-green-700">6.75%</p>
+              <p className="text-xs text-gray-600">MSF</p>
+            </div>
+            <div className="bg-white rounded-lg p-3 text-center shadow-sm border border-green-100">
+              <p className="text-lg font-bold text-green-700">6.75%</p>
+              <p className="text-xs text-gray-600">Bank Rate</p>
+            </div>
+          </div>
+          <p className="text-xs text-green-700 mt-3 italic">* Rates as of latest RBI Monetary Policy Committee meeting. Verify before exam.</p>
+        </div>
 
         <h3>Module C — Indian Financial Architecture (25-30%)</h3>
         <p>
@@ -73,17 +150,52 @@ const BLOG_POSTS: BlogPost[] = [
         </ol>
 
         <h2>30-Day Study Plan</h2>
-        <table className="w-full">
-          <thead>
-            <tr><th>Week</th><th>Focus Area</th><th>Daily Hours</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Week 1</td><td>Module A + Module B (Theory)</td><td>2-3 hours</td></tr>
-            <tr><td>Week 2</td><td>Module C (Acts & Regulators)</td><td>2-3 hours</td></tr>
-            <tr><td>Week 3</td><td>Module D + Practice Questions</td><td>3 hours</td></tr>
-            <tr><td>Week 4</td><td>Full Mock Tests + Revision</td><td>3-4 hours</td></tr>
-          </tbody>
-        </table>
+
+        {/* Visual Study Plan */}
+        <div className="not-prose my-6">
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 bg-blue-50 rounded-xl p-5 border border-blue-200">
+              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W1</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-blue-900">Week 1 — Foundation</h4>
+                <p className="text-sm text-blue-800">Module A + Module B (Theory) • 2-3 hours/day</p>
+                <p className="text-xs text-blue-600 mt-1">Focus: GDP concepts, monetary policy basics, RBI functions</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-indigo-50 rounded-xl p-5 border border-indigo-200">
+              <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W2</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-indigo-900">Week 2 — Acts & Regulators</h4>
+                <p className="text-sm text-indigo-800">Module C (Acts & Regulators) • 2-3 hours/day</p>
+                <p className="text-xs text-indigo-600 mt-1">Focus: BR Act sections, SEBI, IRDAI, financial markets</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-purple-50 rounded-xl p-5 border border-purple-200">
+              <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W3</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-purple-900">Week 3 — Products & Practice</h4>
+                <p className="text-sm text-purple-800">Module D + Practice Questions • 3 hours/day</p>
+                <p className="text-xs text-purple-600 mt-1">Focus: Digital banking, UPI, insurance, mutual funds + MCQ practice</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-green-50 rounded-xl p-5 border border-green-200">
+              <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W4</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-green-900">Week 4 — Mock Tests & Revision</h4>
+                <p className="text-sm text-green-800">Full Mock Tests + Revision • 3-4 hours/day</p>
+                <p className="text-xs text-green-600 mt-1">Focus: 2-3 full mock tests, revise weak areas, memorize rates & thresholds</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <h2>Common Mistakes to Avoid</h2>
         <ol>
@@ -109,6 +221,7 @@ const BLOG_POSTS: BlogPost[] = [
     date: '2026-05-10',
     readTime: '10 min read',
     category: 'RBI Updates',
+    coverImage: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&h=400&fit=crop',
     content: (
       <div className="prose prose-lg max-w-none">
         <p className="lead text-xl text-gray-700 mb-8">
@@ -203,6 +316,7 @@ const BLOG_POSTS: BlogPost[] = [
     date: '2026-05-05',
     readTime: '8 min read',
     category: 'Exam Info',
+    coverImage: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=400&fit=crop',
     content: (
       <div className="prose prose-lg max-w-none">
         <p className="lead text-xl text-gray-700 mb-8">
@@ -368,24 +482,34 @@ const BlogListPage: React.FC = () => {
             {BLOG_POSTS.map((post) => (
               <article
                 key={post.slug}
-                className="bg-white rounded-xl border border-gray-200 p-8 hover:shadow-lg transition cursor-pointer"
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer group"
                 onClick={() => navigate(`/blog/${post.slug}`)}
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                    {post.category}
-                  </span>
-                  <span className="text-sm text-gray-500">{post.date}</span>
-                  <span className="text-sm text-gray-500">•</span>
-                  <span className="text-sm text-gray-500">{post.readTime}</span>
+                {/* Cover Image */}
+                <div className="h-48 overflow-hidden">
+                  <img
+                    src={post.coverImage}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition">
-                  {post.title}
-                </h2>
-                <p className="text-gray-600 leading-relaxed">{post.description}</p>
-                <span className="inline-block mt-4 text-blue-600 font-medium text-sm">
-                  Read more →
-                </span>
+                <div className="p-8">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                      {post.category}
+                    </span>
+                    <span className="text-sm text-gray-500">{post.date}</span>
+                    <span className="text-sm text-gray-500">•</span>
+                    <span className="text-sm text-gray-500">{post.readTime}</span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition">
+                    {post.title}
+                  </h2>
+                  <p className="text-gray-600 leading-relaxed">{post.description}</p>
+                  <span className="inline-block mt-4 text-blue-600 font-medium text-sm group-hover:translate-x-1 transition-transform">
+                    Read more →
+                  </span>
+                </div>
               </article>
             ))}
           </div>
@@ -478,6 +602,15 @@ const BlogPostPage: React.FC = () => {
           >
             ← Back to Blog
           </button>
+
+          {/* Cover Image */}
+          <div className="rounded-xl overflow-hidden mb-8 shadow-lg">
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              className="w-full h-64 object-cover"
+            />
+          </div>
 
           <div className="flex items-center gap-3 mb-4">
             <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
