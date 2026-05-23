@@ -533,7 +533,6 @@ const LandingPage: React.FC = () => {
               <h4 className="text-white font-bold mb-4">About</h4>
               <ul className="space-y-2 text-sm">
                 <li><a href="/blog" className="hover:text-white transition">Blog</a></li>
-                <li><a href="/contact" className="hover:text-white transition">Contact Us</a></li>
               </ul>
             </div>
             <div>

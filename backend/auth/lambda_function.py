@@ -556,6 +556,45 @@ def error_response(status_code: int, message: str) -> Dict[str, Any]:
     }
 
 
+def handle_contact_form(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Handle contact form submission — send email to support."""
+    name = body.get('name', '').strip()
+    email = body.get('email', '').strip()
+    subject = body.get('subject', '').strip()
+    message = body.get('message', '').strip()
+
+    if not name or not email or not subject or not message:
+        return error_response(400, 'All fields are required')
+
+    # Send to support email
+    html_body = f"""
+    <html><body>
+    <h2>New Contact Form Submission</h2>
+    <table style="border-collapse:collapse;width:100%;">
+      <tr><td style="padding:8px;font-weight:bold;border:1px solid #ddd;">Name</td><td style="padding:8px;border:1px solid #ddd;">{name}</td></tr>
+      <tr><td style="padding:8px;font-weight:bold;border:1px solid #ddd;">Email</td><td style="padding:8px;border:1px solid #ddd;">{email}</td></tr>
+      <tr><td style="padding:8px;font-weight:bold;border:1px solid #ddd;">Subject</td><td style="padding:8px;border:1px solid #ddd;">{subject}</td></tr>
+      <tr><td style="padding:8px;font-weight:bold;border:1px solid #ddd;">Message</td><td style="padding:8px;border:1px solid #ddd;">{message}</td></tr>
+    </table>
+    </body></html>
+    """
+
+    try:
+        ses_client.send_email(
+            Source=f"MockMaster Contact <{SENDER_EMAIL}>",
+            Destination={'ToAddresses': ['support@mockmaster.fun']},
+            ReplyToAddresses=[email],
+            Message={
+                'Subject': {'Data': f'[Contact Form] {subject} — from {name}'},
+                'Body': {'Html': {'Data': html_body}}
+            }
+        )
+        return success_response(200, {'message': 'Message sent successfully'})
+    except ClientError as e:
+        print(f"Error sending contact email: {e}")
+        return error_response(500, 'Failed to send message. Please try again.')
+
+
 def handler(event, context):
     """Lambda handler for authentication requests."""
     try:
@@ -595,6 +634,8 @@ def handler(event, context):
             return request_password_reset(body)
         elif path == '/auth/password-reset' and http_method == 'POST':
             return reset_password(body)
+        elif path == '/auth/contact' and http_method == 'POST':
+            return handle_contact_form(body)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     

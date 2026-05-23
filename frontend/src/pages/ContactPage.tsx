@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../services/api';
 
 const ContactPage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,15 +11,29 @@ const ContactPage: React.FC = () => {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For now, just show success. Can integrate with SES/API later.
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError('');
+    try {
+      const response = await apiClient.post<{ message: string }>('/auth/contact', formData);
+      if (response.success) {
+        setSubmitted(true);
+      } else {
+        setSubmitError(response.error || 'Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      setSubmitError('Failed to send message. Please email us directly at support@mockmaster.fun');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -184,10 +199,15 @@ const ContactPage: React.FC = () => {
 
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
+                  disabled={isSubmitting}
+                  className="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
+
+                {submitError && (
+                  <p className="text-red-600 text-sm text-center">{submitError}</p>
+                )}
 
                 <p className="text-xs text-gray-500 text-center">
                   By submitting, you agree to our <a href="/privacy-policy" className="text-blue-600 hover:underline">Privacy Policy</a>
