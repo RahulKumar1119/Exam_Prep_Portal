@@ -46,9 +46,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     clearTimers();
     setSessionWarning(false);
     try { await apiClient.post('/auth/logout', {}); } catch {}
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('refresh_token');
+    sessionStorage.removeItem('user');
     setAuthState({ user: null, access_token: null, refresh_token: null, is_authenticated: false, is_loading: false, error: null });
   }, []);
 
@@ -73,11 +73,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, [authState.is_authenticated, resetIdleTimer]);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from sessionStorage
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = localStorage.getItem('access_token');
-      const user = localStorage.getItem('user');
+      const token = sessionStorage.getItem('access_token');
+      const user = sessionStorage.getItem('user');
 
       if (token && user) {
         try {
@@ -89,8 +89,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             is_loading: false,
           }));
         } catch (error) {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('user');
+          sessionStorage.removeItem('access_token');
+          sessionStorage.removeItem('user');
           setAuthState((prev) => ({
             ...prev,
             is_loading: false,
@@ -134,9 +134,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           status: 'active',
         };
         
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('refresh_token', refresh_token);
-        localStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.setItem('access_token', access_token);
+        sessionStorage.setItem('refresh_token', refresh_token);
+        sessionStorage.setItem('user', JSON.stringify(user));
 
         setAuthState({
           user,
