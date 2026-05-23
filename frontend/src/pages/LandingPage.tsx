@@ -17,6 +17,18 @@ const LandingPage: React.FC = () => {
           </div>
           <div className="flex gap-4">
             <button
+              onClick={() => navigate('/practice-tests')}
+              className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition"
+            >
+              Practice Tests
+            </button>
+            <button
+              onClick={() => navigate('/blog')}
+              className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
+            >
+              Blog
+            </button>
+            <button
               onClick={() => navigate('/login')}
               className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition"
             >
@@ -429,6 +441,16 @@ const LandingPage: React.FC = () => {
             <p className="text-sm text-gray-500 mt-4 italic">
               CAIIB content coming soon — sign up to get notified when it launches.
             </p>
+          </div>
+
+          {/* Browse All Button */}
+          <div className="text-center mt-12">
+            <button
+              onClick={() => navigate('/practice-tests')}
+              className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:scale-105"
+            >
+              Browse All Practice Tests →
+            </button>
           </div>
         </div>
       </section>
