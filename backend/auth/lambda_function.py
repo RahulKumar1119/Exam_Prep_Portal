@@ -306,7 +306,7 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
                 'email': email,
                 'full_name': full_name,
                 'password_hash': password_hash,
-                'email_verified': True,  # Auto-verify for development
+                'email_verified': False,  # Must verify email before login
                 'created_at': int(datetime.utcnow().timestamp()),
                 'last_login': None,
                 'role': 'bank_officer',

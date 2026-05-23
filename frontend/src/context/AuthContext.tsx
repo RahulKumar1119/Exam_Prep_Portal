@@ -195,7 +195,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = async () => { await doLogout(); };
 
   const verifyEmail = async (token: string) => {
-    setAuthState((prev) => ({ ...prev, is_loading: true, error: null }));
+    setAuthState((prev) => ({ ...prev, error: null }));
     try {
       const response = await apiClient.post<{ message: string }>(
         '/auth/verify-email',
@@ -205,16 +205,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (!response.success) {
         throw new Error(response.error || 'Email verification failed');
       }
-
-      setAuthState((prev) => ({
-        ...prev,
-        is_loading: false,
-      }));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Email verification failed';
       setAuthState((prev) => ({
         ...prev,
-        is_loading: false,
         error: errorMessage,
       }));
       throw error;
