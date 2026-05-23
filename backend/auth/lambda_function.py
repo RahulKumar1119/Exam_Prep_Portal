@@ -33,8 +33,8 @@ JWT_ALGORITHM = 'HS256'
 JWT_EXPIRY_MINUTES = 30
 RESET_TOKEN_EXPIRY_HOURS = 24
 VERIFICATION_TOKEN_EXPIRY_HOURS = 24
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@jaiib-portal.com')
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://jaiib-portal.com')
+SENDER_EMAIL = os.environ.get('SES_SENDER_EMAIL', 'noreply@mockmaster.fun')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://mockmaster.fun')
 
 # DynamoDB table
 users_table = dynamodb.Table(USERS_TABLE)
@@ -135,42 +135,124 @@ def validate_password(password: str) -> Tuple[bool, str]:
 
 
 def send_verification_email(email: str, user_id: str, token: str) -> bool:
-    """Send email verification link."""
-    # For development/testing, skip actual email sending
-    # In production, configure SES and verify sender email
-    print(f"[DEV MODE] Verification email would be sent to {email}")
-    print(f"[DEV MODE] Verification token: {token}")
-    return False  # Return False to indicate email not actually sent
-
-
-def send_password_reset_email(email: str, user_id: str, token: str) -> bool:
-    """Send password reset link."""
-    reset_link = f"{FRONTEND_URL}/reset-password?token={token}"
+    """Send email verification link via SES."""
+    verification_link = f"{FRONTEND_URL}/verify-email?token={token}"
     
     html_body = f"""
     <html>
-    <head></head>
+    <head>
+        <style>
+            body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 40px 20px; }}
+            .header {{ text-align: center; margin-bottom: 30px; }}
+            .logo {{ font-size: 24px; font-weight: bold; color: #4F46E5; }}
+            .btn {{ display: inline-block; padding: 14px 28px; background-color: #4F46E5; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; }}
+            .footer {{ margin-top: 40px; font-size: 12px; color: #888; text-align: center; }}
+        </style>
+    </head>
     <body>
-        <h2>Reset Your Password</h2>
-        <p>Click the link below to reset your password:</p>
-        <a href="{reset_link}">Reset Password</a>
-        <p>This link expires in 24 hours.</p>
+        <div class="container">
+            <div class="header">
+                <div class="logo">MockMaster</div>
+                <p style="color: #666;">JAIIB & CAIIB Exam Prep</p>
+            </div>
+            <h2 style="color: #1a1a1a;">Verify Your Email Address</h2>
+            <p>Welcome to MockMaster! Please verify your email address to activate your account and start practicing.</p>
+            <p style="text-align: center; margin: 30px 0;">
+                <a href="{verification_link}" class="btn">Verify Email</a>
+            </p>
+            <p style="font-size: 14px; color: #666;">If the button doesn't work, copy and paste this link into your browser:</p>
+            <p style="font-size: 13px; word-break: break-all; color: #4F46E5;">{verification_link}</p>
+            <p style="font-size: 14px; color: #666;">This link expires in 24 hours.</p>
+            <div class="footer">
+                <p>You received this email because you signed up for MockMaster.</p>
+                <p>If you didn't create an account, you can safely ignore this email.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    text_body = f"""Welcome to MockMaster - JAIIB & CAIIB Exam Prep!
+
+Please verify your email address by clicking the link below:
+
+{verification_link}
+
+This link expires in 24 hours.
+
+If you didn't create an account, you can safely ignore this email.
+"""
+    
+    try:
+        ses_client.send_email(
+            Source=f"MockMaster <{SENDER_EMAIL}>",
+            Destination={'ToAddresses': [email]},
+            Message={
+                'Subject': {'Data': 'Verify your MockMaster account'},
+                'Body': {
+                    'Html': {'Data': html_body},
+                    'Text': {'Data': text_body}
+                }
+            }
+        )
+        print(f"Verification email sent to {email}")
+        return True
+    except ClientError as e:
+        print(f"Error sending verification email: {e}")
+        return False
+
+
+def send_password_reset_email(email: str, user_id: str, token: str) -> bool:
+    """Send password reset link via SES."""
+    reset_link = f"{FRONTEND_URL}/password-reset?token={token}"
+    
+    html_body = f"""
+    <html>
+    <head>
+        <style>
+            body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 40px 20px; }}
+            .header {{ text-align: center; margin-bottom: 30px; }}
+            .logo {{ font-size: 24px; font-weight: bold; color: #4F46E5; }}
+            .btn {{ display: inline-block; padding: 14px 28px; background-color: #4F46E5; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; }}
+            .footer {{ margin-top: 40px; font-size: 12px; color: #888; text-align: center; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="logo">MockMaster</div>
+                <p style="color: #666;">JAIIB & CAIIB Exam Prep</p>
+            </div>
+            <h2 style="color: #1a1a1a;">Reset Your Password</h2>
+            <p>We received a request to reset your password. Click the button below to create a new password:</p>
+            <p style="text-align: center; margin: 30px 0;">
+                <a href="{reset_link}" class="btn">Reset Password</a>
+            </p>
+            <p style="font-size: 14px; color: #666;">If the button doesn't work, copy and paste this link:</p>
+            <p style="font-size: 13px; word-break: break-all; color: #4F46E5;">{reset_link}</p>
+            <p style="font-size: 14px; color: #666;">This link expires in 24 hours.</p>
+            <div class="footer">
+                <p>If you didn't request a password reset, you can safely ignore this email.</p>
+            </div>
+        </div>
     </body>
     </html>
     """
     
     try:
         ses_client.send_email(
-            Source=SENDER_EMAIL,
+            Source=f"MockMaster <{SENDER_EMAIL}>",
             Destination={'ToAddresses': [email]},
             Message={
-                'Subject': {'Data': 'Reset Your JAIIB Portal Password'},
+                'Subject': {'Data': 'Reset your MockMaster password'},
                 'Body': {'Html': {'Data': html_body}}
             }
         )
         return True
     except ClientError as e:
-        print(f"Error sending email: {e}")
+        print(f"Error sending password reset email: {e}")
         return False
 
 
@@ -241,7 +323,7 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
         
         return success_response(201, {
             'user_id': user_id,
-            'message': 'Registration successful. You can now login.',
+            'message': 'Registration successful. Please check your email to verify your account.',
             'verification_email_sent': email_sent
         })
     

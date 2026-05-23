@@ -20,6 +20,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import BlogPage from './pages/BlogPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -49,6 +50,7 @@ const AppContent: React.FC = () => {
       <Route path="/terms-of-service" element={<TermsOfServicePage />} />
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/blog/:slug" element={<BlogPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
 
       {/* Protected Routes */}
       <Route
