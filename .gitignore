@@ -1,4 +1,5 @@
 .config.kiro
+.kiro
 .vscode/
 frontend/node_modules
 .hypothesis/
