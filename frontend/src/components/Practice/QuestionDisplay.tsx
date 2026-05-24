@@ -120,10 +120,10 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   const isReviewed = reviewedQuestions.has(currentQuestion.question_id);
 
   return (
-    <div className="space-y-4">
-      {/* Question Palette at top */}
-      <div className="bg-white rounded-lg shadow p-4 border">
-        <div className="flex flex-wrap gap-1.5 mb-3">
+    <div className="space-y-3 md:space-y-4">
+      {/* Question Palette - collapsible on mobile */}
+      <div className="bg-white rounded-lg shadow p-3 md:p-4 border">
+        <div className="flex flex-wrap gap-1 md:gap-1.5 mb-3 max-h-24 md:max-h-none overflow-y-auto">
           {session.questions.map((q, idx) => {
             const isActive = idx === currentQuestionIndex;
             const isAns = !!answers[q.question_id];
@@ -132,14 +132,14 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               <button
                 key={q.question_id}
                 onClick={() => setCurrentQuestionIndex(idx)}
-                className={`w-8 h-8 rounded text-xs font-bold transition-all border ${
+                className={`w-7 h-7 md:w-8 md:h-8 rounded text-[10px] md:text-xs font-bold transition-all border ${
                   isActive
                     ? 'bg-indigo-600 text-white border-indigo-700 ring-2 ring-indigo-300'
                     : isRev
-                    ? 'bg-orange-400 text-white border-orange-500 hover:bg-orange-500'
+                    ? 'bg-orange-400 text-white border-orange-500'
                     : isAns
-                    ? 'bg-green-500 text-white border-green-600 hover:bg-green-600'
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                    ? 'bg-green-500 text-white border-green-600'
+                    : 'bg-gray-100 text-gray-700 border-gray-300'
                 }`}
               >
                 {idx + 1}
@@ -149,43 +149,43 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 text-xs text-gray-600 mb-3">
+        <div className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs text-gray-600 mb-3">
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded bg-green-500 inline-block"></span> Answer
+            <span className="w-2.5 h-2.5 md:w-3 md:h-3 rounded bg-green-500 inline-block"></span> Answered
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded bg-orange-400 inline-block"></span> Review
+            <span className="w-2.5 h-2.5 md:w-3 md:h-3 rounded bg-orange-400 inline-block"></span> Review
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded bg-gray-100 border border-gray-300 inline-block"></span> Unattempted
+            <span className="w-2.5 h-2.5 md:w-3 md:h-3 rounded bg-gray-100 border border-gray-300 inline-block"></span> Unattempted
           </span>
         </div>
 
-        {/* Action buttons row: Review question, Pause, Timer, Summary */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        {/* Action buttons - stacked on mobile */}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 md:gap-2">
             <button
               onClick={handleReviewQuestion}
-              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+              className={`px-2.5 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-lg transition-all ${
                 isReviewed
-                  ? 'bg-orange-500 text-white hover:bg-orange-600'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-indigo-600 text-white'
               }`}
             >
-              {isReviewed ? '✓ Reviewed' : 'Review question'}
+              {isReviewed ? '✓ Review' : '🔖 Review'}
             </button>
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+              className={`px-2.5 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-lg transition-all ${
                 isPaused
                   ? 'bg-green-600 text-white hover:bg-green-700'
                   : 'bg-indigo-600 text-white hover:bg-indigo-700'
               }`}
             >
-              {isPaused ? '▶ Resume' : '⏸ Pause'}
+              {isPaused ? '▶' : '⏸'}
             </button>
             {/* Timer */}
-            <div className={`flex items-center gap-1.5 px-3 py-2 rounded-lg font-mono font-bold text-sm ${
+            <div className={`flex items-center gap-1 px-2 md:px-3 py-1.5 md:py-2 rounded-lg font-mono font-bold text-xs md:text-sm ${
               isCritical
                 ? 'bg-red-600 text-white animate-pulse'
                 : isWarning
@@ -197,26 +197,26 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           </div>
           <button
             onClick={() => isMockTest ? setShowFinalReview(true) : setShowSummary(true)}
-            className="px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-all"
+            className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-gray-800 text-white rounded-lg transition-all"
           >
-            {isSubmitting ? 'Submitting...' : isMockTest ? 'Final Review & Submit' : 'Summary'}
+            {isSubmitting ? '...' : isMockTest ? 'Submit' : 'Summary'}
           </button>
         </div>
       </div>
 
       {/* Question counter */}
-      <p className="text-sm text-indigo-600 font-medium">
+      <p className="text-xs md:text-sm text-indigo-600 font-medium">
         Question {currentQuestionIndex + 1} of {totalQuestions}
       </p>
 
       {/* Question Card */}
-      <div className="bg-white rounded-lg shadow border p-6">
+      <div className="bg-white rounded-lg shadow border p-4 md:p-6">
         {/* Question text */}
-        <div className="mb-6">
-          <h3 className="text-base font-bold text-gray-900">
+        <div className="mb-4 md:mb-6">
+          <h3 className="text-sm md:text-base font-bold text-gray-900">
             {currentQuestionIndex + 1}. Question
           </h3>
-          <p className="mt-2 text-gray-800 leading-relaxed whitespace-pre-wrap">
+          <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
             {currentQuestion.question_text}
           </p>
         </div>
@@ -244,7 +244,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             return (
               <label
                 key={key}
-                className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}
+                className={`flex items-start p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}
               >
                 <input
                   type="radio"
@@ -252,16 +252,16 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                   value={key}
                   checked={isSelected}
                   onChange={() => handleSelectAnswer(key)}
-                  className="w-4 h-4 text-indigo-600 flex-shrink-0"
+                  className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5"
                 />
-                <span className="ml-3 text-gray-800">
+                <span className="ml-2 md:ml-3 text-sm md:text-base text-gray-800">
                   <span className="font-medium">{key}.</span> {value}
                 </span>
                 {isChecked && isCorrectOption && (
-                  <span className="ml-auto text-green-600 font-bold text-sm">✓ Correct</span>
+                  <span className="ml-auto text-green-600 font-bold text-xs flex-shrink-0">✓</span>
                 )}
                 {isChecked && isSelected && !isCorrectOption && (
-                  <span className="ml-auto text-red-600 font-bold text-sm">✗ Wrong</span>
+                  <span className="ml-auto text-red-600 font-bold text-xs flex-shrink-0">✗</span>
                 )}
               </label>
             );
@@ -282,46 +282,42 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         )}
 
         {/* Bottom action buttons */}
-        <div className="flex items-center justify-between mt-8 pt-4 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-6 md:mt-8 pt-4 border-t border-gray-200 gap-3">
           {/* Left buttons */}
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrevious}
               disabled={currentQuestionIndex === 0}
-              className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-indigo-600 text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
-              Back
+              ← Back
             </button>
             <button
               onClick={handleClearAnswer}
               disabled={!isAnswered}
-              className="px-4 py-2 text-sm font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-green-600 text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
-              Clear Answer
+              Clear
             </button>
             <button
               onClick={() => setShowReportDialog(true)}
-              className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
+              className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-gray-500 text-white rounded-lg transition-all"
             >
-              Report Question
+              Report
             </button>
           </div>
 
           {/* Right buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 justify-end">
             {!isMockTest && (
               <button
                 onClick={() => {
-                  // "Check" reveals the correct answer for current question
                   const qid = currentQuestion.question_id;
-                  if (!answers[qid]) {
-                    // If not answered, just highlight — user needs to select first
-                    return;
-                  }
+                  if (!answers[qid]) return;
                   setCheckedQuestions(prev => new Set(prev).add(qid));
                 }}
                 disabled={!isAnswered}
-                className="px-4 py-2 text-sm font-semibold bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-gray-700 text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               >
                 Check
               </button>
@@ -329,9 +325,9 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             <button
               onClick={handleNext}
               disabled={currentQuestionIndex === totalQuestions - 1}
-              className="px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded-lg hover:bg-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-gray-800 text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
-              Next
+              Next →
             </button>
           </div>
         </div>

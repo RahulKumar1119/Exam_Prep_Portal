@@ -67,3 +67,35 @@ code {
 .danger-badge {
   @apply inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium;
 }
+
+/* Mobile optimizations for Samsung S23 and similar devices */
+@media (max-width: 640px) {
+  /* Prevent horizontal overflow */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Better touch targets */
+  button, a, label, input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Fix dialog overflow on mobile */
+  [role="dialog"] {
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 16px;
+  }
+  
+  /* Smoother scrolling for question palette */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent text selection on buttons during rapid tapping */
+  button {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+}
