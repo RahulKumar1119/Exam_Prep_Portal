@@ -6,7 +6,7 @@ import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 
 const PAPERS = [
-  { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 738, sets: 15 },
+  { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1068, sets: 21 },
   { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 536, sets: 11 },
   { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 535, sets: 11 },
   { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 299, sets: 6 },
@@ -27,8 +27,9 @@ const PracticePage: React.FC = () => {
       return;
     }
     try {
-      await generatePracticeSet(selectedPaper);
-      setSelectedSet(selectedSet || 1);
+      const setNum = selectedSet || 1;
+      setSelectedSet(setNum);
+      await generatePracticeSet(selectedPaper, 'practice', setNum);
     } catch (err) {
       console.error('Failed to generate practice set:', err);
     }

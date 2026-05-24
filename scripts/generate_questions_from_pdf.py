@@ -30,7 +30,7 @@ REGION = 'ap-south-1'
 MODEL_ID = 'global.amazon.nova-2-lite-v1:0'
 DYNAMODB_TABLE = 'jaiib-question-bank'
 PAGES_PER_CHUNK = 25
-QUESTIONS_PER_CHUNK = 10  # questions per chunk (25 pages)
+QUESTIONS_PER_CHUNK = 30  # questions per chunk (25 pages)
 MAX_RETRIES = 2
 
 # ── AWS Clients ───────────────────────────────────────────────────────────────

@@ -234,13 +234,50 @@ def _db_fetch_by_difficulty(questions_table, paper_name: str) -> Dict[str, List[
 
 
 # ── Async worker (invoked by itself) ─────────────────────────────────────────
-def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table, mode: str = 'practice'):
+def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table, mode: str = 'practice', set_number: int = 0):
     """Called asynchronously — generates questions and updates the session."""
 
     if mode == 'mock_test':
         questions = _generate_mock_test(paper_name, questions_table)
+    elif set_number > 0:
+        # Fixed set mode — deterministic slice of questions from DB
+        # Fetch ALL questions for this paper, sort by question_id for consistency
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM')
+        if paper_name in DB_PAPERS:
+            try:
+                items = []
+                kwargs = {
+                    'IndexName': 'paper-topic-index',
+                    'KeyConditionExpression': 'paper_name = :p',
+                    'ExpressionAttributeValues': {':p': paper_name}
+                }
+                while True:
+                    resp = questions_table.query(**kwargs)
+                    items.extend(resp.get('Items', []))
+                    if 'LastEvaluatedKey' not in resp:
+                        break
+                    kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+                
+                # Sort deterministically by question_id
+                items.sort(key=lambda x: x.get('question_id', ''))
+                
+                # Slice: set 1 = items[0:50], set 2 = items[50:100], etc.
+                start = (set_number - 1) * QUESTIONS_PER_SET
+                end = start + QUESTIONS_PER_SET
+                questions = items[start:end]
+                
+                # If not enough questions for this set, wrap around
+                if len(questions) < QUESTIONS_PER_SET and items:
+                    remaining = QUESTIONS_PER_SET - len(questions)
+                    questions += items[:remaining]
+                    
+            except Exception as e:
+                print(f"Fixed set fetch error: {e}")
+                questions = _call_bedrock(paper_name)
+        else:
+            questions = _call_bedrock(paper_name)
     else:
-        # Original practice mode — pull from DB first, fallback to Bedrock
+        # Original practice mode — random from DB, fallback to Bedrock
         DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM')
         if paper_name in DB_PAPERS:
             questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
@@ -400,7 +437,8 @@ def handler(event, context):
                 event['paper_name'],
                 sessions_table,
                 questions_table,
-                mode=event.get('mode', 'practice')
+                mode=event.get('mode', 'practice'),
+                set_number=event.get('set_number', 0)
             )
             return {'statusCode': 200}
 
@@ -417,6 +455,7 @@ def handler(event, context):
         session_id = body.get('session_id')
         answers    = body.get('answers', {})
         mode       = body.get('mode', 'practice')  # 'practice' or 'mock_test'
+        set_number = int(body.get('set_number', 0))  # 0 = random, 1+ = fixed set
 
         # ── GET /practice/status/{session_id} ─────────────────────────────────
         if method == 'GET' and '/status/' in path:
@@ -484,7 +523,8 @@ def handler(event, context):
                     'async_action': 'generate',
                     'session_id':   session_id,
                     'paper_name':   paper_name,
-                    'mode':         mode
+                    'mode':         mode,
+                    'set_number':   set_number
                 })
             )
 
