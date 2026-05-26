@@ -24,13 +24,13 @@ import fitz  # PyMuPDF
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 S3_BUCKET = 'courses007'
-S3_KEY = 'JAIIB-PAPER-1-Module-A-IE-IFS-PDF-By-Ambitiousbaba.pdf'
-PAPER_NAME = 'IE & IFS'
+S3_KEY = 'JAIIB-PPB-Paper-2-Module-B-Functions-of-Banks-PDF.pdf'
+PAPER_NAME = 'PPB'
 REGION = 'ap-south-1'
 MODEL_ID = 'global.amazon.nova-2-lite-v1:0'
 DYNAMODB_TABLE = 'jaiib-question-bank'
 PAGES_PER_CHUNK = 25
-QUESTIONS_PER_CHUNK = 30  # questions per chunk (25 pages)
+QUESTIONS_PER_CHUNK = 35  # questions per chunk (25 pages)
 MAX_RETRIES = 2
 
 # ── AWS Clients ───────────────────────────────────────────────────────────────

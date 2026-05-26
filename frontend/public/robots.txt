@@ -1,8 +1,20 @@
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://mockmaster.fun/sitemap.xml
+
+# Disallow admin/protected routes from crawling
 Disallow: /dashboard
 Disallow: /practice
+Disallow: /previous-attempts
 Disallow: /home
-Disallow: /admin
 
-Sitemap: https://mockmaster.fun/sitemap.xml
+# Allow all public pages
+Allow: /blog
+Allow: /blog/
+Allow: /practice-tests
+Allow: /practice-tests/
+Allow: /contact
+Allow: /login
+Allow: /register
