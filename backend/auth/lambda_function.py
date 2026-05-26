@@ -595,6 +595,38 @@ def handle_contact_form(body: Dict[str, Any]) -> Dict[str, Any]:
         return error_response(500, 'Failed to send message. Please try again.')
 
 
+def handle_report_question(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Handle question report — store in jaiib-question-reports table."""
+    import uuid as _uuid
+    question_id = body.get('question_id', '').strip()
+    reason = body.get('reason', '').strip()
+    comment = body.get('comment', '').strip()
+    paper_name = body.get('paper_name', '').strip()
+    user_id = body.get('user_id', 'anonymous').strip()
+
+    if not question_id or not reason:
+        return error_response(400, 'question_id and reason are required')
+
+    reports_table = dynamodb.Table('jaiib-question-reports')
+    report_id = str(_uuid.uuid4())
+
+    try:
+        reports_table.put_item(Item={
+            'report_id': report_id,
+            'question_id': question_id,
+            'reason': reason,
+            'comment': comment,
+            'paper_name': paper_name,
+            'user_id': user_id,
+            'status': 'pending',
+            'created_at': datetime.utcnow().isoformat(),
+        })
+        return success_response(200, {'message': 'Report submitted', 'report_id': report_id})
+    except ClientError as e:
+        print(f"Error storing report: {e}")
+        return error_response(500, 'Failed to submit report')
+
+
 def handler(event, context):
     """Lambda handler for authentication requests."""
     try:
@@ -636,6 +668,8 @@ def handler(event, context):
             return reset_password(body)
         elif path == '/auth/contact' and http_method == 'POST':
             return handle_contact_form(body)
+        elif path == '/auth/report-question' and http_method == 'POST':
+            return handle_report_question(body)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     

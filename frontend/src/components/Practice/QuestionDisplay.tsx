@@ -301,20 +301,22 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             </button>
             <button
               onClick={async () => {
-                const reasons = ['Wrong answer marked as correct', 'Question is incomplete', 'Options are wrong', 'Duplicate question', 'Other'];
+                const reasons = ['wrong_answer', 'incomplete_question', 'wrong_options', 'duplicate', 'other'];
+                const labels = ['Wrong answer marked as correct', 'Question is incomplete', 'Options are wrong', 'Duplicate question', 'Other'];
                 const reason = window.prompt(
                   `Report Question ${currentQuestionIndex + 1}\n\nSelect reason number:\n1. Wrong answer marked as correct\n2. Question is incomplete\n3. Options are wrong\n4. Duplicate question\n5. Other\n\nEnter 1-5:`
                 );
                 if (!reason) return;
                 const reasonIdx = parseInt(reason) - 1;
-                const selectedReason = reasons[reasonIdx] || reasons[4];
+                if (reasonIdx < 0 || reasonIdx > 4) return;
                 try {
                   const { apiClient } = await import('../../services/api');
-                  await apiClient.post('/auth/contact', {
-                    name: 'Question Report',
-                    email: 'report@mockmaster.fun',
-                    subject: 'Question Report',
-                    message: `Question ${currentQuestionIndex + 1}: "${currentQuestion.question_text.substring(0, 100)}..."\n\nReason: ${selectedReason}\nQuestion ID: ${currentQuestion.question_id}\nPaper: ${session.paper_name}`
+                  await apiClient.post('/auth/report-question', {
+                    question_id: currentQuestion.question_id,
+                    reason: reasons[reasonIdx],
+                    comment: labels[reasonIdx],
+                    paper_name: session.paper_name,
+                    user_id: 'user'
                   });
                   alert('✅ Report submitted. Thank you!');
                 } catch (e) {
