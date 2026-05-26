@@ -300,7 +300,27 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               Clear
             </button>
             <button
-              onClick={() => setShowReportDialog(true)}
+              onClick={async () => {
+                const reasons = ['Wrong answer marked as correct', 'Question is incomplete', 'Options are wrong', 'Duplicate question', 'Other'];
+                const reason = window.prompt(
+                  `Report Question ${currentQuestionIndex + 1}\n\nSelect reason number:\n1. Wrong answer marked as correct\n2. Question is incomplete\n3. Options are wrong\n4. Duplicate question\n5. Other\n\nEnter 1-5:`
+                );
+                if (!reason) return;
+                const reasonIdx = parseInt(reason) - 1;
+                const selectedReason = reasons[reasonIdx] || reasons[4];
+                try {
+                  const { apiClient } = await import('../../services/api');
+                  await apiClient.post('/auth/contact', {
+                    name: 'Question Report',
+                    email: 'report@mockmaster.fun',
+                    subject: 'Question Report',
+                    message: `Question ${currentQuestionIndex + 1}: "${currentQuestion.question_text.substring(0, 100)}..."\n\nReason: ${selectedReason}\nQuestion ID: ${currentQuestion.question_id}\nPaper: ${session.paper_name}`
+                  });
+                  alert('✅ Report submitted. Thank you!');
+                } catch (e) {
+                  alert('Failed to submit report. Please try again.');
+                }
+              }}
               className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-gray-500 text-white rounded-lg transition-all"
             >
               Report
