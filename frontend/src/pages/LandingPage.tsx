@@ -8,35 +8,36 @@ const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-white">
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">JC</span>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-sm sm:text-lg">JC</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">JAIIB-CAIIB Prep</span>
+            <span className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">JAIIB-CAIIB Prep</span>
+            <span className="text-base font-bold text-gray-900 sm:hidden">MockMaster</span>
           </div>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-1 sm:gap-4">
             <button
               onClick={() => navigate('/practice-tests')}
-              className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition"
+              className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
             >
               Practice Tests
             </button>
             <button
               onClick={() => navigate('/blog')}
-              className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
+              className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden md:block"
             >
               Blog
             </button>
             <button
               onClick={() => navigate('/login')}
-              className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition"
+              className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition"
             >
               Login
             </button>
             <button
               onClick={() => navigate('/register')}
-              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+              className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Sign Up
             </button>
@@ -45,31 +46,31 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-10 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div>
-              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
                 Master JAIIB & CAIIB Exams
               </h1>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Prepare for your banking exams with AI-powered practice sets, expert explanations, and personalized learning paths. Join thousands of successful candidates.
+              <p className="text-base sm:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+                AI-powered practice sets with expert explanations and personalized learning paths. Join thousands of successful candidates.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => navigate('/register')}
-                  className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:scale-105"
+                  className="px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
                 >
                   Start Free Trial
                 </button>
                 <button
                   onClick={() => navigate('/login')}
-                  className="px-8 py-4 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition"
+                  className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition text-sm sm:text-base"
                 >
                   Login to Account
                 </button>
               </div>
-              <p className="text-sm text-gray-600 mt-6">✓ No credit card required • ✓ Free access to 100+ questions</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-4 sm:mt-6">✓ No credit card required • ✓ Free access to 3000+ questions</p>
             </div>
             <div className="hidden md:block">
               <div className="bg-gradient-to-br from-blue-400 to-indigo-600 rounded-2xl p-8 text-white shadow-2xl">
@@ -109,100 +110,100 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-white py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-white py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <p className="text-4xl font-bold text-blue-600 mb-2">50K+</p>
-              <p className="text-gray-600">Active Students</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
+            <div className="text-center p-3 sm:p-0">
+              <p className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1">50K+</p>
+              <p className="text-xs sm:text-base text-gray-600">Active Students</p>
             </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-indigo-600 mb-2">95%</p>
-              <p className="text-gray-600">Success Rate</p>
+            <div className="text-center p-3 sm:p-0">
+              <p className="text-2xl sm:text-4xl font-bold text-indigo-600 mb-1">95%</p>
+              <p className="text-xs sm:text-base text-gray-600">Success Rate</p>
             </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-purple-600 mb-2">1000+</p>
-              <p className="text-gray-600">Practice Questions</p>
+            <div className="text-center p-3 sm:p-0">
+              <p className="text-2xl sm:text-4xl font-bold text-purple-600 mb-1">3000+</p>
+              <p className="text-xs sm:text-base text-gray-600">Practice Questions</p>
             </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-pink-600 mb-2">4.8★</p>
-              <p className="text-gray-600">Average Rating</p>
+            <div className="text-center p-3 sm:p-0">
+              <p className="text-2xl sm:text-4xl font-bold text-pink-600 mb-1">4.8★</p>
+              <p className="text-xs sm:text-base text-gray-600">Average Rating</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="bg-gray-50 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gray-50 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose Us?</h2>
-            <p className="text-xl text-gray-600">Everything you need to ace your banking exams</p>
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">Why Choose Us?</h2>
+            <p className="text-sm sm:text-xl text-gray-600">Everything you need to ace your banking exams</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
             {/* Feature 1 */}
-            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-3xl">🎯</span>
+            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                <span className="text-xl sm:text-3xl">🎯</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Adaptive Learning</h3>
-              <p className="text-gray-600">
+              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Adaptive Learning</h3>
+              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
                 Our AI adapts to your learning pace, focusing on weak areas to maximize your score improvement.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-3xl">💡</span>
+            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                <span className="text-xl sm:text-3xl">💡</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Expert Explanations</h3>
-              <p className="text-gray-600">
+              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Expert Explanations</h3>
+              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
                 Get detailed explanations for every question with RBI and IIBF references to deepen your understanding.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-3xl">📈</span>
+            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                <span className="text-xl sm:text-3xl">📈</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Performance Tracking</h3>
-              <p className="text-gray-600">
+              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Performance Tracking</h3>
+              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
                 Monitor your progress with detailed analytics, score trends, and personalized recommendations.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-3xl">⏱️</span>
+            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-green-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                <span className="text-xl sm:text-3xl">⏱️</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Timed Practice</h3>
-              <p className="text-gray-600">
+              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Timed Practice</h3>
+              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
                 Practice under exam conditions with realistic time limits to build speed and accuracy.
               </p>
             </div>
 
             {/* Feature 5 */}
-            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-14 h-14 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-3xl">📱</span>
+            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-yellow-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                <span className="text-xl sm:text-3xl">📱</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Mobile Friendly</h3>
-              <p className="text-gray-600">
+              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Mobile Friendly</h3>
+              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
                 Study anytime, anywhere with our fully responsive platform optimized for all devices.
               </p>
             </div>
 
             {/* Feature 6 */}
-            <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-3xl">🏆</span>
+            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-red-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                <span className="text-xl sm:text-3xl">🏆</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Proven Results</h3>
-              <p className="text-gray-600">
+              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Proven Results</h3>
+              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
                 Join thousands of successful candidates who passed their exams using our platform.
               </p>
             </div>

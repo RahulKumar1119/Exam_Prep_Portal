@@ -92,7 +92,7 @@ const PracticePage: React.FC = () => {
           {/* Practice Set Selection */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Select Paper</h2>
-            <Select value={selectedPaper} onValueChange={(val) => { setSelectedPaper(val); setSelectedSet(null); }}>
+            <Select value={selectedPaper} onValueChange={(val) => { setSelectedPaper(val); setSelectedSet(1); }}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose a paper..." />
               </SelectTrigger>
@@ -110,7 +110,7 @@ const PracticePage: React.FC = () => {
               <div className="mt-8">
                 <div className="bg-sky-100 rounded-lg p-4 text-center mb-6">
                   <h3 className="text-lg font-bold text-sky-800">
-                    Practice Set {selectedSet || '—'}
+                    Practice Set {selectedSet || 1}
                   </h3>
                 </div>
 
