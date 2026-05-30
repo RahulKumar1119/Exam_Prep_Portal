@@ -210,10 +210,16 @@ const PracticeTestDetailPage: React.FC = () => {
               <p className="text-3xl font-bold text-white">Free</p>
               <p className="text-blue-200 text-sm mb-4">with signup</p>
               <button
+                onClick={() => navigate(`/free-quiz/${paper.slug}`)}
+                className="w-full px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition mb-2"
+              >
+                ⚡ Try 5 Free Questions
+              </button>
+              <button
                 onClick={() => navigate('/register')}
                 className="w-full px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
               >
-                Start Practicing →
+                Sign Up for All →
               </button>
             </div>
           </div>
