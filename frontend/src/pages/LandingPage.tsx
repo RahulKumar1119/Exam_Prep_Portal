@@ -459,6 +459,12 @@ const LandingPage: React.FC = () => {
             >
               Browse All Practice Tests →
             </button>
+            <button
+              onClick={() => navigate('/free-quiz/ie-ifs')}
+              className="px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition transform hover:scale-105"
+            >
+              ⚡ Try 5 Free Questions — No Signup
+            </button>
           </div>
         </div>
       </section>
