@@ -360,12 +360,20 @@ const PracticeTestDetailPage: React.FC = () => {
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-3">Ready to Start Practicing?</h2>
           <p className="text-blue-100 mb-6">Access all {paper.questions} questions with AI explanations — completely free</p>
-          <button
-            onClick={() => navigate('/register')}
-            className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
-          >
-            Sign Up & Start Free →
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => navigate(`/free-quiz/${paper.slug}`)}
+              className="px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition"
+            >
+              ⚡ Try 5 Free Questions Now
+            </button>
+            <button
+              onClick={() => navigate('/register')}
+              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
+            >
+              Sign Up for Full Access →
+            </button>
+          </div>
         </div>
       </div>
 
