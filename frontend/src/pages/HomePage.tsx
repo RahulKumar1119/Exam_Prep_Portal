@@ -124,7 +124,7 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Mock Test */}
           <div
-            onClick={() => navigate('/mock-test')}
+            onClick={() => navigate('/practice')}
             className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow-lg p-8 cursor-pointer hover:shadow-xl hover:scale-105 transition transform"
           >
             <div className="flex items-center justify-between">

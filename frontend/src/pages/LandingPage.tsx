@@ -1,11 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="MockMaster — Free JAIIB & CAIIB Mock Tests 2026 | AI-Powered Practice"
+        description="Free JAIIB 2026 mock tests with 3000+ questions. AI explanations citing RBI circulars & IIBF textbooks. Practice IE&IFS, PPB, AFM, RBWM papers. Pass in first attempt."
+        canonical="https://mockmaster.fun/"
+        keywords="JAIIB mock test 2026, JAIIB practice questions free, CAIIB mock test, IIBF exam prep, banking exam preparation"
+      />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
@@ -114,20 +121,20 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
             <div className="text-center p-3 sm:p-0">
-              <p className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1">50K+</p>
-              <p className="text-xs sm:text-base text-gray-600">Active Students</p>
+              <p className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1">3000+</p>
+              <p className="text-xs sm:text-base text-gray-600">Practice Questions</p>
             </div>
             <div className="text-center p-3 sm:p-0">
-              <p className="text-2xl sm:text-4xl font-bold text-indigo-600 mb-1">95%</p>
-              <p className="text-xs sm:text-base text-gray-600">Success Rate</p>
+              <p className="text-2xl sm:text-4xl font-bold text-indigo-600 mb-1">4</p>
+              <p className="text-xs sm:text-base text-gray-600">JAIIB Papers</p>
             </div>
             <div className="text-center p-3 sm:p-0">
               <p className="text-2xl sm:text-4xl font-bold text-purple-600 mb-1">3000+</p>
               <p className="text-xs sm:text-base text-gray-600">Practice Questions</p>
             </div>
             <div className="text-center p-3 sm:p-0">
-              <p className="text-2xl sm:text-4xl font-bold text-pink-600 mb-1">4.8★</p>
-              <p className="text-xs sm:text-base text-gray-600">Average Rating</p>
+              <p className="text-2xl sm:text-4xl font-bold text-pink-600 mb-1">Free</p>
+              <p className="text-xs sm:text-base text-gray-600">Forever</p>
             </div>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ToastProvider, ToastViewport } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/Tooltip';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -108,6 +109,7 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <TooltipProvider>
@@ -126,6 +128,7 @@ const App: React.FC = () => {
         </TooltipProvider>
       </ToastProvider>
     </QueryClientProvider>
+    </HelmetProvider>
   );
 };
 

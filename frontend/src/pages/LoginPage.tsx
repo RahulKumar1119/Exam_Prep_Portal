@@ -7,15 +7,6 @@ interface FormErrors {
   password?: string;
 }
 
-const ALLOWED_DOMAINS = [
-  'gmail.com',
-  'outlook.com',
-  'hotmail.com',
-  'icloud.com',
-  'yahoo.com',
-  'qq.com',
-];
-
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,11 +32,6 @@ const LoginPage: React.FC = () => {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
-    } else {
-      const domain = formData.email.split('@')[1]?.toLowerCase();
-      if (!ALLOWED_DOMAINS.includes(domain)) {
-        errors.email = `Only these email domains are allowed: ${ALLOWED_DOMAINS.join(', ')}`;
-      }
     }
 
     if (!formData.password) {

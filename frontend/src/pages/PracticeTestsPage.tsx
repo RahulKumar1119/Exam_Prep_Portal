@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const PAPERS = [
   {
@@ -63,6 +64,12 @@ const PracticeTestsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="JAIIB Practice Tests 2026 — Free Mock Tests for All Papers"
+        description="3000+ free JAIIB practice questions for IE&IFS, PPB, AFM, RBWM. AI-powered explanations with RBI circular references. Updated for 2026 syllabus."
+        canonical="https://mockmaster.fun/practice-tests"
+        keywords="JAIIB practice test free, JAIIB mock test online, IE IFS practice questions, PPB mock test, AFM questions"
+      />
       {/* Nav */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">

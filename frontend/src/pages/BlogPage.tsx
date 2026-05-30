@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 interface BlogPost {
   slug: string;
@@ -437,6 +438,12 @@ const BlogListPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="JAIIB & CAIIB Preparation Blog — Study Tips, RBI Updates, Syllabus Guide"
+        description="Expert JAIIB preparation tips, RBI circular summaries, syllabus updates, and study strategies. Free guides to help you clear banking exams in first attempt."
+        canonical="https://mockmaster.fun/blog"
+        keywords="JAIIB preparation tips, JAIIB study strategy, RBI circulars for JAIIB, JAIIB syllabus 2026, how to clear JAIIB"
+      />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
@@ -567,6 +574,13 @@ const BlogPostPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title={post.title}
+        description={post.description}
+        canonical={`https://mockmaster.fun/blog/${post.slug}`}
+        type="article"
+        keywords={`JAIIB 2026, ${post.category}, ${post.title.split(' ').slice(0, 5).join(' ')}`}
+      />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">

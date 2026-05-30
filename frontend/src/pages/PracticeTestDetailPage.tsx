@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 interface PaperDetail {
   slug: string;
@@ -177,6 +178,13 @@ const PracticeTestDetailPage: React.FC = () => {
           </div>
         </div>
       </nav>
+
+      <SEO
+        title={`${paper.name} Practice Questions 2026 — Free JAIIB Mock Test`}
+        description={paper.description}
+        canonical={`https://mockmaster.fun/practice-tests/${paper.slug}`}
+        keywords={`${paper.name} practice questions, ${paper.fullName} mock test, JAIIB ${paper.name} 2026`}
+      />
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-600 to-indigo-700 py-16 px-4 sm:px-6 lg:px-8">
