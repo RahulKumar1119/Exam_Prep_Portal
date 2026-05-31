@@ -7,9 +7,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 
 const PAPERS = [
   { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1068, sets: 21 },
-  { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 536, sets: 11 },
-  { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 535, sets: 11 },
-  { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 299, sets: 6 },
+  { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 760, sets: 15 },
+  { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 976, sets: 20 },
+  { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 635, sets: 13 },
 ];
 
 const PracticePage: React.FC = () => {
