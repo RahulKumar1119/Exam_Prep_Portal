@@ -7,7 +7,7 @@ const PAPERS = [
     slug: 'ie-ifs',
     name: 'IE & IFS',
     fullName: 'Indian Economy & Indian Financial System',
-    questions: '698+',
+    questions: '1068+',
     rating: 4.8,
     reviews: 142,
     color: 'blue',
@@ -18,7 +18,7 @@ const PAPERS = [
     slug: 'ppb',
     name: 'PPB',
     fullName: 'Principles & Practices of Banking',
-    questions: '536+',
+    questions: '760+',
     rating: 4.9,
     reviews: 128,
     color: 'indigo',
@@ -29,7 +29,7 @@ const PAPERS = [
     slug: 'afm',
     name: 'AFM',
     fullName: 'Accounting & Financial Management for Bankers',
-    questions: '535+',
+    questions: '600+',
     rating: 4.7,
     reviews: 96,
     color: 'purple',
@@ -40,7 +40,7 @@ const PAPERS = [
     slug: 'rbwm',
     name: 'RBWM',
     fullName: 'Retail Banking & Wealth Management',
-    questions: '299+',
+    questions: '635+',
     rating: 4.8,
     reviews: 74,
     color: 'pink',
@@ -94,7 +94,7 @@ const PracticeTestsPage: React.FC = () => {
             AI-powered practice questions with detailed explanations citing RBI circulars and IIBF textbook references. Updated for the latest syllabus.
           </p>
           <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
-            <span>✅ 2,000+ Questions</span>
+            <span>✅ 3,000+ Questions</span>
             <span>✅ AI Explanations</span>
             <span>✅ No Negative Marking</span>
             <span>✅ Lifetime Access</span>
