@@ -24,8 +24,8 @@ import fitz  # PyMuPDF
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 S3_BUCKET = 'courses007'
-S3_KEY = 'JAIIB-PPB-Paper-2-Module-B-Functions-of-Banks-PDF.pdf'
-PAPER_NAME = 'PPB'
+S3_KEY = 'JAIIB-AFM-Module-B-Financial-Statements-and-Core-Banking-Systems.pdf'
+PAPER_NAME = 'AFM'
 REGION = 'ap-south-1'
 MODEL_ID = 'global.amazon.nova-2-lite-v1:0'
 DYNAMODB_TABLE = 'jaiib-question-bank'
