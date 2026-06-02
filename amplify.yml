@@ -6,10 +6,12 @@ applications:
         preBuild:
           commands:
             - echo "Installing dependencies..."
-            - npm install
+            - npm ci
+            # Install Chromium for react-snap pre-rendering
+            - yum install -y chromium || echo "Chromium already available"
         build:
           commands:
-            - echo "Building React application..."
+            - echo "Building React application with pre-rendering..."
             - npm run build
             - echo "Build completed successfully"
       artifacts:
@@ -53,6 +55,6 @@ applications:
             - key: 'Cache-Control'
               value: 'max-age=31536000, immutable'
       rewrites:
-        - source: '</^[^.]+$|\.(?!(css|gif|ico|jpg|jpeg|js|png|svg|woff|woff2|ttf|eot|otf)$)([^.]+$)/'
+        - source: '</^[^.]+$|\.(?!(css|gif|ico|jpg|jpeg|js|png|svg|woff|woff2|ttf|eot|otf|html)$)([^.]+$)/'
           target: '/index.html'
           status: '200'

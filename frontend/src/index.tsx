@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { hydrateRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
 
@@ -9,12 +10,22 @@ if (seoContent) {
   seoContent.remove();
 }
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const rootElement = document.getElementById('root') as HTMLElement;
 
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// If the page was pre-rendered by react-snap, hydrate instead of render.
+// This preserves the static HTML for SEO while making the page interactive.
+if (rootElement.hasChildNodes()) {
+  hydrateRoot(
+    rootElement,
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+} else {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
