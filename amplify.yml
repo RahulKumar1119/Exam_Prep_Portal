@@ -7,8 +7,8 @@ applications:
           commands:
             - echo "Installing dependencies..."
             - npm ci
-            # Install Chromium for react-snap pre-rendering
-            - yum install -y chromium || echo "Chromium already available"
+            # Install Chromium dependencies required by puppeteer for pre-rendering
+            - yum install -y alsa-lib atk cups-libs gtk3 libXcomposite libXcursor libXdamage libXext libXi libXrandr libXScrnSaver libXtst pango nss at-spi2-atk libdrm mesa-libgbm 2>/dev/null || true
         build:
           commands:
             - echo "Building React application with pre-rendering..."
