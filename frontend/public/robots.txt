@@ -16,5 +16,10 @@ Allow: /blog/
 Allow: /practice-tests
 Allow: /practice-tests/
 Allow: /contact
+Allow: /about
+Allow: /faq
+Allow: /disclaimer
+Allow: /free-quiz
+Allow: /free-quiz/
 Allow: /login
 Allow: /register

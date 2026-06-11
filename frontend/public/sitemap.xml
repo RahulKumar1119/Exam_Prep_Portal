@@ -121,6 +121,24 @@
     <lastmod>2026-05-23</lastmod>
   </url>
   <url>
+    <loc>https://mockmaster.fun/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <lastmod>2026-06-05</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-06-05</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/disclaimer</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <lastmod>2026-06-05</lastmod>
+  </url>
+  <url>
     <loc>https://mockmaster.fun/login</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>

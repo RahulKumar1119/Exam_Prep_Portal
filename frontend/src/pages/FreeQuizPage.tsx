@@ -256,6 +256,27 @@ const FreeQuizPage: React.FC = () => {
         <p className="text-center text-xs text-gray-500 mt-6">
           This is a free sample. <button onClick={() => navigate('/register')} className="text-blue-600 font-medium hover:underline">Sign up</button> to access 3000+ questions.
         </p>
+
+        {/* Static SEO content — visible to crawlers, shows sample questions */}
+        <div className="mt-12 bg-white rounded-xl border border-gray-200 p-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Sample {paperName} Questions</h2>
+          <p className="text-sm text-gray-600 mb-6">Here are the practice questions included in this free quiz. Sign up to access our full question bank with 3000+ questions and AI explanations.</p>
+          <div className="space-y-6">
+            {questions.map((q, idx) => (
+              <div key={q.id} className="border-b border-gray-100 pb-4 last:border-0">
+                <p className="text-sm font-medium text-gray-800 mb-2">{idx + 1}. {q.text}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs text-gray-600">
+                  {Object.entries(q.options).map(([key, val]) => (
+                    <p key={key} className={key === q.correct ? 'text-green-700 font-medium' : ''}>
+                      {key}. {val} {key === q.correct && '✓'}
+                    </p>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2 italic">{q.explanation}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
