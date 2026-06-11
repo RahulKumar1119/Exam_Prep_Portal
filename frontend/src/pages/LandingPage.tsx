@@ -546,6 +546,8 @@ const LandingPage: React.FC = () => {
             <div>
               <h4 className="text-white font-bold mb-4">About</h4>
               <ul className="space-y-2 text-sm">
+                <li><a href="/about" className="hover:text-white transition">About Us</a></li>
+                <li><a href="/faq" className="hover:text-white transition">FAQ</a></li>
                 <li><a href="/blog" className="hover:text-white transition">Blog</a></li>
               </ul>
             </div>
@@ -564,6 +566,7 @@ const LandingPage: React.FC = () => {
               <ul className="space-y-2 text-sm">
                 <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
                 <li><a href="/terms-of-service" className="hover:text-white transition">Terms of Service</a></li>
+                <li><a href="/disclaimer" className="hover:text-white transition">Disclaimer</a></li>
                 <li><a href="/contact" className="hover:text-white transition">Contact</a></li>
               </ul>
             </div>
