@@ -31,6 +31,13 @@ import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
 import DisclaimerPage from './pages/DisclaimerPage';
 
+// Topic Pages
+import CrrExplainedPage from './pages/topics/CrrExplainedPage';
+import NpaClassificationPage from './pages/topics/NpaClassificationPage';
+import PriorityLendingPage from './pages/topics/PriorityLendingPage';
+import NpvIrrPage from './pages/topics/NpvIrrPage';
+import SarfaesiActPage from './pages/topics/SarfaesiActPage';
+
 // Components
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -67,6 +74,13 @@ const AppContent: React.FC = () => {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/faq" element={<FAQPage />} />
       <Route path="/disclaimer" element={<DisclaimerPage />} />
+
+      {/* Topic Hub Pages */}
+      <Route path="/jaiib/ppb/crr-explained" element={<CrrExplainedPage />} />
+      <Route path="/jaiib/ppb/npa-classification" element={<NpaClassificationPage />} />
+      <Route path="/jaiib/ppb/priority-sector-lending" element={<PriorityLendingPage />} />
+      <Route path="/jaiib/afm/npv-irr-explained" element={<NpvIrrPage />} />
+      <Route path="/jaiib/ppb/sarfaesi-act" element={<SarfaesiActPage />} />
 
       {/* Protected Routes */}
       <Route
