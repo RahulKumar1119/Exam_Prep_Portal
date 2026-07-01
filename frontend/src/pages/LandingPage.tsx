@@ -562,6 +562,16 @@ const LandingPage: React.FC = () => {
               </ul>
             </div>
             <div>
+              <h4 className="text-white font-bold mb-4">Study Topics</h4>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/jaiib/ppb/crr-explained" className="hover:text-white transition">CRR Explained</a></li>
+                <li><a href="/jaiib/ppb/npa-classification" className="hover:text-white transition">NPA Classification</a></li>
+                <li><a href="/jaiib/ppb/priority-sector-lending" className="hover:text-white transition">Priority Sector Lending</a></li>
+                <li><a href="/jaiib/afm/npv-irr-explained" className="hover:text-white transition">NPV & IRR Explained</a></li>
+                <li><a href="/jaiib/ppb/sarfaesi-act" className="hover:text-white transition">SARFAESI Act</a></li>
+              </ul>
+            </div>
+            <div>
               <h4 className="text-white font-bold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
