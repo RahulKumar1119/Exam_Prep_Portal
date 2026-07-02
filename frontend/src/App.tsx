@@ -37,6 +37,18 @@ import NpaClassificationPage from './pages/topics/NpaClassificationPage';
 import PriorityLendingPage from './pages/topics/PriorityLendingPage';
 import NpvIrrPage from './pages/topics/NpvIrrPage';
 import SarfaesiActPage from './pages/topics/SarfaesiActPage';
+import SlrExplainedPage from './pages/topics/SlrExplainedPage';
+import KycNormsPage from './pages/topics/KycNormsPage';
+import NiActPage from './pages/topics/NiActPage';
+import BaselNormsPage from './pages/topics/BaselNormsPage';
+import DepositInsurancePage from './pages/topics/DepositInsurancePage';
+import RepoRatePage from './pages/topics/RepoRatePage';
+import BreakEvenPage from './pages/topics/BreakEvenPage';
+import DepreciationPage from './pages/topics/DepreciationPage';
+import RatioAnalysisPage from './pages/topics/RatioAnalysisPage';
+import MutualFundsPage from './pages/topics/MutualFundsPage';
+import UpiPaymentsPage from './pages/topics/UpiPaymentsPage';
+import HomeLoanPage from './pages/topics/HomeLoanPage';
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -81,6 +93,18 @@ const AppContent: React.FC = () => {
       <Route path="/jaiib/ppb/priority-sector-lending" element={<PriorityLendingPage />} />
       <Route path="/jaiib/afm/npv-irr-explained" element={<NpvIrrPage />} />
       <Route path="/jaiib/ppb/sarfaesi-act" element={<SarfaesiActPage />} />
+      <Route path="/jaiib/ppb/slr-explained" element={<SlrExplainedPage />} />
+      <Route path="/jaiib/ppb/kyc-norms" element={<KycNormsPage />} />
+      <Route path="/jaiib/ppb/negotiable-instruments-act" element={<NiActPage />} />
+      <Route path="/jaiib/ppb/basel-norms" element={<BaselNormsPage />} />
+      <Route path="/jaiib/ppb/deposit-insurance-dicgc" element={<DepositInsurancePage />} />
+      <Route path="/jaiib/ppb/repo-rate-explained" element={<RepoRatePage />} />
+      <Route path="/jaiib/afm/break-even-analysis" element={<BreakEvenPage />} />
+      <Route path="/jaiib/afm/depreciation-methods" element={<DepreciationPage />} />
+      <Route path="/jaiib/afm/ratio-analysis" element={<RatioAnalysisPage />} />
+      <Route path="/jaiib/rbwm/mutual-funds-guide" element={<MutualFundsPage />} />
+      <Route path="/jaiib/ppb/upi-payments-system" element={<UpiPaymentsPage />} />
+      <Route path="/jaiib/rbwm/home-loan-guide" element={<HomeLoanPage />} />
 
       {/* Protected Routes */}
       <Route
