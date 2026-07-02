@@ -30,6 +30,7 @@ import FreeQuizPage from './pages/FreeQuizPage';
 import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
 import DisclaimerPage from './pages/DisclaimerPage';
+import StudyTopicsPage from './pages/StudyTopicsPage';
 
 // Topic Pages
 import CrrExplainedPage from './pages/topics/CrrExplainedPage';
@@ -86,6 +87,7 @@ const AppContent: React.FC = () => {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/faq" element={<FAQPage />} />
       <Route path="/disclaimer" element={<DisclaimerPage />} />
+      <Route path="/study-topics" element={<StudyTopicsPage />} />
 
       {/* Topic Hub Pages */}
       <Route path="/jaiib/ppb/crr-explained" element={<CrrExplainedPage />} />

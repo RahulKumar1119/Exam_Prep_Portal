@@ -31,6 +31,12 @@ const LandingPage: React.FC = () => {
               Practice Tests
             </button>
             <button
+              onClick={() => navigate('/study-topics')}
+              className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
+            >
+              Study Topics
+            </button>
+            <button
               onClick={() => navigate('/blog')}
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden md:block"
             >
