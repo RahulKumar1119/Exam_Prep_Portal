@@ -548,7 +548,7 @@ const LandingPage: React.FC = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
               <h4 className="text-white font-bold mb-4">About</h4>
               <ul className="space-y-2 text-sm">
@@ -565,16 +565,6 @@ const LandingPage: React.FC = () => {
                 <li><a href="/practice-tests/ppb" className="hover:text-white transition">PPB</a></li>
                 <li><a href="/practice-tests/afm" className="hover:text-white transition">AFM</a></li>
                 <li><a href="/practice-tests/rbwm" className="hover:text-white transition">RBWM</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Study Topics</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/jaiib/ppb/crr-explained" className="hover:text-white transition">CRR Explained</a></li>
-                <li><a href="/jaiib/ppb/npa-classification" className="hover:text-white transition">NPA Classification</a></li>
-                <li><a href="/jaiib/ppb/priority-sector-lending" className="hover:text-white transition">Priority Sector Lending</a></li>
-                <li><a href="/jaiib/afm/npv-irr-explained" className="hover:text-white transition">NPV & IRR Explained</a></li>
-                <li><a href="/jaiib/ppb/sarfaesi-act" className="hover:text-white transition">SARFAESI Act</a></li>
               </ul>
             </div>
             <div>
