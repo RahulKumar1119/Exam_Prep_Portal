@@ -8,10 +8,10 @@ const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="MockMaster — Free JAIIB & CAIIB Mock Tests 2026 | AI-Powered Practice"
-        description="Free JAIIB 2026 mock tests with 3000+ questions. AI explanations citing RBI circulars & IIBF textbooks. Practice IE&IFS, PPB, AFM, RBWM papers. Pass in first attempt."
+        title="JAIIB Exam 2026: Complete Guide, Syllabus, Strategy & Free Mock Tests"
+        description="Everything you need to pass JAIIB 2026 — exam structure, latest syllabus for IE&IFS, PPB, AFM, RBWM, passing criteria, preparation strategy, study timetable, and free practice questions."
         canonical="https://mockmaster.fun/"
-        keywords="JAIIB mock test 2026, JAIIB practice questions free, CAIIB mock test, IIBF exam prep, banking exam preparation"
+        keywords="JAIIB exam 2026, JAIIB syllabus 2026, JAIIB preparation strategy, JAIIB passing marks, JAIIB study plan, IIBF JAIIB, JAIIB mock test free"
       />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -24,523 +24,409 @@ const LandingPage: React.FC = () => {
             <span className="text-base font-bold text-gray-900 sm:hidden">MockMaster</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-4">
-            <button
-              onClick={() => navigate('/practice-tests')}
-              className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
-            >
-              Practice Tests
-            </button>
-            <button
-              onClick={() => navigate('/study-topics')}
-              className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
-            >
-              Study Topics
-            </button>
-            <button
-              onClick={() => navigate('/blog')}
-              className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden md:block"
-            >
-              Blog
-            </button>
-            <button
-              onClick={() => navigate('/login')}
-              className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
-              className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
-            >
-              Sign Up
-            </button>
+            <button onClick={() => navigate('/practice-tests')} className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block">Practice Tests</button>
+            <button onClick={() => navigate('/study-topics')} className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block">Study Topics</button>
+            <button onClick={() => navigate('/blog')} className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden md:block">Blog</button>
+            <button onClick={() => navigate('/login')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition">Login</button>
+            <button onClick={() => navigate('/register')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-10 sm:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-            <div>
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-                Master JAIIB & CAIIB Exams
-              </h1>
-              <p className="text-base sm:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed">
-                AI-powered practice sets with expert explanations and personalized learning paths. Join thousands of successful candidates.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={() => navigate('/register')}
-                  className="px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
-                >
-                  Start Free Trial
-                </button>
-                <button
-                  onClick={() => navigate('/login')}
-                  className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition text-sm sm:text-base"
-                >
-                  Login to Account
-                </button>
-              </div>
-              <p className="text-xs sm:text-sm text-gray-600 mt-4 sm:mt-6">✓ No credit card required • ✓ Free access to 3000+ questions</p>
-            </div>
-            <div className="hidden md:block">
-              <div className="bg-gradient-to-br from-blue-400 to-indigo-600 rounded-2xl p-8 text-white shadow-2xl">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl">📚</span>
-                    </div>
-                    <div>
-                      <p className="font-semibold">1000+ Questions</p>
-                      <p className="text-sm text-blue-100">Curated from latest exams</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl">🤖</span>
-                    </div>
-                    <div>
-                      <p className="font-semibold">AI Explanations</p>
-                      <p className="text-sm text-blue-100">Understand every concept</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                      <span className="text-2xl">📊</span>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Performance Analytics</p>
-                      <p className="text-sm text-blue-100">Track your progress</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="bg-white py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
-            <div className="text-center p-3 sm:p-0">
-              <p className="text-2xl sm:text-4xl font-bold text-blue-600 mb-1">3000+</p>
-              <p className="text-xs sm:text-base text-gray-600">Practice Questions</p>
-            </div>
-            <div className="text-center p-3 sm:p-0">
-              <p className="text-2xl sm:text-4xl font-bold text-indigo-600 mb-1">4</p>
-              <p className="text-xs sm:text-base text-gray-600">JAIIB Papers</p>
-            </div>
-            <div className="text-center p-3 sm:p-0">
-              <p className="text-2xl sm:text-4xl font-bold text-purple-600 mb-1">3000+</p>
-              <p className="text-xs sm:text-base text-gray-600">Practice Questions</p>
-            </div>
-            <div className="text-center p-3 sm:p-0">
-              <p className="text-2xl sm:text-4xl font-bold text-pink-600 mb-1">Free</p>
-              <p className="text-xs sm:text-base text-gray-600">Forever</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="bg-gray-50 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">Why Choose Us?</h2>
-            <p className="text-sm sm:text-xl text-gray-600">Everything you need to ace your banking exams</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                <span className="text-xl sm:text-3xl">🎯</span>
-              </div>
-              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Adaptive Learning</h3>
-              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
-                Our AI adapts to your learning pace, focusing on weak areas to maximize your score improvement.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                <span className="text-xl sm:text-3xl">💡</span>
-              </div>
-              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Expert Explanations</h3>
-              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
-                Get detailed explanations for every question with RBI and IIBF references to deepen your understanding.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                <span className="text-xl sm:text-3xl">📈</span>
-              </div>
-              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Performance Tracking</h3>
-              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
-                Monitor your progress with detailed analytics, score trends, and personalized recommendations.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-green-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                <span className="text-xl sm:text-3xl">⏱️</span>
-              </div>
-              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Timed Practice</h3>
-              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
-                Practice under exam conditions with realistic time limits to build speed and accuracy.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-yellow-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                <span className="text-xl sm:text-3xl">📱</span>
-              </div>
-              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Mobile Friendly</h3>
-              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
-                Study anytime, anywhere with our fully responsive platform optimized for all devices.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="bg-white rounded-xl p-4 sm:p-8 shadow-md hover:shadow-lg transition">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-red-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                <span className="text-xl sm:text-3xl">🏆</span>
-              </div>
-              <h3 className="text-sm sm:text-xl font-bold text-gray-900 mb-1 sm:mb-3">Proven Results</h3>
-              <p className="text-xs sm:text-base text-gray-600 hidden sm:block">
-                Join thousands of successful candidates who passed their exams using our platform.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Demo Preview Section */}
-      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">See AI Explanations in Action</h2>
-            <p className="text-xl text-gray-600">Not just answers — deep understanding with official references</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Question Mock-up */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-white font-medium text-sm">PPB • Question 14 of 100</span>
-                  <span className="text-blue-100 text-sm">⏱ 1:23 remaining</span>
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-900 font-medium mb-6 leading-relaxed">
-                  As per RBI guidelines, what is the maximum period for which a bank can classify a restructured advance as a "standard asset" after the restructuring date?
-                </p>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
-                    <span className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600">A</span>
-                    <span className="text-gray-700">6 months</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-red-300 bg-red-50">
-                    <span className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-sm font-semibold text-white">B</span>
-                    <span className="text-red-800 font-medium">12 months</span>
-                    <span className="ml-auto text-red-600 text-sm font-medium">✗ Your answer</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-green-300 bg-green-50">
-                    <span className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-sm font-semibold text-white">C</span>
-                    <span className="text-green-800 font-medium">1 year from the date of first payment of interest/principal</span>
-                    <span className="ml-auto text-green-600 text-sm font-medium">✓ Correct</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-gray-200 bg-gray-50">
-                    <span className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600">D</span>
-                    <span className="text-gray-700">2 years</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Explanation Mock-up */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4 flex items-center gap-2">
-                <span className="text-xl">🤖</span>
-                <span className="text-white font-medium">AI Explanation</span>
-              </div>
-              <div className="p-6 space-y-5">
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Why Option C is Correct</h4>
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    A restructured account is classified as a standard asset only if it demonstrates satisfactory performance for <strong>1 year from the date of first payment of interest or principal</strong> (whichever is later) after the restructuring. This is known as the "specified period" under RBI's prudential framework.
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Why Option B is Wrong</h4>
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    12 months is a common misconception. The period is not a fixed calendar duration — it starts from the <em>first payment date post-restructuring</em>, not from the restructuring date itself.
-                  </p>
-                </div>
-
-                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
-                    <span className="text-sm">📖</span> Official References
-                  </h4>
-                  <ul className="space-y-2 text-sm text-blue-800">
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
-                      <span><strong>RBI Master Circular</strong> — Prudential Norms on Income Recognition, Asset Classification and Provisioning (DOR.STR.REC.55/21.04.048/2023-24), Para 10.3.2</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
-                      <span><strong>IIBF PPB Textbook</strong> — Chapter 12: "Credit Management", Section 12.7 (Restructuring of Advances), Page 287</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
-                      <span><strong>RBI Framework</strong> — Resolution of Stressed Assets (June 7, 2019), Clause 17</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                  <h4 className="font-semibold text-amber-900 mb-1 text-sm">💡 Exam Tip</h4>
-                  <p className="text-amber-800 text-sm">
-                    IIBF frequently tests the distinction between "restructuring date" vs "first payment date" — always remember the clock starts at first payment, not at approval.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-gray-600 mb-4">Every question comes with detailed AI explanations citing official RBI circulars, IIBF textbooks, and relevant Acts</p>
-            <button
-              onClick={() => navigate('/register')}
-              className="px-8 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition"
-            >
-              Try It Free →
+      {/* Hero Section — Educational Focus */}
+      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+            JAIIB Exam 2026: Complete Guide to Passing in Your First Attempt
+          </h1>
+          <p className="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed max-w-3xl mx-auto">
+            The Junior Associate of the Indian Institute of Bankers (JAIIB) is a flagship certification conducted by IIBF for bank employees across India. This page covers everything you need — exam structure, updated 2026 syllabus, passing criteria, common mistakes candidates make, and a proven preparation strategy with a week-by-week study timetable.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button onClick={() => navigate('/register')} className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition text-sm sm:text-base">
+              Start Free Practice
             </button>
+            <a href="#jaiib-structure" className="px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition text-sm sm:text-base">
+              Read the Full Guide
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Papers Section */}
-      <section className="bg-white py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Exam Papers Covered</h2>
-            <p className="text-xl text-gray-600">Comprehensive practice for all JAIIB & CAIIB papers</p>
+      {/* Section 1: How JAIIB is Structured */}
+      <section id="jaiib-structure" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto prose prose-lg prose-gray">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">How the JAIIB Exam is Structured</h2>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            JAIIB (Junior Associate of the Indian Institute of Bankers) is a professional certification exam conducted by the Indian Institute of Banking and Finance (IIBF). It is mandatory for confirmed bank employees who wish to get increments and career growth in public and private sector banks. The exam is held twice a year — typically in May/June and November/December.
+          </p>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            The exam consists of <strong>4 compulsory papers</strong>, each tested as a separate online exam. You must pass all four papers within a span of <strong>2 consecutive attempts</strong> (i.e., within one year). Each paper has 100 multiple-choice questions (MCQs) to be answered in 120 minutes.
+          </p>
+
+          <div className="overflow-x-auto my-8">
+            <table className="min-w-full border border-gray-200 rounded-lg text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-900 border-b">Paper</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-900 border-b">Full Name</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-900 border-b">Questions</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-900 border-b">Duration</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-900 border-b">Total Marks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b">
+                  <td className="px-4 py-3 font-medium text-blue-700">IE & IFS</td>
+                  <td className="px-4 py-3 text-gray-700">Indian Economy & Indian Financial System</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                  <td className="px-4 py-3 text-center text-gray-700">120 min</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                </tr>
+                <tr className="border-b bg-gray-50">
+                  <td className="px-4 py-3 font-medium text-blue-700">PPB</td>
+                  <td className="px-4 py-3 text-gray-700">Principles & Practices of Banking</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                  <td className="px-4 py-3 text-center text-gray-700">120 min</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                </tr>
+                <tr className="border-b">
+                  <td className="px-4 py-3 font-medium text-blue-700">AFM</td>
+                  <td className="px-4 py-3 text-gray-700">Accounting & Financial Management for Bankers</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                  <td className="px-4 py-3 text-center text-gray-700">120 min</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-medium text-blue-700">RBWM</td>
+                  <td className="px-4 py-3 text-gray-700">Retail Banking & Wealth Management</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                  <td className="px-4 py-3 text-center text-gray-700">120 min</td>
+                  <td className="px-4 py-3 text-center text-gray-700">100</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          {/* JAIIB Papers */}
-          <div className="mb-12">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <span className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">J</span>
-              JAIIB — Compulsory Papers
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-8 border-2 border-blue-200">
-                <h3 className="text-2xl font-bold text-blue-900 mb-3">IE & IFS</h3>
-                <p className="text-blue-800 mb-4">Indian Economy & Indian Financial System</p>
-                <ul className="space-y-2 text-blue-700">
-                  <li>✓ 250+ practice questions</li>
-                  <li>✓ Topic-wise breakdown</li>
-                  <li>✓ Previous year papers</li>
-                </ul>
-              </div>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            The marking scheme follows a <strong>weighted pattern</strong>: approximately 50 easy questions carry 0.5 marks each (25 marks), 25 medium questions carry 1 mark each (25 marks), and 25 hard questions carry 2 marks each (50 marks) — totalling 100 marks. There is <strong>no negative marking</strong> in JAIIB, so you should attempt every question.
+          </p>
+        </div>
+      </section>
 
-              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-8 border-2 border-indigo-200">
-                <h3 className="text-2xl font-bold text-indigo-900 mb-3">PPB</h3>
-                <p className="text-indigo-800 mb-4">Principles & Practices of Banking</p>
-                <ul className="space-y-2 text-indigo-700">
-                  <li>✓ 250+ practice questions</li>
-                  <li>✓ Topic-wise breakdown</li>
-                  <li>✓ Previous year papers</li>
-                </ul>
-              </div>
+      {/* Section 2: Latest Syllabus 2026 */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">JAIIB Syllabus 2026 (Latest IIBF Update)</h2>
+          <p className="text-gray-700 leading-relaxed mb-8">
+            IIBF updated the JAIIB syllabus in 2023 when it moved from 3 papers to 4 papers. The 2026 syllabus remains the same structure. Each paper has 4 modules covering specific banking and financial topics. Here is the complete module-wise breakdown:
+          </p>
 
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-8 border-2 border-purple-200">
-                <h3 className="text-2xl font-bold text-purple-900 mb-3">AFM</h3>
-                <p className="text-purple-800 mb-4">Accounting & Financial Management for Bankers</p>
-                <ul className="space-y-2 text-purple-700">
-                  <li>✓ 250+ practice questions</li>
-                  <li>✓ Topic-wise breakdown</li>
-                  <li>✓ Previous year papers</li>
-                </ul>
+          {/* IE & IFS */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
+            <h3 className="text-xl font-bold text-blue-800 mb-3">Paper 1: Indian Economy & Indian Financial System (IE & IFS)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module A — Indian Economic Architecture</p>
+                <p>GDP & National Income, Economic Planning, Agriculture/Industrial/Service sectors, Inflation & Price Indices, Fiscal Policy & Union Budget, International Trade, Economic Reforms since 1991.</p>
               </div>
-
-              <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-8 border-2 border-pink-200">
-                <h3 className="text-2xl font-bold text-pink-900 mb-3">RBWM</h3>
-                <p className="text-pink-800 mb-4">Retail Banking & Wealth Management</p>
-                <ul className="space-y-2 text-pink-700">
-                  <li>✓ 250+ practice questions</li>
-                  <li>✓ Topic-wise breakdown</li>
-                  <li>✓ Previous year papers</li>
-                </ul>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module B — Economic Concepts for Banking</p>
+                <p>Money Supply & Monetary Policy, RBI Functions, Credit Creation, Interest Rate Determination, Foreign Exchange, Balance of Payments, Capital Account Convertibility.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module C — Indian Financial Architecture</p>
+                <p>Banking Regulation Act 1949, RBI Act 1934, SEBI, IRDAI, PFRDA, Financial Markets (Money/Capital/Forex/Debt), NABARD, SIDBI.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module D — Financial Products & Services</p>
+                <p>Retail & Corporate Banking, Priority Sector Lending, Digital Banking & Payment Systems (NEFT/RTGS/UPI), Insurance, Mutual Funds, Derivatives, Securitization, Credit Rating Agencies.</p>
               </div>
             </div>
           </div>
 
-          {/* CAIIB Papers */}
-          <div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <span className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold">C</span>
-              CAIIB — Compulsory Papers
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-8 border-2 border-emerald-200">
-                <h3 className="text-2xl font-bold text-emerald-900 mb-3">ABM</h3>
-                <p className="text-emerald-800 mb-4">Advanced Bank Management</p>
-                <ul className="space-y-2 text-emerald-700">
-                  <li>✓ Economic analysis & credit management</li>
-                  <li>✓ NPA & risk management</li>
-                  <li>✓ Organizational behaviour</li>
-                </ul>
+          {/* PPB */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
+            <h3 className="text-xl font-bold text-indigo-800 mb-3">Paper 2: Principles & Practices of Banking (PPB)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module A — General Banking Operations</p>
+                <p>Types of Accounts, KYC Norms, Nomination Facility, Negotiable Instruments Act 1881, Cheque Types & Crossing, Banker-Customer Relationship.</p>
               </div>
-
-              <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-8 border-2 border-teal-200">
-                <h3 className="text-2xl font-bold text-teal-900 mb-3">BFM</h3>
-                <p className="text-teal-800 mb-4">Bank Financial Management</p>
-                <ul className="space-y-2 text-teal-700">
-                  <li>✓ Treasury & international banking</li>
-                  <li>✓ Risk management & Basel norms</li>
-                  <li>✓ Balance sheet management</li>
-                </ul>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module B — Functions of Banks</p>
+                <p>Loans & Advances, Mortgage/Pledge/Hypothecation, Priority Sector & MSME Lending, NPA Classification, SARFAESI Act, Credit Appraisal.</p>
               </div>
-
-              <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl p-8 border-2 border-cyan-200">
-                <h3 className="text-2xl font-bold text-cyan-900 mb-3">ABF</h3>
-                <p className="text-cyan-800 mb-4">Advanced Business & Financial Management</p>
-                <ul className="space-y-2 text-cyan-700">
-                  <li>✓ Corporate finance & project appraisal</li>
-                  <li>✓ Financial services & fintech</li>
-                  <li>✓ Strategic management</li>
-                </ul>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module C — Banking Technology</p>
+                <p>Core Banking Solutions, Internet & Mobile Banking, RTGS/NEFT/IMPS/UPI, Cheque Truncation, Cyber Security, IT Act 2000.</p>
               </div>
-
-              <div className="bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl p-8 border-2 border-sky-200">
-                <h3 className="text-2xl font-bold text-sky-900 mb-3">BRBL</h3>
-                <p className="text-sky-800 mb-4">Banking Regulations & Business Laws</p>
-                <ul className="space-y-2 text-sky-700">
-                  <li>✓ Banking Regulation Act & RBI Act</li>
-                  <li>✓ Contract Act & NI Act</li>
-                  <li>✓ Consumer protection & cyber laws</li>
-                </ul>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module D — Ethics in Banking</p>
+                <p>Banking Codes & Standards, Customer Grievance Redressal, Banking Ombudsman, Anti-Money Laundering (PMLA 2002), KYC/AML/CFT, Corporate Governance.</p>
               </div>
             </div>
+          </div>
 
-            <h4 className="text-lg font-semibold text-gray-700 mb-4">Popular Electives</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { code: 'RBCB', name: 'Retail Banking & Consumer Banking' },
-                { code: 'CRCM', name: 'Credit Management' },
-                { code: 'ITK', name: 'Information Technology & Digital Banking' },
-                { code: 'RISKM', name: 'Risk Management' },
-                { code: 'CBBO', name: 'Central Banking & Business Operations' },
-                { code: 'HRM', name: 'Human Resource Management' },
-              ].map((elective) => (
-                <div key={elective.code} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="font-semibold text-gray-800">{elective.code}</p>
-                  <p className="text-sm text-gray-600">{elective.name}</p>
-                </div>
-              ))}
+          {/* AFM */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
+            <h3 className="text-xl font-bold text-purple-800 mb-3">Paper 3: Accounting & Financial Management (AFM)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module A — Accounting Principles</p>
+                <p>Double Entry System, Journal & Ledger, Trial Balance, Depreciation Methods, Provisions & Reserves, Bank Reconciliation Statement.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module B — Financial Statements</p>
+                <p>Trading & P&L Account, Balance Sheet, Cash Flow Statement (AS-3), Fund Flow, Ratio Analysis, Working Capital Management.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module C — Financial Management</p>
+                <p>Time Value of Money, Capital Budgeting (NPV/IRR), Cost of Capital, Capital Structure & Leverage, Dividend Policy, CAPM.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module D — Taxation & Costing</p>
+                <p>Income Tax Basics, TDS Provisions, GST Overview, Cost Accounting, Marginal Costing, Break-Even Analysis, Standard Costing.</p>
+              </div>
             </div>
-            <p className="text-sm text-gray-500 mt-4 italic">
-              CAIIB content coming soon — sign up to get notified when it launches.
+          </div>
+
+          {/* RBWM */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200">
+            <h3 className="text-xl font-bold text-pink-800 mb-3">Paper 4: Retail Banking & Wealth Management (RBWM)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module A — Retail Banking</p>
+                <p>Retail Products, Home/Auto/Personal Loans, Credit & Debit Cards, Retail Deposits, NRI Banking, Priority Banking.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module B — Retail Products & Recovery</p>
+                <p>Loan Against Property, Education/Gold Loans, Microfinance, SHGs, Recovery Management, SARFAESI in Retail, DRT, Lok Adalat.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module C — Marketing of Banking Services</p>
+                <p>Market Segmentation, CRM, Digital Marketing, Cross-selling, Service Quality, Brand Management, Distribution Channels.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 mb-2">Module D — Wealth Management</p>
+                <p>Financial Planning, Mutual Fund Types, Portfolio Management, Risk Profiling, Insurance & Retirement Planning, Tax Planning, Estate Planning.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3: Passing Criteria */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">JAIIB Passing Criteria & Marking Scheme</h2>
+          <div className="prose prose-lg text-gray-700 leading-relaxed space-y-4">
+            <p>
+              To pass JAIIB, you need to meet <strong>both</strong> of the following conditions:
+            </p>
+            <ul className="list-disc pl-6 space-y-2">
+              <li><strong>Individual paper pass mark:</strong> Minimum 50 out of 100 marks in each paper.</li>
+              <li><strong>Aggregate condition:</strong> A combined total of at least 200 marks across all 4 papers (i.e., an average of 50 per paper).</li>
+            </ul>
+            <p>
+              You get a maximum of <strong>2 consecutive attempts</strong> to clear all 4 papers. If you pass some papers in the first attempt, you only need to re-appear for the remaining papers in the next attempt. However, if you fail to clear all papers within 2 attempts, you must re-register and start over.
+            </p>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 my-6">
+              <h4 className="font-bold text-blue-900 mb-2">Key Facts About JAIIB Scoring</h4>
+              <ul className="list-disc pl-5 space-y-1 text-blue-800 text-sm">
+                <li>No negative marking — attempt every question, even if guessing</li>
+                <li>Weighted marks: Easy (0.5), Medium (1.0), Hard (2.0) — hard questions carry the most weight</li>
+                <li>Online exam with randomised question order — no two candidates get the same paper</li>
+                <li>Results are typically announced 4-6 weeks after the exam</li>
+                <li>Certificate is issued by IIBF and carries one increment in most PSU banks</li>
+              </ul>
+            </div>
+
+            <p>
+              <strong>Practical implication:</strong> Since hard questions (2 marks each) constitute 50% of total marks, you cannot pass by only preparing easy topics. A strong grasp of conceptual and application-based questions is essential.
             </p>
           </div>
+        </div>
+      </section>
 
-          {/* Browse All Button */}
-          <div className="text-center mt-12">
-            <button
-              onClick={() => navigate('/practice-tests')}
-              className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition transform hover:scale-105"
-            >
-              Browse All Practice Tests →
-            </button>
-            <button
-              onClick={() => navigate('/free-quiz/ie-ifs')}
-              className="px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition transform hover:scale-105"
-            >
-              ⚡ Try 5 Free Questions — No Signup
-            </button>
+      {/* Section 4: Common Mistakes */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">7 Common Mistakes JAIIB Candidates Make</h2>
+          <div className="space-y-5 text-gray-700">
+            <div className="bg-white rounded-lg p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-1">1. Ignoring the IIBF Macmillan textbooks</h4>
+              <p className="text-sm">Most questions are sourced directly from IIBF's official textbooks. Third-party guides are useful for revision, but they cannot replace the primary source material.</p>
+            </div>
+            <div className="bg-white rounded-lg p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-1">2. Skipping numerical questions in AFM</h4>
+              <p className="text-sm">AFM Paper 3 has 25 hard questions that are almost entirely calculation-based (NPV, IRR, depreciation, ratios). These carry 2 marks each — a total of 50 marks. Skipping numericals means losing half the paper.</p>
+            </div>
+            <div className="bg-white rounded-lg p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-1">3. Preparing only definitions and full forms</h4>
+              <p className="text-sm">Easy questions (definitions) only carry 0.5 marks each. You cannot pass with just definitions. Medium and hard questions test application, exceptions, regulatory limits, and case-based reasoning.</p>
+            </div>
+            <div className="bg-white rounded-lg p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-1">4. Not practicing under timed conditions</h4>
+              <p className="text-sm">100 questions in 120 minutes means just 72 seconds per question. Without timed practice, many candidates run out of time and leave 15-20 questions unattempted.</p>
+            </div>
+            <div className="bg-white rounded-lg p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-1">5. Studying all papers simultaneously</h4>
+              <p className="text-sm">Spreading focus across all 4 papers leads to shallow understanding. It is better to master one paper at a time, then move to the next, allowing concepts to consolidate.</p>
+            </div>
+            <div className="bg-white rounded-lg p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-1">6. Ignoring recent RBI circulars and amendments</h4>
+              <p className="text-sm">IIBF regularly includes questions from the latest RBI Master Directions, PMLA amendments, and regulatory updates. Check RBI's website for circulars issued in the 6 months before your exam.</p>
+            </div>
+            <div className="bg-white rounded-lg p-5 border border-gray-200">
+              <h4 className="font-bold text-gray-900 mb-1">7. Not attempting all questions</h4>
+              <p className="text-sm">There is zero negative marking. Even an educated guess has a 25% chance of being correct. Leaving any question blank is a guaranteed loss of potential marks.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="bg-gray-50 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">What Students Say</h2>
-            <p className="text-xl text-gray-600">Real success stories from our users</p>
-          </div>
+      {/* Section 5: Preparation Strategy */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Proven Preparation Strategy for JAIIB 2026</h2>
+          <div className="prose prose-lg text-gray-700 leading-relaxed space-y-4">
+            <p>
+              Most successful candidates spend <strong>8-12 weeks</strong> preparing for JAIIB while working full-time at their bank. The key is consistency — 1.5 to 2 hours daily is more effective than weekend cramming sessions.
+            </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Rajesh Kumar',
-                role: 'JAIIB Passed',
-                text: 'The AI explanations helped me understand complex concepts easily. Scored 85% in my first attempt!',
-                rating: 5,
-              },
-              {
-                name: 'Priya Singh',
-                role: 'CAIIB Passed',
-                text: 'Best platform for exam prep. The adaptive learning feature really helped me focus on weak areas.',
-                rating: 5,
-              },
-              {
-                name: 'Amit Patel',
-                role: 'JAIIB Passed',
-                text: 'Comprehensive question bank and excellent explanations. Highly recommended for all banking aspirants.',
-                rating: 5,
-              },
-            ].map((testimonial, idx) => (
-              <div key={idx} className="bg-white rounded-xl p-8 shadow-md">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <span key={i} className="text-yellow-400 text-xl">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 italic">"{testimonial.text}"</p>
-                <div>
-                  <p className="font-bold text-gray-900">{testimonial.name}</p>
-                  <p className="text-sm text-gray-600">{testimonial.role}</p>
-                </div>
-              </div>
-            ))}
+            <h3 className="text-xl font-bold text-gray-900 mt-8 mb-3">Phase 1: Foundation (Weeks 1-4)</h3>
+            <p>
+              Focus on reading the IIBF Macmillan textbooks cover-to-cover for your first two papers (recommended order: PPB first, then IE & IFS). Take notes on key Acts, thresholds, and regulatory limits. At this stage, understanding is more important than memorisation.
+            </p>
+
+            <h3 className="text-xl font-bold text-gray-900 mt-8 mb-3">Phase 2: Deep Dive (Weeks 5-8)</h3>
+            <p>
+              Complete the remaining two papers (AFM and RBWM). For AFM, spend extra time on numerical problems — practice at least 5 NPV/IRR calculations, 5 ratio analysis problems, and 5 depreciation problems daily. Use formula sheets and practice until you can solve them quickly.
+            </p>
+
+            <h3 className="text-xl font-bold text-gray-900 mt-8 mb-3">Phase 3: Practice & Revision (Weeks 9-12)</h3>
+            <p>
+              This is where mock tests become critical. Attempt at least 2-3 full-length mock tests per paper under timed conditions. Analyse your results to identify weak topics. Revisit the textbook sections for topics where you score below 60%. In the final week, focus on:
+            </p>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>Recent RBI circulars (last 6 months)</li>
+              <li>Specific thresholds and limits (e.g., DICGC cover amount, priority sector targets, NPA classification timelines)</li>
+              <li>Statement-based questions (I, II, III, IV — which are correct?)</li>
+              <li>AFM formulas and shortcuts</li>
+            </ul>
+
+            <div className="bg-green-50 border border-green-200 rounded-lg p-5 my-6">
+              <h4 className="font-bold text-green-900 mb-2">The 50-50-100 Rule</h4>
+              <p className="text-green-800 text-sm">
+                Experienced trainers recommend this distribution of study time: 50% on reading textbooks, 50% on solving MCQs and mock tests. Of your practice time, dedicate at least 30% specifically to hard (2-mark) questions — these decide whether you pass or fail.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">Ready to Ace Your Exam?</h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Join thousands of successful candidates. Start your free trial today!
+      {/* Section 6: Study Timetable */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">12-Week JAIIB Study Timetable</h2>
+          <p className="text-gray-700 mb-8">
+            This timetable assumes 1.5-2 hours of daily study on weekdays and 3-4 hours on weekends. Adjust based on your pace — some candidates with banking experience may finish faster.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate('/register')}
-              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition transform hover:scale-105"
-            >
-              Get Started Free
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200 rounded-lg text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-900 border-b">Week</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-900 border-b">Focus Area</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-900 border-b">Daily Activity</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-700">
+                <tr className="border-b"><td className="px-4 py-3 font-medium">1-2</td><td className="px-4 py-3">PPB — Modules A & B</td><td className="px-4 py-3">Read textbook + make notes on Acts & limits</td></tr>
+                <tr className="border-b bg-gray-50"><td className="px-4 py-3 font-medium">3-4</td><td className="px-4 py-3">PPB — Modules C & D + IE&IFS Module A</td><td className="px-4 py-3">Read + attempt 20 MCQs daily on PPB</td></tr>
+                <tr className="border-b"><td className="px-4 py-3 font-medium">5-6</td><td className="px-4 py-3">IE&IFS — Modules B, C, D</td><td className="px-4 py-3">Read textbook + practice conceptual MCQs</td></tr>
+                <tr className="border-b bg-gray-50"><td className="px-4 py-3 font-medium">7-8</td><td className="px-4 py-3">AFM — All modules (focus on numericals)</td><td className="px-4 py-3">Formulas + 10 numerical problems daily</td></tr>
+                <tr className="border-b"><td className="px-4 py-3 font-medium">9-10</td><td className="px-4 py-3">RBWM — All modules</td><td className="px-4 py-3">Read textbook + cross-reference with PPB topics</td></tr>
+                <tr className="border-b bg-gray-50"><td className="px-4 py-3 font-medium">11</td><td className="px-4 py-3">Full mock tests (all 4 papers)</td><td className="px-4 py-3">1 mock test daily + analyse weak areas</td></tr>
+                <tr><td className="px-4 py-3 font-medium">12</td><td className="px-4 py-3">Revision + RBI circulars</td><td className="px-4 py-3">Revise weak topics + recent amendments + formulas</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p className="text-gray-600 text-sm mt-4">
+            <strong>Tip:</strong> If you only have 6 weeks, double the daily study time and combine Phases 1 and 2. The practice phase (mock tests) should never be shortened — it is the most impactful phase.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 7: Practice with Us (subtle CTA) */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Practice JAIIB Questions Online</h2>
+          <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
+            We offer free practice sets for all 4 JAIIB papers with 50 questions per set, instant answer checking, and AI-generated explanations that cite RBI circulars and IIBF textbook references. No time limit on practice sets — learn at your own pace.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+              <p className="text-2xl font-bold text-blue-700">1068</p>
+              <p className="text-xs text-blue-600">IE&IFS Questions</p>
+            </div>
+            <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-200">
+              <p className="text-2xl font-bold text-indigo-700">760</p>
+              <p className="text-xs text-indigo-600">PPB Questions</p>
+            </div>
+            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+              <p className="text-2xl font-bold text-purple-700">1195</p>
+              <p className="text-xs text-purple-600">AFM Questions</p>
+            </div>
+            <div className="bg-pink-50 rounded-lg p-4 border border-pink-200">
+              <p className="text-2xl font-bold text-pink-700">635</p>
+              <p className="text-xs text-pink-600">RBWM Questions</p>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button onClick={() => navigate('/register')} className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">
+              Start Practicing Free
             </button>
-            <button
-              onClick={() => navigate('/login')}
-              className="px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:bg-opacity-10 transition"
-            >
-              Sign In
+            <button onClick={() => navigate('/practice-tests')} className="px-8 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 transition">
+              Browse All Practice Tests
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 8: FAQ */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions About JAIIB</h2>
+          <div className="space-y-4">
+            <details className="bg-white rounded-lg border border-gray-200 p-5 group">
+              <summary className="font-semibold text-gray-900 cursor-pointer">Who is eligible to take JAIIB?</summary>
+              <p className="mt-3 text-gray-700 text-sm">Any confirmed employee of a bank (public sector, private sector, cooperative, or regional rural bank) that is a member institution of IIBF is eligible. Probationary officers and clerks can appear once they are confirmed in service.</p>
+            </details>
+            <details className="bg-white rounded-lg border border-gray-200 p-5 group">
+              <summary className="font-semibold text-gray-900 cursor-pointer">How many attempts are allowed for JAIIB?</summary>
+              <p className="mt-3 text-gray-700 text-sm">You get 2 consecutive attempts. The exam is held twice a year, so you effectively have one year to clear all 4 papers. If you fail, you must re-register and the fee is non-refundable.</p>
+            </details>
+            <details className="bg-white rounded-lg border border-gray-200 p-5 group">
+              <summary className="font-semibold text-gray-900 cursor-pointer">What is the exam fee for JAIIB 2026?</summary>
+              <p className="mt-3 text-gray-700 text-sm">The registration fee is approximately Rs. 3,540 (including GST) for all 4 papers. Individual paper re-examination fees apply if you need to re-appear for specific papers.</p>
+            </details>
+            <details className="bg-white rounded-lg border border-gray-200 p-5 group">
+              <summary className="font-semibold text-gray-900 cursor-pointer">Is JAIIB mandatory for promotion?</summary>
+              <p className="mt-3 text-gray-700 text-sm">In most public sector banks, JAIIB is mandatory for promotion from Clerk to Officer or for the first promotion as an Officer. It also carries one increment in scale. In private banks, it is encouraged but policies vary.</p>
+            </details>
+            <details className="bg-white rounded-lg border border-gray-200 p-5 group">
+              <summary className="font-semibold text-gray-900 cursor-pointer">What is the difference between JAIIB and CAIIB?</summary>
+              <p className="mt-3 text-gray-700 text-sm">JAIIB is the junior-level certification (entry level). CAIIB (Certified Associate) is the senior-level certification that can only be attempted after passing JAIIB. CAIIB has 2 compulsory papers + 1 elective and carries 2 increments in most PSU banks.</p>
+            </details>
+            <details className="bg-white rounded-lg border border-gray-200 p-5 group">
+              <summary className="font-semibold text-gray-900 cursor-pointer">Can I pass JAIIB without coaching classes?</summary>
+              <p className="mt-3 text-gray-700 text-sm">Absolutely. Most successful candidates are self-study. The IIBF textbooks + practice MCQs + mock tests are sufficient. Coaching is helpful for AFM numericals if you are weak in accounting, but not mandatory.</p>
+            </details>
           </div>
         </div>
       </section>
