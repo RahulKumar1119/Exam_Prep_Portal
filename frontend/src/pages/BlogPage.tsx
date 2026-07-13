@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
+import ADDITIONAL_BLOG_POSTS from './blog-posts-additional';
 
 interface BlogPost {
   slug: string;
@@ -1071,6 +1072,7 @@ const BLOG_POSTS: BlogPost[] = [
       </div>
     ),
   },
+  ...ADDITIONAL_BLOG_POSTS,
 ];
 
 
