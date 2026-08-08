@@ -10,6 +10,7 @@ import { AwsRum, type AwsRumConfig } from 'aws-rum-web';
 try {
   const config: AwsRumConfig = {
     sessionSampleRate: 1,
+    identityPoolId: 'ap-south-1:402c08ea-e7d6-442d-8901-0df3443fcce6',
     endpoint: 'https://dataplane.rum.ap-south-1.amazonaws.com',
     telemetries: ['performance', 'errors', 'http'],
     allowCookies: true,
