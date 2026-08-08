@@ -536,7 +536,7 @@ def success_response(status_code: int, data: Dict[str, Any]) -> Dict[str, Any]:
     """Return success response."""
     return {
         'statusCode': status_code,
-        'body': json.dumps(data),
+        'body': json.dumps(data, default=str),
         'headers': {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
@@ -737,7 +737,7 @@ def handler(event, context):
                 'body': json.dumps({})
             }
         
-        body = json.loads(event.get('body', '{}'))
+        body = json.loads(event.get('body') or '{}')
         
         # Route to appropriate handler
         if path == '/auth/register' and http_method == 'POST':
