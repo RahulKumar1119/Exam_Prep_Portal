@@ -23,6 +23,8 @@ USERS = [
     {'user_id': 'df112411-c144-4071-a52e-554f4994777c', 'email': 'vijayalakshmissh2023@gmail.com', 'name': 'Vijayalakshmi'},
     {'user_id': '36158703-c041-4ac7-a471-875ad28beee1', 'email': 'papupachani22@gmail.com', 'name': 'Monjit'},
     {'user_id': 'ee4d3223-1472-448b-a440-e461d4e28dde', 'email': 'susanth31@gmail.com', 'name': 'Susanth'},
+    {'user_id': 'f7fba9da-b576-4bc6-a334-75684bab50f8', 'email': 'vaibhav007pintu@gmail.com', 'name': 'Yatendra'},
+    {'user_id': '1f655495-1d2c-4272-9bfe-17da36f48ab8', 'email': 'meowsnow456@gmail.com', 'name': 'LOGaN'},
 ]
 
 
