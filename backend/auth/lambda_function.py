@@ -713,6 +713,57 @@ def get_discussion_comments(params: Dict[str, Any]) -> Dict[str, Any]:
         return error_response(500, 'Failed to fetch comments')
 
 
+def get_exam_dates() -> Dict[str, Any]:
+    """Get exam dates from config table (public, no auth needed)."""
+    config_table = dynamodb.Table('jaiib-app-config')
+    try:
+        response = config_table.get_item(Key={'config_key': 'exam_dates'})
+        item = response.get('Item')
+        if not item:
+            return success_response(200, {'exam_dates': []})
+        dates = json.loads(item.get('value', '[]'))
+        return success_response(200, {
+            'exam_dates': dates,
+            'updated_at': item.get('updated_at', ''),
+        })
+    except (ClientError, Exception) as e:
+        print(f"Error fetching exam dates: {e}")
+        return error_response(500, 'Failed to fetch exam dates')
+
+
+def update_exam_dates(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Update exam dates (admin only). Body: {exam_dates: [{label, date}], user_id}."""
+    user_id = body.get('user_id', '')
+    exam_dates = body.get('exam_dates', [])
+
+    if not exam_dates or not isinstance(exam_dates, list):
+        return error_response(400, 'exam_dates array is required')
+
+    # Validate format
+    for entry in exam_dates:
+        if not entry.get('label') or not entry.get('date'):
+            return error_response(400, 'Each entry needs label and date (YYYY-MM-DD)')
+
+    config_table = dynamodb.Table('jaiib-app-config')
+    now = datetime.utcnow().isoformat()
+
+    try:
+        config_table.put_item(Item={
+            'config_key': 'exam_dates',
+            'value': json.dumps(exam_dates),
+            'updated_at': now,
+            'updated_by': user_id or 'admin',
+        })
+        return success_response(200, {
+            'message': 'Exam dates updated',
+            'exam_dates': exam_dates,
+            'updated_at': now,
+        })
+    except (ClientError, Exception) as e:
+        print(f"Error updating exam dates: {e}")
+        return error_response(500, 'Failed to update exam dates')
+
+
 def handler(event, context):
     """Lambda handler for authentication requests."""
     try:
@@ -761,6 +812,10 @@ def handler(event, context):
         elif path == '/auth/discussions' and http_method == 'GET':
             query_params = event.get('queryStringParameters', {}) or {}
             return get_discussion_comments(query_params)
+        elif path == '/auth/config/exam-dates' and http_method == 'GET':
+            return get_exam_dates()
+        elif path == '/auth/config/exam-dates' and http_method == 'PUT':
+            return update_exam_dates(body)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     

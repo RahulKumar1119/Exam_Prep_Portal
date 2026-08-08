@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import { apiClient } from '../../services/api';
 
-// JAIIB exam windows — update these when IIBF announces dates
-const EXAM_DATES = [
-  { label: 'JAIIB Nov-Dec 2026', date: new Date('2026-11-15T09:00:00+05:30') },
-  { label: 'JAIIB May-Jun 2027', date: new Date('2027-05-15T09:00:00+05:30') },
+interface ExamDate {
+  label: string;
+  date: string; // YYYY-MM-DD
+}
+
+// Fallback dates in case API is unreachable
+const FALLBACK_DATES: ExamDate[] = [
+  { label: 'JAIIB Nov-Dec 2026', date: '2026-11-15' },
+  { label: 'JAIIB May-Jun 2027', date: '2027-05-15' },
 ];
 
-function getNextExam(): { label: string; date: Date } | null {
+function getNextExam(dates: ExamDate[]): ExamDate | null {
   const now = new Date();
-  for (const exam of EXAM_DATES) {
-    if (exam.date > now) return exam;
+  for (const exam of dates) {
+    if (new Date(exam.date + 'T09:00:00+05:30') > now) return exam;
   }
   return null;
 }
 
-function getDaysUntil(target: Date): number {
+function getDaysUntil(dateStr: string): number {
+  const target = new Date(dateStr + 'T09:00:00+05:30');
   const now = new Date();
   const diff = target.getTime() - now.getTime();
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
@@ -25,15 +32,30 @@ function getWeeksAndDays(totalDays: number): { weeks: number; days: number } {
 }
 
 const ExamCountdown: React.FC = () => {
-  const [, setNow] = useState(new Date());
+  const [examDates, setExamDates] = useState<ExamDate[]>(FALLBACK_DATES);
 
-  // Update every hour to keep countdown fresh
   useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 60 * 60 * 1000);
+    const fetchDates = async () => {
+      try {
+        const response = await apiClient.get<{ exam_dates: ExamDate[] }>('/auth/config/exam-dates');
+        if (response.success && response.data?.exam_dates?.length) {
+          setExamDates(response.data.exam_dates);
+        }
+      } catch {
+        // Use fallback dates silently
+      }
+    };
+    fetchDates();
+  }, []);
+
+  // Force re-render daily
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const nextExam = getNextExam();
+  const nextExam = getNextExam(examDates);
   if (!nextExam) return null;
 
   const daysLeft = getDaysUntil(nextExam.date);
@@ -55,9 +77,9 @@ const ExamCountdown: React.FC = () => {
     ? 'Time to intensify practice. Attempt full mock tests.'
     : 'Plenty of time. Stay consistent with daily practice.';
 
-  // Progress ring (100 days = full preparation cycle)
+  // Progress ring (90 days = full preparation cycle)
   const totalPrepDays = 90;
-  const prepProgress = Math.min(100, Math.round(((totalPrepDays - daysLeft) / totalPrepDays) * 100));
+  const prepProgress = Math.min(100, Math.round(((totalPrepDays - Math.min(daysLeft, totalPrepDays)) / totalPrepDays) * 100));
 
   return (
     <div className={`bg-gradient-to-r ${bgGradient} rounded-xl p-6 text-white shadow-lg`}>
