@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PracticeSession } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
+import { useBookmarks } from '../../hooks/useBookmarks';
+import { useAuth } from '../../context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
 import { ExplanationDisplay } from './ExplanationDisplay';
 
@@ -29,6 +31,10 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
   const [showFinalReview, setShowFinalReview] = useState(false);
+
+  // Bookmarks
+  const { user } = useAuth();
+  const { isBookmarked, toggleBookmark } = useBookmarks(user?.user_id || 'anonymous');
 
   // Restore answers + timer from localStorage if available
   const persisted = loadSessionState();
@@ -298,6 +304,26 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               className="px-3 md:px-4 py-2 text-xs md:text-sm font-semibold bg-green-600 text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all"
             >
               Clear
+            </button>
+            <button
+              onClick={() => {
+                toggleBookmark({
+                  question_id: currentQuestion.question_id,
+                  question_text: currentQuestion.question_text,
+                  options: currentQuestion.options,
+                  correct_answer: currentQuestion.correct_answer,
+                  topic: currentQuestion.topic,
+                  difficulty: currentQuestion.difficulty,
+                  paper_name: session.paper_name,
+                });
+              }}
+              className={`px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-lg transition-all ${
+                isBookmarked(currentQuestion.question_id)
+                  ? 'bg-yellow-500 text-white'
+                  : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+              }`}
+            >
+              {isBookmarked(currentQuestion.question_id) ? '★ Saved' : '☆ Save'}
             </button>
             <button
               onClick={async () => {

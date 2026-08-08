@@ -17,6 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     { path: '/practice', label: 'Practice Sets', icon: 'practice' },
     { path: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
+    { path: '/bookmarks', label: 'Saved Questions', icon: 'bookmarks' },
     { path: '/previous-attempts', label: 'Previous Attempts', icon: 'history' },
   ];
 

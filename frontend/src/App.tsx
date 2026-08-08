@@ -26,6 +26,7 @@ import PracticeTestDetailPage from './pages/PracticeTestDetailPage';
 import PracticePage from './pages/PracticePage';
 import PreviousAttemptsPage from './pages/PreviousAttemptsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import BookmarksPage from './pages/BookmarksPage';
 import ContactPage from './pages/ContactPage';
 import FreeQuizPage from './pages/FreeQuizPage';
 import AboutPage from './pages/AboutPage';
@@ -154,6 +155,16 @@ const AppContent: React.FC = () => {
           <ProtectedRoute>
             <Layout>
               <LeaderboardPage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bookmarks"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <BookmarksPage />
             </Layout>
           </ProtectedRoute>
         }
