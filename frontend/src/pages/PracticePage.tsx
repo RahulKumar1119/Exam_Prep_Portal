@@ -3,6 +3,7 @@ import { usePractice } from '../context/PracticeContext';
 import { useDashboard } from '../context/DashboardContext';
 import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
+import DiscussionThread from '../components/Practice/DiscussionThread';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 
 const PAPERS = [
@@ -272,6 +273,9 @@ const PracticePage: React.FC = () => {
                     isCorrect={result.correct}
                   />
                 )}
+
+                {/* Discussion Thread */}
+                <DiscussionThread questionId={result.question_id} />
               </div>
             ))}
           </div>

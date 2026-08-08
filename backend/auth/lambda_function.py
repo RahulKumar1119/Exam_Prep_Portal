@@ -627,6 +627,92 @@ def handle_report_question(body: Dict[str, Any]) -> Dict[str, Any]:
         return error_response(500, 'Failed to submit report')
 
 
+def post_discussion_comment(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Post a comment/doubt on a question."""
+    question_id = body.get('question_id', '').strip()
+    user_id = body.get('user_id', '').strip()
+    user_name = body.get('user_name', 'Anonymous').strip()
+    comment = body.get('comment', '').strip()
+    parent_id = body.get('parent_id', '').strip()  # For replies
+
+    if not question_id or not comment:
+        return error_response(400, 'question_id and comment are required')
+    if not user_id:
+        return error_response(400, 'user_id is required')
+    if len(comment) > 1000:
+        return error_response(400, 'Comment must be 1000 characters or less')
+
+    discussions_table = dynamodb.Table('jaiib-discussions')
+    comment_id = str(uuid.uuid4())
+    now = datetime.utcnow().isoformat()
+
+    try:
+        item = {
+            'question_id': question_id,
+            'comment_id': comment_id,
+            'user_id': user_id,
+            'user_name': user_name,
+            'comment': comment,
+            'created_at': now,
+            'likes': 0,
+        }
+        if parent_id:
+            item['parent_id'] = parent_id
+
+        discussions_table.put_item(Item=item)
+        return success_response(201, {
+            'message': 'Comment posted',
+            'comment_id': comment_id,
+            'created_at': now,
+        })
+    except ClientError as e:
+        print(f"Error posting discussion comment: {e}")
+        return error_response(500, 'Failed to post comment')
+
+
+def get_discussion_comments(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Get all comments for a question, sorted by newest first."""
+    question_id = params.get('question_id', '')
+
+    if not question_id:
+        return error_response(400, 'question_id query parameter is required')
+
+    discussions_table = dynamodb.Table('jaiib-discussions')
+
+    try:
+        response = discussions_table.query(
+            KeyConditionExpression='question_id = :qid',
+            ExpressionAttributeValues={':qid': question_id},
+            ScanIndexForward=False,  # newest first
+        )
+        comments = response.get('Items', [])
+
+        # Separate top-level comments and replies
+        top_level = [c for c in comments if 'parent_id' not in c or not c['parent_id']]
+        replies = [c for c in comments if c.get('parent_id')]
+
+        # Attach replies to their parent
+        reply_map: Dict[str, list] = {}
+        for r in replies:
+            reply_map.setdefault(r['parent_id'], []).append(r)
+
+        threaded = []
+        for comment in top_level:
+            threaded.append({
+                **comment,
+                'replies': reply_map.get(comment['comment_id'], []),
+            })
+
+        return success_response(200, {
+            'question_id': question_id,
+            'comments': threaded,
+            'total': len(comments),
+        })
+    except ClientError as e:
+        print(f"Error fetching discussion comments: {e}")
+        return error_response(500, 'Failed to fetch comments')
+
+
 def handler(event, context):
     """Lambda handler for authentication requests."""
     try:
@@ -670,6 +756,11 @@ def handler(event, context):
             return handle_contact_form(body)
         elif path == '/auth/report-question' and http_method == 'POST':
             return handle_report_question(body)
+        elif path == '/auth/discussions' and http_method == 'POST':
+            return post_discussion_comment(body)
+        elif path == '/auth/discussions' and http_method == 'GET':
+            query_params = event.get('queryStringParameters', {}) or {}
+            return get_discussion_comments(query_params)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     

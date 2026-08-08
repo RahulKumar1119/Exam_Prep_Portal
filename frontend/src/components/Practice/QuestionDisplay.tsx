@@ -5,6 +5,7 @@ import { useBookmarks } from '../../hooks/useBookmarks';
 import { useAuth } from '../../context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
 import { ExplanationDisplay } from './ExplanationDisplay';
+import DiscussionThread from './DiscussionThread';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
@@ -284,6 +285,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               correctAnswer={currentQuestion.correct_answer}
               isCorrect={isAnswered === currentQuestion.correct_answer}
             />
+            <DiscussionThread questionId={currentQuestion.question_id} />
           </div>
         )}
 
