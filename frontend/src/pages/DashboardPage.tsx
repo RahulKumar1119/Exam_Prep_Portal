@@ -10,6 +10,7 @@ import RecommendedPractice from '../components/Dashboard/RecommendedPractice';
 import ExamReadiness from '../components/Dashboard/ExamReadiness';
 import StudyStreak from '../components/Dashboard/StudyStreak';
 import PercentileRanking from '../components/Dashboard/PercentileRanking';
+import ExamCountdown from '../components/Dashboard/ExamCountdown';
 
 const DashboardPage: React.FC = () => {
   const { dashboard_data, is_loading, error, fetchDashboardData } = useDashboard();
@@ -41,6 +42,9 @@ const DashboardPage: React.FC = () => {
 
       {dashboard_data ? (
         <>
+          {/* Exam Countdown */}
+          <ExamCountdown />
+
           {/* Performance Overview Cards */}
           <PerformanceOverview
             overall_score={dashboard_data.metrics.overall_score}

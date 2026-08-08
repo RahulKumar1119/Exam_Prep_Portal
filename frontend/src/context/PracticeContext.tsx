@@ -3,6 +3,7 @@ import { PracticeSession, SessionResult } from '../types/index';
 import { apiClient } from '../services/api';
 import { useAuth } from './AuthContext';
 import { loadSessionState, clearSessionState } from '../hooks/useSessionPersistence';
+import { recordPracticeActivity } from '../hooks/usePushNotifications';
 
 interface PracticeContextType {
   current_session: PracticeSession | null;
@@ -106,6 +107,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
       if (response.success && response.data) {
         setSessionResult(response.data);
         clearSessionState(); // clear persisted session on successful submit
+        recordPracticeActivity(); // record for push notification inactivity tracking
         onComplete?.();
       } else {
         throw new Error(response.error || 'Failed to submit practice set');

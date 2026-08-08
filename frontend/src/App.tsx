@@ -58,6 +58,7 @@ import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoadingSpinner from './components/LoadingSpinner';
 import { SessionTimeoutWarning } from './components/SessionTimeoutWarning';
+import NotificationPrompt from './components/NotificationPrompt';
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,7 @@ const AppContent: React.FC = () => {
   return (
     <>
       <SessionTimeoutWarning />
+      <NotificationPrompt />
       <Routes>
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
