@@ -243,7 +243,7 @@ def success_response(data: dict) -> dict:
     """Format success response"""
     return {
         'statusCode': 200,
-        'body': json.dumps(data),
+        'body': json.dumps(data, default=str),
         'headers': {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
