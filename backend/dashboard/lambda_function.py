@@ -641,6 +641,94 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
     }
 
 
+def get_leaderboard() -> Dict[str, Any]:
+    """Get All-India leaderboard — top performers ranked by average score."""
+    try:
+        # Scan all completed sessions
+        all_items = []
+        scan_kwargs = {
+            'FilterExpression': '#s = :completed',
+            'ExpressionAttributeNames': {'#s': 'status'},
+            'ExpressionAttributeValues': {':completed': 'completed'},
+            'ProjectionExpression': 'user_id, paper_name, score, submitted_at'
+        }
+
+        while True:
+            resp = sessions_table.scan(**scan_kwargs)
+            all_items.extend(resp.get('Items', []))
+            if 'LastEvaluatedKey' not in resp:
+                break
+            scan_kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+
+        if not all_items:
+            return {'leaderboard': [], 'total_participants': 0}
+
+        # Group by user_id
+        user_stats: Dict[str, Dict[str, Any]] = {}
+        for item in all_items:
+            uid = item.get('user_id', '')
+            if not uid:
+                continue
+            score = float(item.get('score', 0))
+            submitted = item.get('submitted_at', '')
+
+            if uid not in user_stats:
+                user_stats[uid] = {
+                    'scores': [],
+                    'papers': set(),
+                    'last_active': '',
+                }
+            user_stats[uid]['scores'].append(score)
+            user_stats[uid]['papers'].add(item.get('paper_name', ''))
+            if submitted > user_stats[uid]['last_active']:
+                user_stats[uid]['last_active'] = submitted
+
+        # Fetch user names
+        user_names: Dict[str, str] = {}
+        for uid in user_stats:
+            try:
+                user_resp = users_table.get_item(
+                    Key={'user_id': uid},
+                    ProjectionExpression='full_name'
+                )
+                name = user_resp.get('Item', {}).get('full_name', 'Anonymous')
+                user_names[uid] = name
+            except Exception:
+                user_names[uid] = 'Anonymous'
+
+        # Build leaderboard entries
+        leaderboard = []
+        for uid, stats in user_stats.items():
+            scores = stats['scores']
+            avg_score = sum(scores) / len(scores)
+            best_score = max(scores)
+            leaderboard.append({
+                'user_id': uid,
+                'name': user_names.get(uid, 'Anonymous'),
+                'average_score': round(avg_score, 1),
+                'best_score': round(best_score, 1),
+                'sessions_completed': len(scores),
+                'papers_attempted': len(stats['papers']),
+                'last_active': stats['last_active'][:10] if stats['last_active'] else '',
+            })
+
+        # Sort by average score descending
+        leaderboard.sort(key=lambda x: (-x['average_score'], -x['sessions_completed']))
+
+        # Assign ranks
+        for i, entry in enumerate(leaderboard):
+            entry['rank'] = i + 1
+
+        return {
+            'leaderboard': leaderboard[:50],  # Top 50
+            'total_participants': len(leaderboard),
+        }
+
+    except ClientError as e:
+        print(f"Error fetching leaderboard: {e}")
+        return {'leaderboard': [], 'total_participants': 0}
+
+
 def success_response(status_code: int, data: Dict[str, Any]) -> Dict[str, Any]:
     """Return success response."""
     return {
@@ -732,6 +820,9 @@ def handler(event, context):
         if (path == '/dashboard/performance' or path == '/dashboard') and http_method == 'GET':
             dashboard_data = get_dashboard_data(user_id)
             return success_response(200, dashboard_data)
+        elif path == '/dashboard/leaderboard' and http_method == 'GET':
+            leaderboard_data = get_leaderboard()
+            return success_response(200, leaderboard_data)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     
