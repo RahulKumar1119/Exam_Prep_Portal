@@ -92,6 +92,59 @@ SOURCE CONTENT:
 {pdf_text[:40000]}
 ---
 
+AI-300 OFFICIAL SYLLABUS (generate questions covering ALL these areas evenly):
+
+1. Design and implement an MLOps infrastructure (15-20%):
+   - Create/manage Machine Learning workspace, datastores, compute targets
+   - Configure identity and access management for workspaces
+   - Create/manage data assets, environments, components, registries
+   - Configure GitHub integration with Machine Learning
+   - Deploy ML workspaces using Bicep and Azure CLI
+   - Automate resource provisioning with GitHub Actions workflows
+   - Restrict network access to ML workspaces
+
+2. Implement machine learning model lifecycle and operations (25-30%):
+   - Configure experiment tracking with MLflow
+   - Use Automated ML to explore optimal models
+   - Automate hyperparameter tuning
+   - Manage distributed training for large/deep learning models
+   - Implement training pipelines, compare model performance across jobs
+   - Package feature retrieval specification with model artifact
+   - Register an MLflow model, evaluate with responsible AI principles
+   - Deploy models as real-time or batch endpoints with managed inference
+   - Implement progressive rollout and safe rollback strategies
+   - Detect/analyze data drift, monitor production model performance
+   - Configure retraining triggers when thresholds exceeded
+
+3. Design and implement a GenAIOps infrastructure (20-25%):
+   - Create/configure Foundry resources and project environments
+   - Configure RBAC and managed identities
+   - Implement network security and private networking
+   - Deploy infrastructure using Bicep and Azure CLI
+   - Deploy foundation models via serverless API or managed compute
+   - Select models for specific use cases
+   - Configure provisioned throughput units for high-volume workloads
+   - Design/develop prompts, create prompt variants
+   - Implement version control for prompts using Git
+
+4. Implement generative AI quality assurance and observability (10-15%):
+   - Create test datasets for model evaluation
+   - Implement AI quality metrics: groundedness, relevance, coherence, fluency
+   - Configure risk/safety evaluations for harmful content
+   - Set up automated evaluation workflows
+   - Monitor performance: latency, throughput, response times
+   - Track token consumption and resource cost
+   - Configure logging, tracing, debugging for production
+
+5. Optimize generative AI systems and model performance (10-15%):
+   - Optimize RAG: similarity thresholds, chunk sizes, retrieval strategies
+   - Select/fine-tune embedding models for domain-specific use cases
+   - Implement hybrid search (semantic + keyword)
+   - Evaluate RAG with relevance metrics and A/B testing
+   - Design advanced fine-tuning methods
+   - Create/manage synthetic data for fine-tuning
+   - Manage fine-tuned model from dev through production
+
 REQUIREMENTS:
 1. Each question MUST have exactly 4 options (A, B, C, D) with ONE correct answer
 2. NO definitions, NO "what does X stand for", NO "which is true about X"
@@ -338,24 +391,34 @@ def upload_to_dynamodb(questions: List[Dict], exam: str, topic: str = 'General')
     """Upload questions to DynamoDB."""
     table = dynamodb.Table(TABLE_NAME)
     now = datetime.utcnow().isoformat()
+    uploaded = 0
 
     with table.batch_writer() as batch:
         for q in questions:
+            # Skip questions with empty fields
+            if not q.get('question_text') or not q.get('options'):
+                continue
+            # Remove empty keys from options
+            options = {k: v for k, v in q.get('options', {}).items() if k and v}
+            if len(options) < 2:
+                continue
+
             batch.put_item(Item={
                 'question_id': str(uuid.uuid4()),
                 'version': '1',
                 'paper_name': exam,
-                'topic': q.get('topic', topic),
-                'difficulty': q.get('difficulty', 'medium'),
+                'topic': q.get('topic', topic) or topic,
+                'difficulty': q.get('difficulty', 'medium') or 'medium',
                 'question_type': 'multiple_choice',
                 'question_text': q['question_text'],
-                'options': q['options'],
-                'correct_answer': q.get('correct_answer', ''),
+                'options': options,
+                'correct_answer': q.get('correct_answer', '') or '',
                 'created_at': now,
                 'updated_at': now,
             })
+            uploaded += 1
 
-    print(f"  ✓ {len(questions)} questions uploaded to DynamoDB (paper: {exam})")
+    print(f"  ✓ {uploaded} questions uploaded to DynamoDB (paper: {exam})")
 
 
 def preview(questions: List[Dict], limit: int = 3):

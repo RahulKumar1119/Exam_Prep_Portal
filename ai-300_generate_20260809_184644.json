@@ -1,0 +1,602 @@
+[
+  {
+    "question_text": "You are an ML engineer at a regulated financial institution. The security team mandates that all ML training and inference workloads must run within an isolated virtual network, and outbound internet access from compute nodes must be restricted. Which combination of Azure Machine Learning features must you configure?",
+    "options": {
+      "A": "A workspace with a managed virtual network and a serverless compute configured with outbound rules",
+      "B": "A workspace secured with a private endpoint, and compute clusters configured within a VNet with network security groups",
+      "C": "A workspace with Azure Key Vault integration and compute instances with public IPs disabled",
+      "D": "A workspace with Microsoft Purview integration and data assets stored in Azure Blob Storage with private endpoints"
+    },
+    "correct_answer": "B",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Statement: Azure Machine Learning CLI v2 (ml extension) and Python SDK v2 offer identical functionality, and the primary reason to choose the CLI over the SDK is its ability to interact with Azure Resource Manager APIs.",
+    "options": {
+      "A": "Yes — the CLI v2 is required for Azure Resource Manager integration",
+      "B": "No — the SDK and CLI have functional parity; the CLI is often chosen for CI/CD automation due to command-line convenience",
+      "C": "Yes — but only the CLI v2 can create and manage pipeline components",
+      "D": "No — only the Python SDK v2 supports managed inferencing with endpoints"
+    },
+    "correct_answer": "B",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to automate the registration of a new model version after a successful training pipeline run. The model must be registered with lineage tracking linking it to the specific data asset and training environment used. Which sequence of steps should your pipeline include?",
+    "options": {
+      "A": "Run training job -> Capture run metrics with MLflow -> Create a new model version via `ml_client.models.create_or_update` -> Add tags for data asset ID and environment",
+      "B": "Capture run metrics -> Register the MLflow model automatically by logging it in the training script -> The model is automatically linked to the job's inputs",
+      "C": "Run training job -> Package the model artifact manually -> Use the Azure portal to register the model -> Manually input the data asset version",
+      "D": "Create an empty model in the registry -> Run the training job and output to the model path -> Update the model artifact via CLI"
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Which YAML configuration snippet correctly defines a CLI v2 command job that uses a custom environment, mounts a data asset from a datastore, and runs a training script on a compute cluster?",
+    "options": {
+      "A": "$schema: https://azuremlschemas.azure.com/commandJob.json\ncode: src/\ncommand: python train.py\ninputs:\n  data:\n    type: uri_folder\n    path: https://storageaccount.blob.core.windows.net/container/data\nenvironment: azureml:my-env:1\ncompute: azureml:cpu-cluster",
+      "B": "$schema: https://azuremlschemas.azure.com/commandJob.json\ncode: ./src\ncommand: python train.py --data ${{inputs.data}}\nenvironment:\n  image: mydockerimage:latest\ninputs:\n  data:\n    type: mltable\n    path: azureml://datastores/my_datastore/paths/training_data\ncompute: azureml:cpu-cluster",
+      "C": "$schema: https://azuremlschemas.azure.com/commandJob.json\ncommand: python train.py\ninputs:\n  training_data:\n    type: uri_folder\n    path: azureml:my_data_asset:1\nenvironment: azureml:MyTrainingEnv@latest\ncompute: azureml:my-cluster",
+      "D": "job_type: command\nscript: train.py\ncompute_target: my-cluster\nenvironment: my-env\ninputs:\n  data:\n    source:\n      datastore: my_datastore\n      path: data/"
+    },
+    "correct_answer": "C",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your team is building a GenAI application using Azure Machine Learning. You need to select a model from the model catalog for a summarization task that requires both high accuracy and low inference latency, and you must be able to deploy it to a managed endpoint for real-time scoring. Which model selection criteria is most important?",
+    "options": {
+      "A": "Choose a model from the catalog based solely on its provider (e.g., Azure OpenAI) for guaranteed low latency.",
+      "B": "Evaluate the model's size, licensing terms, and supported deployment targets (e.g., managed endpoint vs. serverless API) as listed in the catalog.",
+      "C": "Select the largest available model from Hugging Face for the highest accuracy, as all catalog models support managed endpoints.",
+      "D": "Use only models marked as 'trained by Microsoft' to ensure compliance with enterprise security policies."
+    },
+    "correct_answer": "B",
+    "topic": "Design and implement a GenAIOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are implementing a monitoring solution for a deployed online endpoint. You need to track token consumption per request, model response latency, and detect potential data drift on the inputs. Which two Azure Machine Learning features should you combine?",
+    "options": {
+      "A": "Application Insights integration for latency metrics and Azure Event Grid for token counting",
+      "B": "MLflow tracking within the scoring script and Azure Monitor alerts",
+      "C": "Built-in endpoint monitoring dashboards for performance metrics and data drift detection using scheduled jobs comparing baseline vs. target data",
+      "D": "Azure Log Analytics workspace queries and custom logging within the model's Docker container"
+    },
+    "correct_answer": "C",
+    "topic": "Implement generative AI quality assurance and observability",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to configure a secure Azure Machine Learning workspace for a multi-team environment. Data scientists should be able to create compute instances and run experiments, but not delete the workspace or modify network settings. Which built-in Azure role should you assign to the data scientist users?",
+    "options": {
+      "A": "Owner",
+      "B": "Contributor",
+      "C": "Azure Machine Learning Data Scientist",
+      "D": "Reader"
+    },
+    "correct_answer": "C",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "For each statement, determine if it is true or false regarding Automated ML (AutoML) in Azure Machine Learning:\nStatement 1: AutoML can only be used via the Python SDK v2; it is not available in the studio UI.\nStatement 2: AutoML includes automated featurization and algorithm selection to speed up the model development process.",
+    "options": {
+      "A": "Both statements are true.",
+      "B": "Statement 1 is false, Statement 2 is true.",
+      "C": "Statement 1 is true, Statement 2 is false.",
+      "D": "Both statements are false."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "Which CLI v2 command sequence correctly creates a new online endpoint, deploys a registered model to it with 30% traffic, and then updates the deployment to 100% traffic?",
+    "options": {
+      "A": "az ml online-endpoint create --file endpoint.yaml\naz ml online-deployment create --file deployment.yaml --traffic 30\naz ml online-deployment update --traffic 100",
+      "B": "az ml endpoint create --type online --name my-endpoint\naz ml deployment create --endpoint my-endpoint --model mymodel:1 --traffic-allocation 30\naz ml endpoint update --name my-endpoint --traffic \"deployment=my-deployment,traffic=100\"",
+      "C": "az ml online-endpoint create --name my-endpoint\naz ml online-deployment create --endpoint-name my-endpoint --name blue --model azureml:mymodel:1\naz ml online-endpoint update --name my-endpoint --traffic \"blue=100\"",
+      "D": "az ml endpoint online create --file endpoint.yml\naz ml deployment online create --endpoint my-endpoint --file deploy.yml --set traffic_allocation=30\naz ml endpoint online traffic --name my-endpoint --deployment blue=100"
+    },
+    "correct_answer": "C",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to design a retraining pipeline for a model where performance degradation is likely due to changing data patterns. The pipeline should automatically trigger retraining only when data drift metrics exceed a defined threshold. Which two components are essential to build this automation?",
+    "options": {
+      "A": "An Azure Data Factory pipeline to move data and an Azure Function to send an email alert.",
+      "B": "A scheduled data drift detection job comparing current input data to a baseline, and an Azure Machine Learning pipeline triggered via Azure Event Grid when drift is detected.",
+      "C": "A continuous deployment pipeline in GitHub Actions that runs every night and trains a new model.",
+      "D": "An MLflow callback within the training script that logs data statistics and auto-submits a new job."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Statement: When using the `mltable` data type for a training job input, you must provide a fully qualified local file path to the tabular data, and Azure Machine Learning will automatically serialize it for distributed training.",
+    "options": {
+      "A": "Yes — `mltable` requires a local path and handles serialization.",
+      "B": "No — `mltable` is an abstraction for tabular data that typically references cloud storage; it is primarily used for AutoML and advanced scenarios.",
+      "C": "Yes — but only if the data is in Parquet format.",
+      "D": "No — `mltable` is deprecated; you should always use `uri_folder` instead."
+    },
+    "correct_answer": "B",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to optimize a RAG (Retrieval Augmented Generation) system in Azure Machine Learning. Users report that the generated answers are sometimes irrelevant. Which two adjustments are most likely to improve relevance?",
+    "options": {
+      "A": "Increase the chunk size of indexed documents and switch to a larger embedding model.",
+      "B": "Adjust the similarity score threshold for retrieval and implement hybrid search combining semantic and keyword matching.",
+      "C": "Decrease the number of tokens allowed in the prompt and use a faster, smaller LLM.",
+      "D": "Switch from a managed endpoint to batch scoring and increase the compute resources."
+    },
+    "correct_answer": "B",
+    "topic": "Optimize generative AI systems and model performance",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "What is the correct sequence for using a component within an Azure Machine Learning pipeline using SDK v2?",
+    "options": {
+      "A": "Define component via @command_component decorator -> Load component with `load_component` -> Use component in a pipeline job definition -> Submit pipeline.",
+      "B": "Create a YAML file for the component -> Register the component with `az ml component create` -> Reference the component name in a pipeline YAML -> Submit with `az ml job create`.",
+      "C": "Write a Python script -> Package it as a Docker image -> Reference the image in a pipeline step -> Submit the pipeline.",
+      "D": "All of the above are valid sequences, depending on whether you use SDK, CLI, or Designer."
+    },
+    "correct_answer": "D",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are tasked with evaluating a newly fine-tuned LLM for potential harmful content generation before deployment. Which Azure Machine Learning feature is specifically designed for this purpose?",
+    "options": {
+      "A": "The Responsible AI dashboard in the studio.",
+      "B": "Prompt flow with evaluation nodes for groundedness and relevance.",
+      "C": "The AI Red Teaming Agent (preview).",
+      "D": "Azure Content Safety integrated within the model catalog."
+    },
+    "correct_answer": "C",
+    "topic": "Implement generative AI quality assurance and observability",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to configure a CI/CD workflow using GitHub Actions that automatically deploys a newly registered MLflow model to a staging endpoint whenever the model registry is updated. Which action should be the trigger for the workflow?",
+    "options": {
+      "A": "on: push to the main branch",
+      "B": "on:\n  registry_package:\n    types: [published]",
+      "C": "on:\n  schedule:\n    - cron: '0 0 * * *'",
+      "D": "on:\n  repository_dispatch:\n    types: [model_updated]"
+    },
+    "correct_answer": "B",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are a senior data scientist at Contoso. Your team wants to implement Azure Machine Learning v2 workflows but development timelines are tight. You need to choose an initial development environment that minimizes setup time, provides the Azure ML SDK pre-installed, and allows the team to run pre-made notebook tutorials immediately. Which environment should you recommend?",
+    "options": {
+      "A": "Local Python environment with conda, the SDK installed via pip, and Jupyter Notebooks.",
+      "B": "Azure Machine Learning compute instance.",
+      "C": "Data Science Virtual Machine (DSVM) with Python preinstalled.",
+      "D": "Local Visual Studio Code with the Azure ML extension and a local Python interpreter."
+    },
+    "correct_answer": "B",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are an ML engineer tasked with creating a secure, reproducible training environment. You must ensure all data scientists use identical Python packages, environment variables, and software settings for a specific training job. You need to encapsulate these dependencies within your Azure ML workspace. Which asset should you create?",
+    "options": {
+      "A": "A Compute Instance with the necessary packages manually installed.",
+      "B": "A Datastore containing the requirement.txt file.",
+      "C": "An Azure ML Environment.",
+      "D": "A YAML job definition file with inline pip commands."
+    },
+    "correct_answer": "C",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to update the configuration of an existing environment named 'my-custom-env' in your Azure ML workspace using the CLI v2. The updated specification is in a file named `updated_env.yaml`. Which command should you use?",
+    "options": {
+      "A": "az ml environment create --name my-custom-env --file updated_env.yaml",
+      "B": "az ml environment show --name my-custom-env --file updated_env.yaml",
+      "C": "az ml environment list --file updated_env.yaml",
+      "D": "az ml environment update --name my-custom-env --file updated_env.yaml"
+    },
+    "correct_answer": "D",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which of the following CLI v2 scenarios BEST aligns with the intended use case of simplifying automation and deployment, allowing invocation from any platform that can call a command line?",
+    "options": {
+      "A": "A data scientist interactively prototyping a model in a Jupyter notebook.",
+      "B": "A CI/CD pipeline in GitHub Actions that triggers model retraining.",
+      "C": "A developer experimenting with different hyperparameters using a visual interface.",
+      "D": "An administrator manually monitoring compute instance usage in the Azure portal."
+    },
+    "correct_answer": "B",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You need to streamline the deployment of a 100GB PyTorch model for real-time inference. The deployment must abstract away infrastructure management, support A/B testing by splitting traffic between model versions, and provide a REST endpoint. Which Azure Machine Learning feature should you use?",
+    "options": {
+      "A": "A Compute Instance with a Flask app.",
+      "B": "A Batch Endpoint.",
+      "C": "A Managed Online Endpoint.",
+      "D": "An Azure Kubernetes Service (AKS) cluster attached to the workspace."
+    },
+    "correct_answer": "C",
+    "topic": "Model Lifecycle & Operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are training multiple decision tree models for a retail forecasting task, where a separate model is needed for each of 500 stores. This requires training hundreds of identical, independent models. Which Azure Machine Learning training pattern is most efficient for this scenario?",
+    "options": {
+      "A": "Hyperparameter optimization.",
+      "B": "Multinode distributed training with MPI.",
+      "C": "Automated ML (AutoML).",
+      "D": "Embarrassingly parallel training via parallel jobs."
+    },
+    "correct_answer": "D",
+    "topic": "Model Lifecycle & Operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are tasked with an MLOps implementation. You need to ensure the model lifecycle from training to deployment is auditable, including tracking the exact code version and environment used for each experiment. Which key Azure ML integration feature enables this capability?",
+    "options": {
+      "A": "Serverless Compute integration.",
+      "B": "Automated featurization.",
+      "C": "Git integration.",
+      "D": "Synapse Analytics integration."
+    },
+    "correct_answer": "C",
+    "topic": "Model Lifecycle & Operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Statement: Azure Machine Learning CLI v2 introduces consistency with SDK v2, but differs from CLI v1. Commands follow the format `az ml <noun> <verb> <options>`, and the configuration of the asset or workflow (like what it is and where it runs) is defined primarily within a YAML file.",
+    "options": {
+      "A": "Yes - this is a correct description of CLI v2's syntax and usage.",
+      "B": "No - CLI v2 commands follow the format `az ml <verb> <noun> <options>.",
+      "C": "Yes, but only for model and compute assets, not for environments.",
+      "D": "No - CLI v2 configuration is primarily defined in JSON files, not YAML."
+    },
+    "correct_answer": "A",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to create a reusable piece of logic for data preprocessing that can be incorporated into multiple machine learning pipelines within your team. This component should have defined inputs, outputs, and parameters. In Azure Machine Learning v2, what is this building block called?",
+    "options": {
+      "A": "Compute Cluster.",
+      "B": "Pipeline Job.",
+      "C": "Component.",
+      "D": "Environment."
+    },
+    "correct_answer": "C",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You have a training script that requires a specific version of scikit-learn and CUDA drivers. You want to package these dependencies for use in both training and scoring jobs across different compute targets, ensuring reproducibility. What is the correct sequence of actions?",
+    "options": {
+      "A": "Create a custom Environment -> Submit a Job referencing the environment -> The job's compute uses the environment's dependencies.",
+      "B": "Attach a Datastore -> Submit a Job -> Install dependencies manually in the job script.",
+      "C": "Create a Model -> Package dependencies inside the model artifact -> Deploy the model.",
+      "D": "Create a Component -> Define dependencies within the component's Dockerfile -> Use the component in a pipeline."
+    },
+    "correct_answer": "A",
+    "topic": "Model Lifecycle & Operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Python SDK v2 code snippet correctly creates an MLClient to connect to your Azure Machine Learning workspace using default Azure credentials?",
+    "options": {
+      "A": "from azure.ai.ml import MLClient; ml_client = MLClient(DefaultAzureCredential(), subscription_id, resource_group, workspace)",
+      "B": "from azure.ml.sdk import MLClient; ml_client = MLClient(subscription_id, resource_group, workspace)",
+      "C": "import azureml.core; ws = Workspace(subscription_id, resource_group, workspace)",
+      "D": "from azure.ai.ml import Workspace; ws = Workspace.get(name=workspace, subscription_id=subscription_id, resource_group=resource_group)"
+    },
+    "correct_answer": "A",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are building a Generative AI application using LLMs and want to prototype, experiment, and iterate on prompts efficiently before deploying the application. Which Azure Machine Learning tool is specifically designed to streamline this development cycle?",
+    "options": {
+      "A": "Azure Machine Learning Designer.",
+      "B": "Automated Machine Learning UI.",
+      "C": "Prompt Flow.",
+      "D": "Data Labeling."
+    },
+    "correct_answer": "C",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization requires that ML projects use security features like Virtual Networks, network security groups, and Azure Key Vault for secrets. Which part of the Azure Machine Learning documentation should you consult for implementing these security controls in a workspace?",
+    "options": {
+      "A": "Automated featurization and algorithm selection.",
+      "B": "Hyperparameter optimization.",
+      "C": "Enterprise readiness and security.",
+      "D": "Embarrassingly parallel training."
+    },
+    "correct_answer": "C",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are tasked with submitting a training job using Azure ML CLI v2. The job definition, including the script, compute target, and environment, is fully specified in a YAML file named `train_job.yaml`. What is the correct command to submit this job?",
+    "options": {
+      "A": "az ml job submit --file train_job.yaml",
+      "B": "az ml run submit-script --config train_job.yaml",
+      "C": "az ml job create --file train_job.yaml",
+      "D": "az ml experiment submit --run-config train_job.yaml"
+    },
+    "correct_answer": "C",
+    "topic": "MLOps Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Statement: In Azure Machine Learning, a managed online endpoint for real-time inferencing can process a single request at a time and does not support splitting traffic across multiple deployments for testing new model versions.",
+    "options": {
+      "A": "Yes - traffic splitting requires a batch endpoint.",
+      "B": "No - managed online endpoints can split traffic across multiple deployments, enabling testing of new versions.",
+      "C": "Yes, but it requires using the designer interface.",
+      "D": "No - only batch endpoints support A/B testing via traffic splitting."
+    },
+    "correct_answer": "B",
+    "topic": "Model Lifecycle & Operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are an AI Engineer at Contoso. You need to provision a new Azure Machine Learning workspace with a private endpoint using Infrastructure as Code (IaC). The deployment must be automated and ensure no public ingress to the workspace. Which combination of tools and configuration is essential to achieve this?",
+    "options": {
+      "A": "Azure Machine Learning Studio UI to create the workspace, then manually enable VNet integration",
+      "B": "Azure CLI (v2) and a Bicep template that defines a workspace with 'publicNetworkAccess' set to 'Enabled'",
+      "C": "Azure CLI (v2) and a Bicep template that defines a workspace with a 'private endpoint' configuration and 'publicNetworkAccess' set to 'Disabled'",
+      "D": "Azure PowerShell to run a script that creates a Data Science VM and installs the Python SDK locally"
+    },
+    "correct_answer": "C",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Statement: In Azure Machine Learning, when you create a compute instance from the studio, the Python SDK (v2) and the Azure ML CLI extension (v2) are pre-installed and ready to use by default.",
+    "options": {
+      "A": "Yes — compute instances are fully managed cloud workstations with all SDKs and CLIs installed.",
+      "B": "No — only Jupyter Notebooks are installed; the SDK and CLI must be installed manually.",
+      "C": "Yes — but only for the curated 'AzureML' conda environment; other environments require manual installation.",
+      "D": "No — SDK and CLI installation is an optional step during compute instance creation."
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to automate the deployment of a training pipeline that runs nightly. The pipeline should use the latest version of a registered data asset and a registered environment, train a model, and register the new model if its performance exceeds a baseline. Which sequence of steps should you configure in your CI/CD workflow?",
+    "options": {
+      "A": "Trigger pipeline -> Use latest data asset and environment -> Run training job -> Evaluate model -> Conditionally register model",
+      "B": "Register model -> Create new environment -> Schedule pipeline -> Use static dataset path",
+      "C": "Evaluate model -> Run training job -> Register data asset -> Schedule pipeline",
+      "D": "Create compute cluster -> Manually run pipeline in studio -> Download and register model locally"
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Python SDK (v2) code snippet correctly creates an MLClient to connect to your Azure Machine Learning workspace using a config.json file located in the same directory?",
+    "options": {
+      "A": "from azure.ai.ml import MLClient; ml_client = MLClient.from_config()",
+      "B": "from azure.ai.ml import MLClient, Workspace; ws = Workspace.from_config(); ml_client = MLClient(ws)",
+      "C": "from azure.ai.ml import MLClient; from azure.identity import AzureCliCredential; ml_client = MLClient(AzureCliCredential())",
+      "D": "import azureml.core; from azureml.core import Workspace; ws = Workspace.from_config()"
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are an AI Engineer building a Generative AI application for customer support. You need to select a foundation model from the Azure Machine Learning model catalog that excels at generating human-like, conversational text in English. Which model provider and category should you prioritize?",
+    "options": {
+      "A": "A Mistral model optimized for code generation",
+      "B": "An Azure OpenAI Service model, such as GPT-4, optimized for chat completions",
+      "C": "A Hugging Face embedding model for semantic search",
+      "D": "A NVIDIA model specialized for image generation"
+    },
+    "correct_answer": "B",
+    "topic": "Design and implement a GenAIOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your team needs to implement a robust RAG (Retrieval-Augmented Generation) system. Users complain that responses are sometimes irrelevant. To diagnose, you plan to evaluate retrieval quality by measuring the relevance of retrieved document chunks to the user's query. Which metric and Azure Machine Learning evaluation workflow is most suitable?",
+    "options": {
+      "A": "Monitor model latency and token consumption using Azure Monitor logs.",
+      "B": "Configure an automated evaluation job that uses the 'relevance' metric, comparing the retrieved context against the query.",
+      "C": "Run a data drift analysis on the input queries dataset.",
+      "D": "Use a batch endpoint to score a test dataset and calculate a custom F1 score."
+    },
+    "correct_answer": "B",
+    "topic": "Implement generative AI quality assurance and observability",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You have an MLflow model registered in your Azure Machine Learning workspace. You need to deploy it as a managed online endpoint for real-time inferencing with canary testing capabilities (progressive rollout). Which combination of CLI commands and configuration is correct?",
+    "options": {
+      "A": "`az ml online-endpoint create`, then `az ml online-deployment create` with a `traffic_allocation` property for the new deployment.",
+      "B": "`az ml model deploy` to create a single deployment, then manually switch traffic in the portal.",
+      "C": "`az ml batch-endpoint create`, then submit a scoring job referencing the MLflow model.",
+      "D": "Create an Azure Kubernetes Service (AKS) cluster and use kubectl to deploy the model pod with a canary ingress rule."
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Statement: Azure Machine Learning prompt flow is primarily designed for exploring and building applications with classical machine learning models like logistic regression and decision trees.",
+    "options": {
+      "A": "Yes — prompt flow includes components for any type of ML model.",
+      "B": "No — prompt flow is specifically designed to streamline the development cycle for AI applications powered by Large Language Models (LLMs).",
+      "C": "Yes — but only if the models are registered in the model catalog.",
+      "D": "No — prompt flow is used exclusively for automated hyperparameter tuning."
+    },
+    "correct_answer": "B",
+    "topic": "Design and implement a GenAIOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are implementing MLOps for a training pipeline. You need to track each run's code, parameters, metrics, and outputs, and ensure full lineage from raw data to the final model. Which Azure Machine Learning service should you configure?",
+    "options": {
+      "A": "Use Azure Event Grid to trigger pipeline runs.",
+      "B": "Use Azure Machine Learning's built-in experiment tracking with MLflow integration.",
+      "C": "Store all logs manually in an Azure Blob Storage container.",
+      "D": "Configure Azure SQL Database to store run metrics via custom logging."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which CLI (v2) command correctly creates an environment in your workspace from a local `conda.yaml` file?",
+    "options": {
+      "A": "`az ml environment create --file conda.yaml --name myenv`",
+      "B": "`az ml environment list`",
+      "C": "`az ml workspace create --file workspace.yaml`",
+      "D": "`az ml job create --file job.yaml`"
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are responsible for optimizing the performance of a production RAG system. Retrieved answers lack depth for complex queries. You hypothesize that the fixed chunk size of 256 tokens is splitting key conceptual information. What is the first Azure Machine Learning Prompt Flow component you should adjust to test this hypothesis?",
+    "options": {
+      "A": "The text embedding model used for vectorizing the query.",
+      "B": "The similarity score threshold for the vector store lookup.",
+      "C": "The chunk size and chunk overlap parameters in the document indexing flow.",
+      "D": "The post-processing logic that formats the final answer."
+    },
+    "correct_answer": "C",
+    "topic": "Optimize generative AI systems and model performance",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Statement: When you create a managed online endpoint with two deployments (blue and green), you can configure traffic splitting such as 90% to blue and 10% to green. This configuration is performed during endpoint creation and cannot be changed afterwards.",
+    "options": {
+      "A": "Yes — traffic split is defined at creation and is immutable.",
+      "B": "No — traffic allocation between deployments can be updated at any time using the CLI or SDK.",
+      "C": "Yes — but only for batch endpoints; online endpoints require re-deployment.",
+      "D": "No — traffic can only be split by manually deploying to separate endpoints."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to implement a safe rollback strategy for a real-time model endpoint. The current deployment (v1) has 100% traffic. After deploying a new model version (v2) with 20% traffic, you detect a sharp increase in prediction errors for the v2 requests. What is the correct sequence of actions to mitigate the issue?",
+    "options": {
+      "A": "Scale down the v2 instances to zero, then delete the v2 deployment.",
+      "B": "Immediately update the endpoint traffic allocation to send 100% of traffic back to the v1 deployment.",
+      "C": "Pause the endpoint, delete both deployments, and retrain the model.",
+      "D": "Increase the traffic to v2 to 50% to gather more error data before deciding."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which configuration in a YAML file for a command job is correct for referencing a versioned data asset stored in an Azure Machine Learning datastore?",
+    "options": {
+      "A": "inputs: data: type: uri_folder; path: azureml:my_data_asset:1",
+      "B": "inputs: data: type: mltable; path: ./local_data/",
+      "C": "inputs: data: type: string; path: 'https://mystorage.blob.core.windows.net/container/file.csv'",
+      "D": "inputs: data: type: uri_file; path: C:\\Users\\data.csv"
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are tasked with implementing Responsible AI monitoring for a deployed credit scoring model. You need to detect data drift on the 'income' feature, which is a numerical column, and trigger a retraining pipeline if the drift exceeds a threshold. Which Azure Machine Learning tools should you use?",
+    "options": {
+      "A": "Use the model catalog to find a different, fairer model.",
+      "B": "Configure a data drift monitor using a reference dataset and a target dataset, and set up an Event Grid trigger for the drift alert.",
+      "C": "Use Automated ML to retrain a new model daily and compare performance.",
+      "D": "Manually sample production data each week and calculate statistical differences in Excel."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are an ML engineer at a financial institution that must comply with strict internal data governance. All machine learning artifacts, including models and registered data assets, must be stored within a specific Azure region with no data replication outside it. You are provisioning a new Azure Machine Learning workspace using Bicep. Which configuration should you explicitly include in your Bicep template to meet this requirement?",
+    "options": {
+      "A": "Set the \"location\" property of the Microsoft.MachineLearningServices/workspaces resource to the required region.",
+      "B": "Add a \"customerManagedKey\" property specifying a key vault in the required region and set \"hbi_workspace\" to true.",
+      "C": "Configure the workspace with a \"managedNetwork\" property set to \"isolation\" and specify the target region in the network settings.",
+      "D": "Add a \"primaryUserAssignedIdentity\" property linked to a managed identity scoped to the required region."
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are tasked with submitting a training job using the Azure Machine Learning CLI v2. The job definition, including the command, compute target, and environment, is stored in a YAML file named `train_job.yaml`. Which CLI command should you use?",
+    "options": {
+      "A": "`az ml job create --name train_job --file train_job.yaml`",
+      "B": "`az ml pipeline create --file train_job.yaml`",
+      "C": "`az ml run submit --spec train_job.yaml`",
+      "D": "`az ml experiment run --config train_job.yaml`"
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "For each statement, determine if it is true or false regarding Azure Machine Learning's support for open-source frameworks: \nStatement 1: The Python SDK v2 can be used to submit a training job for a model built using PyTorch. \nStatement 2: Models trained using .NET can be directly registered and managed via the Azure Machine Learning studio UI.",
+    "options": {
+      "A": "Both statements are true.",
+      "B": "Only statement 1 is true.",
+      "C": "Only statement 2 is true.",
+      "D": "Neither statement is true."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are designing a multi-step pipeline for data preparation, model training, and evaluation. The training step uses a component that has been previously developed and tested. You want to ensure this component's logic and environment are versioned and reusable across different pipelines. Which two Azure Machine Learning assets must you create and manage to achieve this?",
+    "options": {
+      "A": "A DataStore and a Compute Instance.",
+      "B": "A Model and an Environment.",
+      "C": "A Component and an Environment.",
+      "D": "A Pipeline Job and a Data Asset."
+    },
+    "correct_answer": "C",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to configure an automated retraining workflow for a production model. The trigger should be based on a significant drop in the model's performance metric, as calculated by a weekly monitoring job. Which sequence of steps correctly sets up this MLOps process in Azure Machine Learning?",
+    "options": {
+      "A": "1. Enable MLflow logging on the deployed endpoint. \n2. Create a schedule linked to the model monitoring data. \n3. Configure an Azure Event Grid trigger to start a pipeline job when performance drops below a threshold. \n4. Update the production endpoint with the newly registered model.",
+      "B": "1. Register a data asset containing the performance metrics. \n2. Create a pipeline that trains a new model and evaluates it. \n3. Use Azure Machine Learning's model monitoring to detect data drift. \n4. Configure a schedule to run the pipeline weekly.",
+      "C": "1. Create a scheduled pipeline job that evaluates the model on new data. \n2. Within the pipeline, compare the new evaluation metric to a stored baseline. \n3. If the metric degrades beyond a threshold, trigger the model training component of the same pipeline. \n4. Register the new model and deploy it via a managed endpoint.",
+      "D": "1. Set up a batch scoring job to run daily. \n2. Use the job's output to calculate a performance metric. \n3. Create an Azure Logic App that is notified by an Event Grid event when the metric is low. \n4. The Logic App calls the Azure Machine Learning REST API to start a new training run."
+    },
+    "correct_answer": "C",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  }
+]
