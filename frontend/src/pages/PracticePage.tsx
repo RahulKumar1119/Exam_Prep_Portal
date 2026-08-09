@@ -5,6 +5,8 @@ import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 import DiscussionThread from '../components/Practice/DiscussionThread';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
+import { useExamPreference, ExamId } from '../hooks/useExamPreference';
+import ExamSelector from '../components/ExamSelector';
 
 const EXAMS = [
   { id: 'JAIIB', name: 'JAIIB', description: 'Junior Associate of Indian Institute of Bankers' },
@@ -26,12 +28,12 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
 const PracticePage: React.FC = () => {
   const { current_session, session_result, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
   const { fetchDashboardData } = useDashboard();
-  const [selectedExam, setSelectedExam] = useState('JAIIB');
+  const { selectedExam, selectExam, hasSelected } = useExamPreference();
   const [selectedPaper, setSelectedPaper] = useState('');
   const [selectedSet, setSelectedSet] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const papers = PAPERS_BY_EXAM[selectedExam] || [];
+  const papers = PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];
   const currentPaperInfo = papers.find(p => p.id === selectedPaper);
 
   const handleStartPracticeSet = async () => {
@@ -92,21 +94,34 @@ const PracticePage: React.FC = () => {
 
       {!current_session ? (
         <div className="max-w-3xl mx-auto space-y-6">
+          {/* Show exam selector if user hasn't picked yet */}
+          {!hasSelected ? (
+            <ExamSelector onSelect={(exam: ExamId) => selectExam(exam)} />
+          ) : (
+          <>
           {/* Exam Selector Tabs */}
-          <div className="flex gap-2 flex-wrap">
-            {EXAMS.map((exam) => (
-              <button
-                key={exam.id}
-                onClick={() => { setSelectedExam(exam.id); setSelectedPaper(''); setSelectedSet(null); }}
-                className={`px-4 py-2.5 rounded-lg font-semibold text-sm transition-all ${
-                  selectedExam === exam.id
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {exam.name}
-              </button>
-            ))}
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2 flex-wrap">
+              {EXAMS.map((exam) => (
+                <button
+                  key={exam.id}
+                  onClick={() => { selectExam(exam.id as ExamId); setSelectedPaper(''); setSelectedSet(null); }}
+                  className={`px-4 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                    selectedExam === exam.id
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {exam.name}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => { selectExam(selectedExam === 'JAIIB' ? 'AI-300' : 'JAIIB'); setSelectedPaper(''); setSelectedSet(null); }}
+              className="text-xs text-indigo-600 hover:underline"
+            >
+              Switch exam
+            </button>
           </div>
 
           {/* Exam Description */}
@@ -219,6 +234,8 @@ const PracticePage: React.FC = () => {
               </div>
             </div>
           </div>
+          </>
+          )}
         </div>
       ) : session_result ? (
         <div className="card">
