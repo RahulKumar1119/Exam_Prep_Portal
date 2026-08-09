@@ -25,6 +25,20 @@ PAPER_DISPLAY_NAMES = {
     'RBWM': 'RBWM',
 }
 
+# Exam categories for multi-exam support
+EXAM_CATEGORIES = {
+    'JAIIB': {
+        'name': 'JAIIB',
+        'full_name': 'Junior Associate of Indian Institute of Bankers',
+        'papers': ['IE & IFS', 'PPB', 'AFM', 'RBWM'],
+    },
+    'AI-300': {
+        'name': 'AI-300',
+        'full_name': 'Microsoft Certified: Operationalizing ML & GenAI Solutions',
+        'papers': ['AI-300'],
+    },
+}
+
 PAPER_SYLLABUS = {
     'IE & IFS': {
         'modules': {
@@ -128,6 +142,41 @@ PAPER_SYLLABUS = {
                 'Mutual funds types', 'Portfolio management', 'Risk profiling',
                 'Insurance planning', 'Retirement planning', 'Tax planning',
                 'Estate planning', 'High net worth individuals'
+            ]
+        }
+    },
+    'AI-300': {
+        'modules': {
+            'Design and Plan AI Solutions (15-20%)': [
+                'Azure AI services architecture', 'AI solution requirements analysis',
+                'Responsible AI principles', 'AI solution cost optimization',
+                'Azure OpenAI Service planning', 'Model selection strategy',
+                'Compute and infrastructure planning', 'Security and compliance for AI'
+            ],
+            'Design and Manage Data Pipelines (20-25%)': [
+                'Data ingestion pipeline design', 'Feature engineering',
+                'Data validation and quality', 'Azure Data Factory for ML',
+                'Data versioning and lineage', 'Real-time vs batch data processing',
+                'Data labeling and annotation', 'Azure Databricks integration'
+            ],
+            'Design and Manage Model Training (20-25%)': [
+                'Azure Machine Learning workspace', 'Training compute management',
+                'Hyperparameter tuning', 'Automated ML (AutoML)',
+                'Distributed training', 'Model evaluation and validation',
+                'MLflow experiment tracking', 'Fine-tuning foundation models',
+                'Prompt engineering for GenAI', 'RAG pattern implementation'
+            ],
+            'Design and Manage Deployment Infrastructure (20-25%)': [
+                'Model deployment strategies', 'Azure ML managed endpoints',
+                'Real-time vs batch inference', 'Model packaging and containerization',
+                'Blue-green and canary deployments', 'Auto-scaling inference endpoints',
+                'Azure Kubernetes Service for ML', 'Edge deployment with ONNX'
+            ],
+            'Monitor and Maintain AI Solutions (10-15%)': [
+                'Model monitoring and drift detection', 'Data drift vs concept drift',
+                'Azure ML model monitoring', 'Logging and alerting for AI systems',
+                'Model retraining triggers', 'A/B testing for models',
+                'Cost monitoring for AI workloads', 'Incident response for AI failures'
             ]
         }
     }

@@ -242,7 +242,7 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
     elif set_number > 0:
         # Fixed set mode — deterministic slice of questions from DB
         # Fetch ALL questions for this paper, sort by question_id for consistency
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300')
         if paper_name in DB_PAPERS:
             try:
                 items = []
@@ -278,7 +278,7 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
             questions = _call_bedrock(paper_name)
     else:
         # Original practice mode — random from DB, fallback to Bedrock
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300')
         if paper_name in DB_PAPERS:
             questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
             if not questions:
@@ -491,7 +491,7 @@ def handler(event, context):
         if action == 'generate':
             if not paper_name:
                 return err(400, 'paper_name is required')
-            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM']
+            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300']
             if paper_name not in valid:
                 return err(400, f"paper_name must be one of: {', '.join(valid)}")
 

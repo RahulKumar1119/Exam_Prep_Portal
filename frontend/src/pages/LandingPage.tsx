@@ -80,6 +80,21 @@ const LandingPage: React.FC = () => {
               <p className="text-xs opacity-80">questions</p>
             </div>
           </div>
+
+          {/* Other Exams */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">Also Available</h3>
+            <div className="flex justify-center">
+              <div onClick={() => navigate('/ai-300-practice-test')} className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl p-5 cursor-pointer hover:shadow-lg hover:scale-[1.03] transition-all text-white text-center max-w-xs w-full">
+                <div className="inline-flex items-center gap-1 bg-white bg-opacity-20 text-xs px-2 py-0.5 rounded-full mb-2">
+                  <span>Microsoft</span>
+                </div>
+                <h3 className="font-bold text-lg">AI-300</h3>
+                <p className="text-sm opacity-80 mt-1">ML & GenAI Solutions</p>
+                <p className="text-xs opacity-60 mt-1">Coming Soon</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

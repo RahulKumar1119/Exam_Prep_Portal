@@ -6,21 +6,33 @@ import { ExplanationDisplay } from '../components/Practice/ExplanationDisplay';
 import DiscussionThread from '../components/Practice/DiscussionThread';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 
-const PAPERS = [
-  { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1068, sets: 21 },
-  { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 760, sets: 15 },
-  { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 1195, sets: 23 },
-  { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 635, sets: 13 },
+const EXAMS = [
+  { id: 'JAIIB', name: 'JAIIB', description: 'Junior Associate of Indian Institute of Bankers' },
+  { id: 'AI-300', name: 'AI-300', description: 'Microsoft: Operationalizing ML & GenAI Solutions' },
 ];
+
+const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: string; totalQuestions: number; sets: number }[]> = {
+  'JAIIB': [
+    { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1068, sets: 21 },
+    { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 760, sets: 15 },
+    { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 1195, sets: 23 },
+    { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 635, sets: 13 },
+  ],
+  'AI-300': [
+    { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 0, sets: 0 },
+  ],
+};
 
 const PracticePage: React.FC = () => {
   const { current_session, session_result, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
   const { fetchDashboardData } = useDashboard();
+  const [selectedExam, setSelectedExam] = useState('JAIIB');
   const [selectedPaper, setSelectedPaper] = useState('');
   const [selectedSet, setSelectedSet] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const currentPaperInfo = PAPERS.find(p => p.id === selectedPaper);
+  const papers = PAPERS_BY_EXAM[selectedExam] || [];
+  const currentPaperInfo = papers.find(p => p.id === selectedPaper);
 
   const handleStartPracticeSet = async () => {
     if (!selectedPaper) {
@@ -80,8 +92,30 @@ const PracticePage: React.FC = () => {
 
       {!current_session ? (
         <div className="max-w-3xl mx-auto space-y-6">
+          {/* Exam Selector Tabs */}
+          <div className="flex gap-2 flex-wrap">
+            {EXAMS.map((exam) => (
+              <button
+                key={exam.id}
+                onClick={() => { setSelectedExam(exam.id); setSelectedPaper(''); setSelectedSet(null); }}
+                className={`px-4 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  selectedExam === exam.id
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {exam.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Exam Description */}
+          <p className="text-sm text-gray-600">
+            {EXAMS.find(e => e.id === selectedExam)?.description}
+          </p>
+
           {/* Paper Info Banner */}
-          {selectedPaper && currentPaperInfo && (
+          {selectedPaper && currentPaperInfo && currentPaperInfo.totalQuestions > 0 && (
             <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-6 text-white text-center">
               <h2 className="text-2xl font-bold">{currentPaperInfo.name} Full Practice Tests</h2>
               <p className="text-green-100 mt-1">
@@ -98,7 +132,7 @@ const PracticePage: React.FC = () => {
                 <SelectValue placeholder="Choose a paper..." />
               </SelectTrigger>
               <SelectContent>
-                {PAPERS.map((paper) => (
+                {papers.map((paper) => (
                   <SelectItem key={paper.id} value={paper.id}>
                     {paper.name} — {paper.fullName}
                   </SelectItem>
@@ -152,6 +186,18 @@ const PracticePage: React.FC = () => {
           </div>
 
           {/* Practice Set Info */}
+          {selectedPaper && currentPaperInfo && currentPaperInfo.totalQuestions === 0 && (
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200 p-8 text-center">
+              <span className="text-4xl mb-4 block">🚧</span>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Coming Soon</h3>
+              <p className="text-gray-600 text-sm mb-4">
+                AI-300 practice questions are being prepared. We're curating questions aligned with the official Microsoft study guide.
+              </p>
+              <p className="text-xs text-gray-500">Sign up to get notified when AI-300 questions are available.</p>
+            </div>
+          )}
+
+          {/* Practice Set Format Info */}
           <div className="bg-gray-50 rounded-xl border border-gray-200 p-6">
             <h3 className="font-bold text-gray-900 mb-3">📝 Practice Set Format</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">

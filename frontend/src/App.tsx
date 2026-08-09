@@ -29,6 +29,7 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import BookmarksPage from './pages/BookmarksPage';
 import ContactPage from './pages/ContactPage';
 import FreeQuizPage from './pages/FreeQuizPage';
+import AI300PracticeTestPage from './pages/AI300PracticeTestPage';
 import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
 import DisclaimerPage from './pages/DisclaimerPage';
@@ -88,6 +89,7 @@ const AppContent: React.FC = () => {
       <Route path="/practice-tests/:slug" element={<PracticeTestDetailPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/free-quiz/:slug" element={<FreeQuizPage />} />
+      <Route path="/ai-300-practice-test" element={<AI300PracticeTestPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/faq" element={<FAQPage />} />
       <Route path="/disclaimer" element={<DisclaimerPage />} />
