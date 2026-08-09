@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             </svg>
           </button>
           <Link to="/" className="text-xl font-bold text-primary-600 dark:text-primary-400">
-            JAIIB-CAIIB
+            MockMaster
           </Link>
         </div>
 

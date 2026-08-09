@@ -11,9 +11,12 @@ import ExamReadiness from '../components/Dashboard/ExamReadiness';
 import StudyStreak from '../components/Dashboard/StudyStreak';
 import PercentileRanking from '../components/Dashboard/PercentileRanking';
 import ExamCountdown from '../components/Dashboard/ExamCountdown';
+import { useExamPreference } from '../hooks/useExamPreference';
 
 const DashboardPage: React.FC = () => {
   const { dashboard_data, is_loading, error, fetchDashboardData } = useDashboard();
+  const { selectedExam } = useExamPreference();
+  const isJAIIB = selectedExam !== 'AI-300';
 
   useEffect(() => {
     fetchDashboardData();
@@ -37,13 +40,13 @@ const DashboardPage: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Performance Dashboard</h1>
-        <p className="text-gray-600 mt-2">Track your learning progress and performance</p>
+        <p className="text-gray-600 mt-2">Track your {isJAIIB ? 'JAIIB' : 'AI-300'} learning progress and performance</p>
       </div>
 
       {dashboard_data ? (
         <>
-          {/* Exam Countdown */}
-          <ExamCountdown />
+          {/* Exam Countdown — JAIIB only */}
+          {isJAIIB && <ExamCountdown />}
 
           {/* Performance Overview Cards */}
           <PerformanceOverview
