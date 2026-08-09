@@ -74,10 +74,10 @@ const PracticeTestsPage: React.FC = () => {
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">JC</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">M</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">JAIIB-CAIIB Prep</span>
+            <span className="text-xl font-bold text-gray-900">MockMaster</span>
           </div>
           <div className="flex gap-4">
             <button onClick={() => navigate('/login')} className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition">Login</button>
@@ -113,7 +113,7 @@ const PracticeTestsPage: React.FC = () => {
                 className="bg-white rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
               >
                 {/* Card Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-xl font-bold text-white">{paper.name}</h3>
@@ -196,7 +196,7 @@ const PracticeTestsPage: React.FC = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-indigo-500 to-purple-600 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Start Practicing Today</h2>
           <p className="text-blue-100 mb-8">Join thousands of bank officers who cleared JAIIB using MockMaster</p>

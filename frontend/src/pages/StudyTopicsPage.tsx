@@ -44,10 +44,10 @@ const StudyTopicsPage: React.FC = () => {
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-sm sm:text-lg">JC</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
-            <span className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">JAIIB-CAIIB Prep</span>
+            <span className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">MockMaster</span>
             <span className="text-base font-bold text-gray-900 sm:hidden">MockMaster</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-4">
@@ -205,8 +205,8 @@ const StudyTopicsPage: React.FC = () => {
       <footer className="bg-gray-900 text-gray-400 py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">JC</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-white font-semibold">MockMaster</span>
           </div>

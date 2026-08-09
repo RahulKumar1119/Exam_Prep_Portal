@@ -127,7 +127,7 @@ const FreeQuizPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white mb-6">
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 text-white mb-6">
               <h3 className="font-bold text-lg mb-2">Want more practice?</h3>
               <p className="text-blue-100 text-sm mb-4">
                 Sign up free to access 3000+ questions with AI explanations, performance tracking, and exam readiness scores.
@@ -165,8 +165,8 @@ const FreeQuizPage: React.FC = () => {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(`/practice-tests/${slug}`)}>
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">JC</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-sm font-bold text-gray-900">MockMaster</span>
           </div>

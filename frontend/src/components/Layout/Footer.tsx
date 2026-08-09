@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
       <div className="container-responsive">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            © {currentYear} JAIIB-CAIIB Exam Prep Portal. All rights reserved.
+            © {currentYear} MockMaster. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm text-gray-600 dark:text-gray-400">
             <Link to="/privacy-policy" className="hover:text-primary-600 transition-colors">

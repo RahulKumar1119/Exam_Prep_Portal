@@ -631,7 +631,7 @@ const BLOG_POSTS: BlogPost[] = [
         <div className="not-prose my-6 overflow-x-auto">
           <table className="w-full text-sm border-collapse border border-gray-300">
             <thead>
-              <tr className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+              <tr className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
                 <th className="border border-gray-300 p-3 text-left">Parameter</th>
                 <th className="border border-gray-300 p-3 text-left">JAIIB</th>
                 <th className="border border-gray-300 p-3 text-left">CAIIB</th>
@@ -1092,10 +1092,10 @@ const BlogListPage: React.FC = () => {
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">JC</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">M</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">JAIIB-CAIIB Prep</span>
+            <span className="text-xl font-bold text-gray-900">MockMaster</span>
           </div>
           <div className="flex gap-4">
             <button
@@ -1168,7 +1168,7 @@ const BlogListPage: React.FC = () => {
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-indigo-500 to-purple-600 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Practicing?</h2>
           <p className="text-blue-100 mb-8">
@@ -1186,7 +1186,7 @@ const BlogListPage: React.FC = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center text-sm">
-          <p>&copy; 2024 JAIIB-CAIIB Prep. All rights reserved.</p>
+          <p>&copy; 2024 MockMaster. All rights reserved.</p>
         </div>
       </footer>
     </div>
@@ -1229,10 +1229,10 @@ const BlogPostPage: React.FC = () => {
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">JC</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">M</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">JAIIB-CAIIB Prep</span>
+            <span className="text-xl font-bold text-gray-900">MockMaster</span>
           </div>
           <div className="flex gap-4">
             <button
@@ -1310,7 +1310,7 @@ const BlogPostPage: React.FC = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center text-sm">
-          <p>&copy; 2024 JAIIB-CAIIB Prep. All rights reserved.</p>
+          <p>&copy; 2024 MockMaster. All rights reserved.</p>
         </div>
       </footer>
     </div>
