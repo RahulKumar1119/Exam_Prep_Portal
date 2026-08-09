@@ -1,0 +1,63 @@
+[
+  {
+    "question_text": "Your company is migrating from Azure ML SDK v1 to v2 and needs to automate pipeline deployment via CI/CD. The pipeline must reuse components across multiple projects and trigger inference endpoints. Which combination of tools is MOST appropriate for this migration?",
+    "options": {
+      "A": "Azure CLI v1 with az ml pipeline create and Azure DevOps classic releases",
+      "B": "Azure ML SDK v2 with PipelineJob class and GitHub Actions using YAML-based component definitions",
+      "C": "Azure ML designer UI drag-and-drop pipelines and manual endpoint creation via studio",
+      "D": "Azure Functions with HTTP triggers and manual model registration via Python SDK v1"
+    },
+    "correct_answer": "B",
+    "topic": "MLOps & SDK Migration",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A data engineer at Contoso needs to schedule daily retraining of a PyTorch model using distributed training across 4 GPU nodes. The training script must run in a custom Docker environment with specific Python libraries. Which compute and command configuration BEST meets these requirements?",
+    "options": {
+      "A": "Azure ML Compute Instance with az ml job create --compute-name cpu-cluster --file train.yaml",
+      "B": "Azure ML Compute Cluster with Standard_NC6s_v3 SKU and az ml job create --file distributed_train.yaml specifying node_count: 4 and distribution: mpi",
+      "C": "Azure Kubernetes Service with custom Helm charts and SDK v2 command Job.create(name='pytorch-job', compute='aks-cluster')",
+      "D": "Serverless compute with az ml job create --compute-name serverless --file train.yaml and environment: 'azureml/pytorch-1.9-ubuntu18.04-py37-cpu'",
+      "E": "B"
+    },
+    "correct_answer": "B",
+    "topic": "Distributed Training",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are architecting a secure Azure ML workspace for financial fraud detection where sensitive customer data must never leave the Azure region. The solution must include encrypted datastores, secret management, and private endpoint connectivity. Which configuration is MOST compliant with enterprise security requirements?",
+    "options": {
+      "A": "Create workspace with public network access, use Azure Key Vault referenced in YAML, and Azure Blob Storage with SAS tokens",
+      "B": "Deploy workspace with private endpoint enabled, register datastore with service principal authentication, and use Azure Key Vault for connection strings referenced via environment variables in SDK v2",
+      "C": "Use Azure ML designer for drag-and-drop pipelines, store data in local files mounted via compute instance Jupyter notebooks",
+      "D": "Attach Azure Synapse Spark pool with public IP, use Azure SQL Database with firewall rules, and store secrets in pipeline YAML file as plain text"
+    },
+    "correct_answer": "B",
+    "topic": "Security and Compliance",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your team needs to prototype a generative AI application using Llama 3 model from Hugging Face with prompt engineering and evaluation. The solution must allow iterative experimentation, versioned prompts, and A/B testing of different prompt templates. Which Azure ML feature should you leverage?",
+    "options": {
+      "A": "Azure ML AutomL UI to generate prompt templates and deploy as real-time endpoint",
+      "B": "Azure ML prompt flow with flow.dag.yaml for defining prompt steps, connections to Hugging Face model, and built-in evaluation metrics",
+      "C": "Azure ML designer with custom Python components and manual testing via Jupyter notebooks",
+      "D": "Azure Functions with HTTP trigger using Hugging Face Inference API and Azure Monitor for logging"
+    },
+    "correct_answer": "B",
+    "topic": "Generative AI & Prompt Flow",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A machine learning engineer needs to deploy a scikit-learn model for batch inference on 10TB of historical sales data stored in Azure Data Lake Gen2. The deployment must process data in parallel, scale automatically, and store results back to ADLS. Which endpoint and compute configuration is MOST efficient?",
+    "options": {
+      "A": "Deploy to managed online endpoint with Standard_D3_v2 compute and trigger via HTTP POST with data URI",
+      "B": "Use Azure ML batch endpoint with Standard_DS12_v2 compute cluster configured for autoscaling, referencing input as uri_folder and output to ADLS path",
+      "C": "Deploy to Azure Container Registry and invoke via Azure Logic Apps using Blob Storage triggers",
+      "D": "Create Azure Databricks cluster with MLflow model serving and schedule jobs via Azure Data Factory"
+    },
+    "correct_answer": "B",
+    "topic": "Batch Inference Deployment",
+    "difficulty": "medium"
+  }
+]

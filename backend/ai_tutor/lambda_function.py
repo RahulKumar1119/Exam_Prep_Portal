@@ -83,7 +83,37 @@ def generate_explanation_with_timeout(
 
     def _call_bedrock():
         try:
-            prompt = f"""You are an expert JAIIB/CAIIB exam tutor. Explain this question clearly in 150-200 words.
+            # Detect if this is a Microsoft/Azure question or banking question
+            combined_text = f"{question_text} {options.get('A', '')} {options.get('B', '')}"
+            is_azure = any(kw in combined_text.lower() for kw in [
+                'azure', 'microsoft', 'endpoint', 'pipeline', 'kubernetes', 'ml workspace',
+                'bedrock', 'deploy', 'container', 'compute cluster', 'sdk', 'cli',
+                'automl', 'mlflow', 'onnx', 'inference', 'docker', 'yaml'
+            ])
+
+            if is_azure:
+                prompt = f"""You are an expert Microsoft Azure AI/ML certification tutor. Explain this question clearly.
+
+Question: {question_text}
+
+Options:
+A. {options.get('A', '')}
+B. {options.get('B', '')}
+C. {options.get('C', '')}
+D. {options.get('D', '')}
+
+Correct Answer: {correct_answer}
+
+Your explanation must include:
+1. Why {correct_answer} is correct
+2. Why the other options are wrong
+3. The key Azure/ML concept being tested
+4. Any relevant Azure documentation reference or best practice
+5. A practical scenario showing when you would use this in production
+
+Keep it clear and well-structured, 200-250 words."""
+            else:
+                prompt = f"""You are an expert JAIIB/CAIIB exam tutor. Explain this question clearly in 150-200 words.
 
 Question: {question_text}
 

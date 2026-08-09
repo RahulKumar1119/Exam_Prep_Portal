@@ -1,0 +1,561 @@
+[
+  {
+    "question_text": "A data scientist wants to quickly prototype a machine learning model without writing any code. Which Azure Machine Learning feature should they utilize?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Python SDK v2",
+      "C": "Azure CLI v2",
+      "D": "Automated Machine Learning via REST API"
+    },
+    "correct_answer": "A",
+    "explanation": "The designer provides a drag-and-drop interface for creating ML pipelines without coding, making it ideal for rapid prototyping.",
+    "topic": "Azure Machine Learning Studio",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "Your company requires a highly auditable and reproducible ML pipeline for a financial risk assessment model. Which feature best supports this requirement?",
+    "options": {
+      "A": "Azure Machine Learning compute instances",
+      "B": "Integration with Git and MLflow",
+      "C": "Using Azure Functions for model scoring",
+      "D": "Deploying directly to Azure Kubernetes Service"
+    },
+    "correct_answer": "B",
+    "explanation": "Git integration provides version control, and MLflow integration offers experiment tracking and reproducibility, crucial for auditability.",
+    "topic": "MLOps",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are migrating existing ML pipelines from Azure Machine Learning CLI v1 to v2. What is the primary reason to prioritize this migration?",
+    "options": {
+      "A": "CLI v2 offers faster model training speeds.",
+      "B": "CLI v1 is deprecated and will cease to function after September 30, 2025.",
+      "C": "CLI v2 automatically optimizes hyperparameters.",
+      "D": "CLI v1 doesn't support automated machine learning."
+    },
+    "correct_answer": "B",
+    "explanation": "Support for CLI v1 ended on September 30, 2025, and continuing to use it introduces potential security risks and breaking changes.",
+    "topic": "CLI v2 Migration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A data scientist requires a development environment with pre-installed data science tools like Python, R, and common ML libraries. What is the MOST appropriate option?",
+    "options": {
+      "A": "Azure Machine Learning compute cluster",
+      "B": "Local development environment with manual package installation",
+      "C": "Data Science Virtual Machine (DSVM)",
+      "D": "Azure App Service"
+    },
+    "correct_answer": "C",
+    "explanation": "The DSVM is designed specifically for data science, providing pre-installed tools and libraries to accelerate development.",
+    "topic": "Development Environments",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your team wants to streamline the development of AI applications powered by Large Language Models (LLMs). Which Azure Machine Learning tool is specifically designed for this purpose?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Azure Machine Learning prompt flow",
+      "C": "Azure Machine Learning data labeling",
+      "D": "Azure Machine Learning model catalog"
+    },
+    "correct_answer": "B",
+    "explanation": "Prompt flow is a specialized tool for prototyping, experimenting, and deploying AI applications leveraging LLMs.",
+    "topic": "Generative AI",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You need to ensure your Azure Machine Learning workspace is secured and restricts access to sensitive data. What approach should you take?",
+    "options": {
+      "A": "Disable logging within the workspace",
+      "B": "Utilize Azure Virtual Networks and Azure Key Vault",
+      "C": "Publicly expose the workspace endpoint",
+      "D": "Disable role-based access control"
+    },
+    "correct_answer": "B",
+    "explanation": "Leveraging Azure Virtual Networks, network security groups, and Azure Key Vault are crucial for securing your ML projects.",
+    "topic": "Security",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "What is the primary purpose of Azure Machine Learning datastores?",
+    "options": {
+      "A": "To store model artifacts and metadata.",
+      "B": "To securely store connection information to data storage accounts.",
+      "C": "To define the schema of tabular data.",
+      "D": "To manage compute resources."
+    },
+    "correct_answer": "B",
+    "explanation": "Datastores securely store credentials and connection details to various Azure storage services, preventing hardcoding in scripts.",
+    "topic": "Data Management",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are building a scalable image classification model using the Azure Machine Learning SDK v2. Which compute option is MOST suited for distributed training with GPUs?",
+    "options": {
+      "A": "Azure Machine Learning compute instance",
+      "B": "Azure Machine Learning compute cluster with GPU nodes",
+      "C": "Azure App Service",
+      "D": "Azure SQL Database"
+    },
+    "correct_answer": "B",
+    "explanation": "Compute clusters with GPU nodes provide the necessary resources for distributed training of deep learning models.",
+    "topic": "Distributed Training",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A data scientist wants to create a reusable component for data preprocessing that can be used across multiple pipelines. What feature of Azure Machine Learning supports this?",
+    "options": {
+      "A": "Azure Machine Learning jobs",
+      "B": "Azure Machine Learning environments",
+      "C": "Azure Machine Learning components",
+      "D": "Azure Machine Learning datasets"
+    },
+    "correct_answer": "C",
+    "explanation": "Components allow you to encapsulate pieces of code (data processing, model training, etc.) and reuse them in different pipelines.",
+    "topic": "Pipelines and Components",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your team needs to monitor the performance of deployed models and retrain them automatically when the performance drops below a certain threshold. Which service within Azure Machine Learning supports this?",
+    "options": {
+      "A": "Azure Data Factory",
+      "B": "Azure Monitor",
+      "C": "MLOps features (tracking, monitoring, retraining)",
+      "D": "Azure Logic Apps"
+    },
+    "correct_answer": "C",
+    "explanation": "Azure Machine Learning's MLOps features provide tools for tracking, monitoring, and automating model retraining.",
+    "topic": "MLOps",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "What is the key distinction between 'mltable' and 'uri_folder' data types in Azure Machine Learning?",
+    "options": {
+      "A": "'mltable' is for large datasets and 'uri_folder' is for small datasets.",
+      "B": "'mltable' represents tabular data abstraction and 'uri_folder' is a location in storage.",
+      "C": "'mltable' only works with Spark, while 'uri_folder' works with all compute.",
+      "D": "'mltable' stores metadata, while 'uri_folder' stores the actual data."
+    },
+    "correct_answer": "B",
+    "explanation": "'mltable' is an abstraction for tabular data, while 'uri_folder' simply points to a data location in storage.",
+    "topic": "Data Management",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are using Azure Machine Learning Python SDK v2. Which method do you utilize to connect to your workspace based on a configuration file?",
+    "options": {
+      "A": "MLClient.create()",
+      "B": "Workspace.load()",
+      "C": "MLClient.from_config()",
+      "D": "Environment.get_workspace()"
+    },
+    "correct_answer": "C",
+    "explanation": "MLClient.from_config() loads the workspace configuration from a file and establishes a connection.",
+    "topic": "SDK v2 Usage",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "A team is experimenting with different algorithms and hyperparameters for a model. What feature in Azure Machine Learning would best facilitate this exploratory phase?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Automated Machine Learning UI",
+      "C": "Azure Machine Learning data labeling",
+      "D": "Azure Machine Learning batch endpoints"
+    },
+    "correct_answer": "B",
+    "explanation": "Automated Machine Learning (AutoML) helps accelerate the process of algorithm selection and hyperparameter tuning.",
+    "topic": "Automated ML",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your company wants to leverage pre-trained models from various providers like Hugging Face and Mistral within Azure Machine Learning. Which feature provides access to these models?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Azure Machine Learning model catalog",
+      "C": "Azure Machine Learning compute instances",
+      "D": "Azure Machine Learning data assets"
+    },
+    "correct_answer": "B",
+    "explanation": "The model catalog is a hub for discovering and using a wide range of models from different providers.",
+    "topic": "Generative AI",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are tasked with creating a secure workspace in Azure Machine Learning. What is a recommended best practice?",
+    "options": {
+      "A": "Disable all logging and monitoring.",
+      "B": "Use public IP addresses for all compute resources.",
+      "C": "Integrate with Azure Virtual Networks and Azure Key Vault.",
+      "D": "Share the workspace credentials with all team members."
+    },
+    "correct_answer": "C",
+    "explanation": "Using Azure Virtual Networks and Azure Key Vault helps to isolate and protect sensitive data and credentials.",
+    "topic": "Security",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You have a model trained in scikit-learn that you want to deploy using Azure Machine Learning. How can you achieve this?",
+    "options": {
+      "A": "You can only deploy models built with Azure Machine Learning tools.",
+      "B": "Azure Machine Learning supports deployment of models built with scikit-learn and other open-source frameworks.",
+      "C": "You must first convert the scikit-learn model to a TensorFlow model.",
+      "D": "You can only deploy models using the Azure Machine Learning designer."
+    },
+    "correct_answer": "B",
+    "explanation": "Azure Machine Learning supports deploying models created in various frameworks, including scikit-learn, PyTorch and TensorFlow.",
+    "topic": "Open and Interoperable",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are deploying a model with a real-time managed endpoint and want to test a new version before fully rolling it out. What's the best approach?",
+    "options": {
+      "A": "Deploy the new version to a separate workspace.",
+      "B": "Increase the traffic allocated to the new deployment gradually.",
+      "C": "Delete the current deployment and replace it with the new one.",
+      "D": "Manually switch traffic using DNS records."
+    },
+    "correct_answer": "B",
+    "explanation": "Real-time endpoints support traffic splitting, allowing you to direct a small percentage of traffic to the new version for testing.",
+    "topic": "Model Deployment",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A data scientist wants to automate hyperparameter tuning for a training job. What Azure Machine Learning feature should they utilize?",
+    "options": {
+      "A": "Azure Machine Learning compute instances",
+      "B": "Azure Machine Learning pipelines",
+      "C": "Hyperparameter optimization (hyperparameter tuning)",
+      "D": "Azure Machine Learning data labeling"
+    },
+    "correct_answer": "C",
+    "explanation": "Azure Machine Learning provides automated hyperparameter tuning to optimize model performance.",
+    "topic": "Hyperparameter Optimization",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "Your team wants to orchestrate complex ML workflows involving multiple steps. Which Azure Machine Learning feature is best suited for this?",
+    "options": {
+      "A": "Azure Machine Learning compute clusters",
+      "B": "Azure Machine Learning pipelines",
+      "C": "Azure Machine Learning data stores",
+      "D": "Azure Machine Learning environments"
+    },
+    "correct_answer": "B",
+    "explanation": "Pipelines allow you to define and execute a series of steps in a defined order, orchestrating complex workflows.",
+    "topic": "Pipelines and Components",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "What is the primary benefit of using serverless compute in Azure Machine Learning?",
+    "options": {
+      "A": "It provides dedicated hardware resources.",
+      "B": "It offloads compute lifecycle management to Azure Machine Learning.",
+      "C": "It guarantees lower cost compared to compute clusters.",
+      "D": "It requires manual configuration of the compute environment."
+    },
+    "correct_answer": "B",
+    "explanation": "Serverless compute simplifies management by automating the provisioning and scaling of compute resources.",
+    "topic": "Compute",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to run a training job that requires a specific version of a Python package not available in the curated environments. How do you achieve this in Azure Machine Learning?",
+    "options": {
+      "A": "Use a curated environment and manually install the package during the job.",
+      "B": "Create a custom environment defined by a Docker image or conda YAML file.",
+      "C": "Modify the curated environment directly.",
+      "D": "Submit the job without specifying an environment."
+    },
+    "correct_answer": "B",
+    "explanation": "Custom environments allow you to define the exact software and dependencies required for your job.",
+    "topic": "Environments",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You have a pipeline defined in YAML using Azure Machine Learning CLI v2. What command would you use to create this pipeline?",
+    "options": {
+      "A": "az ml pipeline submit",
+      "B": "az ml job create --file my_pipeline_definition.yaml",
+      "C": "az ml pipeline create --file my_pipeline_definition.yaml",
+      "D": "az ml component create --file my_pipeline_definition.yaml"
+    },
+    "correct_answer": "C",
+    "explanation": "The `az ml pipeline create` command is specifically used to create pipelines from YAML definitions in v2.",
+    "topic": "CLI v2",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "A data science team is building a model to predict customer churn. They want to automate the process of trying different algorithms and hyperparameters to find the best model. What Azure Machine Learning feature should they use?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Automated Machine Learning (AutoML)",
+      "C": "Azure Machine Learning compute instances",
+      "D": "Azure Machine Learning data labeling"
+    },
+    "correct_answer": "B",
+    "explanation": "AutoML automates algorithm selection and hyperparameter tuning, streamlining model development. Designer is drag-and-drop. Compute instances provide infrastructure. Data labeling focuses on annotation.",
+    "topic": "Automated ML",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "Your company needs to connect to an Azure SQL Database from within an Azure Machine Learning training job. How should you securely manage the connection details?",
+    "options": {
+      "A": "Hardcode the connection string directly into the training script.",
+      "B": "Store the connection string in environment variables on the compute instance.",
+      "C": "Use an Azure Machine Learning datastore to store the connection information.",
+      "D": "Create a public key and store the connection string in Azure Key Vault."
+    },
+    "correct_answer": "C",
+    "explanation": "Datastores securely store connection information without hardcoding. Key Vault is used for secrets, but datastores are designed for data source connections. Hardcoding and environment variables are insecure.",
+    "topic": "Security",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are tasked with migrating an existing machine learning pipeline from Azure Machine Learning CLI v1 to v2. What is the primary reason for making this migration?",
+    "options": {
+      "A": "CLI v1 is being deprecated and will no longer be supported.",
+      "B": "CLI v2 offers enhanced integration with Azure DevOps.",
+      "C": "CLI v2 is required to deploy models to managed endpoints.",
+      "D": "CLI v2 provides performance improvements for training jobs."
+    },
+    "correct_answer": "A",
+    "explanation": "CLI v1 support has ended, making migration necessary. While v2 has other advantages, the end of support is the primary driver.",
+    "topic": "CLI v2",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "A data scientist wants to collaborate with other team members on a machine learning project, sharing notebooks, data, and compute resources. What is the core benefit of using an Azure Machine Learning workspace?",
+    "options": {
+      "A": "The workspace automatically selects the best algorithm for the data.",
+      "B": "The workspace provides a centralized platform for collaboration and resource management.",
+      "C": "The workspace ensures all code is written in Python.",
+      "D": "The workspace encrypts all data at rest and in transit."
+    },
+    "correct_answer": "B",
+    "explanation": "Workspaces are designed for collaboration and centralized management. The other options are features or benefits provided *within* a workspace, but not the primary purpose.",
+    "topic": "Workspace",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "Your team is developing a complex ML pipeline involving multiple steps like data cleaning, feature engineering, and model training. You want to package these steps into reusable components. Which Azure Machine Learning feature should you use?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Azure Machine Learning pipelines using components",
+      "C": "Azure Databricks",
+      "D": "Azure Synapse Analytics"
+    },
+    "correct_answer": "B",
+    "explanation": "Components are the building blocks of reusable ML pipelines, allowing for modularity and sharing. Designer uses a visual interface. Databricks and Synapse are data processing services.",
+    "topic": "Pipelines",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which of the following best describes the purpose of Azure Machine Learning Prompt Flow?",
+    "options": {
+      "A": "A tool for automating hyperparameter tuning.",
+      "B": "A service for real-time model deployment with auto-scaling.",
+      "C": "A development tool for streamlining the entire lifecycle of AI applications powered by LLMs.",
+      "D": "A visual interface for building machine learning pipelines without code."
+    },
+    "correct_answer": "C",
+    "explanation": "Prompt Flow is specifically designed to simplify the development cycle for AI applications using LLMs.",
+    "topic": "Prompt Flow",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to distribute a training job across multiple GPUs to reduce training time. Which Azure Machine Learning compute options support this?",
+    "options": {
+      "A": "Compute instance",
+      "B": "Serverless compute and compute clusters",
+      "C": "Azure Container Instances",
+      "D": "Azure Functions"
+    },
+    "correct_answer": "B",
+    "explanation": "Compute clusters and serverless compute are designed for distributed training. Compute instances are single machines.  ACI and Functions aren't designed for this.",
+    "topic": "Distributed Training",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to monitor a deployed online endpoint to detect concept drift. Which Azure Machine Learning features assists with this?",
+    "options": {
+      "A": "Azure Monitor",
+      "B": "MLflow integration for tracking experiments",
+      "C": "Azure Machine Learning's model monitoring capabilities",
+      "D": "Azure Purview for data governance"
+    },
+    "correct_answer": "C",
+    "explanation": "Azure Machine Learning has dedicated monitoring features for deployed models, including drift detection.",
+    "topic": "MLOps & Monitoring",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your team is using the Azure Machine Learning Python SDK v2. What is the core pattern for interacting with workspace resources?",
+    "options": {
+      "A": "Using resource groups directly with ARM templates.",
+      "B": "Utilizing the `MLClient` object and defining assets (nouns) and actions (verbs).",
+      "C": "Using REST APIs with custom authentication.",
+      "D": "Directly manipulating the underlying Azure Storage accounts."
+    },
+    "correct_answer": "B",
+    "explanation": "SDK v2 focuses on the `MLClient` and a noun-verb pattern for consistent resource management.",
+    "topic": "SDK v2",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your company mandates that all training data used for machine learning models must reside within a specific Azure Virtual Network (VNet) for security reasons. How can you ensure that Azure Machine Learning training jobs can access this data?",
+    "options": {
+      "A": "Use public endpoints for the data storage.",
+      "B": "Configure an Azure Machine Learning workspace with VNet integration.",
+      "C": "Use Azure Key Vault to encrypt the data.",
+      "D": "Create an Azure Logic App to move the data to a public location."
+    },
+    "correct_answer": "B",
+    "explanation": "VNet integration allows Azure Machine Learning to access resources within your VNet. Public endpoints compromise security. Encryption doesn't address network access.",
+    "topic": "Security",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A data scientist needs to label a large dataset of images for an object detection task. Which Azure Machine Learning feature should be used to coordinate this process efficiently?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Azure Machine Learning data labeling",
+      "C": "Automated Machine Learning (AutoML)",
+      "D": "Azure Purview"
+    },
+    "correct_answer": "B",
+    "explanation": "Azure Machine Learning data labeling is specifically designed for coordinating image and text annotation projects.",
+    "topic": "Data Labeling",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You're building a model that predicts loan defaults.  Regulatory requirements demand you can explain *why* a loan application was rejected. Which aspect of Responsible AI is most relevant?",
+    "options": {
+      "A": "Data privacy",
+      "B": "Fairness",
+      "C": "Explainability",
+      "D": "Reliability"
+    },
+    "correct_answer": "C",
+    "explanation": "Explainability focuses on understanding the factors driving a model’s predictions, essential for compliance and trust.",
+    "topic": "Responsible AI",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are running a training job that frequently fails due to intermittent network issues. How can you improve the resilience of your training process?",
+    "options": {
+      "A": "Increase the size of the compute instance.",
+      "B": "Implement retry logic in your training script and leverage Azure Machine Learning's job retry mechanisms.",
+      "C": "Reduce the batch size of your data.",
+      "D": "Switch to a different Azure region."
+    },
+    "correct_answer": "B",
+    "explanation": "Retry logic and Azure Machine Learning's built-in retries are designed to handle transient failures. Instance size affects compute capacity, not network resilience.",
+    "topic": "MLOps & Reliability",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization wants to use existing, pre-trained models from Hugging Face within Azure Machine Learning. How can they easily access and integrate these models?",
+    "options": {
+      "A": "Manually download the models and upload them to Azure Blob Storage.",
+      "B": "Use the Azure Machine Learning model catalog to discover and import models from Hugging Face.",
+      "C": "Write custom code to connect to the Hugging Face API.",
+      "D": "Create a custom Docker image with the models pre-installed."
+    },
+    "correct_answer": "B",
+    "explanation": "The model catalog provides a streamlined way to discover and use models from various providers, including Hugging Face.",
+    "topic": "Model Catalog",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "Your team needs to perform embarrassingly parallel model training, where each model trains independently on a separate store’s data. What technique facilitates scaling the process in Azure Machine Learning?",
+    "options": {
+      "A": "Distributed training with Horovod",
+      "B": "Using a single large compute cluster",
+      "C": "Leveraging serverless Spark compute and Azure Synapse Analytics",
+      "D": "Deploying models to Azure Functions"
+    },
+    "correct_answer": "C",
+    "explanation": "Serverless Spark compute with Synapse Analytics excel at scaling independent tasks like embarrassingly parallel training.",
+    "topic": "Distributed Training",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to deploy a model for online (real-time) inference. You want to test a new model version before fully rolling it out. What feature allows you to gradually shift traffic between deployments?",
+    "options": {
+      "A": "Batch endpoints",
+      "B": "Traffic splitting in managed online endpoints",
+      "C": "Azure Data Factory",
+      "D": "Azure Logic Apps"
+    },
+    "correct_answer": "B",
+    "explanation": "Managed online endpoints support traffic splitting, enabling canary deployments and A/B testing.",
+    "topic": "Model Deployment",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your team is developing an ML pipeline and wants to incorporate reusable components for common tasks like data validation. Which version of the SDK or CLI is required to leverage this feature?",
+    "options": {
+      "A": "Azure Machine Learning CLI v1 and Python SDK v1",
+      "B": "Azure Machine Learning CLI v2 and Python SDK v2",
+      "C": "Azure Machine Learning designer",
+      "D": "Azure Databricks"
+    },
+    "correct_answer": "B",
+    "explanation": "Reusable components are a feature introduced in CLI v2 and SDK v2.",
+    "topic": "Pipelines and Components",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization has a strict policy against storing sensitive data outside of the current Azure region. What does Azure Machine Learning guarantee regarding data processing and storage?",
+    "options": {
+      "A": "Data is automatically replicated to multiple regions for disaster recovery.",
+      "B": "Data is processed in the region where the workspace is deployed and isn't stored elsewhere.",
+      "C": "Data is processed in the region with the lowest cost.",
+      "D": "Data is stored in Azure Data Lake Storage Gen2 globally."
+    },
+    "correct_answer": "B",
+    "explanation": "Azure Machine Learning ensures data remains within the deploying region.",
+    "topic": "Security",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You have a pre-trained model saved as a 'mlflow_model' and want to register it  in your Azure Machine Learning workspace.  What steps are required?",
+    "options": {
+      "A": "Convert the model to a pickle file and upload it to Azure Blob Storage.",
+      "B": "Use the `MLClient.models.create_or_update()` method, specifying the 'mlflow_model' type.",
+      "C": "Deploy the model using the Azure Machine Learning designer.",
+      "D": "Manually create a JSON file defining the model's metadata."
+    },
+    "correct_answer": "B",
+    "explanation": "The `MLClient.models.create_or_update()` method with the correct type parameter is used to register MLflow models. ",
+    "topic": "Model Management",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A data scientist wants to perform hyperparameter optimization for a model. Which Azure Machine Learning feature provides capabilities for automating this process?",
+    "options": {
+      "A": "Azure Machine Learning designer",
+      "B": "Azure Machine Learning compute instances",
+      "C": "Hyperparameter tuning within Azure Machine Learning",
+      "D": "Azure Data Factory"
+    },
+    "correct_answer": "C",
+    "explanation": "Azure Machine Learning provides specific features for automating hyperparameter optimization.",
+    "topic": "Hyperparameter Tuning",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "Your team is migrating from using virtual machines for training to serverless compute in Azure Machine Learning.  What is the primary benefit of this change?",
+    "options": {
+      "A": "Greater control over the underlying infrastructure.",
+      "B": "Reduced infrastructure management overhead.",
+      "C": "Lower cost for short-lived training jobs only.",
+      "D": "Increased security compared to using virtual machines."
+    },
+    "correct_answer": "B",
+    "explanation": "Serverless compute abstracts away infrastructure management, allowing for focusing on ML tasks.",
+    "topic": "Compute",
+    "difficulty": "medium"
+  }
+]
