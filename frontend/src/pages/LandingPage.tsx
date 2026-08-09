@@ -8,10 +8,10 @@ const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="MockMaster — Free JAIIB Mock Tests 2026 | AI Explanations, Leaderboard & More"
-        description="Free JAIIB 2026 practice with 3600+ questions, AI explanations citing RBI circulars, All-India leaderboard, timed mock tests, discussion forum, and performance analytics. IE&IFS, PPB, AFM, RBWM."
+        title="Free Practice Tests for JAIIB & Microsoft AI-300 Certification | MockMaster"
+        description="Free practice tests for JAIIB 2026 (3600+ questions) and Microsoft AI-300 certification (350 questions). AI explanations, leaderboard, timed mock tests. No payment required."
         canonical="https://mockmaster.fun/"
-        keywords="JAIIB mock test 2026, JAIIB practice questions free, JAIIB AI explanation, JAIIB leaderboard, IIBF exam prep, JAIIB mock test free online"
+        keywords="JAIIB mock test 2026, AI-300 practice test, JAIIB practice questions free, Microsoft AI-300 mock test, Azure ML certification, IIBF exam prep, free certification practice"
       />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -37,10 +37,10 @@ const LandingPage: React.FC = () => {
       <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-            Pass JAIIB 2026 with Free AI-Powered Practice
+            Free Practice Tests for JAIIB & Microsoft AI-300 Certification
           </h1>
           <p className="text-base sm:text-lg text-gray-700 mb-8 leading-relaxed max-w-2xl mx-auto">
-            3,600+ questions across all 4 papers. AI explanations citing RBI circulars. All-India leaderboard. Timed mock tests. Discussion forum. Performance analytics. Everything free.
+            4,000+ scenario-based questions with AI explanations. JAIIB (3,600 questions, 4 papers) + Microsoft AI-300 (350 questions, 7 sets). Leaderboard, bookmarks, discussion forum, and performance analytics — all free.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button onClick={() => navigate('/register')} className="px-8 py-3.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition text-sm sm:text-base shadow-lg shadow-blue-200">
@@ -83,15 +83,15 @@ const LandingPage: React.FC = () => {
 
           {/* Other Exams */}
           <div className="mt-8 pt-8 border-t border-gray-200">
-            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">Also Available</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">Microsoft Certification</h3>
             <div className="flex justify-center">
               <div onClick={() => navigate('/ai-300-practice-test')} className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-xl p-5 cursor-pointer hover:shadow-lg hover:scale-[1.03] transition-all text-white text-center max-w-xs w-full">
                 <div className="inline-flex items-center gap-1 bg-white bg-opacity-20 text-xs px-2 py-0.5 rounded-full mb-2">
                   <span>Microsoft</span>
                 </div>
                 <h3 className="font-bold text-lg">AI-300</h3>
-                <p className="text-sm opacity-80 mt-1">ML & GenAI Solutions</p>
-                <p className="text-xs opacity-60 mt-1">Coming Soon</p>
+                <p className="text-2xl font-bold mt-1">350</p>
+                <p className="text-xs opacity-80">questions • 7 sets</p>
               </div>
             </div>
           </div>
