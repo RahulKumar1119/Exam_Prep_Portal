@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiClient } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useExamPreference } from '../hooks/useExamPreference';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 interface LeaderboardEntry {
@@ -21,6 +22,7 @@ interface LeaderboardData {
 
 const LeaderboardPage: React.FC = () => {
   const { user } = useAuth();
+  const { selectedExam } = useExamPreference();
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,8 @@ const LeaderboardPage: React.FC = () => {
     const fetchLeaderboard = async () => {
       setIsLoading(true);
       try {
-        const response = await apiClient.get<LeaderboardData>('/dashboard/leaderboard');
+        const exam = selectedExam || 'JAIIB';
+        const response = await apiClient.get<LeaderboardData>(`/dashboard/leaderboard?exam=${exam}`);
         if (response.success && response.data) {
           setData(response.data);
         } else {
@@ -42,7 +45,7 @@ const LeaderboardPage: React.FC = () => {
       }
     };
     fetchLeaderboard();
-  }, []);
+  }, [selectedExam]);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -62,7 +65,7 @@ const LeaderboardPage: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Leaderboard</h1>
-        <p className="text-gray-600 mt-1">All-India rankings based on average score across all practice sessions</p>
+        <p className="text-gray-600 mt-1">{selectedExam === 'AI-300' ? 'AI-300' : selectedExam === 'ALL' ? 'All Exams' : 'JAIIB'} rankings based on average score</p>
       </div>
 
       {/* My Rank Card */}

@@ -641,8 +641,20 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
     }
 
 
-def get_leaderboard() -> Dict[str, Any]:
-    """Get All-India leaderboard — top performers ranked by average score."""
+def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
+    """Get leaderboard filtered by exam. Only includes sessions for papers belonging to the exam."""
+    # Define which papers belong to which exam
+    exam_papers = {
+        'JAIIB': {'IE & IFS', 'PPB', 'AFM', 'RBWM'},
+        'AI-300': {'AI-300'},
+    }
+    valid_papers = exam_papers.get(exam, exam_papers.get('JAIIB', set()))
+    # ALL = combine everything
+    if exam == 'ALL':
+        valid_papers = set()
+        for papers in exam_papers.values():
+            valid_papers.update(papers)
+
     try:
         # Scan all completed sessions
         all_items = []
@@ -660,8 +672,11 @@ def get_leaderboard() -> Dict[str, Any]:
                 break
             scan_kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
 
+        # Filter by exam papers
+        all_items = [item for item in all_items if item.get('paper_name', '') in valid_papers]
+
         if not all_items:
-            return {'leaderboard': [], 'total_participants': 0}
+            return {'leaderboard': [], 'total_participants': 0, 'exam': exam}
 
         # Group by user_id
         user_stats: Dict[str, Dict[str, Any]] = {}
@@ -722,6 +737,7 @@ def get_leaderboard() -> Dict[str, Any]:
         return {
             'leaderboard': leaderboard[:50],  # Top 50
             'total_participants': len(leaderboard),
+            'exam': exam,
         }
 
     except ClientError as e:
@@ -821,7 +837,9 @@ def handler(event, context):
             dashboard_data = get_dashboard_data(user_id)
             return success_response(200, dashboard_data)
         elif path == '/dashboard/leaderboard' and http_method == 'GET':
-            leaderboard_data = get_leaderboard()
+            query_params = event.get('queryStringParameters', {}) or {}
+            exam_filter = query_params.get('exam', 'JAIIB')
+            leaderboard_data = get_leaderboard(exam_filter)
             return success_response(200, leaderboard_data)
         else:
             return error_response(404, f'Endpoint not found: {path}')
