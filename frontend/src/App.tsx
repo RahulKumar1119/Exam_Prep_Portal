@@ -21,7 +21,6 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import BlogPage from './pages/BlogPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
-import PracticeTestsPage from './pages/PracticeTestsPage';
 import PracticeTestDetailPage from './pages/PracticeTestDetailPage';
 import PracticePage from './pages/PracticePage';
 import PreviousAttemptsPage from './pages/PreviousAttemptsPage';

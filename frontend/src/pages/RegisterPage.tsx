@@ -135,14 +135,14 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Create Account
+            <h1 className="text-3xl font-bold text-white mb-2">
+              MockMaster
             </h1>
-            <p className="text-gray-600">Join JAIIB-CAIIB Exam Prep Portal</p>
+            <p className="text-gray-400">Create your free account</p>
           </div>
 
           {/* Error Message */}
@@ -172,7 +172,7 @@ const RegisterPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Exam Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 I'm preparing for
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -182,7 +182,7 @@ const RegisterPage: React.FC = () => {
                   className={`p-3 rounded-lg border-2 text-left transition-all ${
                     examPreference === 'JAIIB'
                       ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-200'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-gray-200 hover:border-gray-700 bg-gray-800 text-white'
                   }`}
                 >
                   <span className="text-lg">🏦</span>
@@ -195,7 +195,7 @@ const RegisterPage: React.FC = () => {
                   className={`p-3 rounded-lg border-2 text-left transition-all ${
                     examPreference === 'AI-300'
                       ? 'border-purple-600 bg-purple-50 ring-2 ring-purple-200'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-gray-200 hover:border-gray-700 bg-gray-800 text-white'
                   }`}
                 >
                   <span className="text-lg">🤖</span>
@@ -210,7 +210,7 @@ const RegisterPage: React.FC = () => {
 
             {/* Full Name Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 Full Name
               </label>
               <input
@@ -218,8 +218,8 @@ const RegisterPage: React.FC = () => {
                 name="full_name"
                 value={formData.full_name}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  formErrors.full_name ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+                  formErrors.full_name ? 'border-red-500 bg-red-50' : 'border-gray-700 bg-gray-800 text-white'
                 } disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 placeholder="John Doe"
                 disabled={is_loading}
@@ -231,7 +231,7 @@ const RegisterPage: React.FC = () => {
 
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 Email Address
               </label>
               <input
@@ -239,8 +239,8 @@ const RegisterPage: React.FC = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  formErrors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+                  formErrors.email ? 'border-red-500 bg-red-50' : 'border-gray-700 bg-gray-800 text-white'
                 } disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 placeholder="your@email.com"
                 disabled={is_loading}
@@ -252,7 +252,7 @@ const RegisterPage: React.FC = () => {
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 Password
               </label>
               <input
@@ -260,8 +260,8 @@ const RegisterPage: React.FC = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  formErrors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+                  formErrors.password ? 'border-red-500 bg-red-50' : 'border-gray-700 bg-gray-800 text-white'
                 } disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 placeholder="••••••••"
                 disabled={is_loading}
@@ -286,7 +286,7 @@ const RegisterPage: React.FC = () => {
 
             {/* Confirm Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-300 mb-1">
                 Confirm Password
               </label>
               <input
@@ -294,8 +294,8 @@ const RegisterPage: React.FC = () => {
                 name="confirm_password"
                 value={formData.confirm_password}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  formErrors.confirm_password ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition ${
+                  formErrors.confirm_password ? 'border-red-500 bg-red-50' : 'border-gray-700 bg-gray-800 text-white'
                 } disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 placeholder="••••••••"
                 disabled={is_loading}
@@ -309,7 +309,7 @@ const RegisterPage: React.FC = () => {
             <button
               type="submit"
               disabled={is_loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {is_loading ? (
                 <>

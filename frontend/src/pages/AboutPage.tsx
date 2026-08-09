@@ -6,7 +6,7 @@ const AboutPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="About MockMaster — Free JAIIB & CAIIB Exam Prep Platform"
         description="Learn about MockMaster — who we are, our mission to help bank officers clear JAIIB and CAIIB exams with AI-powered practice, detailed explanations, and free access to 3000+ questions."
@@ -14,7 +14,7 @@ const AboutPage: React.FC = () => {
       />
 
       {/* Navigation Bar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="border-b border-gray-800 sticky top-0 z-50 bg-gray-950/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -26,7 +26,7 @@ const AboutPage: React.FC = () => {
           <div className="flex items-center gap-1 sm:gap-4">
             <button
               onClick={() => navigate('/login')}
-              className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition"
+              className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-300 hover:text-white transition"
             >
               Login
             </button>
@@ -41,12 +41,12 @@ const AboutPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-b from-indigo-950/50 to-gray-950 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             About MockMaster
           </h1>
-          <p className="text-base sm:text-xl text-gray-600 leading-relaxed">
+          <p className="text-base sm:text-xl text-gray-400 leading-relaxed">
             Your free companion for JAIIB & CAIIB exam preparation — built by bankers, for bankers.
           </p>
         </div>
@@ -62,7 +62,7 @@ const AboutPage: React.FC = () => {
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Mission</h2>
             </div>
-            <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
+            <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
               We're on a mission to help bank officers clear their JAIIB and CAIIB exams with confidence. Through AI-powered practice sets, detailed explanations citing official sources, and adaptive learning, we make quality exam preparation accessible to everyone — completely free of charge.
             </p>
           </div>
@@ -70,7 +70,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* What We Offer */}
-      <section className="bg-gray-50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gray-900/50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
@@ -79,39 +79,39 @@ const AboutPage: React.FC = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">What We Offer</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
                 <span className="text-xl">📚</span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">3000+ Questions</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm leading-relaxed">
                 A comprehensive question bank covering all JAIIB papers — IE&IFS, PPB, AFM, and RBWM — with new questions added regularly.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
               <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
                 <span className="text-xl">🤖</span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">AI Explanations</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm leading-relaxed">
                 Every question comes with AI-generated explanations that cite specific RBI circulars, Master Directions, and IIBF textbook references.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3">
                 <span className="text-xl">📊</span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Performance Analytics</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm leading-relaxed">
                 Track your progress with detailed analytics — see your strengths, identify weak areas, and monitor improvement over time.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
               <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
                 <span className="text-xl">💰</span>
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Free Forever</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-400 text-sm leading-relaxed">
                 No hidden charges, no premium tiers, no credit card required. Quality exam preparation should be accessible to every bank officer.
               </p>
             </div>
@@ -140,7 +140,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Our Approach */}
-      <section className="bg-gray-50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gray-900/50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -149,35 +149,35 @@ const AboutPage: React.FC = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Approach</h2>
           </div>
           <div className="space-y-4 sm:space-y-6">
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                 <span className="text-white font-bold text-sm">1</span>
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">Aligned with Latest IIBF Syllabus</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-400 text-sm leading-relaxed">
                   All questions are mapped to the current IIBF syllabus, ensuring you practice exactly what will be tested in the exam. We update our question bank whenever the syllabus changes.
                 </p>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
               <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                 <span className="text-white font-bold text-sm">2</span>
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">AI Explanations with Official References</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-400 text-sm leading-relaxed">
                   Our AI-powered explanations don't just tell you the right answer — they cite specific RBI Master Circulars, Master Directions, IIBF textbook chapters, and relevant Banking Acts so you understand the "why" behind every concept.
                 </p>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
               <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                 <span className="text-white font-bold text-sm">3</span>
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900 mb-1">Adaptive Learning for Weak Areas</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-400 text-sm leading-relaxed">
                   Our system identifies your weak topics and adapts your practice sessions accordingly. Spend less time on what you already know and more time strengthening areas that need improvement.
                 </p>
               </div>
@@ -199,25 +199,25 @@ const AboutPage: React.FC = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-300 leading-relaxed">
                   <strong>Accuracy Reviewed:</strong> All questions are reviewed for factual accuracy before being added to the platform.
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-300 leading-relaxed">
                   <strong>Official Sources:</strong> Explanations reference official sources including RBI circulars, IIBF textbooks, Banking Regulation Act, NI Act, and other relevant legislation.
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-300 leading-relaxed">
                   <strong>Regular Updates:</strong> Our content is updated whenever RBI policies change, new Master Directions are issued, or the IIBF syllabus is revised.
                 </p>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-300 leading-relaxed">
                   <strong>Community Feedback:</strong> Users can flag inaccurate questions, which are promptly reviewed and corrected by our team.
                 </p>
               </li>
@@ -227,14 +227,14 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Contact Us */}
-      <section className="bg-gray-50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gray-900/50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-lg border border-gray-100">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">✉️</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Contact Us</h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-gray-400 mb-6 leading-relaxed">
               Have questions, feedback, or suggestions? We'd love to hear from you.
             </p>
             <a
@@ -249,7 +249,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-indigo-500 to-purple-600 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">Ready to Start Preparing?</h2>
           <p className="text-base sm:text-xl text-blue-100 mb-6 sm:mb-8">
@@ -273,7 +273,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-gray-800 text-gray-500 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
