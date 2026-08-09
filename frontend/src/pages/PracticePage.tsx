@@ -28,7 +28,9 @@ const PracticePage: React.FC = () => {
   const [selectedSet, setSelectedSet] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const papers = PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];
+  const papers = selectedExam === 'ALL'
+    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || [])]
+    : PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];
   const currentPaperInfo = papers.find(p => p.id === selectedPaper);
 
   const handleStartPracticeSet = async () => {

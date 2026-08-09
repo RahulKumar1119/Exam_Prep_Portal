@@ -747,7 +747,7 @@ def update_user_preference(body: Dict[str, Any]) -> Dict[str, Any]:
     if not exam_preference:
         return error_response(400, 'exam_preference is required')
 
-    valid_exams = ['JAIIB', 'AI-300']
+    valid_exams = ['JAIIB', 'AI-300', 'ALL']
     if exam_preference not in valid_exams:
         return error_response(400, f'exam_preference must be one of: {", ".join(valid_exams)}')
 

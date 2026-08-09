@@ -6,7 +6,7 @@
  */
 import { useState, useCallback, useEffect } from 'react';
 
-export type ExamId = 'JAIIB' | 'AI-300';
+export type ExamId = 'JAIIB' | 'AI-300' | 'ALL';
 
 export interface ExamInfo {
   id: ExamId;
@@ -24,7 +24,7 @@ const STORAGE_KEY = 'jaiib_selected_exam';
 function loadPreference(): ExamId | null {
   try {
     const val = localStorage.getItem(STORAGE_KEY);
-    if (val === 'JAIIB' || val === 'AI-300') return val;
+    if (val === 'JAIIB' || val === 'AI-300' || val === 'ALL') return val;
     return null;
   } catch {
     return null;
