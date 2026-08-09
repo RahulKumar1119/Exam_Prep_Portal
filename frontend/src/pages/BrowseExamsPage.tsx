@@ -258,8 +258,7 @@ const BrowseExamsPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Request exam */}
-          <div className="mt-12 text-center">
+          <div className="text-center mt-12">
             <p className="text-gray-500 text-sm mb-3">Don't see your exam?</p>
             <button
               onClick={() => navigate('/contact')}
@@ -267,6 +266,64 @@ const BrowseExamsPage: React.FC = () => {
             >
               Request an Exam
             </button>
+          </div>
+
+          {/* AI-300 Community Resources */}
+          <div className="mt-16 pt-12 border-t border-gray-800">
+            <h2 className="text-2xl font-bold mb-3">AI-300 Community Resources</h2>
+            <p className="text-gray-400 text-sm mb-6">Helpful discussions and experiences shared by candidates who have taken or are preparing for the AI-300 exam.</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <a href="https://www.reddit.com/r/Indian_Academia/comments/1t1xdhs/microsoft_azure_ai300_practice_tests_resources/" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/30 transition group">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-orange-500 text-sm">r/Indian_Academia</span>
+                </div>
+                <h4 className="text-sm font-semibold text-white group-hover:text-orange-300 transition">AI-300 Practice Tests & Resources</h4>
+                <p className="text-xs text-gray-500 mt-1">Discussion on study materials and practice resources for AI-300</p>
+              </a>
+
+              <a href="https://www.reddit.com/r/AzureCertification/comments/1usfdxw/ai_300_guidance/" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/30 transition group">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-orange-500 text-sm">r/AzureCertification</span>
+                </div>
+                <h4 className="text-sm font-semibold text-white group-hover:text-orange-300 transition">AI-300 Guidance</h4>
+                <p className="text-xs text-gray-500 mt-1">Community guidance on how to approach the AI-300 exam</p>
+              </a>
+
+              <a href="https://www.reddit.com/r/AzureCertification/comments/1u52s16/passed_the_ai300/" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/30 transition group">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-orange-500 text-sm">r/AzureCertification</span>
+                </div>
+                <h4 className="text-sm font-semibold text-white group-hover:text-orange-300 transition">Passed the AI-300!</h4>
+                <p className="text-xs text-gray-500 mt-1">Success story and tips from a candidate who passed</p>
+              </a>
+
+              <a href="https://www.reddit.com/r/AzureCertification/comments/1vj3yyg/passing_the_ai103_and_ai300_at_the_end_of_this/" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/30 transition group">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-orange-500 text-sm">r/AzureCertification</span>
+                </div>
+                <h4 className="text-sm font-semibold text-white group-hover:text-orange-300 transition">Passing AI-102 and AI-300</h4>
+                <p className="text-xs text-gray-500 mt-1">Experience combining two Azure AI certifications</p>
+              </a>
+
+              <a href="https://www.reddit.com/r/learnmachinelearning/comments/1td0zpy/azure_machine_learning_ai300_exam_questions_or/" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/30 transition group">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-orange-500 text-sm">r/learnmachinelearning</span>
+                </div>
+                <h4 className="text-sm font-semibold text-white group-hover:text-orange-300 transition">AI-300 Exam Questions Discussion</h4>
+                <p className="text-xs text-gray-500 mt-1">ML community discussing exam question patterns</p>
+              </a>
+
+              <a href="https://www.reddit.com/r/AzureCertification/comments/1vizobb/ai300_operationalizing_machine_learning_and/" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-orange-500/30 transition group">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-orange-500 text-sm">r/AzureCertification</span>
+                </div>
+                <h4 className="text-sm font-semibold text-white group-hover:text-orange-300 transition">AI-300: Operationalizing ML & GenAI</h4>
+                <p className="text-xs text-gray-500 mt-1">General discussion thread about the exam</p>
+              </a>
+            </div>
+
+            <p className="text-xs text-gray-600 mt-4">These links point to Reddit. Content is owned by their respective authors.</p>
           </div>
         </div>
       </section>
