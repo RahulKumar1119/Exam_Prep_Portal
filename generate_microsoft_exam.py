@@ -93,37 +93,72 @@ SOURCE CONTENT:
 ---
 
 REQUIREMENTS:
-1. Each question must have exactly 4 options (A, B, C, D) with ONE correct answer
-2. EVERY question MUST start with a scenario: "Your company...", "A data engineer at Contoso...", "You are migrating..."
-3. NEVER ask "What is...", "Which of the following defines...", or simple recall questions
-4. Questions must require REASONING — the candidate must evaluate trade-offs, constraints, or multi-step decisions
-5. All 4 options must be real Azure services/features/commands that could plausibly be correct
-6. Include specific details: SKU names (Standard_DS3_v2), CLI commands (az ml endpoint create), SDK classes (ManagedOnlineEndpoint), YAML properties
-7. At least 40% of questions should involve choosing between 2-3 services that BOTH partially solve the problem — only one is optimal given the constraints
-8. Difficulty: 10% easy, 50% medium, 40% hard
-9. Microsoft passing score is 700/1000 — these questions should challenge someone who has read the docs but not practiced
-10. NO definitions, NO "what does X stand for", NO "which is true about X"
+1. Each question MUST have exactly 4 options (A, B, C, D) with ONE correct answer
+2. NO definitions, NO "what does X stand for", NO "which is true about X"
+3. Difficulty: 10% easy, 50% medium, 40% hard
+4. Microsoft passing score is 700/1000 — calibrate difficulty accordingly
+5. All options must be plausible — real Azure services, commands, or configurations
 
-QUESTION TYPES TO MIX:
-- "Which service/feature should you use?" (architectural decision)
-- "What command should you run?" (operational knowledge)  
-- "Which configuration is correct?" (detailed settings)
-- "What happens when...?" (behavior understanding)
-- "Which is the MOST cost-effective/secure/scalable approach?" (best practice)
+GENERATE THESE MICROSOFT EXAM QUESTION STYLES (mix them):
 
-Return ONLY a valid JSON array — no markdown fences, no text before/after.
-CRITICAL: Do NOT use double quotes inside string values. Use single quotes or backticks for any quoted text within answers.
+STYLE 1 — Scenario + Decision (40% of questions):
+Start with: "You are a ML engineer at [company]. [scenario with constraints]... What should you do?"
+The scenario MUST include constraints that eliminate 2-3 options (cost, latency, compliance, region, etc.)
+
+STYLE 2 — Yes/No Statement Sets (20% of questions):
+"For each statement, determine if it is true or false regarding [topic]:
+Statement: [technical claim about Azure ML]"
+Options: A. Yes  B. No  C. Yes, but only if...  D. No, because...
+
+STYLE 3 — Correct Order / Steps (20% of questions):
+"You need to [goal]. Which sequence of steps should you follow?"
+Options are different orderings of 3-4 steps. Only one order is correct.
+
+STYLE 4 — Code/Command Selection (20% of questions):
+"Which Azure CLI command / Python SDK code / YAML configuration achieves [goal]?"
+Options are 4 different commands or code snippets — only one is syntactically and semantically correct.
+
+CRITICAL OUTPUT RULES:
+- Return ONLY a valid JSON array
+- No markdown fences, no text before or after the JSON
+- Do NOT use unescaped double quotes inside string values
+- Use backticks (`) for code references inside strings
+
 [
   {{
-    "question_text": "Your team needs to deploy a model that serves predictions with sub-100ms latency. The model receives 500 requests per second during peak hours. Which deployment approach should you use?",
+    "question_text": "You are a ML engineer at Fabrikam Inc. Your team trained a fraud detection model that must process 10,000 transactions per second with less than 50ms latency. The model is 2GB in size. Budget is limited to $500/month. Which deployment should you use?",
     "options": {{
-      "A": "Deploy to a batch endpoint with a Standard_DS3_v2 compute cluster",
-      "B": "Deploy to a managed online endpoint with auto-scaling enabled",
-      "C": "Deploy to an Azure Container Instance with 2 CPU cores",
-      "D": "Deploy to Azure Functions with a Consumption plan"
+      "A": "Managed online endpoint with Standard_DS3_v2 and 3 instances",
+      "B": "Batch endpoint with Standard_NC6 GPU cluster",
+      "C": "Managed online endpoint with Standard_F4s_v2 and auto-scaling from 2 to 10 instances",
+      "D": "Azure Container Instance with 4 vCPUs and 16GB RAM"
+    }},
+    "correct_answer": "C",
+    "topic": "Deployment Infrastructure",
+    "difficulty": "hard"
+  }},
+  {{
+    "question_text": "Statement: When you configure a managed online endpoint with `mirror_traffic` set to 10, exactly 10% of production requests are duplicated to the mirror deployment and responses from the mirror are returned to the client.",
+    "options": {{
+      "A": "Yes — mirror traffic returns responses from both deployments",
+      "B": "No — mirror traffic duplicates requests but discards mirror responses; only the production deployment responds to the client",
+      "C": "Yes — but only if the mirror deployment has the same instance count",
+      "D": "No — mirror_traffic is not a valid endpoint property"
     }},
     "correct_answer": "B",
     "topic": "Model Deployment",
+    "difficulty": "hard"
+  }},
+  {{
+    "question_text": "You need to set up a training pipeline that versions datasets, tracks experiments, and automatically registers the best model. Which sequence of steps is correct?",
+    "options": {{
+      "A": "Create data asset -> Create compute cluster -> Submit pipeline job -> Register model from best run",
+      "B": "Register model -> Create data asset -> Submit pipeline job -> Create compute cluster",
+      "C": "Create compute cluster -> Register model -> Create data asset -> Submit pipeline job",
+      "D": "Submit pipeline job -> Create data asset -> Create compute cluster -> Register model from best run"
+    }},
+    "correct_answer": "A",
+    "topic": "Model Training",
     "difficulty": "medium"
   }}
 ]"""
