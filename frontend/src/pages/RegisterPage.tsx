@@ -106,7 +106,8 @@ const RegisterPage: React.FC = () => {
       await register(
         formData.email,
         formData.password,
-        formData.full_name
+        formData.full_name,
+        examPreference
       );
       // Save exam preference locally so it's ready after login
       try {

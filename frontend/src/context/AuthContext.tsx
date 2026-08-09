@@ -8,7 +8,7 @@ const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scr
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, full_name: string) => Promise<void>;
+  register: (email: string, password: string, full_name: string, exam_preference?: string) => Promise<void>;
   logout: () => Promise<void>;
   verifyEmail: (token: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
@@ -169,13 +169,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (
     email: string,
     password: string,
-    full_name: string
+    full_name: string,
+    exam_preference?: string
   ) => {
     setAuthState((prev) => ({ ...prev, is_loading: true, error: null }));
     try {
       const response = await apiClient.post<{ message: string }>(
         '/auth/register',
-        { email, password, full_name }
+        { email, password, full_name, exam_preference: exam_preference || 'JAIIB' }
       );
 
       if (!response.success) {

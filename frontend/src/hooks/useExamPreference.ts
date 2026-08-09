@@ -1,9 +1,10 @@
 /**
  * useExamPreference
  * Persists user's selected exam to localStorage.
+ * Syncs with backend on login (AuthContext writes to localStorage).
  * Used to filter practice page and homepage to only show relevant papers.
  */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export type ExamId = 'JAIIB' | 'AI-300';
 
@@ -38,6 +39,24 @@ function savePreference(exam: ExamId): void {
 
 export function useExamPreference() {
   const [selectedExam, setSelectedExam] = useState<ExamId | null>(loadPreference);
+
+  // Re-read from localStorage periodically (in case login updated it)
+  useEffect(() => {
+    const check = () => {
+      const current = loadPreference();
+      if (current && current !== selectedExam) {
+        setSelectedExam(current);
+      }
+    };
+    // Check on focus (user logs in another tab, or navigates)
+    window.addEventListener('focus', check);
+    // Also check after a short delay (login just happened)
+    const timer = setTimeout(check, 1000);
+    return () => {
+      window.removeEventListener('focus', check);
+      clearTimeout(timer);
+    };
+  }, [selectedExam]);
 
   const selectExam = useCallback((exam: ExamId) => {
     setSelectedExam(exam);
