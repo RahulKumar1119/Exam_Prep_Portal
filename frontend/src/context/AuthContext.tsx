@@ -117,11 +117,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         email: string;
         role: string;
         full_name: string;
+        exam_preference?: string;
       }>('/auth/login', { email, password });
 
       if (response.success && response.data) {
-        const { access_token, refresh_token, user_id, email: userEmail, role, full_name } = response.data;
+        const { access_token, refresh_token, user_id, email: userEmail, role, full_name, exam_preference } = response.data;
         
+        // Save exam preference to localStorage for filtering
+        if (exam_preference) {
+          try { localStorage.setItem('jaiib_selected_exam', exam_preference); } catch {}
+        }
+
         // Construct user object from response with default values for missing fields
         const user: User = {
           user_id,

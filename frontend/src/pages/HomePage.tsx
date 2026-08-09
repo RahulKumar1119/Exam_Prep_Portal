@@ -4,13 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import { useDashboard } from '../context/DashboardContext';
 import ExamCountdown from '../components/Dashboard/ExamCountdown';
 import { useExamPreference } from '../hooks/useExamPreference';
-import ExamSelector from '../components/ExamSelector';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { is_authenticated, is_loading, user } = useAuth();
   const { dashboard_data, fetchDashboardData } = useDashboard();
-  const { selectedExam, selectExam, hasSelected } = useExamPreference();
+  const { selectedExam } = useExamPreference();
 
   useEffect(() => {
     if (is_loading) return;
@@ -44,11 +43,6 @@ const HomePage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Exam Selection Gate */}
-        {!hasSelected ? (
-          <ExamSelector onSelect={selectExam} title="What are you preparing for?" />
-        ) : (
-        <>
         {/* Exam Countdown */}
         <ExamCountdown />
 
@@ -281,8 +275,6 @@ const HomePage: React.FC = () => {
             <li>• <strong>No negative marking</strong> — always attempt every question</li>
           </ul>
         </div>
-        </>
-        )}
       </div>
     </div>
   );

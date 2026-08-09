@@ -18,6 +18,7 @@ const RegisterPage: React.FC = () => {
     confirm_password: '',
     full_name: '',
   });
+  const [examPreference, setExamPreference] = useState<string>('');
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [localError, setLocalError] = useState('');
   const [success, setSuccess] = useState('');
@@ -41,6 +42,10 @@ const RegisterPage: React.FC = () => {
 
   const validateForm = (): boolean => {
     const errors: FormErrors = {};
+
+    if (!examPreference) {
+      errors.full_name = 'Please select an exam first';
+    }
 
     if (!formData.full_name.trim()) {
       errors.full_name = 'Full name is required';
@@ -103,6 +108,10 @@ const RegisterPage: React.FC = () => {
         formData.password,
         formData.full_name
       );
+      // Save exam preference locally so it's ready after login
+      try {
+        localStorage.setItem('jaiib_selected_exam', examPreference);
+      } catch {}
       setSuccess('Registration successful! Please check your email to verify your account. Redirecting to login...');
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
@@ -160,6 +169,44 @@ const RegisterPage: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Exam Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                I'm preparing for
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setExamPreference('JAIIB')}
+                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                    examPreference === 'JAIIB'
+                      ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-200'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <span className="text-lg">🏦</span>
+                  <p className="font-bold text-gray-900 text-sm mt-1">JAIIB</p>
+                  <p className="text-xs text-gray-500">Banking certification</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExamPreference('AI-300')}
+                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                    examPreference === 'AI-300'
+                      ? 'border-purple-600 bg-purple-50 ring-2 ring-purple-200'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <span className="text-lg">🤖</span>
+                  <p className="font-bold text-gray-900 text-sm mt-1">AI-300</p>
+                  <p className="text-xs text-gray-500">Microsoft ML & GenAI</p>
+                </button>
+              </div>
+              {!examPreference && formErrors.full_name && (
+                <p className="text-xs text-red-500 mt-1">Please select an exam</p>
+              )}
+            </div>
+
             {/* Full Name Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -8,11 +8,6 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 import { useExamPreference, ExamId } from '../hooks/useExamPreference';
 import ExamSelector from '../components/ExamSelector';
 
-const EXAMS = [
-  { id: 'JAIIB', name: 'JAIIB', description: 'Junior Associate of Indian Institute of Bankers' },
-  { id: 'AI-300', name: 'AI-300', description: 'Microsoft: Operationalizing ML & GenAI Solutions' },
-];
-
 const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: string; totalQuestions: number; sets: number }[]> = {
   'JAIIB': [
     { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1068, sets: 21 },
@@ -99,35 +94,6 @@ const PracticePage: React.FC = () => {
             <ExamSelector onSelect={(exam: ExamId) => selectExam(exam)} />
           ) : (
           <>
-          {/* Exam Selector Tabs */}
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2 flex-wrap">
-              {EXAMS.map((exam) => (
-                <button
-                  key={exam.id}
-                  onClick={() => { selectExam(exam.id as ExamId); setSelectedPaper(''); setSelectedSet(null); }}
-                  className={`px-4 py-2.5 rounded-lg font-semibold text-sm transition-all ${
-                    selectedExam === exam.id
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {exam.name}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={() => { selectExam(selectedExam === 'JAIIB' ? 'AI-300' : 'JAIIB'); setSelectedPaper(''); setSelectedSet(null); }}
-              className="text-xs text-indigo-600 hover:underline"
-            >
-              Switch exam
-            </button>
-          </div>
-
-          {/* Exam Description */}
-          <p className="text-sm text-gray-600">
-            {EXAMS.find(e => e.id === selectedExam)?.description}
-          </p>
 
           {/* Paper Info Banner */}
           {selectedPaper && currentPaperInfo && currentPaperInfo.totalQuestions > 0 && (

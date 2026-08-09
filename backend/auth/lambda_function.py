@@ -275,6 +275,7 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
     email = body.get('email', '').strip().lower()
     password = body.get('password', '')
     full_name = body.get('full_name', '').strip()
+    exam_preference = body.get('exam_preference', '').strip()
     
     # Validation
     if not email or not validate_email(email):
@@ -311,6 +312,7 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
                 'last_login': None,
                 'role': 'bank_officer',
                 'status': 'active',
+                'exam_preference': exam_preference or 'JAIIB',
                 'preferences': {
                     'notifications_enabled': True,
                     'theme': 'light'
@@ -410,7 +412,8 @@ def login_user(body: Dict[str, Any]) -> Dict[str, Any]:
             'user_id': user['user_id'],
             'email': user['email'],
             'role': user['role'],
-            'full_name': user['full_name']
+            'full_name': user['full_name'],
+            'exam_preference': user.get('exam_preference', None),
         })
     
     except ClientError as e:
@@ -713,6 +716,56 @@ def get_discussion_comments(params: Dict[str, Any]) -> Dict[str, Any]:
         return error_response(500, 'Failed to fetch comments')
 
 
+def get_user_preference(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Get user's exam preference."""
+    user_id = params.get('user_id', '')
+    if not user_id:
+        return error_response(400, 'user_id is required')
+
+    try:
+        response = users_table.get_item(
+            Key={'user_id': user_id},
+            ProjectionExpression='exam_preference'
+        )
+        item = response.get('Item', {})
+        return success_response(200, {
+            'user_id': user_id,
+            'exam_preference': item.get('exam_preference', None),
+        })
+    except ClientError as e:
+        print(f"Error fetching preference: {e}")
+        return error_response(500, 'Failed to fetch preference')
+
+
+def update_user_preference(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Update user's exam preference (JAIIB, AI-300, etc.)."""
+    user_id = body.get('user_id', '')
+    exam_preference = body.get('exam_preference', '')
+
+    if not user_id:
+        return error_response(400, 'user_id is required')
+    if not exam_preference:
+        return error_response(400, 'exam_preference is required')
+
+    valid_exams = ['JAIIB', 'AI-300']
+    if exam_preference not in valid_exams:
+        return error_response(400, f'exam_preference must be one of: {", ".join(valid_exams)}')
+
+    try:
+        users_table.update_item(
+            Key={'user_id': user_id},
+            UpdateExpression='SET exam_preference = :ep',
+            ExpressionAttributeValues={':ep': exam_preference}
+        )
+        return success_response(200, {
+            'message': 'Preference updated',
+            'exam_preference': exam_preference,
+        })
+    except ClientError as e:
+        print(f"Error updating preference: {e}")
+        return error_response(500, 'Failed to update preference')
+
+
 def get_exam_dates() -> Dict[str, Any]:
     """Get exam dates from config table (public, no auth needed)."""
     config_table = dynamodb.Table('jaiib-app-config')
@@ -816,6 +869,11 @@ def handler(event, context):
             return get_exam_dates()
         elif path == '/auth/config/exam-dates' and http_method == 'PUT':
             return update_exam_dates(body)
+        elif path == '/auth/preference' and http_method == 'GET':
+            query_params = event.get('queryStringParameters', {}) or {}
+            return get_user_preference(query_params)
+        elif path == '/auth/preference' and http_method == 'PUT':
+            return update_user_preference(body)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     
