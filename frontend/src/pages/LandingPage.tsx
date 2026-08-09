@@ -24,7 +24,7 @@ const LandingPage: React.FC = () => {
             <span className="text-xl font-bold">MockMaster</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => navigate('/practice-tests')} className="hidden sm:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Exams</button>
+            <button onClick={() => navigate('/exams')} className="hidden sm:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Exams</button>
             <button onClick={() => navigate('/blog')} className="hidden md:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Blog</button>
             <button onClick={() => navigate('/login')} className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</button>
             <button onClick={() => navigate('/register')} className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</button>
@@ -54,7 +54,7 @@ const LandingPage: React.FC = () => {
             <button onClick={() => navigate('/register')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-base transition shadow-lg shadow-indigo-600/25">
               Create Free Account
             </button>
-            <button onClick={() => navigate('/practice-tests')} className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl text-base transition">
+            <button onClick={() => navigate('/exams')} className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl text-base transition">
               Browse Exams
             </button>
           </div>
