@@ -362,8 +362,76 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Section 7: Practice with Us (subtle CTA) */}
+      {/* Platform Features */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 text-center">What You Get on MockMaster</h2>
+          <p className="text-gray-600 text-center mb-10 max-w-2xl mx-auto">Every feature is designed to help you pass JAIIB in your first attempt — no fluff, just what works.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">📝</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">3,600+ Practice Questions</h3>
+              <p className="text-sm text-gray-600">50 questions per set across IE&IFS (1068), PPB (760), AFM (1195), and RBWM (635). Fixed sets so you can track progress across attempts.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">🤖</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">AI Explanations</h3>
+              <p className="text-sm text-gray-600">Every wrong answer gets a detailed explanation citing specific RBI circulars, IIBF textbook chapters, and relevant Act sections. Not generic — exam-specific.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">⏱️</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">Timed Mock Tests</h3>
+              <p className="text-sm text-gray-600">100 questions in 120 minutes with real JAIIB exam weightage — 50 easy (0.5 marks), 25 medium (1 mark), 25 hard (2 marks). Auto-submit when time's up.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">🏆</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">All-India Leaderboard</h3>
+              <p className="text-sm text-gray-600">See your rank among all MockMaster users. Sorted by average score. Compete with colleagues and track your position over time.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">⭐</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">Bookmark Questions</h3>
+              <p className="text-sm text-gray-600">Save tricky questions with one tap during practice. Revisit them anytime from your Saved Questions page — perfect for last-day revision.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">💬</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">Discussion per Question</h3>
+              <p className="text-sm text-gray-600">Ask doubts or share alternative reasoning after checking any answer. Other candidates reply — learn from the community, not just the textbook.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">📊</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">Performance Dashboard</h3>
+              <p className="text-sm text-gray-600">Score trends, paper-wise breakdown, topic-level accuracy, weak area identification, exam readiness score, and percentile ranking vs other users.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">⏰</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">Exam Countdown & Reminders</h3>
+              <p className="text-sm text-gray-600">Live countdown to the next JAIIB exam on your dashboard. Browser notifications remind you if you haven't practiced in 3 days or when the exam is near.</p>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center mb-3"><span className="text-xl">🔥</span></div>
+              <h3 className="font-bold text-gray-900 mb-1">Study Streak & Badges</h3>
+              <p className="text-sm text-gray-600">Build daily practice habits with streak tracking. Earn badges for milestones — first session, 10 sessions, 70+ score, 7-day streak, all 4 papers covered.</p>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-gray-600 text-sm mb-4">All features are free. No subscription, no hidden paywall.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 7: Practice with Us (subtle CTA) */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Practice JAIIB Questions Online</h2>
           <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
