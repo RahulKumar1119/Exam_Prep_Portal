@@ -184,26 +184,26 @@ const RegisterPage: React.FC = () => {
                   onClick={() => setExamPreference('JAIIB')}
                   className={`p-3 rounded-lg border-2 text-left transition-all ${
                     examPreference === 'JAIIB'
-                      ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-200'
-                      : 'border-gray-200 hover:border-gray-700 bg-gray-800 text-white'
+                      ? 'border-indigo-500 bg-indigo-500/10 ring-2 ring-indigo-500/30'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
                   <span className="text-lg">🏦</span>
-                  <p className="font-bold text-gray-900 text-sm mt-1">JAIIB</p>
-                  <p className="text-xs text-gray-500">Banking certification</p>
+                  <p className="font-bold text-white text-sm mt-1">JAIIB</p>
+                  <p className="text-xs text-gray-400">Banking certification</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setExamPreference('AI-300')}
                   className={`p-3 rounded-lg border-2 text-left transition-all ${
                     examPreference === 'AI-300'
-                      ? 'border-purple-600 bg-purple-50 ring-2 ring-purple-200'
-                      : 'border-gray-200 hover:border-gray-700 bg-gray-800 text-white'
+                      ? 'border-purple-500 bg-purple-500/10 ring-2 ring-purple-500/30'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
                   <span className="text-lg">🤖</span>
-                  <p className="font-bold text-gray-900 text-sm mt-1">AI-300</p>
-                  <p className="text-xs text-gray-500">Microsoft ML & GenAI</p>
+                  <p className="font-bold text-white text-sm mt-1">AI-300</p>
+                  <p className="text-xs text-gray-400">Microsoft ML & GenAI</p>
                 </button>
               </div>
               {!examPreference && formErrors.full_name && (
