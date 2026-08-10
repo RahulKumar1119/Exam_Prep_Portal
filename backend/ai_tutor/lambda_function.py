@@ -108,8 +108,9 @@ Your explanation must include:
 1. Why {correct_answer} is correct
 2. Why the other options are wrong
 3. The key Azure/ML concept being tested
-4. Any relevant Azure documentation reference or best practice
-5. A practical scenario showing when you would use this in production
+4. A practical scenario showing when you would use this in production
+
+IMPORTANT: Do NOT include any URLs or hyperlinks. Do NOT reference specific documentation pages by URL. Just explain the concept clearly.
 
 Keep it clear and well-structured, 200-250 words."""
             else:
