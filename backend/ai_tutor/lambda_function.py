@@ -92,7 +92,7 @@ def generate_explanation_with_timeout(
             ])
 
             if is_azure:
-                prompt = f"""You are an expert Microsoft Azure AI/ML certification tutor. Explain this question clearly.
+                prompt = f"""You are an expert Microsoft Azure AI/ML certification tutor. Provide a comprehensive, detailed explanation for this exam question.
 
 Question: {question_text}
 
@@ -104,15 +104,21 @@ D. {options.get('D', '')}
 
 Correct Answer: {correct_answer}
 
-Your explanation must include:
-1. Why {correct_answer} is correct
-2. Why the other options are wrong
-3. The key Azure/ML concept being tested
-4. A practical scenario showing when you would use this in production
+Provide a DETAILED explanation covering ALL of the following:
 
-IMPORTANT: Do NOT include any URLs or hyperlinks. Do NOT reference specific documentation pages by URL. Just explain the concept clearly.
+1. **Why {correct_answer} is correct** — Explain the technical reasoning in depth. Include the Azure service architecture, how it works internally, and why it fits this scenario.
 
-Keep it clear and well-structured, 200-250 words."""
+2. **Why each other option is wrong** — For EACH incorrect option, explain specifically why it fails for this scenario. Don't just say "it's wrong" — explain what that service/feature actually does and why it doesn't apply here.
+
+3. **Key Azure Concept** — Explain the underlying concept being tested (e.g., managed endpoints vs batch endpoints, MLflow tracking, RAG architecture, etc.) in 3-4 sentences.
+
+4. **Real-World Production Scenario** — Give a concrete example of when you would use the correct answer in a real enterprise ML/AI project. Include specific details like team size, data volume, or latency requirements.
+
+5. **Exam Tip** — One specific tip for answering similar questions on the AI-300 exam. What keywords or constraints in the question should candidates look for?
+
+IMPORTANT: Do NOT include any URLs or hyperlinks. Do NOT make up documentation links.
+
+Write 400-500 words. Use clear headings and formatting."""
             else:
                 prompt = f"""You are an expert JAIIB/CAIIB exam tutor. Explain this question clearly in 150-200 words.
 
@@ -143,7 +149,7 @@ Keep it clear and well-structured, 250-300 words."""
                 accept='application/json',
                 body=json.dumps({
                     'anthropic_version': 'bedrock-2023-05-31',
-                    'max_tokens': 900,
+                    'max_tokens': 1500 if is_azure else 900,
                     'messages': [
                         {
                             'role': 'user',
