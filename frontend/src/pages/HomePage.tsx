@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDashboard } from '../context/DashboardContext';
 import ExamCountdown from '../components/Dashboard/ExamCountdown';
+import AzureResources from '../components/Dashboard/AzureResources';
 import { useExamPreference } from '../hooks/useExamPreference';
 
 const HomePage: React.FC = () => {
@@ -45,6 +46,9 @@ const HomePage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Exam Countdown — only for JAIIB */}
         {selectedExam !== 'AI-300' && <ExamCountdown />}
+
+        {/* Azure Resources — only for AI-300 */}
+        {selectedExam === 'AI-300' && <AzureResources />}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">

@@ -11,6 +11,7 @@ import ExamReadiness from '../components/Dashboard/ExamReadiness';
 import StudyStreak from '../components/Dashboard/StudyStreak';
 import PercentileRanking from '../components/Dashboard/PercentileRanking';
 import ExamCountdown from '../components/Dashboard/ExamCountdown';
+import AzureResources from '../components/Dashboard/AzureResources';
 import { useExamPreference } from '../hooks/useExamPreference';
 
 const DashboardPage: React.FC = () => {
@@ -47,6 +48,9 @@ const DashboardPage: React.FC = () => {
         <>
           {/* Exam Countdown — JAIIB only */}
           {isJAIIB && <ExamCountdown />}
+
+          {/* Azure Resources — AI-300 only */}
+          {!isJAIIB && <AzureResources />}
 
           {/* Performance Overview Cards */}
           <PerformanceOverview
