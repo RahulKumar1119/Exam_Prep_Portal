@@ -6,7 +6,7 @@ applications:
         preBuild:
           commands:
             - echo "Installing dependencies..."
-            - npm ci
+            - npm install --legacy-peer-deps
             # Install Chromium dependencies required by puppeteer for pre-rendering
             - yum install -y alsa-lib atk cups-libs gtk3 libXcomposite libXcursor libXdamage libXext libXi libXrandr libXScrnSaver libXtst pango nss at-spi2-atk libdrm mesa-libgbm 2>/dev/null || true
         build:
