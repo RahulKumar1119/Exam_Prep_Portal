@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useRef, useCallb
 import { User, AuthState } from '../types/index';
 import { apiClient } from '../services/api';
 
-const IDLE_TIMEOUT_MS = 5 * 60 * 1000;       // 5 minutes
-const WARN_BEFORE_MS  = 1 * 60 * 1000;        // warn 1 minute before logout
+const IDLE_TIMEOUT_MS = 20 * 60 * 1000;      // 20 minutes
+const WARN_BEFORE_MS  = 2 * 60 * 1000;       // warn 2 minutes before logout
 const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'];
 
 interface AuthContextType extends AuthState {
