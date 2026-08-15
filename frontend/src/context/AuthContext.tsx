@@ -49,6 +49,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     sessionStorage.removeItem('access_token');
     sessionStorage.removeItem('refresh_token');
     sessionStorage.removeItem('user');
+    // Clear practice session data from localStorage
+    try { localStorage.removeItem('jaiib_practice_session'); } catch {}
     setAuthState({ user: null, access_token: null, refresh_token: null, is_authenticated: false, is_loading: false, error: null });
   }, []);
 
