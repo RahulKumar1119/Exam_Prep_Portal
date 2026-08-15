@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
 import ADDITIONAL_BLOG_POSTS from './blog-posts-additional';
+import DevToArticles from '../components/DevToArticles';
 
 interface BlogPost {
   slug: string;
@@ -1164,6 +1165,18 @@ const BlogListPage: React.FC = () => {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Trending from Dev.to */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <DevToArticles
+            tags={['azure', 'machinelearning', 'banking', 'fintech']}
+            title="Trending from the Community"
+            limit={6}
+            darkMode={false}
+          />
         </div>
       </section>
 

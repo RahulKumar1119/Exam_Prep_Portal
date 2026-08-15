@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
+import DevToArticles from '../components/DevToArticles';
 
 interface ExamCard {
   id: string;
@@ -266,6 +267,16 @@ const BrowseExamsPage: React.FC = () => {
             >
               Request an Exam
             </button>
+          </div>
+
+          {/* Trending Articles from Dev.to */}
+          <div className="mt-16 pt-12 border-t border-gray-800">
+            <DevToArticles
+              tags={['azure', 'machinelearning', 'mlops', 'devops', 'kubernetes']}
+              title="Trending Articles"
+              limit={6}
+              darkMode={true}
+            />
           </div>
 
           {/* AI-300 Community Resources */}
