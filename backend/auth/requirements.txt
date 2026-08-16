@@ -1,4 +1,4 @@
 boto3==1.17.53
 botocore==1.20.53
 passlib==1.7.4
-PyJWT==2.9.0
+PyJWT==2.13.0
