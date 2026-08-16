@@ -1,0 +1,602 @@
+[
+  {
+    "question_text": "You are implementing a secure multi-tenant Foundry deployment for a financial services company. Each business unit must have isolated, dedicated compute for fine-tuning. You need to ensure compliance with strict data sovereignty and network isolation requirements. What should you do?",
+    "options": {
+      "A": "Deploy a single Foundry hub with multiple projects, use Azure Private Link for all projects, and enable managed virtual network isolation at the hub level.",
+      "B": "Deploy separate Foundry instances (resource groups) per business unit, configure dedicated managed compute for each, and use customer-managed keys with separate key vaults per region.",
+      "C": "Deploy separate Foundry instances per region, use Azure Policy to enforce private networking, and implement hub-and-spoke VNet peering to centralize egress.",
+      "D": "Deploy a single Foundry hub with shared managed compute, use project-level RBAC for isolation, and implement data residency via policy tags on resource groups."
+    },
+    "correct_answer": "B",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are designing a CI/CD pipeline for agent deployment in Microsoft Foundry. The pipeline must include automated evaluation (groundedness, relevance), red teaming for safety, and gated approval before production. Which sequence of steps should you follow?",
+    "options": {
+      "A": "Create agent -> Run automated evaluation -> Trigger red teaming -> Manually approve -> Deploy to staging -> Monitor with alerts",
+      "B": "Create agent -> Deploy to staging -> Run automated evaluation -> Trigger red teaming -> Manually approve -> Promote to production",
+      "C": "Create agent -> Run automated evaluation -> Deploy to staging -> Trigger red teaming -> Monitor with alerts -> Promote to production",
+      "D": "Create agent -> Trigger red teaming -> Run automated evaluation -> Deploy to staging -> Manually approve -> Promote to production"
+    },
+    "correct_answer": "A",
+    "topic": "Deployment and Integration",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "For a low-latency stock analysis agent, you need to optimize RTF (Retrieval Time Fraction). Which combination of RAG optimization techniques should you implement?",
+    "options": {
+      "A": "Decrease chunk size to 256 tokens, enable hybrid search (semantic + keyword), and implement similarity score threshold of 0.8.",
+      "B": "Increase chunk size to 2048 tokens, use cosine similarity only, and implement a sliding window context.",
+      "C": "Use a dense retrieval only (no keyword), implement chunk overlap of 50%, and disable re-ranking.",
+      "D": "Enable hybrid search, implement a similarity score threshold of 0.5, and use a vector index with HNSW algorithm."
+    },
+    "correct_answer": "A",
+    "topic": "Optimization and Performance",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are building a multi-agent claims processing system with Foundry. The \"Claims Reviewer\" agent must hand off complex cases to a \"Senior Adjuster\" agent, and both agents must share conversation context. Which orchestration type should you use?",
+    "options": {
+      "A": "Sequential orchestration with explicit handoff instructions in the agent prompt.",
+      "B": "Concurrent orchestration where both agents process the same input simultaneously.",
+      "C": "Handoff orchestration using the `handoff` capability of the Microsoft Agent Framework.",
+      "D": "Group chat orchestration where all agents participate in a shared conversation thread."
+    },
+    "correct_answer": "C",
+    "topic": "Multi-Agent Orchestration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You have an Azure OpenAI GPT-4 model deployed via Foundry's serverless API. Traffic is spiky, with peaks of 500 requests/second. You need guaranteed low latency (<200ms p95) and predictable billing. What should you configure?",
+    "options": {
+      "A": "Enable auto-scaling on the serverless API endpoint and set a maximum RUPS limit.",
+      "B": "Deploy the model to a dedicated managed compute instance with provisioned throughput units (PTUs).",
+      "C": "Use the model cascade feature to route simpler requests to GPT-3.5 Turbo.",
+      "D": "Implement client-side request throttling with exponential backoff and caching."
+    },
+    "correct_answer": "B",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are fine-tuning a model for medical jargon consistency using Foundry. The training dataset is 10,000 high-quality examples, compute budget is limited, and you need to preserve the model's general reasoning ability. Which fine-tuning method and compute option should you select?",
+    "options": {
+      "A": "Supervised Fine-Tuning (SFT) using serverless API, as it requires no infrastructure management.",
+      "B": "Direct Preference Optimization (DPO) using managed compute with a low-priority GPU cluster.",
+      "C": "Supervised Fine-Tuning (SFT) using managed compute with a GPU cluster, with a low learning rate and early stopping.",
+      "D": "Reinforcement Learning from Human Feedback (RLHF) using managed compute, as it optimizes for both accuracy and safety."
+    },
+    "correct_answer": "C",
+    "topic": "Model Lifecycle and Operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to evaluate a RAG-based customer support agent for groundedness and relevance before production deployment. Which steps are required?",
+    "options": {
+      "A": "Create a test dataset with question-answer pairs, run batch evaluation using the Foundry SDK, configure groundedness and relevance metrics, review the evaluation dashboard.",
+      "B": "Deploy the agent to a staging endpoint, send live traffic, monitor logs for hallucinations, adjust the similarity threshold.",
+      "C": "Use the Foundry portal to run a single real-time test, manually score the response, iterate on the prompt.",
+      "D": "Configure automated evaluation in the CI/CD pipeline, trigger on each commit, block deployment if relevance score is below 0.7."
+    },
+    "correct_answer": "A",
+    "topic": "Quality Assurance and Observability",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Statement: In Microsoft Foundry, when you create a knowledge base using Azure AI Search, you must manually create and manage the index schema, chunking logic, and embedding generation.",
+    "options": {
+      "A": "Yes — Foundry IQ only provides a unified query layer; index management is always manual.",
+      "B": "No — Foundry IQ can automatically create the index, generate embeddings using a selected model, and apply smart chunking.",
+      "C": "Yes — but only if you use the SDK; the portal provides a managed index creation wizard.",
+      "D": "No — knowledge bases in Foundry are read-only snapshots of Fabric Lakehouses; indexing is automatic."
+    },
+    "correct_answer": "B",
+    "topic": "Enterprise Data Integration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are configuring an MLOps pipeline for a classification model. The pipeline must track experiments with MLflow, compare multiple algorithm runs, and register the best model automatically. Which Azure ML component is essential?",
+    "options": {
+      "A": "A PipelineJob that uses a SweepJob for hyperparameter tuning and outputs the best model to the model registry.",
+      "B": "An AutoML job configured for classification that outputs a leaderboard and registers the top model.",
+      "C": "A CommandJob that trains a single model, logs metrics with MLflow, and manually registers the model via SDK.",
+      "D": "A ParallelRunStep that trains multiple models concurrently and selects the best based on a custom metric."
+    },
+    "correct_answer": "A",
+    "topic": "Model Lifecycle and Operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Azure CLI command correctly creates a new Foundry project with private networking enabled, using a user-assigned managed identity for outbound access?",
+    "options": {
+      "A": "`az ai foundry project create --name \"myproject\" --resource-group \"rg\" --hub \"myhub\" --managed-identity `/subscriptions/.../myIdentity` --private-network-enabled true`",
+      "B": "`az deployment group create --template-file foundry.bicep --parameters projectName=\"myproject\" hubName=\"myhub\" enablePrivateEndpoint=true`",
+      "C": "`az ml workspace create --name \"myproject\" --resource-group \"rg\" --managed-network \"outboundRules\": [{\"type\": \"privateEndpoint\"}]`",
+      "D": "`az ai project create --name \"myproject\" --resource-group \"rg\" --hub-id \"myhub\" --network-acl \"defaultAction\": \"Deny\"`"
+    },
+    "correct_answer": "A",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are tasked with implementing a cost-optimization strategy for a Foundry-based Q&A agent that handles mixed-complexity queries. You have access to GPT-4 Turbo and GPT-3.5 Turbo models. Which approach reduces cost while maintaining quality for complex queries?",
+    "options": {
+      "A": "Deploy both models, implement model cascading where GPT-3.5 handles all requests first, and only fall back to GPT-4 if confidence is low.",
+      "B": "Use prompt compression on all inputs before sending to GPT-4 Turbo, reducing token usage.",
+      "C": "Deploy only GPT-3.5 Turbo and implement extensive fine-tuning to improve its performance on complex queries.",
+      "D": "Implement caching for identical queries and use GPT-4 Turbo for all non-cached requests."
+    },
+    "correct_answer": "A",
+    "topic": "Optimization and Performance",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to give a customer service agent access to a secure internal API for checking order status. The API requires OAuth2 client credentials. Which Foundry tool integration method should you use?",
+    "options": {
+      "A": "Create an OpenAPI specification tool, configure authentication with the OAuth2 flow, and attach it to the agent.",
+      "B": "Use the built-in Azure Functions tool, write a function that calls the API, and secure the function with a key.",
+      "C": "Use the Logic Apps trigger, build a workflow that calls the API, and expose the Logic App as a webhook.",
+      "D": "Use Model Context Protocol (MCP) to connect to the API server, configure the MCP server with credentials."
+    },
+    "correct_answer": "A",
+    "topic": "Tool Integration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Statement: When you register an MLflow model in Azure ML, you can package a feature retrieval specification (including feature store location and transformation logic) as part of the model artifact, ensuring consistent feature engineering during inference.",
+    "options": {
+      "A": "Yes — the MLmodel file can reference a feature specification YAML, which is used by batch endpoints.",
+      "B": "No — feature retrieval specifications are only supported in Azure Databricks, not Azure ML.",
+      "C": "Yes — but only if you use the Python SDK to log the model; the UI does not support this.",
+      "D": "No — feature engineering must be handled separately in the inference scoring script."
+    },
+    "correct_answer": "A",
+    "topic": "Model Lifecycle and Operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are responsible for monitoring a production agent that uses Foundry IQ. You need to track token consumption, response latency, and the ratio of questions answered using RAG vs. model knowledge. Which Foundry feature should you configure?",
+    "options": {
+      "A": "Enable Log Analytics workspace integration and create a workbook with custom KQL queries.",
+      "B": "Use the built-in Foundry observability dashboard and configure alerts for latency > 1s.",
+      "C": "Implement SDK-based logging in the agent's code and stream logs to Application Insights.",
+      "D": "Use Azure Monitor auto‑configured metrics for Foundry and set up metric alerts."
+    },
+    "correct_answer": "B",
+    "topic": "Quality Assurance and Observability",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Python SDK code snippet correctly creates a Foundry agent with a knowledge base connection and the Bing Search grounding tool?",
+    "options": {
+      "A": "`agent = client.agents.create(name=\"myagent\", instructions=\"...\", tools=[{\"type\": \"knowledge_base\", \"id\": \"kb123\"}, {\"type\": \"bing_search\"}])`",
+      "B": "`agent = client.agents.create(name=\"myagent\", instructions=\"...\", tools=[\"knowledge_base:kb123\", \"bing_search\"])`",
+      "C": "`agent_definition = PromptAgentDefinition(name=\"myagent\", instructions=\"...\", tools=[KnowledgeBaseTool(id=\"kb123\"), BingSearchTool()]); agent = client.agents.create(agent_definition)`",
+      "D": "`agent = client.agents.create(agent_config={'name':'myagent','tools':[{'knowledge_base':'kb123'},{'bing_search':{}}]})`"
+    },
+    "correct_answer": "C",
+    "topic": "Agent Development",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are an AI engineer at Contoso Healthcare. You need to build a solution that creates automated summaries of clinical notes using an LLM. The summaries must maintain strict PII/PHI compliance and consistency across thousands of notes per day. You have limited labeled data and a moderate budget. Which approach should you prioritize first?",
+    "options": {
+      "A": "Use the pre-trained GPT-4 Turbo model from the Foundry catalog with advanced prompt engineering and strict grounding in a private Azure AI Search knowledge base containing only cleaned data.",
+      "B": "Fine-tune a Llama 3.1-8B model using a small set of 100 de-identified notes and rely on its internal knowledge for summarization.",
+      "C": "Deploy an agent with tool access to Azure Blob Storage containing raw notes and the Code Interpreter tool to process the data.",
+      "D": "Implement a RAG pipeline using the Azure OpenAI Text Embedding model and a public web search tool for additional context."
+    },
+    "correct_answer": "A",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to deploy a high-volume, low-latency agent that handles customer service chat. You expect traffic spikes and must ensure consistent sub-200ms response times. Which Foundry resource configuration should you use?",
+    "options": {
+      "A": "Provisioned Throughput Units (PTU) for the underlying Azure OpenAI model service.",
+      "B": "A Managed Identity attached to a serverless API deployment.",
+      "C": "A private endpoint connection linking the Foundry project to a VNet.",
+      "D": "A Standard Pay-As-You-Go model deployment with auto-scaling disabled."
+    },
+    "correct_answer": "A",
+    "topic": "Optimize GenAI Systems",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A statement about integrating a custom Action Tool in a Microsoft Foundry Agent: 'The `run_tool` method in the agent's execution flow must handle the OpenAPI spec validation and returns a JSON object directly to the LLM for reasoning.'",
+    "options": {
+      "A": "Yes — the `run_tool` method processes the spec and returns the raw JSON result.",
+      "B": "No — the agent framework handles OpenAPI spec validation separately; the tool returns a structured result, but the agent orchestrator is responsible for interpreting the response.",
+      "C": "Yes — but only if the tool is registered with 'requires_approval' set to false.",
+      "D": "No — OpenAPI tools require manual approval via a Logic App before any execution."
+    },
+    "correct_answer": "B",
+    "topic": "Agent Tool Integration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Statement: In Microsoft Foundry, when you create a new Project, you can share Azure AI Search instances and compute clusters across multiple Projects within the same Hub to reduce costs and simplify management.",
+    "options": {
+      "A": "Yes — resources in a Hub can be attached to multiple Projects.",
+      "B": "No — each Project requires dedicated, isolated resources; sharing is not allowed.",
+      "C": "Yes — but only for non-production Projects.",
+      "D": "No — only storage accounts can be shared; compute and search must be dedicated."
+    },
+    "correct_answer": "A",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to implement a CI/CD pipeline for a Foundry Agent that includes automated safety evaluation, red teaming, and deployment to a staging environment. Which sequence of steps is correct?",
+    "options": {
+      "A": "Create test dataset -> Run batch evaluation with safety metrics -> Execute red team simulation -> If passes, approve deployment via Azure DevOps release gate.",
+      "B": "Deploy to staging -> Run red team simulation -> Create test dataset -> Evaluate with safety metrics.",
+      "C": "Execute red team simulation -> Create test dataset -> Deploy to staging -> Run batch evaluation.",
+      "D": "Run batch evaluation -> Deploy to staging -> Create test dataset -> Execute red team simulation."
+    },
+    "correct_answer": "A",
+    "topic": "GenAI Quality Assurance",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Which Azure CLI command correctly creates a new Microsoft Foundry resource with a private endpoint in a specific resource group and enables content safety filters?",
+    "options": {
+      "A": "`az foundry create --name myfoundry --resource-group rg1 --location eastus --enable-private-endpoint true`",
+      "B": "`az ai foundry create --name myfoundry --resource-group rg1 --location eastus --content-safety enabled`",
+      "C": "`az resource create --resource-type Microsoft.CognitiveServices/accounts --name myfoundry --resource-group rg1 --properties '{\"kind\":\"Foundry\",\"properties\":{\"publicNetworkAccess\":\"Disabled\"}}'`",
+      "D": "`az ml workspace create --name myfoundry --resource-group rg1 --location eastus --hbi-workspace true`"
+    },
+    "correct_answer": "C",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are optimizing a RAG system for a legal document chatbot. You notice low relevance scores because the system retrieves too many broad, irrelevant chunks. You have already tuned the similarity threshold. What should you adjust next?",
+    "options": {
+      "A": "Switch from semantic search to keyword-only search.",
+      "B": "Reduce the chunk size from 512 tokens to 128 tokens and increase chunk overlap.",
+      "C": "Increase the provisioned throughput units (PTU) for the embedding model.",
+      "D": "Implement hybrid search (semantic + keyword) and adjust the weighting toward keyword for precise term matching."
+    },
+    "correct_answer": "D",
+    "topic": "Optimize GenAI Systems",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "For each statement about fine-tuning in Microsoft Foundry, determine if it is true or false:\nStatement 1: Serverless fine-tuning is best for large datasets (>100k examples) and requires no infrastructure management.\nStatement 2: Direct Preference Optimization (DPO) is a supervised fine-tuning method that uses human preference data to align model outputs without a reward model.",
+    "options": {
+      "A": "Both statements are true.",
+      "B": "Statement 1 is false; Statement 2 is true.",
+      "C": "Statement 1 is true; Statement 2 is false.",
+      "D": "Both statements are false."
+    },
+    "correct_answer": "B",
+    "topic": "Model Lifecycle Operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to configure network security for a Foundry project that processes highly sensitive financial data. The solution must prevent any public internet access and enforce access only from an approved virtual network. Which configuration should you implement?",
+    "options": {
+      "A": "Disable public network access on the Foundry resource, create a private endpoint, and configure Network Security Group (NSG) rules on the VNet.",
+      "B": "Enable a service endpoint for Azure AI services on the subnet and restrict ingress traffic using Azure Firewall.",
+      "C": "Use Azure Private Link for storage accounts only; Foundry service traffic can remain public.",
+      "D": "Configure a VPN Gateway and force all developer traffic through the VPN."
+    },
+    "correct_answer": "A",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are evaluating a customer feedback analysis agent and need to track groundedness, relevance, and token cost per session over time. Which Foundry observability features should you enable?",
+    "options": {
+      "A": "Configure Azure Monitor diagnostics settings for the Foundry resource and create a custom dashboard using the 'AI_Quality_Metrics' log table.",
+      "B": "Enable 'session tracking' in the Agent configuration and export logs to a Log Analytics workspace.",
+      "C": "Use the built-in Foundry evaluation studio to run a one-time batch evaluation on a static dataset.",
+      "D": "Create an Azure Application Insights resource and manually instrument the agent SDK to emit custom events."
+    },
+    "correct_answer": "B",
+    "topic": "GenAI Quality Assurance",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Python SDK code correctly creates a Managed Online Endpoint, deploys a registered MLflow model, and allocates 20% traffic to a new version for a canary rollout?",
+    "options": {
+      "A": "`ml_client.online_endpoints.create_or_update(endpoint) \n ml_client.online_deployments.create_or_update(deployment) \n endpoint.traffic = {'blue': 80, 'green': 20}`",
+      "B": "`ml_client.begin_create_or_update(endpoint) \n ml_client.online_deployments.begin_create_or_update(deployment) \n endpoint.update(traffic={'blue': 0.8, 'green': 0.2})`",
+      "C": "`endpoint = ManagedOnlineEndpoint(...) \n deployment = ManagedOnlineDeployment(...) \n ml_client.online_endpoints.begin_create_or_update(endpoint).result() \n ml_client.online_deployments.begin_create_or_update(deployment).result() \n ml_client.online_endpoints.update_traffic(endpoint_name, {'blue': 80, 'green': 20})`",
+      "D": "`ml_client.endpoints.create(name='ep1', traffic_config={'blue':80, 'green':20}) \n ml_client.deployments.create(model='model1', endpoint_name='ep1', deployment_name='green')`"
+    },
+    "correct_answer": "C",
+    "topic": "Model Lifecycle Operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to design a multi-agent workflow where one agent (Planner) breaks down a complex request, another (Executor) performs tasks using tools, and a third (Reviewer) validates outputs before final response. Which Microsoft Agent Framework orchestration pattern is most appropriate?",
+    "options": {
+      "A": "Sequential orchestration with handoff.",
+      "B": "Concurrent orchestration with parallel agent execution.",
+      "C": "Group chat with moderated turn-taking.",
+      "D": "Magnetic orchestration with a central coordinator."
+    },
+    "correct_answer": "A",
+    "topic": "Multi-Agent Orchestration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are implementing a content safety layer for an agent that generates marketing copy. The solution must block high-severity harmful content but allow medium-severity content with a log entry. Where should you configure this policy?",
+    "options": {
+      "A": "In the Azure AI Content Safety Studio, create a custom blocklist and apply it to the Foundry project's model deployments.",
+      "B": "In the Foundry project's 'Safety & Compliance' settings, under 'Content filters', set thresholds for each severity category.",
+      "C": "Write a custom Python filter tool that the agent calls before generating any output.",
+      "D": "Use Azure Policy to assign a compliance standard for AI systems."
+    },
+    "correct_answer": "B",
+    "topic": "GenAI Quality Assurance",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which sequence of steps correctly sets up a fine-tuning job in Foundry using the portal UI for a custom summarization task?",
+    "options": {
+      "A": "Select base model -> Upload training/validation JSONL dataset -> Configure hyperparameters -> Submit job -> Evaluate metrics -> Deploy fine-tuned model.",
+      "B": "Create a new Agent -> Add Fine-Tuning Tool -> Upload dataset -> Configure reward model -> Run job.",
+      "C": "Go to Model Catalog -> Select model version -> Click 'Fine-Tune' -> Enter prompt examples -> Start job.",
+      "D": "Deploy managed compute -> Create training pipeline -> Register dataset as data asset -> Submit pipeline job."
+    },
+    "correct_answer": "A",
+    "topic": "Model Lifecycle Operations",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You have an agent that uses the Bing Search Grounding tool. You notice citations are missing for some factual statements the agent makes. What is the most likely cause and remediation?",
+    "options": {
+      "A": "The tool's citation mode is set to 'none'; enable 'citations' in the tool connection configuration.",
+      "B": "The agent's context window is full; increase the context window size in the agent definition.",
+      "C": "Bing Search does not support citations; you must switch to the Azure AI Search tool.",
+      "D": "The model does not have the capability to generate citations; you must fine-tune it for citation generation."
+    },
+    "correct_answer": "A",
+    "topic": "Agent Tool Integration",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are an AI engineer at a financial services company. You need to deploy a chatbot using Microsoft Foundry that processes sensitive customer data. Regulatory compliance requires strict isolation between dev, test, and prod workloads. You must also enable different teams to manage their own AI agents. Which resource architecture should you configure?",
+    "options": {
+      "A": "A single Microsoft Foundry hub with one project for each environment (dev/test/prod), applying RBAC and network security controls.",
+      "B": "Three separate Microsoft Foundry resources (one per environment), each configured as independent hubs.",
+      "C": "A central Foundry hub with dedicated projects per environment, using private networking and customer-managed keys for each project.",
+      "D": "A single project within a Foundry hub, leveraging environment-specific connections and segregated data within Azure AI Search."
+    },
+    "correct_answer": "B",
+    "topic": "Foundry Infrastructure / Security & Governance",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are implementing a CI/CD pipeline for a Foundry agent that uses a custom tool. The agent needs to be versioned, evaluated for safety, and deployed to production automatically after passing red team tests. What is the correct sequence of steps in your GitHub Actions workflow?",
+    "options": {
+      "A": "Build agent definition -> Run automated evaluations -> Deploy to testing project -> Execute red teaming -> Deploy to production.",
+      "B": "Run automated evaluations -> Execute red teaming -> Build agent definition -> Deploy to testing project -> Deploy to production.",
+      "C": "Deploy to testing project -> Execute red teaming -> Run automated evaluations -> Build agent definition -> Deploy to production.",
+      "D": "Build agent definition -> Deploy to testing project -> Run automated evaluations -> Execute red teaming -> Deploy to production."
+    },
+    "correct_answer": "D",
+    "topic": "Deployment and Integration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Azure CLI command correctly deploys a Microsoft Foundry resource with private networking enabled, using a customer-managed key for encryption, and assigns the current user as a contributor?",
+    "options": {
+      "A": "az ml workspace create --name foundry-prod --resource-group rg-ai --location eastus --hbi-workspace true --encryption-key-identifier 'https://myvault.vault.azure.net/keys/mykey'",
+      "B": "az foundry create --name foundry-prod --resource-group rg-ai --location eastus --primary-user-assigned-identity '/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{id}' --disable-public-network true",
+      "C": "az ai hub create --name hub-prod --resource-group rg-ai --location eastus --cmk-uri 'https://myvault.vault.azure.net/keys/mykey' --public-network-access disabled --key-identity-type user-assigned --identity-type user-assigned",
+      "D": "az ml foundry create --name foundry-prod --resource-group rg-ai --location eastus --public-network-access Disabled --encryption-cmk-keyvault 'https://myvault.vault.azure.net/keys/mykey' --identity-type SystemAssigned"
+    },
+    "correct_answer": "C",
+    "topic": "Deployment Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are designing a retrieval-augmented generation (RAG) system for querying technical documentation. The queries are sometimes vague, and you need to improve both precision and recall. Which combination of Azure AI Search configurations should you implement?",
+    "options": {
+      "A": "Use semantic search only, with a high similarity threshold (0.8) for groundedness.",
+      "B": "Implement hybrid search (vector + full-text), adjust chunk sizes to 512 tokens, and tune the similarity score threshold based on evaluation metrics.",
+      "C": "Configure keyword-based BM25 retrieval and implement query expansion using synonyms.",
+      "D": "Use the default vector search with cosine similarity and a reranker model for final scoring."
+    },
+    "correct_answer": "B",
+    "topic": "RAG Optimization",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "For each statement about Microsoft Foundry Agent Tools, determine if it is true or false:\nStatement: The OpenAPI Spec tool automatically validates the schema of the API response and requires explicit user approval before the agent can execute any action.\nStatement: The Logic App trigger tool can initiate a workflow, but the Logic App itself cannot pass dynamic data back to the agent as part of the same execution step.",
+    "options": {
+      "A": "First Yes, Second Yes",
+      "B": "First No, Second No",
+      "C": "First No, Second Yes",
+      "D": "First Yes, Second No"
+    },
+    "correct_answer": "C",
+    "topic": "Advanced Agent Capabilities",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are responsible for monitoring a deployed AI agent in production. You need to track token consumption, response latency, and the quality metric \"groundedness\" to detect potential degradation. Which Foundry features should you enable?",
+    "options": {
+      "A": "Configure Azure Monitor alerts on the Foundry resource metrics and set up a dashboard using Application Insights logs.",
+      "B": "Enable Foundry's built-in performance monitoring, quality metrics tracking, and automated evaluation workflows that run on a schedule.",
+      "C": "Use the SDK to log each agent run to a custom Cosmos DB table and build a Power BI report.",
+      "D": "Set up a batch evaluation job that runs daily, sampling 10% of production traffic, and review the results manually."
+    },
+    "correct_answer": "B",
+    "topic": "Generative AI Observability",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You have a multi-agent sales automation system where a Coordinator Agent receives a lead and must delegate tasks to a Research Agent and a Follow-up Agent. The Research Agent needs to run concurrently with the Follow-up Agent, but the Coordinator should only send the final summary after both complete. Which orchestration type in the Microsoft Agent Framework should you use?",
+    "options": {
+      "A": "Sequential",
+      "B": "Concurrent",
+      "C": "Handoff",
+      "D": "Magnetic"
+    },
+    "correct_answer": "B",
+    "topic": "Multi-Agent Orchestration",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Python SDK code snippet correctly creates a Foundry agent that uses a specific GPT-4 model, includes a custom tool defined by an OpenAPI spec, and configures a temperature of 0.2?",
+    "options": {
+      "A": "agent = client.agents.create( name='sales-agent', model='gpt-4', tools=[{'type':'openapi','spec':'openapi.json'}], parameters={temperature: 0.2} )",
+      "B": "from azure.ai.projects.models import PromptAgentDefinition, OpenAPIToolDefinition\nagent_def = PromptAgentDefinition( model='gpt-4', tools=[OpenAPIToolDefinition(openapi_spec='openapi.json')], inference_params={'temperature': 0.2} )\nagent = client.agents.create_or_update(name='sales-agent', definition=agent_def)",
+      "C": "agent = AIProjectClient().create_agent( agent_name='sales-agent', model_deployment_name='gpt-4', tools_configuration={'openapi_tool': 'openapi.json'}, inference_configuration={'temp': 0.2} )",
+      "D": "definition = { 'model': 'gpt-4', 'tools': [{'name':'custom_tool','spec_path':'openapi.yaml'}], 'inference': {'temperature':0.2} }\nagent = client.create_agent('sales-agent', definition)"
+    },
+    "correct_answer": "B",
+    "topic": "Agent Development",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You need to fine-tune a model for a domain-specific task using a curated dataset of 10,000 examples. Cost is a concern, and the training does not require GPU-heavy compute. Which Foundry fine-tuning compute option should you select?",
+    "options": {
+      "A": "Managed compute with Standard_NC6 GPU nodes for faster iteration.",
+      "B": "Serverless API to avoid managing infrastructure, paying only for tokens processed.",
+      "C": "Bring-your-own Azure Machine Learning compute cluster with CPU nodes.",
+      "D": "Managed compute with CPU-only nodes to reduce cost."
+    },
+    "correct_answer": "B",
+    "topic": "Model Fine-Tuning",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are designing the evaluation strategy for a new customer support agent before deployment. You need to assess its safety, relevance, and coherence across a diverse set of test queries. Which sequence is correct for implementing automated evaluation in Foundry?",
+    "options": {
+      "A": "Create a test dataset -> Configure evaluation metrics (e.g., groundedness, relevance) -> Run batch evaluation job -> Review results in portal -> Deploy if metrics pass threshold.",
+      "B": "Deploy agent to a staging endpoint -> Use real user traffic for A/B testing -> Configure metrics in Application Insights -> Analyze logs.",
+      "C": "Run a red team exercise manually -> Fix any issues found -> Create a synthetic test dataset -> Run a single evaluation.",
+      "D": "Configure automated evaluation workflow in GitHub Actions -> Let it run on every commit -> Manually check the generated report."
+    },
+    "correct_answer": "A",
+    "topic": "AI Quality Assurance",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Statement: When configuring a knowledge base for RAG in Azure AI Search, you must manually create and manage the index schema, chunking logic, and embedding generation pipeline. Foundry IQ provides a fully managed alternative that automates these steps.\nStatement: The Microsoft Fabric Data Agent tool allows an AI agent to execute arbitrary SQL queries on any Fabric data warehouse without requiring explicit access permissions configured in the agent's identity.",
+    "options": {
+      "A": "First Yes, Second Yes",
+      "B": "First No, Second No",
+      "C": "First Yes, Second No",
+      "D": "First No, Second Yes"
+    },
+    "correct_answer": "C",
+    "topic": "Enterprise Data Integration",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are experiencing high latency in your agent's tool-calling step, where it uses an OpenAPI tool to call an external REST API. The API itself is fast. What is the FIRST action you should take to diagnose the bottleneck using Foundry observability?",
+    "options": {
+      "A": "Increase the provisioned throughput units (PTUs) for your Foundry resource.",
+      "B": "Examine the Agent Execution trace in the Foundry portal to see time spent in each phase (reasoning, tool calling, response generation).",
+      "C": "Switch the agent's model to a smaller, faster model like GPT-3.5-Turbo.",
+      "D": "Check the Azure Monitor metrics for network egress from the Foundry resource's virtual network."
+    },
+    "correct_answer": "B",
+    "topic": "Performance Monitoring",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization requires that all AI-generated content for legal documents include citations to the source knowledge base items. You are using an agent with a connected Azure AI Search knowledge base. Which agent configuration ensures citations are always provided?",
+    "options": {
+      "A": "Set the 'grounding' parameter to 'required' in the agent's inference settings.",
+      "B": "Enable the 'Citation' built-in tool and add it to the agent's tool list.",
+      "C": "Configure the Azure AI Search index to include a 'source_url' field and use the File Search tool.",
+      "D": "Use the Grounding with Bing Search tool, which automatically cites web sources."
+    },
+    "correct_answer": "A",
+    "topic": "Contextual AI / RAG",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to set up a multi-agent workflow where Agent A classifies an incoming request, then conditionally routes it to either Agent B or Agent C based on the classification. After the specialized agent processes it, control should return to Agent A for final formatting. Which orchestration pattern is most appropriate?",
+    "options": {
+      "A": "Sequential orchestration with explicit handoff steps.",
+      "B": "Concurrent orchestration with a coordinator.",
+      "C": "Handoff orchestration with a return callback.",
+      "D": "Group chat where all agents see all messages."
+    },
+    "correct_answer": "C",
+    "topic": "Multi-Agent Workflows",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Which of the following is a valid strategy for cost optimization when using large language models in Foundry for a high-volume, non-latency-sensitive summarization task?",
+    "options": {
+      "A": "Use model cascading: first try a smaller, cheaper model (like GPT-3.5-Turbo), and only fall back to a larger model (like GPT-4) if confidence is low.",
+      "B": "Deploy the largest available model (like GPT-4) on provisioned throughput units (PTUs) to guarantee performance.",
+      "C": "Implement prompt compression techniques to reduce token count for every request, regardless of model.",
+      "D": "Cache identical prompts and their responses in an external Redis database."
+    },
+    "correct_answer": "A",
+    "topic": "Cost Optimization",
+    "difficulty": "easy"
+  },
+  {
+    "question_text": "You are a cloud solution architect at Contoso Pharmaceuticals. The company requires a high-priority, dedicated capacity environment for sensitive clinical trial data analysis to ensure isolation from shared tenants. The compute workload will involve fine-tuning a large language model (LLM) on proprietary data. The solution must minimize the risk of noisy neighbors and allow for custom hardware provisioning. Which compute option should you configure in Microsoft Foundry?",
+    "options": {
+      "A": "A serverless API endpoint on Standard NC-series nodes",
+      "B": "A managed compute instance with GPU (NC-series) using dedicated subscriptions",
+      "C": "A serverless API endpoint on a general-purpose Standard D-series node",
+      "D": "Standard NC-series with capacity reservation in a project's shared pool"
+    },
+    "correct_answer": "B",
+    "topic": "Foundry Infrastructure & Security",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "For each statement, determine if it is true or false regarding selecting models in the Microsoft Foundry Model Catalog: Statement: The Model Catalog provides real-time performance metrics, such as tokens per second and latency benchmarks, to guide the selection of models for inference and fine-tuning tasks.",
+    "options": {
+      "A": "Yes — performance metrics are available directly for all models.",
+      "B": "No — the Model Catalog provides governance, licensing, and technical specifications only.",
+      "C": "Yes — but only for models you have previously deployed and run.",
+      "D": "No — performance metrics are available only through direct deployment and execution."
+    },
+    "correct_answer": "D",
+    "topic": "Model Catalog & Selection",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to configure a CI/CD pipeline for an AI agent that includes automated deployment, evaluation, and red-teaming. The process must ensure that changes happen in a controlled sequence across development, staging, and production environments. Which sequence of steps is correct in the recommended process for agent deployments?",
+    "options": {
+      "A": "Create new agent → Run automated evaluations → Deploy to staging → Perform risk assessment → Deploy to production",
+      "B": "Deploy to production → Run automated evaluations → Create new agent → Perform risk assessment → Deploy to staging",
+      "C": "Perform risk assessment → Create new agent → Deploy to staging → Run automated evaluations → Deploy to production",
+      "D": "Create new agent → Perform risk assessment → Deploy to staging → Run automated evaluations → Deploy to production"
+    },
+    "correct_answer": "D",
+    "topic": "Deployment & CI/CD",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Which Azure CLI command or Python SDK code snippet correctly deploys an Azure OpenAI model in a Microsoft Foundry project, ensuring the model appears in the project-specific model catalog? Assume you have the required role-based access control (RBAC) permissions.",
+    "options": {
+      "A": "az ml model deploy --name gpt-4 --type azure_openai --workspace-name my-foundry",
+      "B": "az deployment group create --resource-group my-rg --template-file bicep/openai.bicep --parameters modelName=gpt-4",
+      "C": "from azure.ai.projects import AIProjectsClient;<br>client = AIProjectsClient(...);<br>client.models.deploy(model_name=\"gpt-4\", source=\"AzureOpenAI\", deployment_name=\"gpt-4-deployment\")",
+      "D": "az cognitiveservices account create --name my-openai --resource-group my-rg --kind OpenAI"
+    },
+    "correct_answer": "C",
+    "topic": "Resource Deployment & SDK",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are designing a multi-agent system where a primary 'Manager' agent must dynamically delegate tasks to specialized 'Worker' agents based on the nature of incoming user queries. The workers are hosted in separate Foundry projects with different security contexts. The solution must maintain security boundaries while allowing seamless task handoff. Which Microsoft Foundry component should you use to implement this communication pattern?",
+    "options": {
+      "A": "Connected Agents",
+      "B": "Logic App triggers",
+      "C": "OpenAPI Spec tool",
+      "D": "Azure Functions for stateful tools"
+    },
+    "correct_answer": "A",
+    "topic": "Multi-Agent Orchestration",
+    "difficulty": "hard"
+  }
+]
