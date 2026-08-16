@@ -10,7 +10,7 @@ import ExamSelector from '../components/ExamSelector';
 
 const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: string; totalQuestions: number; sets: number }[]> = {
   'JAIIB': [
-    { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1068, sets: 21 },
+    { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1163, sets: 23 },
     { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 760, sets: 15 },
     { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 1195, sets: 23 },
     { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 635, sets: 13 },

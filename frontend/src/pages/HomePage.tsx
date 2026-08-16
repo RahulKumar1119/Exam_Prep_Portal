@@ -218,7 +218,7 @@ const HomePage: React.FC = () => {
             {(selectedExam === 'AI-300' ? [
               { id: 'AI-300', name: 'AI-300', questions: 600, color: 'from-purple-600 to-indigo-700' },
             ] : [
-              { id: 'IE & IFS', name: 'IE & IFS', questions: 1068, color: 'from-blue-500 to-blue-700' },
+              { id: 'IE & IFS', name: 'IE & IFS', questions: 1163, color: 'from-blue-500 to-blue-700' },
               { id: 'PPB', name: 'PPB', questions: 760, color: 'from-indigo-500 to-indigo-700' },
               { id: 'AFM', name: 'AFM', questions: 1195, color: 'from-purple-500 to-purple-700' },
               { id: 'RBWM', name: 'RBWM', questions: 635, color: 'from-pink-500 to-pink-700' },
