@@ -1,0 +1,506 @@
+[
+  {
+    "question_text": "Your MLOps team at a healthcare startup is building a patient readmission prediction model using 8 TB of PHI data stored in Azure Data Lake. The team of 4 data scientists needs to train multiple deep learning models with PyTorch on GPU clusters for rapid experimentation, while maintaining strict HIPAA compliance and full audit trails. The training jobs must automatically capture data lineage, model artifacts, and execution metrics for reproducibility. Budget constraints limit GPU compute to $1,200 per week. The CIO requires all workspace access to use Azure AD authentication with conditional access policies. Which combination of Azure ML workspace configuration and training approach satisfies all requirements?",
+    "options": {
+      "A": "Create a HIPAA-compliant workspace with customer-managed keys for encryption at rest, enable data lineage tracking using MLflow with Azure ML, configure a low-priority GPU cluster (Standard_NC6s_v3) with auto-scale from 0 to 4 nodes, and submit training jobs using `az ml job create` with the `--experiment-name` flag for organized tracking",
+      "B": "Deploy a workspace with service-managed encryption, use Automated ML to explore optimal models without manual scripting, configure a persistent GPU cluster of 2 Standard_NC24s_v3 instances running continuously, and track experiments using the Azure ML Studio UI with manual artifact uploads",
+      "C": "Configure a workspace with public network access, store PHI data in default blob storage with SAS tokens, train models using Data Science Virtual Machines with manual setup, capture lineage by saving notebook outputs to OneDrive, and use role-based access with shared service accounts",
+      "D": "Provision a workspace without private endpoint, use Azure Databricks for isolated training environments with HIPAA BAA, process PHI directly in Spark jobs, store models in Azure Container Registry, and audit access through Databricks workspace logs"
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A retail company's demand forecasting pipeline processes 50 TB of historical sales data across 15 regions weekly. The current manual training process takes 48 hours and often fails due to memory constraints on single VMs. You need to redesign the pipeline using Azure ML to complete training within 6 hours with 99% reliability. The model uses a Scikit-learn ensemble that can be parallelized, and feature engineering involves large-scale joins across product catalogs. The solution must auto-retry failed steps, cache intermediate features, and cost under $800 per run. Which Azure ML pipeline architecture and configuration meets these requirements?",
+    "options": {
+      "A": "Design a pipeline with three components: data prep using ParallelRunStep with `ProcessDataParallel` mode on CPU clusters, training using `CommandComponent` with distributed Scikit-learn via joblib on 8 Standard_D16s_v3 nodes, and model registration. Configure caching at component level and timeout policies for each step",
+      "B": "Create a single pipeline job using a `CommandComponent` with `instance_type: Standard_E64s_v3` and `instance_count: 1` to handle all processing sequentially, implement manual checkpoints in the training script, and rely on workspace recovery options for failures",
+      "C": "Build separate pipelines per region using `ScheduleRecurrence` for weekly triggers, each using `AutomatedML` with time-series forecasting, enable ensemble learning with ONNX runtime, and consolidate results using a final aggregation component",
+      "D": "Use Azure Data Factory to orchestrate data movement to Synapse, train using Spark MLlib on a large Spark pool, save models to ADLS, and invoke an Azure Function to register the model in Azure ML via REST API"
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your fintech company has deployed a real-time loan approval model that serves 2,000 predictions per minute via a managed online endpoint. Over the last month, the 95th percentile latency has increased from 80ms to 320ms, and the error rate spiked to 8% during business hours. Application logs show increased memory consumption on the `Standard_D4s_v3` instances, and monitoring indicates the input payload size has grown by 300% due to new features. The SLA requires P99 latency under 150ms with 99.9% availability. You need to diagnose and resolve the performance degradation within the next deployment window (4 hours). What is the most efficient troubleshooting and remediation strategy?",
+    "options": {
+      "A": "Enable Data Collector for the endpoint to capture request-response pairs, analyze the payload distribution and model execution times in Application Insights, upgrade to `Standard_D8s_v3` instances with higher memory, implement payload size validation in the scoring script, and deploy using a blue-green deployment with 10% traffic initially",
+      "B": "Immediately scale out from 2 to 8 instances of the same SKU, enable auto-scaling based on CPU utilization, add a CDN in front of the endpoint, and modify the scoring script to use batch processing for every 10 requests",
+      "C": "Switch to a batch endpoint, reprocess all pending requests in bulk using a `ParallelRunStep`, migrate the model to ONNX format for faster inference, and schedule batch jobs every 5 minutes instead of real-time serving",
+      "D": "Increase the request timeout to 10 seconds in the client applications, disable logging and monitoring to reduce overhead, compress the input payload using gzip at the application layer, and implement client-side retries with exponential backoff"
+    },
+    "correct_answer": "A",
+    "topic": "Monitoring the ML model",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are implementing an MLOps governance framework for a pharmaceutical company training clinical trial models. The compliance team requires full lineage tracking from raw source data (stored in Azure Purview) through feature engineering, model training, validation, and deployment. Any model used for patient stratification must have an immutable audit trail showing who approved deployment and when. The solution must integrate with existing Azure AD groups and enforce that only principal data scientists can promote models from staging to production. Which combination of Azure ML features and configurations enforces these governance requirements?",
+    "options": {
+      "A": "Register all datasets using `az ml data create` with `--type uri_folder` and traceability tags, enable MLflow autologging with `mlflow.start_run()`, register models with `az ml model create` including `--description` with approval metadata, use model registry stages with role-based transition permissions, and configure diagnostic settings to stream audit logs to Log Analytics",
+      "B": "Store raw data in Azure SQL DB with temporal tables, manually document lineage in SharePoint, use Git tags for model versioning, deploy models using Azure DevOps release pipelines with manual approval gates, and send email notifications for deployment events",
+      "C": "Use Databricks notebooks for all development, leverage MLflow within Databricks to log experiments, export models to Azure ML for deployment, and configure AAD conditional access policies to restrict sign-ins from unmanaged devices",
+      "D": "Create a custom metadata database using Cosmos DB to track all assets, build a Power BI dashboard for lineage visualization, implement Azure Functions to sync metadata between Azure ML and Purview on a daily batch schedule, and use Azure Policy to enforce tagging"
+    },
+    "correct_answer": "A",
+    "topic": "Capturing and securing governance data for MLOps",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A logistics company needs to implement a hyperparameter tuning solution for their route optimization model that uses XGBoost with 200 hyperparameters. The current grid search on a single machine takes 2 weeks to complete. You must reduce this to under 8 hours while exploring 5,000 hyperparameter combinations. The tuning must leverage early termination to prune poor performers, log all trials for comparison, and stay within a $500 budget per tuning job. The team uses Azure ML CLI v2 and wants to compare results visually. Which configuration of sweep jobs meets these requirements?",
+    "options": {
+      "A": "Configure a sweep job with `sampling_algorithm: random`, `early_termination: BanditPolicy`, `max_total_trials: 5000`, `max_concurrent_trials: 20`, and `compute: Standard_D16s_v3` cluster with 4 nodes. Use MLflow with Azure ML backend to track metrics, and visualize results in the Azure ML Studio experiment comparison view",
+      "B": "Run 10 parallel Azure ML pipeline jobs manually, each exploring 500 combinations with grid search on `Standard_F4s_v2` instances, aggregate results in a CSV file, and use Python scripts to identify the best hyperparameters",
+      "C": "Use Automated ML with timeouts set to 8 hours, enable deep learning with ONNX compatible models, configure the experiment to prioritize accuracy over training time, and let Automated ML handle feature engineering",
+      "D": "Create a HyperDrive configuration using Azure Machine Learning SDK v1, define a parameter space with `choice` and `uniform`, run on a single `Standard_E64s_v3` VM with 64 cores, and monitor progress via Jupyter notebook widgets"
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your e-commerce company uses GitHub Actions for CI/CD of ML models. The current workflow builds a Docker image, runs unit tests, trains the model on a sample dataset, and deploys to staging. However, the training step fails intermittently due to Azure ML workspace authentication issues from the GitHub runner. The team wants to implement secure, credentialless authentication for Azure ML jobs triggered from GitHub, while maintaining granular RBAC and ensuring no secrets are stored in repository variables. The solution must work across 15 Azure ML workspaces in different subscriptions. Which authentication and workflow configuration should you implement?",
+    "options": {
+      "A": "Configure GitHub OIDC federation with Azure AD, create a federated identity credential for the GitHub Actions workflow, assign the `Azure ML Data Scientist` role to the identity at workspace scope, and use `az login --federated-token` in the workflow to acquire tokens for Azure ML CLI commands",
+      "B": "Store Azure service principal credentials in GitHub Encrypted Secrets, reference them in workflow YAML, use `az login --service-principal` with the secret, and rotate the credentials every 90 days manually",
+      "C": "Use managed identities for Azure Resources, assign the MI to the GitHub runner VM, grant the MI access to Azure ML, and run jobs using the Azure ML SDK with `DefaultAzureCredential`",
+      "D": "Create a shared user account in Azure AD, generate a long-lived PAT token, embed it directly in the workflow YAML as a variable, restrict the account to specific IP ranges, and monitor sign-ins via Azure AD logs"
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are designing a batch scoring solution for a customer churn model that must process 200 million customer records nightly within a 3-hour window. The model is a TensorFlow neural network requiring 8GB RAM per batch. The current implementation uses a single `Standard_E16s_v3` VM and exceeds the SLA by 5 hours. You need to parallelize scoring across multiple nodes while handling failures gracefully and optimizing cost. The output must be written to Azure SQL Database with individual transaction commits to avoid rollback on partial failures. Which Azure ML batch deployment configuration satisfies these requirements?",
+    "options": {
+      "A": "Create a batch deployment with `ParallelRunStep`, configure `process_count_per_node: 4` and `node_count: 8` on `Standard_D8s_v3` cluster, set `error_threshold: -1` to continue on failure, use `output_action: append_row` with partitioned writes to SQL DB via pyodbc connection pooling",
+      "B": "Deploy to a real-time endpoint with `Standard_E32s_v3` instances, implement a batching layer in the scoring script to accumulate 1,000 requests before inference, and queue incoming records via Service Bus with delayed processing",
+      "C": "Use Azure Databricks with Spark UDFs to distribute scoring across a 32-core cluster, save results to Delta Lake, and then bulk insert into Azure SQL DB using PolyBase, scheduling the job via ADF",
+      "D": "Configure an Azure Function with durable orchestrations, split the dataset into 1,000 blobs, trigger parallel Function instances via Event Grid, each scoring 200k records, and aggregate outputs using a final activity function"
+    },
+    "correct_answer": "A",
+    "topic": "Model Deployment: Batch Scoring and Real-Time Web Services",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A media company's recommendation model shows significant performance decay after 2 weeks in production. Monitoring indicates data drift in user preference features with a PSI score of 0.35. You need to implement an automated retraining pipeline that triggers when drift exceeds a threshold of 0.2, retrains the model on fresh data, evaluates against the current production model using AUC and RMSE, and promotes the new model only if it improves AUC by at least 2%. The solution must log all decisions for auditing and not exceed $300 per retraining cycle. Which Azure ML monitoring and automation setup achieves this?",
+    "options": {
+      "A": "Enable data drift monitoring using the dataset monitor with `compute: Standard_D4s_v3` and weekly frequency, configure an alert rule when PSI > 0.2 that triggers an Azure ML pipeline via Logic Apps, include model evaluation component comparing AUC/RMSE, use a conditional step for model registration only if improvement threshold met, and log pipeline runs to Log Analytics",
+      "B": "Manually monitor feature distributions in Power BI weekly, run a scheduled notebook to calculate PSI, if drift detected, email the data science team to initiate retraining using Azure ML Studio, and manually update the endpoint after testing",
+      "C": "Implement a custom Python script that downloads production data daily, computes KL divergence, stores results in Cosmos DB, and uses Azure Functions to call the Azure ML REST API for training, evaluating with hardcoded thresholds",
+      "D": "Use Azure Application Insights to track input feature values, set up alerts on anomalous patterns using machine learning anomalies detector, trigger an Azure Data Factory pipeline that copies data to retraining storage, and use Azure DevOps to orchestrate model rebuild"
+    },
+    "correct_answer": "A",
+    "topic": "Monitoring the ML model",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization is implementing a GenAIOps infrastructure for an internal HR chatbot using Azure AI Foundry. The chatbot uses GPT-4 with RAG over 50,000 internal policy documents. Requirements include: answers must be grounded with citations, response latency < 2 seconds for 90% of queries, all prompts and responses logged for compliance, and the system must block harmful content with 99% accuracy. The budget allows for 10M tokens/month. Which Foundry configuration and quality assurance approach meets all requirements?",
+    "options": {
+      "A": "Create a Foundry project with a managed online endpoint for GPT-4, configure Azure AI Search with integrated vector store for RAG, enable content safety filters with built-in harm categories, implement automated evaluation workflows for groundedness and relevance using `azure.ai.evaluation`, and monitor token usage via Azure Metrics with alerts at 8M tokens",
+      "B": "Deploy GPT-4 via Azure OpenAI Service without Foundry, build a custom FastAPI app for RAG using Pinecone for vectors, implement rule-based keyword filtering for harmful content, log prompts/responses to Azure Blob Storage, and track costs manually via Cost Management",
+      "C": "Use Azure Databricks with LangChain, store vectors in Databricks Vector Search, fine-tune GPT-3.5-Turbo on internal documents to avoid RAG, rely on model moderation API for safety, and monitor performance with MLflow tracking within Databricks",
+      "D": "Implement a static website with Azure Static Web Apps that calls the OpenAI API directly, cache embeddings locally in IndexedDB, use client-side content moderation with a pre-trained model, and rely on Application Insights for latency tracking"
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement a GenAIOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your team has developed a PyTorch image classification model that must be packaged for deployment across 3 regions (East US, West Europe, Southeast Asia). The model uses custom CUDA kernels and requires specific Python packages with version conflicts. You need to create a reusable environment definition that ensures consistent inference across all regions, tracks exact package versions, and allows for easy updates when security patches are released. The package must be stored in the Azure ML registry for sharing. Which approach for environment management and model packaging satisfies these needs?",
+    "options": {
+      "A": "Define a Conda environment YAML with exact package versions and `pip` dependencies, register it using `az ml environment create --file environment.yml --registry-name <registry>`, build the environment as a Docker image with `Environment.build_local = False` to use curated Azure ML base images, and reference this environment in deployment configurations across all workspaces",
+      "B": "Create a Dockerfile with `FROM nvidia/cuda:11.8.0-base`, manually install packages using `pip install --no-deps`, push the image to Azure Container Registry in each region, and configure each endpoint to use the regional ACR image",
+      "C": "Use the Azure ML curated environment `AzureML-pytorch-1.13-ubuntu20.04-py38-cuda11.7` and assume compatibility, specify only high-level packages like `torch` and `torchvision` without versions, rely on environment resolution at deployment time",
+      "D": "Package the model as a MLflow model with `python_env.yaml`, store it in Blob Storage, and at deployment time use `inference_config.environment.python.interpreter_path` to point to a pre-installed system Python with global site packages"
+    },
+    "correct_answer": "A",
+    "topic": "Model Management (Registration and Packaging)",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A financial services firm needs to implement a secure ML workspace that restricts network access to only approved IP ranges and requires all data traffic to stay within the Azure backbone. The workspace will store sensitive customer data used for credit scoring models. Compliance mandates that no public IPs are exposed, all inbound traffic originates from the corporate VPN (IP range 10.20.0.0/16), and outbound calls to Azure ML services use private endpoints. The team of 10 data scientists works remotely and accesses the workspace via Azure ML Studio and CLI. Which networking configuration for the Azure ML workspace satisfies these security requirements?",
+    "options": {
+      "A": "Create the workspace with `hbi_workspace: true`, enable private endpoint for the workspace and associated services (storage, key vault, container registry), configure the workspace VNet with NSG rules allowing only 10.20.0.0/16, disable public network access using `public_network_access: Disabled`, and set up a VPN gateway for remote user access",
+      "B": "Deploy the workspace with default settings, configure Azure Firewall in front of the workspace with application rules allowing `*.azureml.net`, force tunnel all traffic through the firewall, and use service endpoints for storage and key vault",
+      "C": "Use Azure Private Link for storage and container registry only, keep the workspace API publicly accessible with AAD conditional access requiring MFA, implement IP allowlisting at the application layer using Azure Front Door WAF",
+      "D": "Place the workspace in a dedicated subscription with no networking restrictions, encrypt data at rest with customer-managed keys, rely on Azure DDoS Protection Standard, and monitor suspicious access with Microsoft Defender for Cloud"
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your company is implementing Responsible AI (RAI) for a resume screening model to avoid bias. The model must be evaluated for fairness across gender and ethnicity subgroups before deployment. You need to generate disparity metrics (demographic parity, equal opportunity) and create a dashboard for the ethics committee showing model behavior across protected attributes. The evaluation must be automated as part of the CI/CD pipeline and fail the build if any disparity metric exceeds 0.1. Which Azure ML RAI tools and pipeline integration approach should you use?",
+    "options": {
+      "A": "Use the `azureml-responsbleai` package to create a `RAIInsights` object, compute fairness metrics using `fetch_fairness_metrics()` with sensitive features, generate a dashboard via `RAIInsights.dashboard()`, integrate the evaluation in an Azure ML pipeline component that raises an error if thresholds breached, and publish the dashboard to Azure ML Studio",
+      "B": "Manually annotate a test dataset with protected attributes, compute confusion matrices per subgroup in Excel, create a Power BI report with slicers for demographics, and set up a manual review gate in Azure DevOps requiring committee approval",
+      "C": "Use Automated ML's fairness-aware training with the `task_type: classification` and `enable_fairness: true`, rely on the built-in fairness metrics in the Automated ML run details, and configure the endpoint to log predictions for post-deployment auditing",
+      "D": "Implement a custom fairness assessment using `fairlearn` library in a notebook, save results to CSV, email the report to stakeholders, and add a manual step in the release pipeline to check fairness before promotion"
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are migrating an existing ML model training pipeline from SDK v1 to CLI v2. The pipeline includes custom Python scripts for data preparation, featurization using custom transformers, training with LightGBM, and evaluation. The current pipeline uses `PythonScriptStep` and `EstimatorStep` with complex parameter passing. You need to rewrite the pipeline using Azure ML CLI v2 components and pipelines while preserving the existing logic and enabling reuse across multiple projects. The solution must support parallel execution of data prep steps and conditional execution based on evaluation metrics. Which CLI v2 component and pipeline design pattern meets these requirements?",
+    "options": {
+      "A": "Define each step as a separate YAML component file with `$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json`, specify inputs/outputs as paths, register components in the workspace registry, create a pipeline YAML that references components via `component: azureml:<component_name>:<version>`, and use `if` expressions in the pipeline to conditionally register the model",
+      "B": "Create a single monolithic YAML job that includes inline scripts for all steps, use `str` parameters for configuration, rely on `depends_on` for sequencing, and run the job using `az ml job create --file pipeline.yml`",
+      "C": "Use Azure ML designer to visually construct the pipeline, export it as a YAML, modify the YAML to replace designer modules with custom script references, and schedule it via the CLI",
+      "D": "Keep the SDK v1 pipeline, wrap it with a CLI v2 command job that calls `PythonScriptStep` via the SDK, and use the CLI only for submission, not for component definition"
+    },
+    "correct_answer": "A",
+    "topic": "Reproducible and Reusable ML",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "An IoT company processes 10 TB of sensor data daily for predictive maintenance models. The data ingestion pipeline uses Azure Event Hubs, and feature engineering is done in Azure Databricks. The trained model must be deployed for real-time inference on edge devices with limited connectivity, requiring periodic model updates via Azure IoT Hub. The edge devices run Linux on ARM64 architecture. The solution must support canary rollouts of new models with telemetry feedback to evaluate performance. Which model deployment and update strategy addresses these edge computing requirements?",
+    "options": {
+      "A": "Package the model as a MLflow model, convert to ONNX for cross-platform compatibility, deploy to Azure Container Registry, use Azure IoT Edge modules to pull the container onto edge devices, implement deployment manifests with layered configurations for canary rollout, and collect telemetry via IoT Hub module twins",
+      "B": "Deploy the model to a central Azure VM with a public IP, have edge devices send data via HTTPS REST calls, cache predictions locally, and update the model by redeploying the VM and notifying devices via webhook",
+      "C": "Store the model in Azure Blob Storage, write a custom Python script on each edge device to download the model hourly, load it using Pickle, run inference locally, and send logs to Azure Monitor via agent",
+      "D": "Use Azure Functions with HTTP triggers, have edge devices call the function endpoint, manage model versions via Function app settings, and use Azure Traffic Manager for gradual rollout across regions"
+    },
+    "correct_answer": "A",
+    "topic": "Model Deployment: Batch Scoring and Real-Time Web Services",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your team is implementing LLMOps for a customer support chatbot using Azure AI Foundry. The chatbot uses GPT-4-Turbo with RAG over product documentation. You need to optimize the RAG pipeline to improve answer relevance and reduce latency. Currently, retrieval takes 800ms and relevance score is 0.65. You have control over chunking strategy, embedding model, and retrieval parameters. Which combination of optimizations is likely to yield the best improvement while staying within the 2-second response SLA?",
+    "options": {
+      "A": "Switch to `text-embedding-3-small` for faster embeddings, reduce chunk size from 512 to 256 tokens with overlap of 64, implement hybrid search with BM25 + semantic reranking using `AzureAISearch` ranker, and cache frequent queries in Redis",
+      "B": "Increase chunk size to 1024 tokens for more context, use `text-embedding-3-large` for better accuracy, raise similarity threshold to 0.8 to reduce irrelevant chunks, and precompute all embeddings offline",
+      "C": "Use a single large chunk per document (up to 4000 tokens), skip embedding and use keyword matching only, implement client-side filtering based on metadata, and compress responses with gzip",
+      "D": "Fine-tune the embedding model on your domain data using contrastive learning, store vectors in a dedicated VM with FAISS, implement approximate nearest neighbor with high recall, and batch retrieval requests"
+    },
+    "correct_answer": "A",
+    "topic": "Optimize generative AI systems and model performance",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are designing an MLOps infrastructure for a healthcare startup developing diagnostic imaging models with HIPAA compliance requirements. The team of 8 data scientists needs to collaborate on experiments using 20TB of sensitive DICOM data. All infrastructure must reside in East US 2 and West Europe regions for disaster recovery. The solution must support automatic on-demand compute scaling (GPU nodes) when training jobs are submitted, but compute must de-provision completely during idle periods to control costs. The data science team prefers Python SDK interactions, but the security team mandates infrastructure-as-code deployments and requires audit logs for all data access. Which combination of steps should you take?",
+    "options": {
+      "A": "Create two Azure Machine Learning workspaces, one in each region, using Bicep templates. Configure each workspace with a system-assigned managed identity and connect them to separate VNets using private endpoints. Create an Azure Data Lake Storage Gen2 account with hierarchical namespace as the default datastore, enable customer-managed keys, and configure cross-region replication. Use AML's auto-scale feature for compute clusters, setting minimum nodes to 0 and maximum to 8.",
+      "B": "Deploy a single Azure Machine Learning workspace in East US 2 using the Azure portal. Enable Identity-based data access and link it to an Azure Active Directory tenant. Use Azure Blob Storage with soft delete enabled for data storage. Create persistent GPU compute clusters in both regions and configure them to auto-pause after 30 minutes of inactivity. Implement audit logging by creating diagnostic settings to send workspace logs to a Log Analytics workspace.",
+      "C": "Use Azure Synapse Analytics workspaces in both regions with Azure Machine Learning linked services. Store DICOM data in Synapse dedicated SQL pools and use Spark pools for data preprocessing. Create Azure Machine Learning compute instances for each data scientist with GPU capabilities. Implement cost control by scheduling the compute instances to shut down during non-business hours using Azure Automation.",
+      "D": "Deploy Azure Databricks workspaces in both regions with Premium tier for HIPAA compliance. Store DICOM data in DBFS and use Databricks MLflow for experiment tracking. Create GPU-enabled clusters with auto-termination after 120 minutes of inactivity. Implement audit logging by enabling audit logs in Azure Databricks and sending them to Azure Event Hubs."
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A multinational retail company is automating its inventory forecasting pipeline. The pipeline must handle 50TB of historical sales data across 500 stores, support daily retraining triggered by new data arrival in Azure Data Lake Storage Gen2, and compare multiple model algorithms automatically. The training jobs are computationally intensive and must complete within 4 hours to meet the overnight processing window. The data science lead requires full reproducibility of all experiments with lineage tracking back to the exact training data version used. Which implementation approach meets all requirements while maintaining operational efficiency?",
+    "options": {
+      "A": "Create an Azure Machine Learning pipeline with a ParallelRunStep for data preprocessing and an AutoMLStep for model exploration. Configure the pipeline to trigger via schedule using an AML schedule resource linked to the Data Lake storage event. Use MLflow tracking within the pipeline to log metrics, and register the best performing model with its feature retrieval specification packaged as part of the MLflow model artifact.",
+      "B": "Implement an Azure Databricks workflow with a scheduled notebook that loads data from ADLS Gen2, performs distributed training using Horovod, and saves the best model to MLflow Model Registry. Use Databricks Jobs to orchestrate the workflow and configure email alerts for job completion. Store data versions using Delta Lake time travel features.",
+      "C": "Set up an Azure Synapse Analytics pipeline that copies data to a SQL pool, executes a stored procedure for model training using the built-in machine learning capabilities, and exports the model to AML for registration. Use Synapse pipeline triggers based on file arrival in storage. Track lineage through Synapse's built-in lineage features.",
+      "D": "Create a GitHub Actions workflow that provisions an AML compute cluster on-demand, runs a training script using PyTorch DistributedDataParallel, registers the model in AML registry, then deprovisions the cluster. Use GitHub's artifact storage to save training metrics and configure the workflow trigger on push to the main branch."
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are implementing a progressive rollout strategy for a credit risk assessment model serving 200 financial institutions via REST API. The current model (v1) has an accuracy of 87% on validation data. The new candidate model (v2) shows 92% accuracy on historical data but has not been tested on recent market conditions. The business requires zero downtime during rollout and the ability to instantly revert if v2 shows degraded performance on live traffic. Each institution's traffic patterns differ significantly, so you need to test v2 on a representative sample across all institutions before full deployment. Which combination of Azure Machine Learning features should you implement?",
+    "options": {
+      "A": "Deploy both models as separate online endpoints. Configure Azure Traffic Manager with weighted routing to send 10% of traffic to endpoint v2 and 90% to endpoint v1 initially. Create custom metrics in Application Insights to track accuracy per institution, and set up an Azure Monitor alert to trigger automatic traffic re-routing back to 100% v1 if v2's accuracy drops below 88% for any institution.",
+      "B": "Deploy a single online endpoint with two deployments (v1 and v2). Use endpoint traffic rules to split traffic 90/10 between v1 and v2 initially. Configure deployment metrics collection via DataCollector and set up an Azure Monitor alert based on the model performance metric. Implement a safe rollback by creating an Azure Logic App that modifies traffic rules back to 100% v1 when the alert triggers.",
+      "C": "Register both models in the AML registry and deploy them to Azure Kubernetes Service with Istio service mesh. Configure Istio's canary routing to gradually shift traffic from v1 to v2. Use Prometheus metrics fed into Azure Monitor to track performance, and create a KEDA scaler to automatically adjust traffic based on the accuracy metric.",
+      "D": "Use AML's batch endpoints for both models and process all transactions through both pipelines in parallel. Compare results using a consensus layer and log discrepancies. Route transactions based on a weighted confidence score calculated from both model outputs, adjusting weights weekly based on performance reviews."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A logistics company needs to detect data drift in their delivery time prediction model which uses daily shipment data. The model runs as a batch endpoint processing 2GB of new data nightly. The operations team wants automated alerts when feature distributions shift beyond acceptable thresholds, triggering a retraining pipeline when critical features drift beyond 0.1 KL divergence. They require detailed drift analysis reports showing which features have drifted and by how much. The current MLOps setup uses AML for model training and Azure Data Factory for data movement. Which implementation provides the most maintainable solution?",
+    "options": {
+      "A": "Create a scheduled Azure Data Factory pipeline that runs daily after batch scoring completes. The pipeline should execute an AML data drift monitor job that compares the previous day's input data against a 30-day baseline, generates a drift report, and publishes metrics to Application Insights. Configure an Azure Monitor alert rule based on the max_feature_drift metric exceeding 0.1, which triggers an AML pipeline via webhook.",
+      "B": "Use Azure Synapse Analytics to calculate statistical differences between incoming data and a reference dataset stored in a dedicated SQL pool. Create a Power BI report showing drift metrics and configure data-driven alerts within Power BI service. When drift exceeds threshold, manually trigger the retraining pipeline from the AML studio.",
+      "C": "Implement a custom Python script in an AML compute instance that computes Wasserstein distance for each feature daily. Store results in Azure Table Storage and use Azure Functions to check thresholds and send email alerts. Manually review alerts and trigger retraining via the AML CLI when necessary.",
+      "D": "Enable data drift monitoring directly on the AML batch endpoint deployment. Configure the monitor to use a target dataset with a rolling 30-day window and a reference dataset from the training period. Set the feature importance-based metrics with a 0.1 threshold and configure it to output metrics to the AML workspace. Create an AML schedule that triggers retraining when drift is detected."
+    },
+    "correct_answer": "D",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization is building an AI Foundry solution for an internal legal document analysis system. The solution must support 50 concurrent users querying a RAG system over 500,000 PDF documents (avg 50 pages each). Users require responses within 8 seconds P95 latency. The system must ensure all generated content is grounded in the source documents with citations, and must filter out any harmful content. The legal team requires version control for prompt templates and the ability to A/B test different retrieval strategies. Budget allows for provisioned throughput units but cannot exceed $5,000 monthly. Which architecture and configuration approach meets all requirements?",
+    "options": {
+      "A": "Deploy GPT-4 Turbo via Azure OpenAI Service with provisioned throughput units for consistent latency. Implement RAG using Azure AI Search with semantic ranking enabled and chunk sizes of 512 tokens. Store documents in Azure Blob Storage with integrated vector indexing. Implement prompt flow with variant testing and use Azure AI Content Safety for filtering. Configure logging to Application Insights for latency monitoring.",
+      "B": "Fine-tune a Llama 3 model using Azure Machine Learning managed compute and deploy to a real-time endpoint. Implement document chunking using Azure Form Recognizer and store vectors in Azure Cosmos DB for MongoDB with vector search. Use Azure API Management for rate limiting and Azure Monitor for tracking token consumption. Manually review outputs for grounding quality.",
+      "C": "Use Azure Databricks Foundation Model APIs with DBRX as the base model. Store documents in Delta Lake and use Databricks Vector Search for retrieval. Implement a LangChain orchestration layer running on Databricks Serverless compute. Create prompt templates in Databricks MLflow Prompt Engineering UI and track variants there. Rely on the model's built-in safety filters.",
+      "D": "Build a custom solution using open-source models on Azure Kubernetes Service with GPU nodes. Implement FAISS for vector similarity and Redis for caching. Use Trivy for vulnerability scanning and manual content review processes. Deploy multiple variants behind an Azure Front Door for A/B testing."
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement a GenAIOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "An e-commerce company needs to implement automated quality evaluation for their product description generation system. The system uses Azure OpenAI GPT-4 to generate marketing copy based on product attributes. They need to measure groundedness (against product specs), relevance to target audience, coherence of narrative, and fluency of language. The evaluation must run automatically on 1,000 new products weekly, with results stored for trend analysis. The marketing team wants a dashboard showing quality metrics over time and alerts when scores drop below thresholds. Which combination of Azure AI services and implementation steps satisfies these requirements?",
+    "options": {
+      "A": "Create an Azure AI evaluation workflow using the Azure AI Studio evaluation SDK. Configure groundedness, relevance, coherence, and fluency metrics as evaluators in your evaluation flow. Use Azure AI Search to retrieve product specifications as grounding documents. Schedule the evaluation to run weekly via Azure Logic Apps, storing results in Azure SQL Database. Build a Power BI dashboard connected to the database and set up Azure Monitor alerts based on metric thresholds.",
+      "B": "Implement custom evaluation scripts in Python running on AML compute clusters. Compute BLEU scores for fluency, cosine similarity for relevance, and human-in-the-loop reviews for coherence. Store results in Azure Blob Storage and use Azure Data Factory to aggregate metrics weekly. Create alerts by configuring Azure Functions to email the team when scores dip below historical averages.",
+      "C": "Use Azure Application Insights custom events to track each generation request. Log product attributes, generated text, and manually assigned quality scores by marketing staff. Analyze trends using Application Insights workbooks and set up alert rules based on the custom event properties. Run weekly reports using Log Analytics queries exported to Excel.",
+      "D": "Deploy an Azure Machine Learning pipeline with Responsible AI (RAI) dashboard components. Configure the RAI dashboard to compute fairness, error analysis, and model explanations. Schedule the pipeline using AML schedules and output the dashboard as an HTML report to Azure Storage. Manually review the dashboard each week to identify quality issues."
+    },
+    "correct_answer": "A",
+    "topic": "Implement generative AI quality assurance and observability",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A financial services firm is implementing RAG for their internal research portal, querying 10,000 research papers and regulatory documents. Initial testing shows poor retrieval accuracy because domain-specific financial terminology isn't well captured by general-purpose embeddings. Users report irrelevant documents appearing in top results. The team wants to optimize the RAG system by improving semantic search relevance while maintaining sub-second retrieval times. They have labeled 5,000 query-document relevance pairs for evaluation. Which approach provides the most effective improvement with measurable validation?",
+    "options": {
+      "A": "Fine-tune the Azure OpenAI text-embedding-ada-002 model using the labeled query-document pairs via the Azure OpenAI fine-tuning API. Deploy the fine-tuned embedding model and update the Azure AI Search index with new vectors. Implement A/B testing by routing 50% of queries to the new embeddings and compare mean reciprocal rank (MRR) metrics using Azure AI Studio evaluation workflows.",
+      "B": "Switch to Azure AI Search's semantic reranking capability while keeping the same embeddings. Adjust the similarity threshold from 0.7 to 0.5 to retrieve more candidates for reranking. Evaluate performance using the labeled pairs by computing NDCG@10 scores and deploy if improvement exceeds 15%.",
+      "C": "Implement hybrid search combining BM25 keyword matching with the existing semantic search. Adjust chunk sizes from 256 to 512 tokens to capture more context. Evaluate using precision@5 metrics on the labeled dataset and deploy if both precision and recall improve.",
+      "D": "Replace Azure AI Search with a custom FAISS index on Azure Machine Learning compute instances. Train a custom sentence transformer model on the research paper corpus using contrastive learning. Evaluate using cosine similarity between query and retrieved documents and deploy if average similarity increases by 0.2 points."
+    },
+    "correct_answer": "A",
+    "topic": "Optimize generative AI systems and model performance",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your team manages a production ML pipeline that trains computer vision models on manufacturing defect images. The pipeline has been failing intermittently for 3 days with error 'Unable to allocate 8GB GPU memory during forward pass'. The model architecture hasn't changed, but the dataset has grown from 100,000 to 500,000 images. Training uses AML's PyTorchJob with 4 Standard_NC6s_v3 nodes (1 GPU each). Before the dataset increase, training completed in 6 hours; now it fails randomly after 2-5 hours. Monitoring shows GPU memory utilization reaches 100% at failure time, but CPU and system memory are normal. What is the most likely root cause and the correct remediation?",
+    "options": {
+      "A": "The batch size in the training script is fixed at 128 images. With larger dataset, some batches contain unusually large images that exceed GPU memory. Remediate by implementing gradient accumulation to effectively reduce batch size or add image resizing preprocessing to enforce maximum dimensions before batching.",
+      "B": "The AML compute cluster auto-scaling is incorrectly configured, causing nodes to be removed during training. Remediate by setting the minimum node count equal to maximum node count (4) for the cluster to prevent scaling operations during job execution.",
+      "C": "The PyTorch DataLoader num_workers parameter is set too high (8 per node), causing excessive memory fragmentation on the GPU. Remediate by reducing num_workers to 2 and enabling pinned memory to improve data transfer efficiency.",
+      "D": "The training script has a memory leak in the validation loop where tensors aren't moved back to CPU. Remediate by adding torch.cuda.empty_cache() calls after each validation step and using with torch.no_grad(): context manager for inference operations."
+    },
+    "correct_answer": "A",
+    "topic": "Troubleshooting & Debugging",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A pharmaceutical company needs to implement network security for their Azure Machine Learning workspace used for drug discovery research. The workspace processes sensitive clinical trial data subject to HIPAA and GDPR regulations. All inbound/outbound traffic must flow through Azure Firewall for inspection, and no public internet access is permitted for compute resources. Data scientists need to access the workspace from corporate network only, while training jobs must pull base container images from Microsoft Container Registry. The solution must not require VPN connections for everyday workspace access. Which sequence of configuration steps satisfies all security requirements?",
+    "options": {
+      "A": "1. Deploy AML workspace with 'Public network access' disabled. 2. Create a private endpoint for the workspace and link it to the corporate VNet. 3. Configure Azure Firewall rules to allow traffic between VNet subnets and AML workspace private IPs. 4. Configure compute cluster with 'No public IP' property enabled and assign to a subnet with NAT gateway for outbound to MCR. 5. Enable managed identity for compute to authenticate to container registry.",
+      "B": "1. Create AML workspace with default network settings. 2. Configure service endpoints for AML and Storage in the VNet. 3. Set up Azure Bastion for secure workspace portal access. 4. Use AML's built-in Docker images instead of custom containers to avoid external registry dependencies. 5. Implement Azure Private Link for Storage accounts.",
+      "C": "1. Deploy AML workspace in a completely isolated subscription with no internet connectivity. 2. Set up a site-to-site VPN between corporate network and AML VNet. 3. Mirror required container images to Azure Container Registry in the private network. 4. Whitelist scientist IP addresses in AML workspace firewall settings. 5. Use Azure Policy to enforce network rules.",
+      "D": "1. Enable AML workspace's VNet integration feature. 2. Create inbound NSG rules allowing only corporate IP ranges. 3. Configure outbound firewall rules to allow Microsoft Container Registry domains. 4. Use AML's managed online endpoints which automatically handle networking security. 5. Enable diagnostic logging to track all access attempts."
+    },
+    "correct_answer": "A",
+    "topic": "Design and implement an MLOps infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are implementing hyperparameter tuning for a deep learning model predicting equipment failure in industrial IoT. The model has 12 hyperparameters with complex interactions. Initial random search with 100 trials yielded 78% accuracy, but you suspect better combinations exist in narrow regions of the search space. Each training trial costs $15 in compute and takes 45 minutes. The business needs at least 82% accuracy within a $1,500 tuning budget and 48-hour timeframe. Which AML hyperparameter tuning approach optimizes both cost and performance?",
+    "options": {
+      "A": "Use Bayesian optimization with early termination policy enabled, starting from the best 20 random search trials as initial points. Configure the sweep job with max_total_trials=80 and max_concurrent_trials=4. Set BanditPolicy with evaluation_interval=5 and slack_amount=0.02 to terminate underperforming trials early.",
+      "B": "Run exhaustive grid search over reduced parameter ranges identified from random search correlation analysis. Set up 5 parallel sweep jobs each exploring different parameter subspaces with 50 trials each. Aggregate results and select the best combination.",
+      "C": "Implement a two-stage approach: use Hyperband algorithm for rapid exploration with max_trials=200, then refine top 20 candidates with Bayesian optimization with max_trials=30. Configure the Hyperband stage with max_concurrent_trials=8 and early_stopping enabled.",
+      "D": "Use random search again but with a smarter parameter distribution based on insights from initial trials - narrowing ranges where good performance was found. Configure max_total_trials=100 and max_concurrent_trials=5 to stay within budget. Apply MedianStoppingPolicy to terminate trials performing below median."
+    },
+    "correct_answer": "C",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A media company is implementing LLMOps for their automated news summarization system. They've deployed GPT-4 via Azure OpenAI with a prompt flow that fetches articles, generates summaries, and posts to CMS. They need to monitor token consumption per customer for billing purposes, track latency percentiles (P50, P95, P99) per API endpoint, and log all prompts/completions for audit trails while ensuring no PII leakage. The solution must scale to handle 10,000 requests per minute during breaking news events. Which observability implementation provides the necessary visibility while maintaining performance?",
+    "options": {
+      "A": "Enable diagnostic settings on Azure OpenAI resource to send logs to Log Analytics workspace. Create custom queries to calculate token usage grouped by deployment and caller identity. Implement Application Insights with custom events for prompt/completion logging (with PII redaction). Use Azure Monitor Metrics to track request latency from Azure Load Balancer. Set up alerts for latency spikes above SLA thresholds.",
+      "B": "Configure Azure API Management in front of Azure OpenAI endpoints. Enable logging to Event Hubs and use Stream Analytics to process metrics. Implement token counting in APIM policies and log to Azure Table Storage. Use Azure Monitor autoscale rules to handle traffic spikes. Store prompts/completions in Azure Cosmos DB with TTL for compliance retention.",
+      "C": "Instrument the prompt flow with OpenTelemetry SDK, exporting traces to Azure Monitor Application Insights. Add custom dimensions for token counts and customer IDs. Use Application Insights' live metrics for real-time monitoring and set up alerts based on performance counters. Store prompt/completion pairs in Azure Blob Storage with encryption enabled.",
+      "D": "Implement a sidecar container alongside the prompt flow that captures all requests/responses and forwards to Azure Event Hubs. Process the stream with Azure Functions to aggregate metrics and store in Azure SQL Database. Build a Power BI dashboard for reporting. Use Azure Front Door to manage traffic scaling."
+    },
+    "correct_answer": "C",
+    "topic": "Implement generative AI quality assurance and observability",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization needs to implement distributed training for a vision transformer model on 100 million product images. Each training run must complete within 12 hours to meet daily retraining schedules. The model uses PyTorch with DistributedDataParallel and requires 8 V100 GPUs per run. Data is stored in Azure Data Lake Storage Gen2 across 5PB. The team has limited expertise in distributed systems debugging. Which AML compute configuration and training approach balances performance, cost, and operational simplicity?",
+    "options": {
+      "A": "Configure an AML compute cluster with 4 Standard_ND40rs_v2 nodes (8 V100 GPUs each). Use PyTorchJob with distributed backend='nccl' and node_count=4. Mount ADLS Gen2 via blobfuse for high-throughput data access. Enable InfiniBand networking for optimal GPU communication. Set up the training script with gradient accumulation to handle larger effective batch sizes.",
+      "B": "Use AML's managed distributed training with PyTorchDistribution with process_count_per_node=8. Select compute target as AML Compute with 'GPU cluster' SKU and set min_nodes=2, max_nodes=8 with auto-scale enabled. Implement a custom DataLoader with sharded dataset reading to prevent I/O bottlenecks. Use Azure Files Premium for shared checkpoint storage.",
+      "C": "Provision an Azure Kubernetes Service cluster with GPU node pools using Standard_NC24ads_A100_v4. Configure Kubeflow Training Operator to run MPIJob with 32 workers. Use Azure Disk Storage Class for persistent volumes. Implement Horovod for distributed training with bytePS for gradient compression to reduce network overhead.",
+      "D": "Use Azure Batch AI with NDv4-series VMs configured in a pool. Implement the training script using DeepSpeed with ZeRO-3 optimization to reduce memory usage. Mount data via Azure File Share SMB 3.0. Use Azure Batch's job scheduling features to manage the daily runs automatically."
+    },
+    "correct_answer": "B",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A telecommunications company is implementing fine-tuning for their customer service chatbot using their proprietary conversation logs. They have 500,000 human-agent chat sessions with quality ratings. They want to fine-tune GPT-3.5 Turbo to better match their brand voice and technical troubleshooting knowledge. The solution must maintain data privacy (no human review of raw chat logs), support progressive model updates as new data arrives weekly, and provide A/B testing capability between fine-tuned and baseline models. Compliance requires retaining training data lineage for 7 years. Which approach satisfies all requirements?",
+    "options": {
+      "A": "Use Azure OpenAI fine-tuning service with customer-managed encryption keys. Prepare training data in JSONL format with system/user/assistant messages, redacting PII using Azure AI Language service first. Deploy fine-tuned model as a new Azure OpenAI deployment. Implement A/B testing by routing percentage of traffic between deployments using Azure API Management policies. Store training data versions in Azure Storage with versioning enabled.",
+      "B": "Fine-tune an open-source Llama 3 model using AML with confidential computing on SGX-enabled VMs. Store chat logs in Azure SQL Database with dynamic data masking. Implement A/B testing by deploying both models to Azure Container Instances and using Azure Traffic Manager for routing. Maintain lineage by saving dataset snapshots to ADLS Gen2 with immutable storage.",
+      "C": "Use Azure Databricks Fine-Tuning API with DBRX model. Store conversation logs in Delta Lake with time travel enabled for lineage. Implement CI/CD for fine-tuning pipelines using Databricks Workflows. Deploy models using Databricks Model Serving and split traffic using Databricks feature store. Use Databricks Unity Catalog for access control.",
+      "D": "Implement reinforcement learning from human feedback (RLHF) using Azure Machine Learning and Proximal Policy Optimization. Collect comparison data from quality ratings and train a reward model. Deploy using AML online endpoints with canary rollout features. Store all training artifacts in AML registry with retention policies."
+    },
+    "correct_answer": "A",
+    "topic": "Optimize generative AI systems and model performance",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your team needs to implement a machine learning pipeline that preprocesses 10TB of IoT sensor data, trains an anomaly detection model, and deploys it as both batch and real-time endpoints. The pipeline must run daily, be fully automated, and include quality gates that fail the deployment if model performance drops below thresholds. The current implementation uses separate scripts for each stage with manual orchestration. Which combination of AML components and GitHub Actions configuration provides the most maintainable automated solution?",
+    "options": {
+      "A": "Create AML Pipeline with three components: data preprocessing component using ParallelRunStep, training component using PythonScriptStep with hyperparameter sweep, and model registration component. Schedule the pipeline using AML Schedule. Implement GitHub Actions workflow that validates pipeline YAML, tests components, and updates pipeline version when code changes. Use AML's model evaluation features within the pipeline to compare new model against baseline.",
+      "B": "Implement Azure Data Factory pipeline with AML Execute Pipeline activity for training and AML Batch Deployment activity for scoring. Trigger via Data Factory schedule. Use Azure DevOps release pipelines for model deployment with approval gates. Configure Application Insights availability tests for endpoint monitoring.",
+      "C": "Build Docker images for each pipeline stage and orchestrate with Azure Container Instances using Durable Functions as coordinator. Store pipeline definition in YAML in GitHub. Use GitHub Actions to build images and deploy the function app. Implement quality gates by having the function call AML model evaluation API before proceeding.",
+      "D": "Use Kubeflow Pipelines on Azure Kubernetes Service with AML components. Store pipeline definitions as compiled YAML in GitHub. Implement GitOps with FluxCD to sync pipeline changes to AKS. Use Prometheus and Grafana for monitoring pipeline execution and model metrics."
+    },
+    "correct_answer": "A",
+    "topic": "Automating the ML Lifecycle with ML Pipelines and GitHub Workflows",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A financial compliance model running as AML batch endpoint has started producing inconsistent results. The model, which flags suspicious transactions, shows 40% variation in false positive rates between identical input datasets run at different times. The model uses a RandomForest classifier trained 3 months ago. Batch scoring runs on AML compute cluster with 16 nodes. You've verified the scoring script hasn't changed and input data validation passes. Monitoring shows CPU and memory usage normal. What is the most likely root cause and immediate remediation?",
+    "options": {
+      "A": "The RandomForest implementation in the scoring script has non-deterministic behavior due to random seed not being fixed across distributed scoring workers. Remediate by setting numpy.random.seed() and random.seed() at the beginning of scoring script and ensuring sklearn's random_state parameter is set for the RandomForest model.",
+      "B": "The batch endpoint is configured with auto-scaling enabled, causing different numbers of nodes to process each batch. This leads to different data partitioning and aggregation. Remediate by fixing the compute instance count to a specific value and disabling auto-scaling for the batch deployment.",
+      "C": "The model file has been corrupted during storage or loading. Remediate by re-downloading the registered model from AML registry and verifying the SHA256 checksum matches the original training output. Update the scoring script to validate model integrity on load.",
+      "D": "There's a data race condition in the scoring script when writing results to output storage. Multiple nodes are writing to the same blob concurrently without proper locking. Remediate by implementing a distributed lock using Azure Blob Storage lease mechanism or partitioning output by worker node ID."
+    },
+    "correct_answer": "A",
+    "topic": "Troubleshooting & Debugging",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "An insurance company needs to implement responsible AI evaluation for their claims prediction model that affects premium calculations. The model must be evaluated for fairness across protected attributes (age, gender, zip code), tested for robustness against adversarial examples, and have human-interpretable explanations for denied claims. The compliance team requires documentation of all evaluations before production deployment. The model processes 2 million claims annually across 50 US states. Which AML capabilities and workflow should you implement?",
+    "options": {
+      "A": "Use AML's Responsible AI (RAI) dashboard components within a model evaluation pipeline. Configure fairness assessment with multiple fairness metrics (demographic parity, equalized odds) across sensitive features. Run error analysis to identify problematic data slices. Generate model explanations using SHAP for top features. Package all results in an RAI Insights dashboard stored with the registered model.",
+      "B": "Implement custom fairness testing using Fairlearn library in Python notebook. Compute disparate impact ratio and statistical parity difference. Use LIME for local explanations and generate HTML reports. Store evaluation results in Azure Storage and link to model registry via tags. Manually review all metrics before approving deployment.",
+      "C": "Use Azure AI Studio's model evaluation features for fairness assessment. Upload the model and test dataset with protected attributes marked. Select fairness metrics and generate compliance report. Use the built-in explanation feature for feature importance. Export PDF report for regulatory submission.",
+      "D": "Deploy the model to a staging endpoint and run A/B test with synthetic data containing adversarial examples. Monitor prediction consistency across demographic groups using Application Insights custom events. Use AML's model data collector to gather real-world predictions and analyze fairness post-deployment."
+    },
+    "correct_answer": "A",
+    "topic": "Implement machine learning model lifecycle and operations",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "At Litware Pharmaceuticals, an MLOps team of 4 is implementing model performance monitoring for a clinical trial patient classification model deployed to a managed online endpoint. The model must be monitored for data drift on 15 categorical and 5 continuous input features. The team must track model drift over time, set up alerts when statistical distance metrics exceed thresholds, and store all raw inference data for 7 years for FDA audit compliance. The solution must avoid storing actual PHI (Protected Health Information) in logs while retaining the ability to reconstruct drift analysis. The monthly budget for monitoring is $800. Which monitoring configuration meets all requirements?",
+    "options": {
+      "A": "Enable data collection on the deployment with sampling rate of 20%, configure Application Insights to capture all inputs and outputs, create a scheduled job that runs weekly to compute Jensen-Shannon divergence for categorical features and Wasserstein distance for continuous features against the training dataset, and export all logs to Azure Data Lake with customer-managed keys",
+      "B": "Configure DataCollector in the scoring script to collect all model inputs and outputs, enable Application Insights integration for the endpoint, set up a model monitor with DriftDetectorSignal for both categorical and numerical features, schedule it to run daily against the baseline dataset, and store the collected data in the workspace default datastore with a 7-year retention policy",
+      "C": "Implement custom logging in the inference container to write inputs/outputs to Azure Blob Storage, create an Azure Function that triggers weekly to calculate Population Stability Index for categorical features and Kolmogorov-Smirnov test for continuous features, store results in Cosmos DB, and configure Log Analytics alerts on threshold breaches",
+      "D": "Enable model data collection in the deployment configuration with path_format setting for partitioned storage, create a scheduled Data Drift monitor job that uses Kolmogorov-Smirnov for continuous and Chi-Square for categorical features against the registered baseline dataset, configure alerts through Azure Monitor when drift score exceeds 0.15, and ensure all data resides in the workspace-backed storage with GRS redundancy"
+    },
+    "correct_answer": "D",
+    "topic": "Monitoring Model Performance",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are implementing a training pipeline for a large language model fine-tuning project at Fabrikam Retail. The pipeline must prepare 12TB of customer interaction text data, train a Llama 3 70B model using DeepSpeed Zero-3 optimization, track all experiments with MLflow in the Azure ML workspace, and register the best model based on validation loss. The training must run on a cluster of 8 Standard_ND96amsr_A100_v4 VMs for 48 hours. The pipeline must be fully automated, triggered when new training data arrives in Azure Data Lake, and cost must be minimized by allowing compute to scale down to zero when idle. Which combination of Azure ML components and configurations fulfills these requirements?",
+    "options": {
+      "A": "Create a pipeline with a data component using TabularDataset to read from ADLS Gen2, a training component using PyTorchJob with distributed training configuration set to PyTorchConfiguration, enable MLflow autologging in the training script, configure the pipeline to run on an AmlCompute cluster with min_nodes=0 and max_nodes=8, and register the model using MLflow.register_model in the pipeline's final step",
+      "B": "Build a pipeline using ParallelRunStep for data preprocessing, a CommandComponent for training with environment containing deepspeed and mpi, configure experiment tracking via mlflow.azureml.autolog(), create an AmlCompute cluster with low_priority_nodes enabled and idle_time_before_scale_down=600, and use a PipelineJob to register the model with best metric comparison",
+      "C": "Design a pipeline with a DataTransferComponent to move data to workspace blob, a CommandComponent with distributed training type set to 'PyTorch' and process_count_per_instance=8, set MLflow tracking URI to the workspace via mlflow.set_tracking_uri, configure a ComputeCluster with priority='low-priority' and scale_settings with node_idle_time=10 minutes, and register the model using MLflowRegistry",
+      "D": "Implement a multi-step pipeline with a data preparation component using USQLActivity, a training component with distribution set to MpiConfiguration with process_count=64, enable MLflow tracking via workspace.get_mlflow_tracking_uri(), provision a ComputeInstance with GPU quota for 48 hours, and register the model using mlflow.register_model with tags for experiment lineage"
+    },
+    "correct_answer": "B",
+    "topic": "Training Pipelines & Distributed Training",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "A manufacturing company needs to deploy a predictive maintenance model that scores 50,000 IoT sensor readings per hour in batch mode. The model is a scikit-learn Random Forest trained on 8GB of historical data and packaged as an MLflow model. Scoring must complete within 15 minutes of data arrival to trigger maintenance alerts. The solution must be cost-effective, scaling from zero compute during idle periods, and support incremental scoring of new partitions. The team prefers using managed endpoints with minimal infrastructure management. Which deployment approach satisfies these batch scoring requirements?",
+    "options": {
+      "A": "Deploy the model to a managed batch endpoint with an AmlCompute cluster configured with min_nodes=0, max_nodes=5, and vm_size=Standard_D4s_v3. Configure the batch deployment with mini_batch_size=1000, instance_count=4, and retry_settings.max_retries=3. Trigger scoring via PipelineJob when new data arrives in the datastore",
+      "B": "Create an Azure Kubernetes Service cluster with keda autoscaling, deploy the model as a Kubernetes job with parallel processing, configure HorizontalPodAutoscaler based on queue length, and use Azure Queue Storage to trigger scoring jobs when new data partitions appear",
+      "C": "Deploy to an online endpoint with automatic scaling, create an Azure Function that batches incoming requests into groups of 1000, and use the endpoint's high-throughput mode with increased instance counts during scoring windows",
+      "D": "Use Azure Batch directly with a pool of Standard_D4s_v3 VMs, create a job manager task that distributes scoring across nodes, mount the datastore via blobfuse, and schedule execution via Logic Apps on a cron schedule"
+    },
+    "correct_answer": "A",
+    "topic": "Model Deployment: Batch Scoring",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are designing an MLOps infrastructure for a healthcare startup building a HIPAA-compliant medical imaging model. The workspace must restrict network access to private endpoints only, enforce role-based access control for 3 data scientists and 2 infrastructure engineers, and integrate with GitHub Enterprise for CI/CD. All training data (15TB of DICOM images) must reside in a storage account with customer-managed keys, and compute clusters must only be accessible from the corporate VPN. The solution must be deployable via Infrastructure as Code for audit purposes. Which combination of configurations achieves these security and compliance requirements?",
+    "options": {
+      "A": "Create an Azure ML workspace with hbi_workspace=true, configure private endpoint connectivity, assign the Data Scientist role to data scientists and Contributor role to engineers via Azure RBAC, attach an Azure Datastore with CMK enabled, and deploy using an Azure Resource Manager Bicep template with network isolation settings",
+      "B": "Deploy a workspace using the Azure CLI with parameters --v1-legacy-mode false and --encryption-key-identifier, configure service endpoints for the storage account, assign custom roles via Azure AD, set up GitHub Actions with OIDC authentication, and restrict compute with NSG rules allowing only VPN IP ranges",
+      "C": "Provision a workspace with 'public_network_access' disabled, enable vnet injection for all resources, create a private endpoint for the workspace, configure Azure RBAC with custom role definitions for MLFlow access, register the datastore with server-side encryption, and use Bicep modules for reproducible deployment",
+      "D": "Create a workspace with the 'allow_internet_access' flag set to false, configure managed identity for storage access, set up GitHub integration via service principal, encrypt data at rest with platform-managed keys, and deploy using Terraform with network security group rules blocking public internet"
+    },
+    "correct_answer": "C",
+    "topic": "MLOps Infrastructure & Security",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "At Adventure Works Cycling, a production demand forecasting pipeline has been failing inconsistently during the model training step. The pipeline uses Automated ML to train time series models on 2 years of daily sales data (730 records). The error occurs randomly with message: 'AutoMLException: Failed to generate any time series model. Could not infer frequency from data.' The pipeline was working correctly until last month when new European market data was added. Data validation shows no missing values or schema changes. What is the most likely root cause and remediation?",
+    "options": {
+      "A": "The issue is irregular datetime formatting in the new European market data (DD/MM/YYYY vs MM/DD/YYYY). Remediate by adding a preprocessing step to standardize all date columns to ISO format and explicitly set the frequency parameter in the AutoMLConfig to 'day'",
+      "B": "Automated ML is hitting resource constraints due to increased data volume. Remediate by increasing the compute target from Standard_D4s_v3 to Standard_D8s_v3 and increasing experiment_timeout_hours from 1 to 3",
+      "C": "There is a data leakage issue where future values are being used in training. Remediate by adding time-based cross-validation with RollingOriginValidator and ensuring the time_column_name is correctly specified",
+      "D": "The new data contains duplicate timestamps causing frequency inference to fail. Remediate by removing duplicate dates, ensuring the time index has unique values, and explicitly setting forecast_horizon to 14 in the AutoMLConfig"
+    },
+    "correct_answer": "A",
+    "topic": "Troubleshooting & Automated ML",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You are implementing a hyperparameter tuning workflow for a deep learning image classifier at Northwind Traders. The model uses ResNet-50 architecture and must be tuned across 5 hyperparameters: learning_rate, batch_size, num_epochs, optimizer, and dropout_rate. The tuning budget allows for 100 total runs with early termination to find optimal configuration within 48 hours. The team needs to compare all runs visually and identify the best combination based on validation accuracy. Which tuning approach provides the most efficient optimization with proper tracking?",
+    "options": {
+      "A": "Create a HyperDriveConfig with Bayesian sampling policy for continuous parameters and random sampling for discrete parameters, set primary_metric='accuracy', goal='maximize', max_total_runs=100, max_concurrent_runs=8, and early_termination_policy with BanditPolicy(slack_factor=0.1). Run as a SweepJob and visualize results in Azure ML studio",
+      "B": "Use GridSearchCV from scikit-learn with predefined parameter grid, run cross-validation on local compute, log metrics manually to MLflow, and analyze results using pandas DataFrame to select the best hyperparameters",
+      "C": "Configure an Azure ML SweepJob with sampling_method='grid' for all parameters, set metric_goal='maximize', max_total_trials=100, max_concurrent_trials=4, and enable median_stopping_policy. Compare runs using the experiment dashboard and download the best run configuration",
+      "D": "Implement manual tuning with random search using ScriptRunConfig for each combination, store results in Azure SQL Database, create a Power BI dashboard for comparison, and select the configuration with highest validation F1-score"
+    },
+    "correct_answer": "A",
+    "topic": "Hyperparameter Tuning",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "Your organization is implementing a multi-stage ML pipeline for customer churn prediction that must perform data validation, feature engineering, model training with five algorithms, and model evaluation. The pipeline must be fully reproducible, support reruns from any stage, and track all artifacts in MLflow. The data scientists use Python notebooks and need to convert their experimentation code into modular components. Which component and pipeline design patterns should you recommend to meet these requirements?",
+    "options": {
+      "A": "Create CommandComponent definitions for each stage with explicit input/output specifications, build a PipelineJob using @pipeline decorator, enable default_datastore for artifact storage, set continue_on_step_failure=False, and register the pipeline as a model in the workspace registry",
+      "B": "Develop PythonScriptStep objects for each pipeline stage, configure RunConfiguration with conda dependencies, use PipelineData for intermediate data passing, enable allow_reuse=True, and publish the pipeline via pipeline.publish() for scheduling",
+      "C": "Build custom components using Component class with defined input/output types, assemble them into a @dsl.pipeline, configure each component with compute target and environment, enable caching with enable_cache=True, and register the pipeline endpoint for HTTP triggering",
+      "D": "Use Azure Data Factory for orchestration with Azure ML Execute Pipeline activities, store features in Feature Store, train models via AutoML via REST API, log metrics to Application Insights, and schedule the pipeline using trigger-based execution"
+    },
+    "correct_answer": "A",
+    "topic": "Reproducible ML Pipelines",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "A financial services company needs to monitor their production credit risk model for performance degradation. The model is deployed to a managed online endpoint serving 10,000 requests/day with P99 latency requirement of 200ms. The team must detect data drift in 20 input features, monitor prediction latency and throughput, and trigger retraining when model accuracy drops below 92% or data drift exceeds threshold. Alerts must be sent to a Teams channel with detailed context. The solution must operate within a $500/month budget for monitoring services. Which monitoring implementation meets all these requirements?",
+    "options": {
+      "A": "Configure Application Insights for the endpoint to capture request metrics, create a Model Monitor with DataDriftDetector scheduled daily, set up metric alerts for model accuracy via log queries, configure Action Group for Teams notification, and use Azure Monitor dashboards for visualization",
+      "B": "Implement custom logging in scoring script to write to Azure Blob Storage, create Azure Functions that analyze logs hourly for statistical anomalies, send alerts via Event Grid to Logic Apps, and display metrics in Grafana",
+      "C": "Enable data collection on deployment with sampling_rate=0.1, create ScheduledTrigger for model monitoring with target and baseline datasets, configure alert rules in Azure Monitor for data drift and accuracy metrics, integrate with Teams via webhook action group",
+      "D": "Use MLflow's model registry evaluation APIs to run periodic assessments, store results in Cosmos DB, create Power Automate flows to check thresholds and post to Teams, and visualize trends in Power BI with automatic refresh"
+    },
+    "correct_answer": "C",
+    "topic": "Alerting & Model Monitoring",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "You are designing a GenAIOps infrastructure for a legal document analysis system using Azure AI Foundry. The solution must deploy a Llama 3.1 405B model via serverless endpoints for high-volume document processing with ability to handle 5,000 concurrent requests. The system requires guaranteed throughput of 10,000 tokens/second during business hours, with costs controlled through provisioned throughput units. All prompts and responses must be logged for compliance, and the model must be accessible only via private networking from the corporate Azure Virtual Network. Which infrastructure configuration meets these requirements?",
+    "options": {
+      "A": "Create a Foundry project with managed online endpoint deployment, configure provisioned throughput with 10 PTUs, enable data collection with full logging, attach the workspace to the corporate VNet with private endpoints, and configure auto-scaling rules based on request queue length",
+      "B": "Deploy the foundation model via managed compute with Standard_NC48ads_A100_v4 VMs, configure scaling from 2 to 8 instances based on CPU utilization, enable Application Insights logging, restrict access via network security groups, and monitor token consumption via Azure Cost Management",
+      "C": "Use serverless API deployment with consumption-based billing, implement Azure Front Door for load balancing, store prompts and responses in Azure SQL with encryption, configure VNet service endpoints for security, and set up alerting when response latency exceeds 5 seconds",
+      "D": "Create a dedicated inference cluster with Kubernetes, deploy the model using Triton Inference Server, configure Horizontal Pod Autoscaler based on request rate, implement private link service for VNet connectivity, and log all inferences to Log Analytics workspace"
+    },
+    "correct_answer": "A",
+    "topic": "GenAIOps Infrastructure",
+    "difficulty": "hard"
+  },
+  {
+    "question_text": "Your team is implementing responsible AI dashboards for a loan approval model to meet regulatory requirements. The model must be evaluated for fairness across gender and age groups, with detailed metrics on model interpretability and error analysis. All assessments must be versioned alongside model versions and accessible to auditors via a web portal. The solution should integrate with the existing Azure ML model registry and provide actionable insights to data scientists. Which implementation approach provides the most comprehensive responsible AI tracking?",
+    "options": {
+      "A": "Use the Azure ML Responsible AI dashboard by generating it via rai_insights SDK, upload the assessment to the model registry as an artifact, share via Azure ML studio workspace, and schedule monthly re-evaluation when new demographic data arrives",
+      "B": "Create custom fairness metrics using Fairlearn library, run assessment via Jupyter notebook, store results in Model registry as tags, visualize using Power BI embedded reports, and configure alerts when fairness metrics breach thresholds",
+      "C": "Implement SHAP values for feature importance calculation, generate LIME explanations for sample predictions, log all metrics to MLflow, create a Streamlit app for visualization, and export reports as PDF for audit trail",
+      "D": "Configure Model Monitor with fairness signals enabled, schedule monthly evaluation jobs that compute statistical parity difference and equalized odds, store outputs in the workspace default datastore, and build a custom dashboard using Azure Dashboards service"
+    },
+    "correct_answer": "A",
+    "topic": "Responsible AI & Model Evaluation",
+    "difficulty": "medium"
+  },
+  {
+    "question_text": "You need to configure progressive rollout for a new recommendation model replacing an existing production model. The current A/B test shows the new model has 3% higher click-through rate but slightly higher latency. The rollout must minimize risk by sending 5% of traffic initially, gradually increasing to 100% over 7 days if error rate remains below 1% and latency under 300ms P99. The solution must support instant rollback if anomalies are detected. Which deployment strategy and configuration should you implement?",
+    "options": {
+      "A": "Deploy the new model as a separate deployment on the managed online endpoint with traffic_weight=5%, configure Azure Monitor alerts for error rate and latency, manually increase traffic weight daily based on performance, and maintain ability to set traffic_weight=0% for immediate rollback",
+      "B": "Create a blue-green deployment with the new model on a separate endpoint, use Azure Traffic Manager to route increasing percentage of users, configure Application Insights availability tests, and switch DNS back to old endpoint if issues occur",
+      "C": "Use Kubernetes with Istio for canary deployment, configure virtual service with weight-based routing, implement Prometheus metrics collection, and use Argo Rollouts for automated progressive delivery with analysis templates",
+      "D": "Deploy both models to the same endpoint with canary traffic allocation, set up automated rollout rules in endpoint settings that increase traffic based on performance metrics, and configure auto-rollback triggers when health checks fail"
+    },
+    "correct_answer": "D",
+    "topic": "Safe Rollout Strategies",
+    "difficulty": "hard"
+  }
+]

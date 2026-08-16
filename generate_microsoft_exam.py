@@ -148,28 +148,26 @@ AI-300 OFFICIAL SYLLABUS (generate questions covering ALL these areas evenly):
 REQUIREMENTS:
 1. Each question MUST have exactly 4 options (A, B, C, D) with ONE correct answer
 2. NO definitions, NO "what does X stand for", NO "which is true about X"
-3. Difficulty: 10% easy, 50% medium, 40% hard
-4. Microsoft passing score is 700/1000 — calibrate difficulty accordingly
+3. Difficulty: 0% easy, 30% medium, 70% hard — THIS IS AN EXPERT-LEVEL EXAM
+4. Microsoft passing score is 700/1000 — these questions should STUMP people who only read docs without hands-on experience
 5. All options must be plausible — real Azure services, commands, or configurations
+6. EVERY question text MUST be 4-8 sentences long with a detailed enterprise scenario
+7. Include specific constraints: team size, data volumes (TB), latency requirements (ms), budget ($), compliance (HIPAA/SOC2), regions, SLAs
+8. Options MUST be 2-3 sentences each — not just short phrases. Include specific SKUs, CLI flags, YAML properties, SDK class names
+9. At least 50% of questions should require knowing MULTIPLE Azure services and how they interact
 
 GENERATE THESE MICROSOFT EXAM QUESTION STYLES (mix them):
 
-STYLE 1 — Scenario + Decision (40% of questions):
-Start with: "You are a ML engineer at [company]. [scenario with constraints]... What should you do?"
-The scenario MUST include constraints that eliminate 2-3 options (cost, latency, compliance, region, etc.)
+STYLE 1 — Complex Multi-Constraint Scenario (50% of questions):
+Start with a 5-8 sentence enterprise scenario with at least 4 specific constraints (cost, latency, compliance, data size, team expertise, existing infrastructure). The candidate must evaluate ALL constraints together to find the single correct answer. Example: "You are a senior MLOps engineer at Contoso Financial. Your team of 3 data scientists has trained a credit scoring model using 50TB of historical transaction data. The model must serve predictions with P99 latency under 100ms for 5,000 concurrent users. Your company requires SOC2 compliance and all data must stay within the EU region. The infrastructure budget is $2,000/month. The model uses a custom PyTorch framework with 8GB model weights. Currently, your team uses GitHub for source control and has no Kubernetes expertise. Which deployment approach meets ALL requirements?"
 
-STYLE 2 — Yes/No Statement Sets (20% of questions):
-"For each statement, determine if it is true or false regarding [topic]:
-Statement: [technical claim about Azure ML]"
-Options: A. Yes  B. No  C. Yes, but only if...  D. No, because...
+STYLE 2 — Multi-Step Architecture (25% of questions):
+"Your organization is implementing [complex goal]. The solution must [requirement 1], [requirement 2], and [requirement 3]. The current infrastructure includes [existing services]. Which combination of steps, executed in the correct order, achieves this goal while meeting all requirements?"
+Options should be 4 different multi-step approaches (each 2-3 sentences describing a sequence of actions).
 
-STYLE 3 — Correct Order / Steps (20% of questions):
-"You need to [goal]. Which sequence of steps should you follow?"
-Options are different orderings of 3-4 steps. Only one order is correct.
-
-STYLE 4 — Code/Command Selection (20% of questions):
-"Which Azure CLI command / Python SDK code / YAML configuration achieves [goal]?"
-Options are 4 different commands or code snippets — only one is syntactically and semantically correct.
+STYLE 3 — Troubleshooting & Debugging (25% of questions):
+"A production ML pipeline at [company] has been failing intermittently for 3 days. The pipeline trains a [model type] using [compute]. Error logs show [specific error message or symptom]. The pipeline was working correctly before [recent change]. Monitoring shows [specific metric pattern]. What is the most likely root cause and the correct remediation?"
+Options should describe different root causes + their fixes (each 2 sentences).
 
 CRITICAL OUTPUT RULES:
 - Return ONLY a valid JSON array
@@ -179,40 +177,16 @@ CRITICAL OUTPUT RULES:
 
 [
   {{
-    "question_text": "You are a ML engineer at Fabrikam Inc. Your team trained a fraud detection model that must process 10,000 transactions per second with less than 50ms latency. The model is 2GB in size. Budget is limited to $500/month. Which deployment should you use?",
+    "question_text": "You are a senior MLOps engineer at Contoso Financial Services. Your team has trained a real-time fraud detection model using PyTorch that processes credit card transactions. The model requires GPU inference with P99 latency under 50ms to meet SLA requirements. Your company processes 25,000 transactions per second during peak hours (Black Friday) but only 2,000 TPS during normal periods. The security team mandates that all inference must occur within a private virtual network with no public internet exposure. Your infrastructure budget is capped at $3,500/month and the team has no Kubernetes experience. The model artifact is 4.2GB and requires CUDA 11.8. Which deployment architecture satisfies all constraints?",
     "options": {{
-      "A": "Managed online endpoint with Standard_DS3_v2 and 3 instances",
-      "B": "Batch endpoint with Standard_NC6 GPU cluster",
-      "C": "Managed online endpoint with Standard_F4s_v2 and auto-scaling from 2 to 10 instances",
-      "D": "Azure Container Instance with 4 vCPUs and 16GB RAM"
-    }},
-    "correct_answer": "C",
-    "topic": "Deployment Infrastructure",
-    "difficulty": "hard"
-  }},
-  {{
-    "question_text": "Statement: When you configure a managed online endpoint with `mirror_traffic` set to 10, exactly 10% of production requests are duplicated to the mirror deployment and responses from the mirror are returned to the client.",
-    "options": {{
-      "A": "Yes — mirror traffic returns responses from both deployments",
-      "B": "No — mirror traffic duplicates requests but discards mirror responses; only the production deployment responds to the client",
-      "C": "Yes — but only if the mirror deployment has the same instance count",
-      "D": "No — mirror_traffic is not a valid endpoint property"
-    }},
-    "correct_answer": "B",
-    "topic": "Model Deployment",
-    "difficulty": "hard"
-  }},
-  {{
-    "question_text": "You need to set up a training pipeline that versions datasets, tracks experiments, and automatically registers the best model. Which sequence of steps is correct?",
-    "options": {{
-      "A": "Create data asset -> Create compute cluster -> Submit pipeline job -> Register model from best run",
-      "B": "Register model -> Create data asset -> Submit pipeline job -> Create compute cluster",
-      "C": "Create compute cluster -> Register model -> Create data asset -> Submit pipeline job",
-      "D": "Submit pipeline job -> Create data asset -> Create compute cluster -> Register model from best run"
+      "A": "Deploy to a managed online endpoint with Standard_NC6s_v3 GPU instances, configure auto-scaling from 1 to 8 instances based on request latency, and enable private endpoint connectivity by attaching the workspace to your VNet with a private link",
+      "B": "Deploy to Azure Kubernetes Service with GPU node pools using Standard_NC6s_v3 VMs, configure horizontal pod autoscaler with custom metrics, and restrict access using an internal load balancer within your VNet",
+      "C": "Deploy to a batch endpoint with Standard_NC6s_v3 compute cluster, configure the scoring script to process micro-batches of 100 transactions, and use a private endpoint for the storage account",
+      "D": "Deploy to Azure Container Instances with GPU support, configure 8 container groups behind Azure Front Door, and use service endpoints to restrict traffic to your VNet"
     }},
     "correct_answer": "A",
-    "topic": "Model Training",
-    "difficulty": "medium"
+    "topic": "Deployment Infrastructure",
+    "difficulty": "hard"
   }}
 ]"""
 
