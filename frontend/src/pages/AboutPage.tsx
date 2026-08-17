@@ -8,111 +8,92 @@ const AboutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
-        title="About MockMaster — Free JAIIB & CAIIB Exam Prep Platform"
-        description="Learn about MockMaster — who we are, our mission to help bank officers clear JAIIB and CAIIB exams with AI-powered practice, detailed explanations, and free access to 3000+ questions."
+        title="About MockMaster — Free Certification Exam Practice Platform"
+        description="MockMaster helps professionals pass certification exams with AI-powered practice tests, detailed explanations, and performance analytics. JAIIB, CAIIB, and Microsoft AI-300."
         canonical="https://mockmaster.fun/about"
       />
 
-      {/* Navigation Bar */}
+      {/* Nav */}
       <nav className="border-b border-gray-800 sticky top-0 z-50 bg-gray-950/90 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-sm sm:text-lg">M</span>
+            <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">M</span>
             </div>
-            <span className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">MockMaster</span>
-            <span className="text-base font-bold text-gray-900 sm:hidden">MockMaster</span>
+            <span className="text-xl font-bold">MockMaster</span>
           </div>
-          <div className="flex items-center gap-1 sm:gap-4">
-            <button
-              onClick={() => navigate('/login')}
-              className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-300 hover:text-white transition"
-            >
-              Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
-              className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
-            >
-              Sign Up
-            </button>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button onClick={() => navigate('/exams')} className="hidden sm:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Exams</button>
+            <button onClick={() => navigate('/login')} className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</button>
+            <button onClick={() => navigate('/register')} className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-indigo-950/50 to-gray-950 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-            About MockMaster
+      {/* Hero */}
+      <section className="relative overflow-hidden py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/40 via-transparent to-transparent" />
+        <div className="max-w-3xl mx-auto text-center relative">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
+            About <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">MockMaster</span>
           </h1>
-          <p className="text-base sm:text-xl text-gray-400 leading-relaxed">
-            Your free companion for JAIIB & CAIIB exam preparation — built by bankers, for bankers.
+          <p className="text-lg text-gray-400 leading-relaxed">
+            Free AI-powered practice tests for banking professionals and cloud engineers. Built to help you pass on your first attempt.
           </p>
         </div>
       </section>
 
-      {/* Our Mission */}
+      {/* Mission */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-lg border border-gray-100">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <span className="text-xl sm:text-2xl">🎯</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Mission</h2>
-            </div>
-            <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
-              We're on a mission to help bank officers clear their JAIIB and CAIIB exams with confidence. Through AI-powered practice sets, detailed explanations citing official sources, and adaptive learning, we make quality exam preparation accessible to everyone — completely free of charge.
+          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 sm:p-10 shadow-2xl">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">Our Mission</h2>
+            <p className="text-indigo-100 text-lg leading-relaxed">
+              Quality exam preparation shouldn't cost a fortune. We're building the most effective practice platform for professional certifications — powered by AI, backed by official sources, and completely free.
             </p>
           </div>
         </div>
       </section>
 
       {/* What We Offer */}
-      <section className="bg-gray-900/50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl sm:text-2xl">🚀</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">What We Offer</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">What We Offer</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-indigo-500/30 transition">
+              <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">📚</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">3000+ Questions</h3>
+              <h3 className="text-lg font-bold text-white mb-2">4,300+ Questions</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                A comprehensive question bank covering all JAIIB papers — IE&IFS, PPB, AFM, and RBWM — with new questions added regularly.
+                JAIIB (IE&IFS, PPB, AFM, RBWM) + Microsoft AI-300. Previous year papers included. Updated regularly with new content.
               </p>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition">
+              <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">🤖</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">AI Explanations</h3>
+              <h3 className="text-lg font-bold text-white mb-2">AI Explanations</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Every question comes with AI-generated explanations that cite specific RBI circulars, Master Directions, and IIBF textbook references.
+                Every question gets a detailed AI explanation citing RBI circulars, IIBF textbooks, or Azure documentation. Not generic — exam-specific.
               </p>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-green-500/30 transition">
+              <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">📊</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Performance Analytics</h3>
+              <h3 className="text-lg font-bold text-white mb-2">Performance Analytics</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Track your progress with detailed analytics — see your strengths, identify weak areas, and monitor improvement over time.
+                Score trends, weak area identification, exam readiness score, percentile ranking, and study streak tracking.
               </p>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mb-3">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-amber-500/30 transition">
+              <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">💰</span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Free Forever</h3>
+              <h3 className="text-lg font-bold text-white mb-2">Free Forever</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                No hidden charges, no premium tiers, no credit card required. Quality exam preparation should be accessible to every bank officer.
+                No hidden charges. No premium tiers. No credit card. Quality exam preparation accessible to everyone.
               </p>
             </div>
           </div>
@@ -120,190 +101,124 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* Why We Built This */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6">Why We Built This</h2>
+          <div className="space-y-4 text-gray-300 text-base leading-relaxed">
+            <p>
+              MockMaster was built by professionals who experienced the pain of exam preparation firsthand — outdated materials, expensive coaching classes, and scattered resources that never matched the actual exam pattern.
+            </p>
+            <p>
+              We combined modern AI technology with expert-curated content to create a platform that actually helps you pass. Our questions are sourced from official textbooks and previous exam papers. Our AI explanations cite specific regulatory references so you understand the "why" behind every answer.
+            </p>
+            <p>
+              Whether you're a bank officer preparing for JAIIB/CAIIB or a cloud engineer studying for Microsoft AI-300, MockMaster gives you the practice and feedback you need — without spending a rupee.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Exams Covered */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-10 text-white shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                <span className="text-xl sm:text-2xl">💡</span>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">Exams We Cover</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl">🏦</span>
+                <div>
+                  <h3 className="font-bold text-white">JAIIB</h3>
+                  <p className="text-xs text-gray-500">Indian Institute of Banking & Finance</p>
+                </div>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold">Why We Built This</h2>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>• IE & IFS — 1,163 questions (23 sets)</li>
+                <li>• PPB — 760 questions (15 sets)</li>
+                <li>• AFM — 1,195 questions (23 sets)</li>
+                <li>• RBWM — 635 questions (13 sets)</li>
+              </ul>
             </div>
-            <p className="text-base sm:text-lg text-blue-100 leading-relaxed mb-4">
-              MockMaster was founded by banking professionals who struggled with outdated study materials, expensive coaching, and scattered resources while preparing for their own JAIIB and CAIIB exams.
-            </p>
-            <p className="text-base sm:text-lg text-blue-100 leading-relaxed">
-              We believe every bank officer deserves access to quality exam preparation regardless of their budget. That's why we built MockMaster — a platform that combines the latest technology with expert-curated content to give you the best possible chance of clearing your exams in the first attempt.
-            </p>
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl">🤖</span>
+                <div>
+                  <h3 className="font-bold text-white">Microsoft AI-300</h3>
+                  <p className="text-xs text-gray-500">Operationalizing ML & GenAI Solutions</p>
+                </div>
+              </div>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>• 600 scenario-based questions (12 sets)</li>
+                <li>• Covers MLOps, GenAIOps, RAG, fine-tuning</li>
+                <li>• Azure ML, Foundry, GitHub Actions</li>
+                <li>• Expert-level difficulty</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Our Approach */}
-      <section className="bg-gray-900/50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl sm:text-2xl">⚙️</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Approach</h2>
-          </div>
-          <div className="space-y-4 sm:space-y-6">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8">Our Approach</h2>
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-bold text-sm">1</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Aligned with Latest IIBF Syllabus</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  All questions are mapped to the current IIBF syllabus, ensuring you practice exactly what will be tested in the exam. We update our question bank whenever the syllabus changes.
-                </p>
+                <h3 className="font-bold text-white mb-1">Official Sources Only</h3>
+                <p className="text-gray-400 text-sm">Questions mapped to current IIBF syllabus and Microsoft Learn study guides. Explanations reference RBI circulars, Master Directions, and Azure documentation.</p>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
-              <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+            <div className="flex items-start gap-4 bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-bold text-sm">2</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">AI Explanations with Official References</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Our AI-powered explanations don't just tell you the right answer — they cite specific RBI Master Circulars, Master Directions, IIBF textbook chapters, and relevant Banking Acts so you understand the "why" behind every concept.
-                </p>
+                <h3 className="font-bold text-white mb-1">AI That Teaches, Not Just Answers</h3>
+                <p className="text-gray-400 text-sm">Our AI doesn't just say "B is correct." It explains why B is correct, why A/C/D are wrong, and gives you a real-world scenario to cement the concept.</p>
               </div>
             </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-md border border-gray-100 flex items-start gap-4">
-              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+            <div className="flex items-start gap-4 bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <div className="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-bold text-sm">3</span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Adaptive Learning for Weak Areas</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  Our system identifies your weak topics and adapts your practice sessions accordingly. Spend less time on what you already know and more time strengthening areas that need improvement.
-                </p>
+                <h3 className="font-bold text-white mb-1">Community-Driven Quality</h3>
+                <p className="text-gray-400 text-sm">Users can report incorrect questions, discuss answers, and share alternative reasoning. The community helps maintain accuracy.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Content Quality */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <span className="text-xl sm:text-2xl">✅</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Content Quality</h2>
-          </div>
-          <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-lg border border-gray-100">
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-300 leading-relaxed">
-                  <strong>Accuracy Reviewed:</strong> All questions are reviewed for factual accuracy before being added to the platform.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-300 leading-relaxed">
-                  <strong>Official Sources:</strong> Explanations reference official sources including RBI circulars, IIBF textbooks, Banking Regulation Act, NI Act, and other relevant legislation.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-300 leading-relaxed">
-                  <strong>Regular Updates:</strong> Our content is updated whenever RBI policies change, new Master Directions are issued, or the IIBF syllabus is revised.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-green-500 font-bold mt-0.5">✓</span>
-                <p className="text-gray-300 leading-relaxed">
-                  <strong>Community Feedback:</strong> Users can flag inaccurate questions, which are promptly reviewed and corrected by our team.
-                </p>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Us */}
-      <section className="bg-gray-900/50 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-lg border border-gray-100">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">✉️</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Contact Us</h2>
-            <p className="text-gray-400 mb-6 leading-relaxed">
-              Have questions, feedback, or suggestions? We'd love to hear from you.
-            </p>
+      {/* Contact */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Get in Touch</h2>
+          <p className="text-gray-400 mb-8">Have questions, feedback, or want to contribute questions? We'd love to hear from you.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="mailto:support@mockmaster.fun"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+              className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition"
             >
-              <span>📧</span>
-              support@mockmaster.fun
+              📧 support@mockmaster.fun
             </a>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-gradient-to-r from-indigo-600 to-purple-600 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">Ready to Start Preparing?</h2>
-          <p className="text-base sm:text-xl text-blue-100 mb-6 sm:mb-8">
-            Join thousands of bank officers who are preparing smarter with MockMaster.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate('/register')}
-              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition transform hover:scale-105"
+              onClick={() => navigate('/contact')}
+              className="px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl transition"
             >
-              Get Started Free
-            </button>
-            <button
-              onClick={() => navigate('/login')}
-              className="px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:bg-opacity-10 transition"
-            >
-              Sign In
+              Contact Form
             </button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 text-gray-500 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h4 className="text-white font-bold mb-4">About</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/blog" className="hover:text-white transition">Blog</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Practice</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/practice-tests" className="hover:text-white transition">Practice Tests</a></li>
-                <li><a href="/practice-tests/ie-ifs" className="hover:text-white transition">IE & IFS</a></li>
-                <li><a href="/practice-tests/ppb" className="hover:text-white transition">PPB</a></li>
-                <li><a href="/practice-tests/afm" className="hover:text-white transition">AFM</a></li>
-                <li><a href="/practice-tests/rbwm" className="hover:text-white transition">RBWM</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
-                <li><a href="/terms-of-service" className="hover:text-white transition">Terms of Service</a></li>
-                <li><a href="/contact" className="hover:text-white transition">Contact</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; 2026 MockMaster. All rights reserved.</p>
-          </div>
+      <footer className="border-t border-gray-800 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center text-sm text-gray-500">
+          <p>&copy; 2026 MockMaster. All rights reserved.</p>
         </div>
       </footer>
     </div>
