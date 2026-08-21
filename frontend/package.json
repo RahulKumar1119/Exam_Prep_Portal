@@ -26,12 +26,12 @@
     "react-helmet-async": "^3.0.0",
     "react-query": "^3.39.0",
     "react-router-dom": "^6.20.0",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.3",
+    "@testing-library/user-event": "^14.6.4",
     "@types/jest": "^30.0.0",
     "@types/node": "^20.10.0",
     "@types/react": "^19.2.18",
@@ -41,7 +41,7 @@
     "eslint-config-react-app": "^7.0.0",
     "postcss": "^8.5.25",
     "prettier": "^3.9.6",
-    "puppeteer": "^25.5.0",
+    "puppeteer": "^25.7.0",
     "react-scripts": "5.0.1",
     "serve-handler": "^6.1.7",
     "tailwindcss": "^3.4.19",
