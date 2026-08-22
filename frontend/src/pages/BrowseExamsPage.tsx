@@ -129,7 +129,7 @@ const EXAMS: ExamCard[] = [
     difficulty: 'Advanced',
     status: 'live',
     color: 'from-emerald-500 to-teal-700',
-    link: '/register',
+    link: '/practice-tests/abm',
   },
 ];
 
