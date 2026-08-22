@@ -224,8 +224,8 @@ const HomePage: React.FC = () => {
               { id: 'PPB', name: 'PPB', questions: 760, color: 'from-indigo-500 to-indigo-700' },
               { id: 'AFM', name: 'AFM', questions: 1195, color: 'from-purple-500 to-purple-700' },
               { id: 'RBWM', name: 'RBWM', questions: 635, color: 'from-pink-500 to-pink-700' },
+              { id: 'ABM', name: 'ABM (CAIIB)', questions: 740, color: 'from-emerald-500 to-teal-700' },
               ...(selectedExam === 'ALL' ? [
-                { id: 'ABM', name: 'ABM', questions: 740, color: 'from-emerald-500 to-teal-700' },
                 { id: 'AI-300', name: 'AI-300', questions: 600, color: 'from-purple-600 to-indigo-700' },
               ] : []),
             ]).map((paper) => (

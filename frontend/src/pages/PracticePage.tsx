@@ -33,6 +33,8 @@ const PracticePage: React.FC = () => {
 
   const papers = selectedExam === 'ALL'
     ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || [])]
+    : selectedExam === 'JAIIB'
+    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || [])]
     : PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];
   const currentPaperInfo = papers.find(p => p.id === selectedPaper);
 
