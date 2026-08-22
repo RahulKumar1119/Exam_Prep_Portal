@@ -38,7 +38,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-32 sm:pb-24 text-center relative">
           <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span>4,600+ questions • Always free</span>
+            <span>5,000+ questions • Always free</span>
           </div>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
             Master your certification.
@@ -116,12 +116,12 @@ const LandingPage: React.FC = () => {
               <p className="text-sm text-gray-400 mb-5">ABM paper live. Statistics, HRM, credit management, compliance & corporate governance.</p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-2xl font-bold text-white">355</span>
+                  <span className="text-2xl font-bold text-white">740</span>
                   <span className="text-xs text-gray-500">questions</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-white">7</span>
+                  <span className="text-lg font-bold text-white">14</span>
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
