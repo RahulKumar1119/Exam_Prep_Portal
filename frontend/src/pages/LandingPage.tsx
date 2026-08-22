@@ -38,7 +38,7 @@ const LandingPage: React.FC = () => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-32 sm:pb-24 text-center relative">
           <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span>4,300+ questions • Always free</span>
+            <span>4,600+ questions • Always free</span>
           </div>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
             Master your certification.
@@ -70,7 +70,7 @@ const LandingPage: React.FC = () => {
             <p className="text-gray-400">Select an exam to start practicing. More exams coming soon.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* JAIIB */}
             <div
               onClick={() => navigate('/register')}
@@ -85,7 +85,7 @@ const LandingPage: React.FC = () => {
                   <p className="text-xs text-gray-500">Indian Institute of Banking & Finance</p>
                 </div>
               </div>
-              <p className="text-sm text-gray-400 mb-5">4 papers: IE&IFS, PPB, AFM, RBWM. Covers banking operations, financial management, and wealth management.</p>
+              <p className="text-sm text-gray-400 mb-5">4 papers: IE&IFS, PPB, AFM, RBWM. Banking operations, financial management, wealth management.</p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
                   <span className="text-2xl font-bold text-white">3,700+</span>
@@ -93,13 +93,40 @@ const LandingPage: React.FC = () => {
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-white">72</span>
+                  <span className="text-lg font-bold text-white">74</span>
+                  <span className="text-xs text-gray-500">sets</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CAIIB */}
+            <div
+              onClick={() => navigate('/register')}
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-8 cursor-pointer hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                  <span className="text-2xl">🎓</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold group-hover:text-emerald-400 transition">CAIIB</h3>
+                  <p className="text-xs text-gray-500">Certified Associate (Advanced)</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-400 mb-5">ABM paper live. Statistics, HRM, credit management, compliance & corporate governance.</p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-2xl font-bold text-white">355</span>
+                  <span className="text-xs text-gray-500">questions</span>
+                </div>
+                <div className="w-px h-6 bg-gray-800" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold text-white">7</span>
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-white">4</span>
-                  <span className="text-xs text-gray-500">papers</span>
+                  <span className="text-lg font-bold text-green-400">NEW</span>
                 </div>
               </div>
             </div>

@@ -159,43 +159,56 @@ table = dynamodb.Table(DYNAMODB_TABLE)
 
 
 # ── Prompt Template ───────────────────────────────────────────────────────────
-PROMPT = """Based on this PDF textbook for CAIIB paper "{paper_name}", generate exactly {num_questions} HARD statement-based MCQ questions in the exact IIBF exam format.
+PROMPT = """Based on this PDF textbook for CAIIB paper "{paper_name}", generate exactly {num_questions} HARD MCQ questions in the exact IIBF exam format.
 
 This is CAIIB (Certified Associate of Indian Institute of Bankers) — an ADVANCED level exam. Questions must be significantly harder than JAIIB.
 
-STRICT FORMAT RULES:
-- Each question MUST present 3-4 numbered statements (1, 2, 3, 4)
-- Question asks "Which of the following statements is/are correct?" or "Which of the following correctly describes..."
-- Options MUST be combinations: "1 and 2 only", "1, 2 and 3 only", "2 and 4 only", "1, 2, 3 and 4"
-- Include 1-2 INCORRECT/misleading statements that look plausible but are factually wrong
-- Questions must be based on ACTUAL content from this PDF — use specific numbers, percentages, Act names, section numbers, RBI circular references
-- Each question must test DEEP knowledge — not basic definitions
+IIBF QUESTION TYPES (generate a MIX of all these):
 
-CAIIB-SPECIFIC RULES:
-- Questions should test application of concepts, not just recall
-- Include numerical questions (calculations for BFM: bond pricing, forex, derivatives)
-- Include case-based scenarios for credit decisions (ABM)
-- Include specific section numbers of Acts (BRBL)
-- Include Basel III/IV norms, ICAAP, stress testing concepts (BFM)
-- Assume the candidate has already passed JAIIB — don't ask basic questions
+TYPE 1 — Knowledge Testing (15%):
+Specific facts, thresholds, section numbers, RBI circular references. NOT definitions.
+Example: "Under Section 35A of BR Act 1949, RBI can issue directions to banks when..."
+
+TYPE 2 — Conceptual Grasp (15%):
+Test deep understanding of concepts — WHY something works, not just WHAT it is.
+Example: "If CRR is increased by 50 bps, which of the following effects on money supply is most accurate?"
+
+TYPE 3 — Analytical/Logical Exposition (15%):
+Present data/scenario and ask candidate to analyze, interpret, or draw conclusions.
+Example: "A bank's NPA ratio moved from 4.2% to 5.8% while gross advances grew 12%. Which interpretation is correct?"
+
+TYPE 4 — Problem Solving / Numerical (20%):
+Calculations: ratios, VaR, bond pricing, capital adequacy, probability, regression, BEP.
+Example: "A bond with face value ₹1000, coupon 8%, maturity 5 years is trading at ₹950. Calculate YTM (approximate)."
+
+TYPE 5 — Case Analysis (20%):
+Present a 3-4 sentence case scenario about a bank/company, then ask what action/decision is correct.
+Example: "XYZ Bank has Capital Adequacy Ratio of 9.5%, Tier-1 at 6.2%. As per Basel III norms for Indian banks..."
+
+TYPE 6 — Statement-Based (15%):
+Present 3-4 numbered statements, ask which are correct/incorrect. Include 1-2 tricky wrong statements.
+Example: "Consider the following statements regarding ICAAP: 1. ... 2. ... 3. ... 4. ... Which are correct?"
+
+STRICT RULES:
+- Each question MUST have exactly 4 options (A, B, C, D) with ONE correct answer
+- NO basic definitions — assume candidate has passed JAIIB
+- Include specific numbers: percentages, ₹ amounts, time limits, section numbers
+- For numerical questions, show the calculation setup in the question
+- All 4 options must be plausible — real values that could result from different calculation approaches
+- Difficulty: 20% medium, 80% hard
 
 TOPIC RULES:
 - "topic" must be a specific syllabus topic from: {topics}
 - Do NOT use the paper name as topic
 
-DIFFICULTY DISTRIBUTION (CAIIB is harder than JAIIB):
-- 2 EASY questions (straightforward application)
-- 4 MEDIUM questions (multi-concept integration, specific provisions)
-- 4 HARD questions (tricky statements with subtle errors, numerical, requires deep analysis)
-
 Return ONLY a valid JSON array. No markdown, no explanation, no ```json wrapper.
 [
   {{
-    "question_text": "Consider the following statements regarding Basel III Capital Adequacy Framework:\\n1. Common Equity Tier 1 (CET1) must be at least 5.5% of RWA for Indian banks.\\n2. Capital Conservation Buffer is 2.5% of RWA.\\n3. Counter-cyclical buffer ranges from 0-2.5%.\\n4. Total minimum capital requirement including CCB is 11.5%.\\nWhich of the above statements are correct?",
-    "options": {{"A": "1, 2 and 3 only", "B": "1 and 2 only", "C": "2, 3 and 4 only", "D": "1, 2, 3 and 4"}},
-    "correct_answer": "D",
-    "topic": "Capital adequacy",
-    "difficulty": "hard",
+    "question_text": "question here",
+    "options": {{"A": "option A", "B": "option B", "C": "option C", "D": "option D"}},
+    "correct_answer": "B",
+    "topic": "specific topic name",
+    "difficulty": "medium|hard",
     "reference": "Page X"
   }}
 ]"""
