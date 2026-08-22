@@ -146,7 +146,7 @@ const PAPER_DETAILS: Record<string, PaperDetail> = {
     slug: 'abm',
     name: 'ABM',
     fullName: 'Advanced Bank Management (CAIIB)',
-    questions: '355+',
+    questions: '740+',
     rating: 4.7,
     reviews: 34,
     description: 'Advanced-level practice questions for CAIIB Paper 1 — covering statistics, human resource management, credit management, and compliance & corporate governance. Includes numerical problems, case analysis, and statement-based questions as per IIBF exam pattern.',
@@ -164,7 +164,7 @@ const PAPER_DETAILS: Record<string, PaperDetail> = {
       { text: 'A bank has the following data: Mean of loan defaults = 4.5%, Standard deviation = 1.2%, Confidence level = 95% (Z = 1.96). What is the upper limit of the confidence interval for loan defaults?', options: ['5.7%', '6.85%', '6.95%', '7.06%'], answer: 'B', explanation: 'Upper limit = Mean + Z × SD = 4.5% + 1.96 × 1.2% = 4.5% + 2.352% = 6.852% ≈ 6.85%. This is a standard confidence interval calculation tested in Module A Statistics.' },
       { text: 'Consider the following statements regarding IBC 2016:\\n1. CIRP must be completed within 330 days including litigation.\\n2. CoC requires 66% voting share for approval of resolution plan.\\n3. Operational creditors have voting rights in CoC.\\n4. Pre-packed resolution is available for MSMEs with default above ₹1 crore.\\nWhich statements are correct?', options: ['1 and 2 only', '1, 2 and 4 only', '2 and 3 only', '1, 2, 3 and 4'], answer: 'A', explanation: 'Statement 1 is correct (330 days max). Statement 2 is correct (66% voting). Statement 3 is wrong — operational creditors do NOT have voting rights in CoC. Statement 4 is wrong — pre-pack is for defaults up to ₹1 crore for MSMEs.' },
     ],
-    features: ['355+ advanced-level questions', 'Numerical & calculation-based problems', 'Case analysis scenarios', 'Statement-based questions (IIBF pattern)', 'AI explanations for every question', 'Covers all 4 ABM modules', 'CAIIB difficulty level (harder than JAIIB)', '7 practice sets of 50 questions each'],
+    features: ['355+ advanced-level questions', 'Numerical & calculation-based problems', 'Case analysis scenarios', 'Statement-based questions (IIBF pattern)', 'AI explanations for every question', 'Covers all 4 ABM modules', 'CAIIB difficulty level (harder than JAIIB)', '14 practice sets of 50 questions each'],
     faqs: [
       { q: 'How hard are ABM questions compared to JAIIB?', a: 'Significantly harder. ABM assumes you have passed JAIIB. Questions test application, analysis, and problem-solving — not basic recall. Expect numerical calculations in Module A and case scenarios in Module C.' },
       { q: 'Are there numerical/calculation questions?', a: 'Yes. Module A (Statistics) has probability, regression, VaR, and confidence interval calculations. Module C has working capital and ratio analysis calculations. About 20% of questions are numerical.' },

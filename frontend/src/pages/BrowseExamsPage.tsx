@@ -124,7 +124,7 @@ const EXAMS: ExamCard[] = [
     provider: 'IIBF',
     providerIcon: '🏦',
     category: 'Banking',
-    questions: 355,
+    questions: 740,
     sets: 7,
     difficulty: 'Advanced',
     status: 'live',

@@ -16,7 +16,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
     { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 635, sets: 13 },
   ],
   'CAIIB': [
-    { id: 'ABM', name: 'ABM', fullName: 'Advanced Bank Management', totalQuestions: 355, sets: 7 },
+    { id: 'ABM', name: 'ABM', fullName: 'Advanced Bank Management', totalQuestions: 740, sets: 14 },
   ],
   'AI-300': [
     { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 600, sets: 12 },
