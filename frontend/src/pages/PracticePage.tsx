@@ -32,7 +32,7 @@ const PracticePage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const papers = selectedExam === 'ALL'
-    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || [])]
+    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || [])]
     : PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];
   const currentPaperInfo = papers.find(p => p.id === selectedPaper);
 
