@@ -178,7 +178,7 @@ const RegisterPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 I'm preparing for
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setExamPreference('JAIIB')}
@@ -190,7 +190,20 @@ const RegisterPage: React.FC = () => {
                 >
                   <span className="text-lg">🏦</span>
                   <p className="font-bold text-white text-sm mt-1">JAIIB</p>
-                  <p className="text-xs text-gray-400">Banking certification</p>
+                  <p className="text-xs text-gray-400">Banking (Junior)</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExamPreference('CAIIB')}
+                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                    examPreference === 'CAIIB'
+                      ? 'border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/30'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
+                  }`}
+                >
+                  <span className="text-lg">🎓</span>
+                  <p className="font-bold text-white text-sm mt-1">CAIIB</p>
+                  <p className="text-xs text-gray-400">Banking (Senior)</p>
                 </button>
                 <button
                   type="button"
@@ -203,7 +216,7 @@ const RegisterPage: React.FC = () => {
                 >
                   <span className="text-lg">🤖</span>
                   <p className="font-bold text-white text-sm mt-1">AI-300</p>
-                  <p className="text-xs text-gray-400">Microsoft ML & GenAI</p>
+                  <p className="text-xs text-gray-400">Microsoft ML</p>
                 </button>
               </div>
               {!examPreference && formErrors.full_name && (

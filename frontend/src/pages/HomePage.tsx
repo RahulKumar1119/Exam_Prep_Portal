@@ -217,12 +217,17 @@ const HomePage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {(selectedExam === 'AI-300' ? [
               { id: 'AI-300', name: 'AI-300', questions: 600, color: 'from-purple-600 to-indigo-700' },
+            ] : selectedExam === 'CAIIB' ? [
+              { id: 'ABM', name: 'ABM', questions: 355, color: 'from-emerald-500 to-teal-700' },
             ] : [
               { id: 'IE & IFS', name: 'IE & IFS', questions: 1163, color: 'from-blue-500 to-blue-700' },
               { id: 'PPB', name: 'PPB', questions: 760, color: 'from-indigo-500 to-indigo-700' },
               { id: 'AFM', name: 'AFM', questions: 1195, color: 'from-purple-500 to-purple-700' },
               { id: 'RBWM', name: 'RBWM', questions: 635, color: 'from-pink-500 to-pink-700' },
-              ...(selectedExam === 'ALL' ? [{ id: 'AI-300', name: 'AI-300', questions: 0, color: 'from-purple-600 to-indigo-700' }] : []),
+              ...(selectedExam === 'ALL' ? [
+                { id: 'ABM', name: 'ABM', questions: 355, color: 'from-emerald-500 to-teal-700' },
+                { id: 'AI-300', name: 'AI-300', questions: 600, color: 'from-purple-600 to-indigo-700' },
+              ] : []),
             ]).map((paper) => (
               <div
                 key={paper.id}

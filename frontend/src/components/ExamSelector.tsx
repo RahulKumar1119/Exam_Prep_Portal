@@ -18,7 +18,7 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {AVAILABLE_EXAMS.map((exam) => (
           <button
             key={exam.id}
@@ -27,9 +27,9 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
           >
             <div className="flex items-start gap-4">
               <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                exam.id === 'JAIIB' ? 'bg-blue-100' : 'bg-purple-100'
+                exam.id === 'JAIIB' ? 'bg-blue-100' : exam.id === 'CAIIB' ? 'bg-emerald-100' : 'bg-purple-100'
               }`}>
-                <span className="text-2xl">{exam.id === 'JAIIB' ? '🏦' : '🤖'}</span>
+                <span className="text-2xl">{exam.id === 'JAIIB' ? '🏦' : exam.id === 'CAIIB' ? '🎓' : '🤖'}</span>
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg group-hover:text-indigo-600 transition">
@@ -37,10 +37,13 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">{exam.fullName}</p>
                 {exam.id === 'JAIIB' && (
-                  <p className="text-xs text-green-600 mt-2 font-medium">3,600+ questions available</p>
+                  <p className="text-xs text-green-600 mt-2 font-medium">3,700+ questions available</p>
+                )}
+                {exam.id === 'CAIIB' && (
+                  <p className="text-xs text-emerald-600 mt-2 font-medium">355 questions available</p>
                 )}
                 {exam.id === 'AI-300' && (
-                  <p className="text-xs text-orange-600 mt-2 font-medium">Coming soon</p>
+                  <p className="text-xs text-purple-600 mt-2 font-medium">600 questions available</p>
                 )}
               </div>
             </div>
