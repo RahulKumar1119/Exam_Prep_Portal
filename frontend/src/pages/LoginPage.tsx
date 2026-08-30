@@ -11,12 +11,14 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as any)?.from || '/dashboard';
-  const { login, error, is_loading, clearError, is_authenticated } = useAuth();
+  const { login, error, is_loading, clearError, is_authenticated, resendVerificationEmail } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [localError, setLocalError] = useState('');
   const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState('');
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -72,6 +74,26 @@ const LoginPage: React.FC = () => {
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Login failed. Please try again.';
       setLocalError(errorMsg);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!formData.email.trim()) {
+      setLocalError('Please enter your email address first');
+      return;
+    }
+
+    setResendLoading(true);
+    setLocalError('');
+    setResendSuccess('');
+    try {
+      await resendVerificationEmail(formData.email);
+      setResendSuccess('Verification email sent! Check your inbox.');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to resend verification email';
+      setLocalError(errorMsg);
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -195,8 +217,30 @@ const LoginPage: React.FC = () => {
             </button>
           </form>
 
+          {/* Success Message for resend */}
+          {resendSuccess && (
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-start">
+                <svg className="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <p className="text-green-700 text-sm">{resendSuccess}</p>
+              </div>
+            </div>
+          )}
+
           {/* Links */}
           <div className="mt-6 space-y-3 text-center text-sm">
+            <p className="text-gray-600">
+              Didn't receive verification email?{' '}
+              <button
+                onClick={handleResendVerification}
+                disabled={resendLoading || is_loading || !formData.email.trim()}
+                className="text-blue-600 hover:text-blue-700 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed underline"
+              >
+                {resendLoading ? 'Sending...' : 'Resend verification email'}
+              </button>
+            </p>
             <p className="text-gray-600">
               Don't have an account?{' '}
               <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium transition">

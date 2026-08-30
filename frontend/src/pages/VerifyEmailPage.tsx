@@ -5,9 +5,11 @@ import { useAuth } from '../context/AuthContext';
 const VerifyEmailPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { verifyEmail } = useAuth();
+  const { verifyEmail, resendVerificationEmail } = useAuth();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [errorMessage, setErrorMessage] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState('');
 
   useEffect(() => {
     const token = searchParams.get('token');
@@ -35,6 +37,26 @@ const VerifyEmailPage: React.FC = () => {
     verify();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleResendVerification = async () => {
+    const email = searchParams.get('email');
+    if (!email) {
+      setErrorMessage('Email not found in link. Please register again.');
+      return;
+    }
+
+    setResendLoading(true);
+    setResendSuccess('');
+    try {
+      await resendVerificationEmail(email);
+      setResendSuccess('Verification email sent! Check your inbox.');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to resend verification email';
+      setErrorMessage(errorMsg);
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4">
@@ -72,10 +94,22 @@ const VerifyEmailPage: React.FC = () => {
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h1>
             <p className="text-gray-600 mb-6">{errorMessage}</p>
+            {resendSuccess && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                {resendSuccess}
+              </div>
+            )}
             <div className="space-y-3">
               <button
+                onClick={handleResendVerification}
+                disabled={resendLoading}
+                className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+              >
+                {resendLoading ? 'Sending...' : 'Resend Verification Email'}
+              </button>
+              <button
                 onClick={() => navigate('/register')}
-                className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition"
+                className="w-full px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition"
               >
                 Try Registering Again
               </button>
