@@ -365,6 +365,49 @@ def verify_email(body: Dict[str, Any]) -> Dict[str, Any]:
         return error_response(500, 'Error verifying email')
 
 
+def resend_verification_email(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Resend email verification link."""
+    email = body.get('email', '').strip().lower()
+    
+    if not email or not validate_email(email):
+        return error_response(400, 'Valid email is required')
+    
+    try:
+        # Get user by email
+        response = users_table.query(
+            IndexName='email-index',
+            KeyConditionExpression='email = :email',
+            ExpressionAttributeValues={':email': email}
+        )
+        
+        if not response['Items']:
+            # Don't reveal if email exists
+            return success_response(200, {
+                'message': 'If email exists and is unverified, verification link has been sent'
+            })
+        
+        user = response['Items'][0]
+        
+        # Check if already verified
+        if user.get('email_verified', False):
+            return error_response(400, 'Email is already verified')
+        
+        # Generate new verification token
+        verification_token = generate_verification_token(user['user_id'], user['email'])
+        
+        # Send verification email
+        email_sent = send_verification_email(email, user['user_id'], verification_token)
+        
+        return success_response(200, {
+            'message': 'Verification email sent',
+            'verification_email_sent': email_sent
+        })
+    
+    except ClientError as e:
+        print(f"Error resending verification email: {e}")
+        return error_response(500, 'Error resending verification email')
+
+
 def login_user(body: Dict[str, Any]) -> Dict[str, Any]:
     """Authenticate user and return tokens."""
     email = body.get('email', '').strip().lower()
@@ -848,6 +891,8 @@ def handler(event, context):
             return register_user(body)
         elif path == '/auth/verify-email' and http_method == 'POST':
             return verify_email(body)
+        elif path == '/auth/resend-verification' and http_method == 'POST':
+            return resend_verification_email(body)
         elif path == '/auth/login' and http_method == 'POST':
             return login_user(body)
         elif path == '/auth/refresh-token' and http_method == 'POST':

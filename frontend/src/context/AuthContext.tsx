@@ -11,6 +11,7 @@ interface AuthContextType extends AuthState {
   register: (email: string, password: string, full_name: string, exam_preference?: string) => Promise<void>;
   logout: () => Promise<void>;
   verifyEmail: (token: string) => Promise<void>;
+  resendVerificationEmail: (email: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (token: string, new_password: string) => Promise<void>;
   clearError: () => void;
@@ -224,6 +225,33 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const resendVerificationEmail = async (email: string) => {
+    setAuthState((prev) => ({ ...prev, is_loading: true, error: null }));
+    try {
+      const response = await apiClient.post<{ message: string }>(
+        '/auth/resend-verification',
+        { email }
+      );
+
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to resend verification email');
+      }
+
+      setAuthState((prev) => ({
+        ...prev,
+        is_loading: false,
+      }));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to resend verification email';
+      setAuthState((prev) => ({
+        ...prev,
+        is_loading: false,
+        error: errorMessage,
+      }));
+      throw error;
+    }
+  };
+
   const requestPasswordReset = async (email: string) => {
     setAuthState((prev) => ({ ...prev, is_loading: true, error: null }));
     try {
@@ -293,6 +321,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         register,
         logout,
         verifyEmail,
+        resendVerificationEmail,
         requestPasswordReset,
         resetPassword,
         clearError,
