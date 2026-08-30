@@ -180,7 +180,7 @@ const BookmarkCard: React.FC<BookmarkCardProps> = ({
                 </span>
               )}
             </div>
-            <p className="text-sm md:text-base text-gray-900 leading-relaxed line-clamp-2">
+            <p className="text-sm md:text-base text-gray-900 leading-relaxed">
               {question.question_text}
             </p>
           </div>
