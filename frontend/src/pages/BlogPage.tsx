@@ -1084,10 +1084,11 @@ const BlogListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="JAIIB & CAIIB Preparation Blog — Study Tips, RBI Updates, Syllabus Guide"
-        description="Expert JAIIB preparation tips, RBI circular summaries, syllabus updates, and study strategies. Free guides to help you clear banking exams in first attempt."
+        title="JAIIB & CAIIB Preparation Blog"
+        description="Expert study strategies, syllabus updates, and RBI circular summaries to help you clear your banking exams"
         canonical="https://mockmaster.fun/blog"
-        keywords="JAIIB preparation tips, JAIIB study strategy, RBI circulars for JAIIB, JAIIB syllabus 2026, how to clear JAIIB"
+        type="website"
+        keywords="JAIIB 2026, CAIIB preparation, banking exam study strategy, RBI circulars, IIBF syllabus, mock tests"
       />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
