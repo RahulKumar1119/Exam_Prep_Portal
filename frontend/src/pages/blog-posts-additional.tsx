@@ -708,6 +708,203 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
       </div>
     ),
   },
+  {
+    slug: 'ai-300-preparation-guide-2026',
+    title: 'Microsoft AI-300 Certification Preparation Guide 2026 — Complete Study Plan & Resources',
+    description: 'Comprehensive guide to pass the Microsoft AI-300 exam (Operationalizing ML & GenAI Solutions). Includes exam structure, official Microsoft Learn modules, study resources, and a 4-week study plan.',
+    date: '2026-06-20',
+    readTime: '15 min read',
+    category: 'IT Certification',
+    coverImage: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">
+          The Microsoft AI-300 certification validates your ability to operationalize machine learning and generative AI solutions on Azure. This guide covers everything you need to pass the exam, including the official Microsoft Learn modules, study strategies, and practice resources.
+        </p>
+
+        <h2>AI-300 Exam Overview</h2>
+        <div className="not-prose bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 my-6">
+          <h3 className="text-lg font-bold text-blue-900 mb-4">📋 Exam Details</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-blue-600">AI-300</p>
+              <p className="text-xs text-gray-600">Exam Code</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-indigo-600">120 min</p>
+              <p className="text-xs text-gray-600">Duration</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-green-600">40-60</p>
+              <p className="text-xs text-gray-600">Questions</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-purple-600">700/1000</p>
+              <p className="text-xs text-gray-600">Pass Score</p>
+            </div>
+          </div>
+        </div>
+
+        <h2>Skills Measured (Exam Weightage)</h2>
+        <div className="not-prose bg-white rounded-xl border border-gray-200 p-6 my-6 shadow-sm">
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Design and Plan AI Solutions (15-20%)</span><span className="text-blue-600 font-bold">15-20%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-blue-500 rounded-full" style={{width: '17%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Design and Manage Data Pipelines (20-25%)</span><span className="text-indigo-600 font-bold">20-25%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-indigo-500 rounded-full" style={{width: '22%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Design and Manage Model Training (20-25%)</span><span className="text-purple-600 font-bold">20-25%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-purple-500 rounded-full" style={{width: '22%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Design and Manage Deployment Infrastructure (20-25%)</span><span className="text-pink-600 font-bold">20-25%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-pink-500 rounded-full" style={{width: '22%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Monitor and Maintain AI Solutions (10-15%)</span><span className="text-green-600 font-bold">10-15%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-green-500 rounded-full" style={{width: '12%'}}></div></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Official Microsoft Learn Modules (Free)</h2>
+        <p className="text-gray-700 mb-4">The following Microsoft Learn modules are the official preparation materials, organized by exam domain:</p>
+
+        <h3>🟦 Domain 1: Design and Plan AI Solutions (15-20%)</h3>
+        <ul className="space-y-2 mb-6">
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/get-started-ai-fundamentals/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Get started with AI fundamentals</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/fundamentals-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Fundamentals of machine learning</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/plan-prepare-genaiops/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Plan and prepare for GenAIOps</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/azure-ai-foundry-secure-environment/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Azure AI Foundry secure environment</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/implement-identity-based-security-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Implement identity-based security for Azure Machine Learning</a></li>
+        </ul>
+
+        <h3>🟪 Domain 2: Design and Manage Data Pipelines (20-25%)</h3>
+        <ul className="space-y-2 mb-6">
+          <li><a href="https://learn.microsoft.com/en-us/training/paths/design-machine-learning-solution/" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Design a machine learning solution (Learning Path)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/explore-azure-machine-learning-workspace/" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Explore Azure Machine Learning workspace</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/explore-azure-machine-learning-workspace-resources-assets/" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Explore Azure ML workspace resources and assets</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/work-environments-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Work with environments in Azure Machine Learning</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/work-compute-resources-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Work with compute resources in Azure Machine Learning</a></li>
+        </ul>
+
+        <h3>🟣 Domain 3: Design and Manage Model Training (20-25%)</h3>
+        <ul className="space-y-2 mb-6">
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/design-machine-learning-model-training-solution/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Design a machine learning model training solution</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/run-training-script-command-job-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Run a training script as a command job</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/train-models-training-mlflow-jobs/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Train models with MLflow jobs</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/run-training-scripts-track-models-mlflow/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Run training scripts and track models with MLflow</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/perform-hyperparameter-tuning-azure-machine-learning-pipelines/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Perform hyperparameter tuning with Azure ML pipelines</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/optimize-finetune-agents/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Optimize and fine-tune agents</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/paths/automate-machine-learning-model-selection-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Automate ML model selection (Learning Path)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/use-azure-machine-learn-job-for-automation/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Use Azure ML jobs for automation</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/run-pipelines-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Run pipelines in Azure Machine Learning</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/paths/use-azure-machine-learning-pipelines-for-automation/" target="_blank" rel="noopener noreferrer" className="text-pink-600 hover:underline">Use Azure ML pipelines for automation (Learning Path)</a></li>
+        </ul>
+
+        <h3>🟢 Domain 4: Design and Manage Deployment Infrastructure (20-25%)</h3>
+        <ul className="space-y-2 mb-6">
+          <li><a href="https://learn.microsoft.com/en-us/training/paths/deploy-consume-models-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Deploy and consume models with Azure ML (Learning Path)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/design-model-deployment-solution/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Design a model deployment solution</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/deploy-model-batch-endpoint/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Deploy model to batch endpoint</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/continuous-deployment-for-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Continuous deployment for machine learning</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/deploy-model-github-actions/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Deploy model with GitHub Actions</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/trigger-azure-machine-learn-jobs-github-actions/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Trigger Azure ML jobs with GitHub Actions</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/trigger-github-actions-trunk-based-development/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Trigger GitHub Actions with trunk-based development</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/work-environments-github-actions/" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Work with environments in GitHub Actions</a></li>
+        </ul>
+
+        <h3>🟠 Domain 5: Monitor and Maintain AI Solutions (10-15%)</h3>
+        <ul className="space-y-2 mb-6">
+          <li><a href="https://learn.microsoft.com/en-us/training/paths/manage-review-models-azure-machine-learning/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Manage and review models in Azure ML (Learning Path)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/prompt-versioning-genaiops/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Prompt versioning for GenAIOps</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/automated-evaluation-genaiops/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Automated evaluation for GenAIOps</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/optimize-generative-ai-model-performance/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Optimize generative AI model performance</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/tracing-generative-ai-app/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Tracing generative AI applications</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/monitor-generative-ai-app/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Monitor generative AI applications</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/manage-optimize-agent-investment-azure/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Manage and optimize agent investment in Azure</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/paths/introduction-machine-learn-operations/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Introduction to MLOps (Learning Path)</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/modules/design-machine-learning-operations-solution/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Design MLOps solution</a></li>
+          <li><a href="https://learn.microsoft.com/en-us/training/paths/train-deploy-machine-learning-model/" target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">Train and deploy ML models (Learning Path)</a></li>
+        </ul>
+
+        <h2>4-Week Study Plan</h2>
+        <div className="not-prose my-6">
+          <div className="space-y-4">
+            <div className="flex items-start gap-4 bg-blue-50 rounded-xl p-5 border border-blue-200">
+              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W1</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-blue-900">Week 1: Foundations & Planning</h4>
+                <p className="text-sm text-blue-800">AI fundamentals, ML basics, GenAIOps planning, Azure AI Foundry security, Identity-based security</p>
+                <p className="text-xs text-blue-600 mt-1">Modules: 6 | Est. 15-20 hours</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-indigo-50 rounded-xl p-5 border border-indigo-200">
+              <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W2</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-indigo-900">Week 2: Data Pipelines & Training</h4>
+                <p className="text-sm text-indigo-800">Azure ML workspace, environments, compute, data pipelines, model training solutions, command jobs, MLflow</p>
+                <p className="text-xs text-indigo-600 mt-1">Modules: 9 | Est. 20-25 hours</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-purple-50 rounded-xl p-5 border border-purple-200">
+              <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W3</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-purple-900">Week 3: Training Optimization & Deployment</h4>
+                <p className="text-sm text-purple-800">Hyperparameter tuning, fine-tuning agents, AutoML, pipelines, deployment solutions, batch endpoints, GitHub Actions CI/CD</p>
+                <p className="text-xs text-purple-600 mt-1">Modules: 10 | Est. 20-25 hours</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-green-50 rounded-xl p-5 border border-green-200">
+              <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">W4</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-green-900">Week 4: Monitoring, MLOps & Mock Exams</h4>
+                <p className="text-sm text-green-800">GenAIOps monitoring, prompt versioning, automated evaluation, tracing, MLOps design, practice exams</p>
+                <p className="text-xs text-green-600 mt-1">Modules: 7 | Est. 15-20 hours</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Additional Resources</h2>
+        <ul className="space-y-2 mb-6">
+          <li><strong>Official Exam Page:</strong> <a href="https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-engineer/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Microsoft Certified: Azure AI Engineer Associate</a></li>
+          <li><strong>Practice Assessment:</strong> Microsoft Learn offers a free practice assessment for AI-300</li>
+          <li><strong>Azure ML Documentation:</strong> <a href="https://learn.microsoft.com/en-us/azure/machine-learning/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Azure Machine Learning documentation</a></li>
+          <li><strong>Responsible AI:</strong> <a href="https://learn.microsoft.com/en-us/azure/ai-services/responsible-use/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Responsible AI practices</a></li>
+        </ul>
+
+        <h2>Pro Tips for AI-300</h2>
+        <ol>
+          <li><strong>Hands-on is critical:</strong> This exam tests practical Azure ML skills. Create a free Azure account and complete the labs in each Learn module.</li>
+          <li><strong>Focus on GenAIOps:</strong> The exam heavily emphasizes generative AI operations — prompt versioning, automated evaluation, tracing, and monitoring.</li>
+          <li><strong>Know the deployment patterns:</strong> Understand real-time vs batch endpoints, managed vs Kubernetes deployments, and when to use each.</li>
+          <li><strong>MLflow integration:</strong> Know how MLflow integrates with Azure ML for experiment tracking, model registry, and deployment.</li>
+          <li><strong>GitHub Actions for MLOps:</strong> The exam tests CI/CD pipelines using GitHub Actions to trigger Azure ML jobs.</li>
+          <li><strong>Security & Identity:</strong> Don't skip the security modules — managed identities, RBAC, and network isolation are tested.</li>
+        </ol>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
+          <h3 className="text-blue-900 mt-0">Practice AI-300 Questions</h3>
+          <p className="text-blue-800 mb-0">
+            Our platform includes AI-300 practice questions with detailed explanations covering all 5 exam domains. Track your readiness score and focus on weak areas.
+          </p>
+        </div>
+      </div>
+    ),
+  },
 ];
 
 export default ADDITIONAL_BLOG_POSTS;
