@@ -1084,11 +1084,11 @@ const BlogListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="JAIIB & CAIIB Preparation Blog"
-        description="Expert study strategies, syllabus updates, and RBI circular summaries to help you clear your banking exams"
+        title="Certification Preparation Hub"
+        description="Prepare smarter with expert study guides, practice questions, exam strategies, syllabus updates, and learning resources for banking, IT, cloud, cybersecurity, AI, and professional certification exams."
         canonical="https://mockmaster.fun/blog"
         type="website"
-        keywords="JAIIB 2026, CAIIB preparation, banking exam study strategy, RBI circulars, IIBF syllabus, mock tests"
+        keywords="JAIIB 2026, CAIIB preparation, banking exam study strategy, IT certification, cloud computing, cybersecurity, AI certification, professional certification exams, mock tests"
       />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -1120,10 +1120,10 @@ const BlogListPage: React.FC = () => {
       <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            JAIIB & CAIIB Preparation Blog
+            Certification Preparation Hub
           </h1>
-          <p className="text-xl text-gray-600">
-            Expert study strategies, syllabus updates, and RBI circular summaries to help you clear your banking exams
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Prepare smarter with expert study guides, practice questions, exam strategies, syllabus updates, and learning resources for banking, IT, cloud, cybersecurity, AI, and professional certification exams.
           </p>
         </div>
       </section>
