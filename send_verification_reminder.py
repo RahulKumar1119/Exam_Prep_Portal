@@ -25,6 +25,7 @@ USERS = [
     {'user_id': 'ee4d3223-1472-448b-a440-e461d4e28dde', 'email': 'susanth31@gmail.com', 'name': 'Susanth'},
     {'user_id': 'f7fba9da-b576-4bc6-a334-75684bab50f8', 'email': 'vaibhav007pintu@gmail.com', 'name': 'Yatendra'},
     {'user_id': '1f655495-1d2c-4272-9bfe-17da36f48ab8', 'email': 'meowsnow456@gmail.com', 'name': 'LOGaN'},
+    {'user_id': '89ea5990-5688-41e8-8e1a-dc7e38427b8b', 'email' : 'dasj59050@gmail.com', 'name': 'Jayanta'},
 ]
 
 

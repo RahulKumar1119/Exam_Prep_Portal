@@ -18,6 +18,7 @@ USERS = [
     {'email': 'mahesh54445@gmail.com', 'name': 'Mahesh'},
     {'email': 'pradeep.munda1@gmail.com', 'name': 'Pradeep'},
     {'email': 'mekaveerababu@gmail.com', 'name': 'Veerababu'},
+    {'email': 'rahulprem512@gmail.com', 'name': 'rahul prem'},
 ]
 
 
