@@ -192,7 +192,7 @@ const App: React.FC = () => {
             <PracticeProvider>
               <DashboardProvider>
                 <NotificationProvider>
-                  <Router>
+                  <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                     <AppContent />
                   </Router>
                   <ToastViewport />
