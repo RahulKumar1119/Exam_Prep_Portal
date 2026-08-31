@@ -4,7 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { PracticeProvider } from './context/PracticeContext';
 import { DashboardProvider } from './context/DashboardContext';
 import { NotificationProvider } from './context/NotificationContext';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ToastProvider, ToastViewport } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/Tooltip';
 import { HelmetProvider } from 'react-helmet-async';
@@ -192,7 +192,7 @@ const App: React.FC = () => {
             <PracticeProvider>
               <DashboardProvider>
                 <NotificationProvider>
-                  <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                  <Router>
                     <AppContent />
                   </Router>
                   <ToastViewport />
