@@ -3,8 +3,10 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(async () => {
+  const tailwindcss = (await import('@tailwindcss/vite')).default;
+  return {
+    plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -26,4 +28,5 @@ export default defineConfig({
     sourcemap: false,
   },
   envPrefix: 'VITE_',
+  };
 });
