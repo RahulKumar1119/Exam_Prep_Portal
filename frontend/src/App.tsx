@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PracticeProvider } from './context/PracticeContext';
@@ -9,50 +9,52 @@ import { ToastProvider, ToastViewport } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/Tooltip';
 import { HelmetProvider } from 'react-helmet-async';
 
-// Pages
+// Eager: critical landing/auth
+import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import PasswordResetPage from './pages/PasswordResetPage';
-import LandingPage from './pages/LandingPage';
-import HomePage from './pages/HomePage';
-import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsOfServicePage from './pages/TermsOfServicePage';
-import BlogPage from './pages/BlogPage';
-import VerifyEmailPage from './pages/VerifyEmailPage';
-import PracticeTestDetailPage from './pages/PracticeTestDetailPage';
-import PracticePage from './pages/PracticePage';
-import PreviousAttemptsPage from './pages/PreviousAttemptsPage';
-import LeaderboardPage from './pages/LeaderboardPage';
-import BookmarksPage from './pages/BookmarksPage';
-import ContactPage from './pages/ContactPage';
-import FreeQuizPage from './pages/FreeQuizPage';
-import AI300PracticeTestPage from './pages/AI300PracticeTestPage';
-import BrowseExamsPage from './pages/BrowseExamsPage';
-import AboutPage from './pages/AboutPage';
-import FAQPage from './pages/FAQPage';
-import DisclaimerPage from './pages/DisclaimerPage';
-import StudyTopicsPage from './pages/StudyTopicsPage';
 
-// Topic Pages
-import CrrExplainedPage from './pages/topics/CrrExplainedPage';
-import NpaClassificationPage from './pages/topics/NpaClassificationPage';
-import PriorityLendingPage from './pages/topics/PriorityLendingPage';
-import NpvIrrPage from './pages/topics/NpvIrrPage';
-import SarfaesiActPage from './pages/topics/SarfaesiActPage';
-import SlrExplainedPage from './pages/topics/SlrExplainedPage';
-import KycNormsPage from './pages/topics/KycNormsPage';
-import NiActPage from './pages/topics/NiActPage';
-import BaselNormsPage from './pages/topics/BaselNormsPage';
-import DepositInsurancePage from './pages/topics/DepositInsurancePage';
-import RepoRatePage from './pages/topics/RepoRatePage';
-import BreakEvenPage from './pages/topics/BreakEvenPage';
-import DepreciationPage from './pages/topics/DepreciationPage';
-import RatioAnalysisPage from './pages/topics/RatioAnalysisPage';
-import MutualFundsPage from './pages/topics/MutualFundsPage';
-import UpiPaymentsPage from './pages/topics/UpiPaymentsPage';
-import HomeLoanPage from './pages/topics/HomeLoanPage';
+// Lazy: heavy / less critical routes (code-split)
+const PasswordResetPage = lazy(() => import('./pages/PasswordResetPage'));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage'));
+const PracticeTestDetailPage = lazy(() => import('./pages/PracticeTestDetailPage'));
+const PracticePage = lazy(() => import('./pages/PracticePage'));
+const PreviousAttemptsPage = lazy(() => import('./pages/PreviousAttemptsPage'));
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
+const BookmarksPage = lazy(() => import('./pages/BookmarksPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const FreeQuizPage = lazy(() => import('./pages/FreeQuizPage'));
+const AI300PracticeTestPage = lazy(() => import('./pages/AI300PracticeTestPage'));
+const BrowseExamsPage = lazy(() => import('./pages/BrowseExamsPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const FAQPage = lazy(() => import('./pages/FAQPage'));
+const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage'));
+const StudyTopicsPage = lazy(() => import('./pages/StudyTopicsPage'));
+
+// Topic Pages (lazy - large set)
+const CrrExplainedPage = lazy(() => import('./pages/topics/CrrExplainedPage'));
+const NpaClassificationPage = lazy(() => import('./pages/topics/NpaClassificationPage'));
+const PriorityLendingPage = lazy(() => import('./pages/topics/PriorityLendingPage'));
+const NpvIrrPage = lazy(() => import('./pages/topics/NpvIrrPage'));
+const SarfaesiActPage = lazy(() => import('./pages/topics/SarfaesiActPage'));
+const SlrExplainedPage = lazy(() => import('./pages/topics/SlrExplainedPage'));
+const KycNormsPage = lazy(() => import('./pages/topics/KycNormsPage'));
+const NiActPage = lazy(() => import('./pages/topics/NiActPage'));
+const BaselNormsPage = lazy(() => import('./pages/topics/BaselNormsPage'));
+const DepositInsurancePage = lazy(() => import('./pages/topics/DepositInsurancePage'));
+const RepoRatePage = lazy(() => import('./pages/topics/RepoRatePage'));
+const BreakEvenPage = lazy(() => import('./pages/topics/BreakEvenPage'));
+const DepreciationPage = lazy(() => import('./pages/topics/DepreciationPage'));
+const RatioAnalysisPage = lazy(() => import('./pages/topics/RatioAnalysisPage'));
+const MutualFundsPage = lazy(() => import('./pages/topics/MutualFundsPage'));
+const UpiPaymentsPage = lazy(() => import('./pages/topics/UpiPaymentsPage'));
+const HomeLoanPage = lazy(() => import('./pages/topics/HomeLoanPage'));
 
 // Components
 import Layout from './components/Layout/Layout';
@@ -74,6 +76,7 @@ const AppContent: React.FC = () => {
     <>
       <SessionTimeoutWarning />
       <NotificationPrompt />
+      <Suspense fallback={<LoadingSpinner />}>
       <Routes>
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
@@ -178,6 +181,7 @@ const AppContent: React.FC = () => {
       {/* Catch-all */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
+      </Suspense>
     </>
   );
 };
