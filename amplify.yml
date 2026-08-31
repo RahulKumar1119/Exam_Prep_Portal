@@ -1,60 +1,27 @@
 version: 1
-applications:
-  - appRoot: frontend
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - echo "Installing dependencies..."
-            - npm install --legacy-peer-deps
-            # Install Chromium dependencies required by puppeteer for pre-rendering
-            - yum install -y alsa-lib atk cups-libs gtk3 libXcomposite libXcursor libXdamage libXext libXi libXrandr libXScrnSaver libXtst pango nss at-spi2-atk libdrm mesa-libgbm 2>/dev/null || true
-        build:
-          commands:
-            - echo "Building React application with pre-rendering..."
-            - npm run build
-            - echo "Build completed successfully"
-      artifacts:
-        baseDirectory: build
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-      customHeaders:
-        - pattern: '**'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=0, no-cache, no-store, must-revalidate'
-        - pattern: '**/*.js'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=31536000, immutable'
-        - pattern: '**/*.css'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=31536000, immutable'
-        - pattern: '**/*.png'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=31536000, immutable'
-        - pattern: '**/*.jpg'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=31536000, immutable'
-        - pattern: '**/*.svg'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=31536000, immutable'
-        - pattern: '**/*.woff'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=31536000, immutable'
-        - pattern: '**/*.woff2'
-          headers:
-            - key: 'Cache-Control'
-              value: 'max-age=31536000, immutable'
-      rewrites:
-        - source: '</^[^.]+$|\.(?!(css|gif|ico|jpg|jpeg|js|png|svg|woff|woff2|ttf|eot|otf|html)$)([^.]+$)/'
-          target: '/index.html'
-          status: '200'
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci --legacy-peer-deps
+        # Install Chromium dependencies for puppeteer pre-rendering
+        - yum install -y alsa-lib atk cups-libs gtk3 libXcomposite libXcursor libXdamage libXext libXi libXrandr libXScrnSaver libXtst pango nss at-spi2-atk libdrm mesa-libgbm 2>/dev/null || true
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+  customHeaders:
+    - pattern: '**/*'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=0, must-revalidate'
+    - pattern: '/static/**'
+      headers:
+        - key: 'Cache-Control'
+          value: 'public, max-age=31536000, immutable'
