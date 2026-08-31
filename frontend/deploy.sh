@@ -40,10 +40,10 @@ npm run test -- --coverage --watchAll=false || {
 
 # Step 3: Build application
 echo -e "${YELLOW}Step 3: Building application...${NC}"
-REACT_APP_ENVIRONMENT=$ENVIRONMENT npm run build
+VITE_ENVIRONMENT=$ENVIRONMENT npm run build
 
 # Step 4: Validate build
-if [ ! -d "build" ]; then
+if [ ! -d "dist" ]; then
     echo -e "${RED}Build directory not found. Build failed.${NC}"
     exit 1
 fi
@@ -66,7 +66,7 @@ if [ -n "$AMPLIFY_APP_ID" ]; then
     echo -e "${GREEN}Deployment to Amplify completed${NC}"
 else
     echo -e "${YELLOW}Step 5: Skipping Amplify deployment (AMPLIFY_APP_ID not set)${NC}"
-    echo -e "${YELLOW}Build artifacts are ready in the 'build' directory${NC}"
+    echo -e "${YELLOW}Build artifacts are ready in the 'dist' directory${NC}"
 fi
 
 # Step 6: Run smoke tests (if deployment was successful)

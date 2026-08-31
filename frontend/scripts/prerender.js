@@ -8,7 +8,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const buildDir = path.resolve(__dirname, '..', 'build');
+const buildDir = path.resolve(__dirname, '..', 'dist');
 
 // Pages to pre-render
 const PAGES = [
@@ -96,8 +96,8 @@ async function prerender() {
     const url = `http://localhost:45678${route}`;
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
 
-    // Wait a bit for React to fully render
-    await page.waitForTimeout(1000);
+    // Wait a bit for React to fully render (page.waitForTimeout removed in puppeteer 22+)
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const html = await page.content();
 
