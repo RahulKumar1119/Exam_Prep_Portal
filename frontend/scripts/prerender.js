@@ -57,6 +57,8 @@ const PAGES = [
   '/jaiib/rbwm/home-loan-guide',
   '/login',
   '/register',
+  '/password-reset',
+  '/verify-email',
   '/privacy-policy',
   '/terms-of-service',
 ];
