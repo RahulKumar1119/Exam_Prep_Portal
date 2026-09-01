@@ -25,3 +25,10 @@ frontend:
       headers:
         - key: 'Cache-Control'
           value: 'public, max-age=31536000, immutable'
+  # SPA fallback: serve index.html for all routes (client-side routing)
+  # This must also be configured in Amplify Console > Rewrites and Redirects
+  rewrites:
+    - source: '</^[^.]+$/>'
+      target: '/index.html'
+      status: '200'
+      condition: null
