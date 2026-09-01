@@ -8,6 +8,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ToastProvider, ToastViewport } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/Tooltip';
 import { HelmetProvider } from 'react-helmet-async';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Eager: critical landing/auth
 import LandingPage from './pages/LandingPage';
@@ -76,6 +77,7 @@ const AppContent: React.FC = () => {
     <>
       <SessionTimeoutWarning />
       <NotificationPrompt />
+      <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
       <Routes>
       {/* Public Routes */}
@@ -122,59 +124,71 @@ const AppContent: React.FC = () => {
       <Route
         path="/home"
         element={
+          <ErrorBoundary>
           <ProtectedRoute>
             <HomePage />
           </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/dashboard"
         element={
+          <ErrorBoundary>
           <ProtectedRoute>
             <Layout>
               <DashboardPage />
             </Layout>
           </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/practice"
         element={
+          <ErrorBoundary>
           <ProtectedRoute>
             <Layout>
               <PracticePage />
             </Layout>
           </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/previous-attempts"
         element={
+          <ErrorBoundary>
           <ProtectedRoute>
             <Layout>
               <PreviousAttemptsPage />
             </Layout>
           </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/leaderboard"
         element={
+          <ErrorBoundary>
           <ProtectedRoute>
             <Layout>
               <LeaderboardPage />
             </Layout>
           </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/bookmarks"
         element={
+          <ErrorBoundary>
           <ProtectedRoute>
             <Layout>
               <BookmarksPage />
             </Layout>
           </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
 
@@ -182,6 +196,7 @@ const AppContent: React.FC = () => {
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
       </Suspense>
+      </ErrorBoundary>
     </>
   );
 };
