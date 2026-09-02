@@ -42,7 +42,7 @@ export interface PracticeSession {
   score?: number;
   time_taken?: number;
   submitted_at?: string;
-  status: 'in_progress' | 'completed' | 'expired';
+  status: 'generating' | 'ready' | 'in_progress' | 'completed' | 'expired';
   version: string;
   mode?: 'practice' | 'mock_test';
   duration_minutes?: number;

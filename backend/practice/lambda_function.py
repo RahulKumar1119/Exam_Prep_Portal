@@ -469,6 +469,7 @@ def handler(event, context):
                 response_data = {
                     'status': 'ready',
                     'session_id': sid,
+                    'user_id': session.get('user_id'),
                     'paper_name': session.get('paper_name'),
                     'questions': session.get('questions', []),
                     'total_questions': len(session.get('questions', [])),
