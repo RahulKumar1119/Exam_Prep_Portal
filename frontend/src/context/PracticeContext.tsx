@@ -26,16 +26,21 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [is_loading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Restore in-progress session from localStorage on mount — only if it belongs to current user
+  // Restore in-progress session from IndexedDB on mount — only if it belongs to current user
   useEffect(() => {
     if (!user) return;
-    const persisted = loadSessionState();
-    if (persisted && persisted.session.status === 'in_progress' && persisted.session.user_id === user.user_id) {
-      setCurrentSession(persisted.session);
-    } else if (persisted && persisted.session.user_id !== user?.user_id) {
-      // Clear stale session from another user
-      clearSessionState();
-    }
+    let cancelled = false;
+
+    loadSessionState().then((persisted) => {
+      if (cancelled) return;
+      if (persisted && persisted.session.status === 'in_progress' && persisted.session.user_id === user.user_id) {
+        setCurrentSession(persisted.session);
+      } else if (persisted && persisted.session.user_id !== user.user_id) {
+        clearSessionState();
+      }
+    });
+
+    return () => { cancelled = true; };
   }, [user]);
 
   const generatePracticeSet = async (paper_name: string, mode: 'practice' | 'mock_test' = 'practice', set_number: number = 0) => {
