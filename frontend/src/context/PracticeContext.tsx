@@ -9,6 +9,7 @@ interface PracticeContextType {
   current_session: PracticeSession | null;
   session_result: SessionResult | null;
   is_loading: boolean;
+  is_restoring: boolean;
   error: string | null;
   generatePracticeSet: (paper_name: string, mode?: 'practice' | 'mock_test', set_number?: number) => Promise<void>;
   submitPracticeSet: (session_id: string, answers: Record<string, string>, onComplete?: () => void) => Promise<void>;
@@ -24,20 +25,30 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [current_session, setCurrentSession] = useState<PracticeSession | null>(null);
   const [session_result, setSessionResult] = useState<SessionResult | null>(null);
   const [is_loading, setIsLoading] = useState(false);
+  const [is_restoring, setIsRestoring] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Restore in-progress session from IndexedDB on mount — only if it belongs to current user
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setIsRestoring(false);
+      return;
+    }
     let cancelled = false;
 
     loadSessionState().then((persisted) => {
       if (cancelled) return;
-      if (persisted && persisted.session.status === 'in_progress' && persisted.session.user_id === user.user_id) {
-        setCurrentSession(persisted.session);
+      if (persisted && persisted.session.user_id === user.user_id) {
+        // status is 'ready' when active, not 'in_progress'
+        if (persisted.session.status !== 'completed' && persisted.session.status !== 'expired') {
+          setCurrentSession(persisted.session);
+        }
       } else if (persisted && persisted.session.user_id !== user.user_id) {
         clearSessionState();
       }
+      setIsRestoring(false);
+    }).catch(() => {
+      if (!cancelled) setIsRestoring(false);
     });
 
     return () => { cancelled = true; };
@@ -173,6 +184,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
         current_session,
         session_result,
         is_loading,
+        is_restoring,
         error,
         generatePracticeSet,
         submitPracticeSet,
