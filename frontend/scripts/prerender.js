@@ -61,6 +61,14 @@ const PAGES = [
   '/verify-email',
   '/privacy-policy',
   '/terms-of-service',
+  // Protected SPA routes — prerendered as shells so refresh doesn't 404
+  // (React will hydrate and check auth from sessionStorage)
+  '/practice',
+  '/home',
+  '/dashboard',
+  '/bookmarks',
+  '/leaderboard',
+  '/previous-attempts',
 ];
 
 async function prerender() {
