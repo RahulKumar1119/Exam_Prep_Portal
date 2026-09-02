@@ -24,34 +24,45 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   isSubmitting = false,
   isMockTest = false
 }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [reviewedQuestions, setReviewedQuestions] = useState<Set<string>>(new Set());
   const [showSummary, setShowSummary] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
-  const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
   const [showFinalReview, setShowFinalReview] = useState(false);
 
   // Bookmarks
   const { user } = useAuth();
   const { isBookmarked, toggleBookmark } = useBookmarks(user?.user_id || 'anonymous');
 
-  // Restore answers + timer from localStorage if available
-  const persisted = loadSessionState();
+  // Restore answers + timer + UI state from IndexedDB if available
+  const [persisted, setPersisted] = useState<Awaited<ReturnType<typeof loadSessionState>>>(null);
   const isRestoredSession = persisted?.session?.session_id === session.session_id;
 
-  const [answers, setAnswers] = useState<Record<string, string>>(
-    isRestoredSession ? persisted!.answers : {}
-  );
-  const [timeLeft, setTimeLeft] = useState(
-    isRestoredSession ? persisted!.timeLeft : TIMER_DURATION
-  );
+  useEffect(() => {
+    loadSessionState().then(setPersisted);
+  }, [session.session_id]);
+
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [reviewedQuestions, setReviewedQuestions] = useState<Set<string>>(new Set());
+  const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
   const [timedOut, setTimedOut] = useState(false);
   const answersRef = useRef(answers);
 
+  // Initialize from persisted state once loaded
+  useEffect(() => {
+    if (persisted && isRestoredSession) {
+      setAnswers(persisted.answers);
+      setTimeLeft(persisted.timeLeft);
+      setCurrentQuestionIndex(persisted.currentQuestionIndex);
+      setReviewedQuestions(new Set(persisted.reviewedQuestions));
+      setCheckedQuestions(new Set(persisted.checkedQuestions));
+    }
+  }, [persisted, isRestoredSession]);
+
   useEffect(() => { answersRef.current = answers; }, [answers]);
-  useSessionPersistence(session, answers, timeLeft);
+  useSessionPersistence(session, answers, timeLeft, currentQuestionIndex, reviewedQuestions, checkedQuestions);
 
   // Countdown timer
   useEffect(() => {
