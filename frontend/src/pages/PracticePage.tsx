@@ -24,7 +24,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
 };
 
 const PracticePage: React.FC = () => {
-  const { current_session, session_result, is_loading, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
+  const { current_session, session_result, is_loading, is_restoring, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
   const { fetchDashboardData } = useDashboard();
   const { selectedExam, selectExam, hasSelected } = useExamPreference();
   const [selectedPaper, setSelectedPaper] = useState('');
@@ -70,6 +70,15 @@ const PracticePage: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (is_restoring) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-64 space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p className="text-gray-600 font-medium">Restoring your session...</p>
+      </div>
+    );
+  }
 
   if (is_loading) {
     return (
