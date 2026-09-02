@@ -110,6 +110,7 @@ class JaiibCaiibStack(cdk.Stack):
         question_bank_table = self._create_question_bank_table(kms_key)
         audit_logs_table = self._create_audit_logs_table(kms_key)
         notifications_table = self._create_notifications_table(kms_key)
+        bookmarks_table = self._create_bookmarks_table(kms_key)
 
         # Grant Lambda role access to all tables
         for table in [
@@ -119,6 +120,7 @@ class JaiibCaiibStack(cdk.Stack):
             question_bank_table,
             audit_logs_table,
             notifications_table,
+            bookmarks_table,
         ]:
             table.grant_read_write_data(lambda_role)
 
@@ -191,6 +193,12 @@ class JaiibCaiibStack(cdk.Stack):
             "NotificationsTableName",
             value=notifications_table.table_name,
             description="DynamoDB Notifications table name",
+        )
+        cdk.CfnOutput(
+            self,
+            "BookmarksTableName",
+            value=bookmarks_table.table_name,
+            description="DynamoDB Bookmarks table name",
         )
         cdk.CfnOutput(
             self,
@@ -352,6 +360,27 @@ class JaiibCaiibStack(cdk.Stack):
             ),
             sort_key=dynamodb.Attribute(
                 name="notification_id", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            encryption=dynamodb.TableEncryption.CUSTOMER_MANAGED,
+            encryption_key=kms_key,
+            removal_policy=RemovalPolicy.RETAIN,
+            point_in_time_recovery=True,
+        )
+
+        return table
+
+    def _create_bookmarks_table(self, kms_key: kms.Key) -> dynamodb.Table:
+        """Create Bookmarks DynamoDB table — stores saved questions per user"""
+        table = dynamodb.Table(
+            self,
+            "BookmarksTable",
+            table_name="jaiib-bookmarks",
+            partition_key=dynamodb.Attribute(
+                name="user_id", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="question_id", type=dynamodb.AttributeType.STRING
             ),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
             encryption=dynamodb.TableEncryption.CUSTOMER_MANAGED,

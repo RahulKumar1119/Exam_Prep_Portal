@@ -860,6 +860,109 @@ def update_exam_dates(body: Dict[str, Any]) -> Dict[str, Any]:
         return error_response(500, 'Failed to update exam dates')
 
 
+def get_bookmarks(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Get all bookmarks for a user."""
+    user_id = params.get('user_id', '')
+    if not user_id:
+        return error_response(400, 'user_id is required')
+
+    bookmarks_table = dynamodb.Table('jaiib-bookmarks')
+    try:
+        response = bookmarks_table.query(
+            KeyConditionExpression='user_id = :uid',
+            ExpressionAttributeValues={':uid': user_id},
+        )
+        items = response.get('Items', [])
+        # Sort by bookmarked_at descending
+        items.sort(key=lambda x: x.get('bookmarked_at', ''), reverse=True)
+        return success_response(200, {
+            'user_id': user_id,
+            'bookmarks': items,
+            'count': len(items),
+        })
+    except ClientError as e:
+        print(f"Error fetching bookmarks: {e}")
+        return error_response(500, 'Failed to fetch bookmarks')
+
+
+def add_bookmark(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Add a bookmark for a user."""
+    user_id = body.get('user_id', '')
+    question_id = body.get('question_id', '')
+
+    if not user_id:
+        return error_response(400, 'user_id is required')
+    if not question_id:
+        return error_response(400, 'question_id is required')
+
+    bookmarks_table = dynamodb.Table('jaiib-bookmarks')
+    item = {
+        'user_id': user_id,
+        'question_id': question_id,
+        'question_text': body.get('question_text', ''),
+        'options': body.get('options', {}),
+        'correct_answer': body.get('correct_answer', ''),
+        'topic': body.get('topic', 'General'),
+        'difficulty': body.get('difficulty', 'medium'),
+        'paper_name': body.get('paper_name', ''),
+        'bookmarked_at': datetime.utcnow().isoformat(),
+    }
+
+    try:
+        bookmarks_table.put_item(Item=item)
+        return success_response(201, {'message': 'Bookmark added', 'bookmark': item})
+    except ClientError as e:
+        print(f"Error adding bookmark: {e}")
+        return error_response(500, 'Failed to add bookmark')
+
+
+def delete_bookmark(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Delete a single bookmark."""
+    user_id = params.get('user_id', '')
+    question_id = params.get('question_id', '')
+
+    if not user_id:
+        return error_response(400, 'user_id is required')
+    if not question_id:
+        return error_response(400, 'question_id is required')
+
+    bookmarks_table = dynamodb.Table('jaiib-bookmarks')
+    try:
+        bookmarks_table.delete_item(Key={'user_id': user_id, 'question_id': question_id})
+        return success_response(200, {'message': 'Bookmark deleted', 'question_id': question_id})
+    except ClientError as e:
+        print(f"Error deleting bookmark: {e}")
+        return error_response(500, 'Failed to delete bookmark')
+
+
+def clear_bookmarks(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Delete all bookmarks for a user."""
+    user_id = body.get('user_id', '') or (body.get('params') or {}).get('user_id', '')
+    # Also support query params path
+    if not user_id:
+        return error_response(400, 'user_id is required')
+
+    bookmarks_table = dynamodb.Table('jaiib-bookmarks')
+    try:
+        response = bookmarks_table.query(
+            KeyConditionExpression='user_id = :uid',
+            ExpressionAttributeValues={':uid': user_id},
+            ProjectionExpression='user_id, question_id',
+        )
+        items = response.get('Items', [])
+        if not items:
+            return success_response(200, {'message': 'No bookmarks to clear', 'deleted': 0})
+
+        with bookmarks_table.batch_writer() as batch:
+            for item in items:
+                batch.delete_item(Key={'user_id': item['user_id'], 'question_id': item['question_id']})
+
+        return success_response(200, {'message': 'All bookmarks cleared', 'deleted': len(items)})
+    except ClientError as e:
+        print(f"Error clearing bookmarks: {e}")
+        return error_response(500, 'Failed to clear bookmarks')
+
+
 def handler(event, context):
     """Lambda handler for authentication requests."""
     try:
@@ -919,6 +1022,30 @@ def handler(event, context):
             return get_user_preference(query_params)
         elif path == '/auth/preference' and http_method == 'PUT':
             return update_user_preference(body)
+        elif path == '/bookmarks' and http_method == 'GET':
+            query_params = event.get('queryStringParameters', {}) or {}
+            return get_bookmarks(query_params)
+        elif path == '/bookmarks' and http_method == 'POST':
+            return add_bookmark(body)
+        elif path == '/bookmarks' and http_method == 'DELETE':
+            query_params = event.get('queryStringParameters', {}) or {}
+            # If question_id in query → delete single, else clear all
+            if query_params.get('question_id'):
+                return delete_bookmark(query_params)
+            # Also support body for DELETE (API Gateway may send body)
+            if body.get('question_id'):
+                return delete_bookmark({**query_params, **body})
+            if body.get('user_id') or query_params.get('user_id'):
+                # clear all needs user_id
+                merged = {**query_params, **body}
+                return clear_bookmarks(merged)
+            return error_response(400, 'user_id is required')
+        elif path.startswith('/bookmarks/') and http_method == 'DELETE':
+            # RESTful: DELETE /bookmarks/{question_id}?user_id=
+            question_id = path.split('/')[-1]
+            query_params = event.get('queryStringParameters', {}) or {}
+            query_params['question_id'] = question_id
+            return delete_bookmark(query_params)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     
