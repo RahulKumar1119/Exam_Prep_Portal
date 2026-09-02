@@ -11,21 +11,21 @@
     },
     "JaiibCaiibStack": {
       "type": "aws:cloudformation:stack",
-      "environment": "aws://438097524343/ap-south-1",
+      "environment": "aws://123456/ap-south-1",
       "properties": {
         "templateFile": "JaiibCaiibStack.template.json",
         "terminationProtection": false,
         "validateOnSynth": false,
-        "assumeRoleArn": "arn:${AWS::Partition}:iam::438097524343:role/cdk-hnb659fds-deploy-role-438097524343-ap-south-1",
-        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::438097524343:role/cdk-hnb659fds-cfn-exec-role-438097524343-ap-south-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-438097524343-ap-south-1/443b8e78555f9b8a29bc3b941caada394f210e6ffdc832c2b7e4a770a66c1f5e.json",
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::123456:role/cdk-hnb659fds-deploy-role-123456-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::123456:role/cdk-hnb659fds-cfn-exec-role-123456-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-123456-ap-south-1/e717efed33e745330de896e0b562288eec0b3efb4e1787f235925e9ac2629a16.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
           "JaiibCaiibStack.assets"
         ],
         "lookupRole": {
-          "arn": "arn:${AWS::Partition}:iam::438097524343:role/cdk-hnb659fds-lookup-role-438097524343-ap-south-1",
+          "arn": "arn:${AWS::Partition}:iam::123456:role/cdk-hnb659fds-lookup-role-123456-ap-south-1",
           "requiresBootstrapStackVersion": 8,
           "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
         }
@@ -142,6 +142,20 @@
             "data": "NotificationsTable76DCFC6C"
           }
         ],
+        "/JaiibCaiibStack/BookmarksTable": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "BookmarksTable5112AF79"
+            }
+          }
+        ],
+        "/JaiibCaiibStack/BookmarksTable/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BookmarksTable5112AF79"
+          }
+        ],
         "/JaiibCaiibStack/JaiibLogGroup/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -187,7 +201,7 @@
         "/JaiibCaiibStack/JaiibApi/Deployment/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "JaiibApiDeployment53D9F67188162694313959e99b4e1a0f16e25c07"
+            "data": "JaiibApiDeployment53D9F671b3de20612209f06ac5d4a5eab864ba23"
           }
         ],
         "/JaiibCaiibStack/JaiibApi/DeploymentStage.prod/Resource": [
@@ -262,6 +276,24 @@
             "data": "JaiibApidashboardGET43612742"
           }
         ],
+        "/JaiibCaiibStack/JaiibApi/Default/security/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApisecurity87115985"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/security/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApisecurityOPTIONSF216F067"
+          }
+        ],
+        "/JaiibCaiibStack/JaiibApi/Default/security/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JaiibApisecurityPOST60207663"
+          }
+        ],
         "/JaiibCaiibStack/JaiibApi/RequestValidator/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -320,6 +352,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "NotificationsTableName"
+          }
+        ],
+        "/JaiibCaiibStack/BookmarksTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BookmarksTableName"
           }
         ],
         "/JaiibCaiibStack/LogGroupName": [

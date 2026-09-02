@@ -19,7 +19,7 @@
            {
             "Ref": "AWS::Partition"
            },
-           ":iam::438097524343:root"
+           ":iam::123456:root"
           ]
          ]
         }
@@ -347,6 +347,34 @@
         {
          "Fn::GetAtt": [
           "NotificationsTable76DCFC6C",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "BookmarksTable5112AF79",
           "Arn"
          ]
         },
@@ -711,6 +739,51 @@
     "aws:cdk:path": "JaiibCaiibStack/NotificationsTable/Resource"
    }
   },
+  "BookmarksTable5112AF79": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "question_id",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "user_id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "question_id",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "KMSMasterKeyId": {
+      "Fn::GetAtt": [
+       "JaiibKmsKeyACB32463",
+       "Arn"
+      ]
+     },
+     "SSEEnabled": true,
+     "SSEType": "KMS"
+    },
+    "TableName": "jaiib-bookmarks"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/BookmarksTable/Resource"
+   }
+  },
   "JaiibLogGroup1FCE30C7": {
    "Type": "AWS::Logs::LogGroup",
    "Properties": {
@@ -844,7 +917,7 @@
     "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Account"
    }
   },
-  "JaiibApiDeployment53D9F67188162694313959e99b4e1a0f16e25c07": {
+  "JaiibApiDeployment53D9F671b3de20612209f06ac5d4a5eab864ba23": {
    "Type": "AWS::ApiGateway::Deployment",
    "Properties": {
     "Description": "JAIIB-CAIIB Exam Prep Portal API",
@@ -863,6 +936,9 @@
     "JaiibApipracticeOPTIONSDC9B3E64",
     "JaiibApipracticePOST2F88B517",
     "JaiibApipractice34469C5E",
+    "JaiibApisecurityOPTIONSF216F067",
+    "JaiibApisecurityPOST60207663",
+    "JaiibApisecurity87115985",
     "JaiibApiRequestValidator5E7A1E54"
    ],
    "Metadata": {
@@ -873,8 +949,19 @@
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
-     "Ref": "JaiibApiDeployment53D9F67188162694313959e99b4e1a0f16e25c07"
+     "Ref": "JaiibApiDeployment53D9F671b3de20612209f06ac5d4a5eab864ba23"
     },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": false,
+      "HttpMethod": "*",
+      "LoggingLevel": "INFO",
+      "MetricsEnabled": true,
+      "ResourcePath": "/*",
+      "ThrottlingBurstLimit": 200,
+      "ThrottlingRateLimit": 100
+     }
+    ],
     "RestApiId": {
      "Ref": "JaiibApiA4F3AD36"
     },
@@ -897,8 +984,9 @@
      "IntegrationResponses": [
       {
        "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
-        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Request-Signature,X-Request-Timestamp'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://jaiib-caiib.example.com'",
+        "method.response.header.Vary": "'Origin'",
         "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
         "method.response.header.Access-Control-Max-Age": "'86400'"
        },
@@ -915,6 +1003,7 @@
       "ResponseParameters": {
        "method.response.header.Access-Control-Allow-Headers": true,
        "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
        "method.response.header.Access-Control-Allow-Methods": true,
        "method.response.header.Access-Control-Max-Age": true
       },
@@ -963,8 +1052,9 @@
      "IntegrationResponses": [
       {
        "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
-        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Request-Signature,X-Request-Timestamp'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://jaiib-caiib.example.com'",
+        "method.response.header.Vary": "'Origin'",
         "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
         "method.response.header.Access-Control-Max-Age": "'86400'"
        },
@@ -981,6 +1071,7 @@
       "ResponseParameters": {
        "method.response.header.Access-Control-Allow-Headers": true,
        "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
        "method.response.header.Access-Control-Allow-Methods": true,
        "method.response.header.Access-Control-Max-Age": true
       },
@@ -1006,6 +1097,13 @@
     "Integration": {
      "IntegrationResponses": [
       {
+       "ResponseParameters": {
+        "method.response.header.Strict-Transport-Security": "'max-age=31536000; includeSubDomains; preload'",
+        "method.response.header.Content-Security-Policy": "'default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self''",
+        "method.response.header.X-Frame-Options": "'DENY'",
+        "method.response.header.X-Content-Type-Options": "'nosniff'",
+        "method.response.header.Referrer-Policy": "'strict-origin-when-cross-origin'"
+       },
        "StatusCode": "200"
       }
      ],
@@ -1013,6 +1111,13 @@
     },
     "MethodResponses": [
      {
+      "ResponseParameters": {
+       "method.response.header.Strict-Transport-Security": true,
+       "method.response.header.Content-Security-Policy": true,
+       "method.response.header.X-Frame-Options": true,
+       "method.response.header.X-Content-Type-Options": true,
+       "method.response.header.Referrer-Policy": true
+      },
       "StatusCode": "200"
      }
     ],
@@ -1055,8 +1160,9 @@
      "IntegrationResponses": [
       {
        "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
-        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Request-Signature,X-Request-Timestamp'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://jaiib-caiib.example.com'",
+        "method.response.header.Vary": "'Origin'",
         "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
         "method.response.header.Access-Control-Max-Age": "'86400'"
        },
@@ -1073,6 +1179,7 @@
       "ResponseParameters": {
        "method.response.header.Access-Control-Allow-Headers": true,
        "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
        "method.response.header.Access-Control-Allow-Methods": true,
        "method.response.header.Access-Control-Max-Age": true
       },
@@ -1147,8 +1254,9 @@
      "IntegrationResponses": [
       {
        "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'",
-        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Request-Signature,X-Request-Timestamp'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://jaiib-caiib.example.com'",
+        "method.response.header.Vary": "'Origin'",
         "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
         "method.response.header.Access-Control-Max-Age": "'86400'"
        },
@@ -1165,6 +1273,7 @@
       "ResponseParameters": {
        "method.response.header.Access-Control-Allow-Headers": true,
        "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
        "method.response.header.Access-Control-Allow-Methods": true,
        "method.response.header.Access-Control-Max-Age": true
       },
@@ -1209,6 +1318,100 @@
    },
    "Metadata": {
     "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/dashboard/GET/Resource"
+   }
+  },
+  "JaiibApisecurity87115985": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "JaiibApiA4F3AD36",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "security",
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/security/Resource"
+   }
+  },
+  "JaiibApisecurityOPTIONSF216F067": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Request-Signature,X-Request-Timestamp'",
+        "method.response.header.Access-Control-Allow-Origin": "'https://jaiib-caiib.example.com'",
+        "method.response.header.Vary": "'Origin'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+        "method.response.header.Access-Control-Max-Age": "'86400'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Vary": true,
+       "method.response.header.Access-Control-Allow-Methods": true,
+       "method.response.header.Access-Control-Max-Age": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApisecurity87115985"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/security/OPTIONS/Resource"
+   }
+  },
+  "JaiibApisecurityPOST60207663": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "StatusCode": "200"
+      }
+     ],
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "StatusCode": "200"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "JaiibApisecurity87115985"
+    },
+    "RestApiId": {
+     "Ref": "JaiibApiA4F3AD36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "JaiibCaiibStack/JaiibApi/Default/security/POST/Resource"
    }
   },
   "JaiibApiRequestValidator5E7A1E54": {
@@ -1332,6 +1535,12 @@
    "Description": "DynamoDB Notifications table name",
    "Value": {
     "Ref": "NotificationsTable76DCFC6C"
+   }
+  },
+  "BookmarksTableName": {
+   "Description": "DynamoDB Bookmarks table name",
+   "Value": {
+    "Ref": "BookmarksTable5112AF79"
    }
   },
   "LogGroupName": {
