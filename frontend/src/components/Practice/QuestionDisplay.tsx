@@ -119,6 +119,49 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     }
   };
 
+  const handleYesNoAnswer = (idx: number, value: string) => {
+    const qid = currentQuestion.question_id;
+    const prev = answers[qid];
+    const arr: string[] = Array.isArray(prev) ? [...(prev as string[])] : [];
+    // ensure length
+    const stmtsLen = currentQuestion.statements?.length || 0;
+    while (arr.length < stmtsLen) arr.push('');
+    arr[idx] = value;
+    const hasAny = arr.some((v) => v);
+    if (!hasAny) {
+      const copy = { ...answers };
+      delete copy[qid];
+      setAnswers(copy);
+      onAnswer(qid, []);
+    } else {
+      setAnswers({ ...answers, [qid]: arr });
+      onAnswer(qid, arr);
+    }
+  };
+
+  const handleOrderingMove = (from: number, to: number) => {
+    const qid = currentQuestion.question_id;
+    const prev = answers[qid];
+    const items = currentQuestion.correct_order || currentQuestion.drag_items?.map((d) => d.id) || [];
+    // current order is either saved answer or default items
+    let arr: string[] = Array.isArray(prev) && prev.length ? [...(prev as string[])] : [...items];
+    // if items are labels not ids, use items as is
+    if (!arr.length) arr = [...items];
+    const [moved] = arr.splice(from, 1);
+    arr.splice(to, 0, moved);
+    setAnswers({ ...answers, [qid]: arr });
+    onAnswer(qid, arr);
+  };
+
+  const handleDragMapping = (zoneId: string, itemId: string) => {
+    const qid = currentQuestion.question_id;
+    const prev = answers[qid];
+    const map: Record<string, string> = prev && typeof prev === 'object' && !Array.isArray(prev) ? { ...(prev as Record<string, string>) } : {};
+    const next = { ...map, [zoneId]: itemId };
+    setAnswers({ ...answers, [qid]: next as unknown as UserAnswer });
+    onAnswer(qid, next as unknown as UserAnswer);
+  };
+
   const handleClearAnswer = () => {
     const questionId = currentQuestion.question_id;
     const newAnswers = { ...answers };
@@ -245,68 +288,139 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
       {/* Question Card */}
       <div className="bg-white rounded-lg shadow border p-4 md:p-6">
+        {/* Case Study Scenario */}
+        {(currentQuestion.scenario || currentQuestion.case_study_id) && (
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">Case Study {currentQuestion.case_study_id ? `— ${currentQuestion.case_study_id}` : ''}</p>
+            {currentQuestion.scenario && <p className="text-sm text-amber-900 whitespace-pre-wrap">{currentQuestion.scenario}</p>}
+            {currentQuestion.exhibits && currentQuestion.exhibits.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {currentQuestion.exhibits.map((ex, i) => (
+                  <details key={i} className="text-xs bg-white border rounded px-2 py-1">
+                    <summary className="cursor-pointer font-medium">{ex.title}</summary>
+                    <p className="mt-1 whitespace-pre-wrap">{ex.content}</p>
+                  </details>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Question text */}
         <div className="mb-4 md:mb-6">
           <h3 className="text-sm md:text-base font-bold text-gray-900">
-            {currentQuestionIndex + 1}. Question
+            {currentQuestionIndex + 1}. Question {currentQuestion.question_type && currentQuestion.question_type !== 'single_choice' ? `— ${currentQuestion.question_type.replace('_',' ')}` : ''}
           </h3>
           <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
             {currentQuestion.question_text}
           </p>
         </div>
 
-        {/* Options — radio for single_choice, checkbox for multi_select */}
-        <div className="space-y-2">
-          {Object.entries(currentQuestion.options).map(([key, value]) => {
-            const isChecked = checkedQuestions.has(currentQuestion.question_id);
-            const isMulti = currentQuestion.question_type === 'multi_select';
-            const correctSet = currentQuestion.correct_answers || (currentQuestion.correct_answer ? [currentQuestion.correct_answer] : []);
-            const isCorrectOption = isMulti ? correctSet.includes(key) : key === currentQuestion.correct_answer;
-            const selectedArr: string[] = Array.isArray(isAnswered) ? isAnswered as string[] : isAnswered ? [isAnswered as string] : [];
-            const isSelected = isMulti ? selectedArr.includes(key) : isAnswered === key;
+        {/* Options — type-switched */}
+        {currentQuestion.question_type === 'yes_no' && currentQuestion.statements ? (
+          <div className="space-y-3">
+            {currentQuestion.statements.map((stmt, idx) => {
+              const selArr = Array.isArray(isAnswered) ? (isAnswered as string[]) : [];
+              const sel = selArr[idx] || '';
+              const correct = currentQuestion.correct_answers?.[idx];
+              const isChecked = checkedQuestions.has(currentQuestion.question_id);
+              return (
+                <div key={idx} className={`p-3 border rounded-lg ${isChecked ? (sel === correct ? 'bg-green-50 border-green-500' : sel ? 'bg-red-50 border-red-500' : 'bg-white') : 'bg-white'}`}>
+                  <p className="text-sm text-gray-800 mb-2">{idx + 1}. {stmt}</p>
+                  <div className="flex gap-4">
+                    {['Yes', 'No'].map((v) => (
+                      <label key={v} className="flex items-center gap-1 cursor-pointer">
+                        <input type="radio" name={`q-${currentQuestion.question_id}-${idx}`} checked={sel === v} onChange={() => handleYesNoAnswer(idx, v)} className="w-4 h-4 text-indigo-600" />
+                        <span className="text-sm">{v}</span>
+                        {isChecked && v === correct && <span className="text-green-600 text-xs">✓</span>}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : currentQuestion.question_type === 'hot_area' && currentQuestion.image_url ? (
+          <div className="space-y-3">
+            <div className="relative border rounded overflow-hidden bg-gray-50">
+              <img src={currentQuestion.image_url} alt="Hot area" className="w-full h-auto" />
+              {(currentQuestion.hot_areas || []).map((area) => {
+                const isSel = isAnswered === area.id;
+                const isCorr = area.id === currentQuestion.correct_area;
+                const isChecked = checkedQuestions.has(currentQuestion.question_id);
+                return (
+                  <button key={area.id} onClick={() => handleSelectAnswer(area.id)} className={`absolute border-2 rounded ${isSel ? 'border-indigo-600 bg-indigo-200/50' : 'border-transparent hover:border-indigo-300'} ${isChecked && isCorr ? '!border-green-500 bg-green-200/50' : ''}`} style={{ left: `${area.coords[0]}%`, top: `${area.coords[1]}%`, width: `${area.coords[2]}%`, height: `${area.coords[3]}%` }} aria-label={`Area ${area.id}`} />
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(currentQuestion.hot_areas || []).map((a) => (
+                <button key={a.id} onClick={() => handleSelectAnswer(a.id)} className={`px-3 py-1 rounded-full text-xs font-medium border ${isAnswered === a.id ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white'}`}>{a.id}</button>
+              ))}
+            </div>
+          </div>
+        ) : currentQuestion.question_type === 'drag_drop' && currentQuestion.drag_items && currentQuestion.drop_zones ? (
+          <div className="space-y-3">
+            {currentQuestion.drop_zones.map((zone) => {
+              const map = isAnswered && typeof isAnswered === 'object' && !Array.isArray(isAnswered) ? (isAnswered as Record<string, string>) : {};
+              const sel = map[zone.id] || '';
+              const isChecked = checkedQuestions.has(currentQuestion.question_id);
+              const corr = currentQuestion.correct_mapping?.[zone.id];
+              return (
+                <div key={zone.id} className={`flex items-center gap-2 p-2 border rounded ${isChecked ? (sel === corr ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500') : 'bg-white'}`}>
+                  <span className="text-sm font-medium min-w-24">{zone.label}:</span>
+                  <select value={sel} onChange={(e) => handleDragMapping(zone.id, e.target.value)} className="flex-1 text-sm border rounded px-2 py-1">
+                    <option value="">— select —</option>
+                    {currentQuestion.drag_items!.map((it) => <option key={it.id} value={it.id}>{it.label}</option>)}
+                  </select>
+                  {isChecked && sel === corr && <span className="text-green-600 text-xs">✓</span>}
+                </div>
+              );
+            })}
+          </div>
+        ) : currentQuestion.question_type === 'build_list' || currentQuestion.question_type === 'ordering' ? (
+          <div className="space-y-2">
+            {(() => {
+              const items = currentQuestion.correct_order || currentQuestion.drag_items?.map((d) => d.label) || Object.values(currentQuestion.options);
+              const order: string[] = Array.isArray(isAnswered) && isAnswered.length ? (isAnswered as string[]) : [...items];
+              return order.map((label, idx) => (
+                <div key={`${label}-${idx}`} className="flex items-center gap-2 p-3 border rounded bg-white">
+                  <span className="text-sm flex-1">{idx + 1}. {label}</span>
+                  <button onClick={() => idx > 0 && handleOrderingMove(idx, idx - 1)} disabled={idx === 0} className="px-2 py-1 text-xs bg-gray-100 rounded disabled:opacity-30">↑</button>
+                  <button onClick={() => idx < order.length - 1 && handleOrderingMove(idx, idx + 1)} disabled={idx === order.length - 1} className="px-2 py-1 text-xs bg-gray-100 rounded disabled:opacity-30">↓</button>
+                </div>
+              ));
+            })()}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {Object.entries(currentQuestion.options).map(([key, value]) => {
+              const isChecked = checkedQuestions.has(currentQuestion.question_id);
+              const isMulti = currentQuestion.question_type === 'multi_select';
+              const correctSet = currentQuestion.correct_answers || (currentQuestion.correct_answer ? [currentQuestion.correct_answer] : []);
+              const isCorrectOption = isMulti ? correctSet.includes(key) : key === currentQuestion.correct_answer;
+              const selectedArr: string[] = Array.isArray(isAnswered) ? isAnswered as string[] : isAnswered ? [isAnswered as string] : [];
+              const isSelected = isMulti ? selectedArr.includes(key) : isAnswered === key;
 
-            let optionStyle = 'border-gray-200 hover:border-gray-300 hover:bg-gray-50';
-            if (isChecked) {
-              if (isCorrectOption) {
-                optionStyle = 'border-green-500 bg-green-50';
-              } else if (isSelected && !isCorrectOption) {
-                optionStyle = 'border-red-500 bg-red-50';
-              } else {
-                optionStyle = 'border-gray-200 bg-white';
-              }
-            } else if (isSelected) {
-              optionStyle = 'border-indigo-500 bg-indigo-50';
-            }
+              let optionStyle = 'border-gray-200 hover:border-gray-300 hover:bg-gray-50';
+              if (isChecked) {
+                if (isCorrectOption) optionStyle = 'border-green-500 bg-green-50';
+                else if (isSelected && !isCorrectOption) optionStyle = 'border-red-500 bg-red-50';
+                else optionStyle = 'border-gray-200 bg-white';
+              } else if (isSelected) optionStyle = 'border-indigo-500 bg-indigo-50';
 
-            return (
-              <label
-                key={key}
-                className={`flex items-start p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}
-              >
-                <input
-                  type={isMulti ? 'checkbox' : 'radio'}
-                  name={`question-${currentQuestion.question_id}`}
-                  value={key}
-                  checked={isSelected}
-                  onChange={() => handleSelectAnswer(key)}
-                  className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5"
-                />
-                <span className="ml-2 md:ml-3 text-sm md:text-base text-gray-800">
-                  <span className="font-medium">{key}.</span> {value}
-                </span>
-                {isChecked && isCorrectOption && (
-                  <span className="ml-auto text-green-600 font-bold text-xs flex-shrink-0">✓</span>
-                )}
-                {isChecked && isSelected && !isCorrectOption && (
-                  <span className="ml-auto text-red-600 font-bold text-xs flex-shrink-0">✗</span>
-                )}
-              </label>
-            );
-          })}
-          {currentQuestion.question_type === 'multi_select' && (
-            <p className="text-xs text-gray-500 italic">Select all that apply (multiple answers allowed)</p>
-          )}
-        </div>
+              return (
+                <label key={key} className={`flex items-start p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}>
+                  <input type={isMulti ? 'checkbox' : 'radio'} name={`question-${currentQuestion.question_id}`} value={key} checked={isSelected} onChange={() => handleSelectAnswer(key)} className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
+                  <span className="ml-2 md:ml-3 text-sm md:text-base text-gray-800"><span className="font-medium">{key}.</span> {value}</span>
+                  {isChecked && isCorrectOption && <span className="ml-auto text-green-600 font-bold text-xs flex-shrink-0">✓</span>}
+                  {isChecked && isSelected && !isCorrectOption && <span className="ml-auto text-red-600 font-bold text-xs flex-shrink-0">✗</span>}
+                </label>
+              );
+            })}
+            {currentQuestion.question_type === 'multi_select' && <p className="text-xs text-gray-500 italic">Select all that apply</p>}
+          </div>
+        )}
 
         {/* Explanation after Check */}
         {checkedQuestions.has(currentQuestion.question_id) && (

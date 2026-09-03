@@ -565,19 +565,26 @@ def handler(event, context):
                 correct_answers = q.get('correct_answers')
                 difficulty   = q.get('difficulty', 'medium')
 
-                # Scoring per type — supports string or string[] answers
+                # Scoring per type — supports string / string[] / mapping
                 if q_type == 'multi_select' and correct_answers:
-                    # Normalize user answer to sorted set
                     if isinstance(user_ans, str) and user_ans:
                         user_set = set([s.strip() for s in user_ans.split(',') if s.strip()])
                     elif isinstance(user_ans, list):
                         user_set = set(user_ans)
                     else:
                         user_set = set()
-                    correct_set = set(correct_answers)
-                    is_correct = user_set == correct_set
+                    is_correct = user_set == set(correct_answers)
                 elif q_type == 'yes_no' and correct_answers:
-                    is_correct = user_ans == correct_ans or (isinstance(user_ans, list) and user_ans == correct_answers)
+                    # statements: user_ans is Yes/No array
+                    is_correct = user_ans == correct_answers if isinstance(user_ans, list) else user_ans == correct_ans
+                elif q_type in ('ordering', 'build_list') and q.get('correct_order'):
+                    corr = q.get('correct_order')
+                    is_correct = isinstance(user_ans, list) and user_ans == corr
+                elif q_type == 'drag_drop' and q.get('correct_mapping'):
+                    corr = q.get('correct_mapping')
+                    is_correct = isinstance(user_ans, dict) and user_ans == corr
+                elif q_type == 'hot_area' and q.get('correct_area'):
+                    is_correct = user_ans == q.get('correct_area')
                 else:
                     is_correct = user_ans == correct_ans
                 

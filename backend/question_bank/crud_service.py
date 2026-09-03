@@ -80,22 +80,21 @@ def validate_mcq_fields(
     if len(question_text.strip()) < 10:
         return False, "Question text must be at least 10 characters"
     
-    # Validate options
-    if not options or not isinstance(options, list):
-        return False, "Options must be a list"
-    
-    if len(options) != 4:
-        return False, "Must provide exactly 4 options"
-    
-    for i, option in enumerate(options):
-        if not option or not isinstance(option, str):
-            return False, f"Option {chr(65+i)} must be a non-empty string"
-        if len(option.strip()) < 2:
-            return False, f"Option {chr(65+i)} must be at least 2 characters"
-    
     # Validate question_type
     if question_type not in VALID_QUESTION_TYPES:
         return False, f"question_type must be one of: {', '.join(VALID_QUESTION_TYPES)}"
+
+    # Validate options — only strict for choice types
+    if question_type in ('single_choice', 'multi_select'):
+        if not options or not isinstance(options, list):
+            return False, "Options must be a list"
+        if len(options) != 4:
+            return False, "Must provide exactly 4 options"
+        for i, option in enumerate(options):
+            if not option or not isinstance(option, str):
+                return False, f"Option {chr(65+i)} must be a non-empty string"
+            if len(option.strip()) < 2:
+                return False, f"Option {chr(65+i)} must be at least 2 characters"
 
     # Validate correct answer(s) per type
     if question_type == 'single_choice':

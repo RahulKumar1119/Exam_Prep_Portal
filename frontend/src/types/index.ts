@@ -56,7 +56,7 @@ export interface Question {
   iibf_reference?: string;
 }
 
-export type UserAnswer = string | string[];
+export type UserAnswer = string | string[] | Record<string, string>;
 
 export interface PracticeSession {
   session_id: string;
