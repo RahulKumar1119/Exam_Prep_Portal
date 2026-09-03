@@ -43,7 +43,7 @@
     "@types/node": "^20.10.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^10.8.1",
     "postcss": "^8.5.25",
     "prettier": "^3.9.6",
@@ -51,8 +51,8 @@
     "serve-handler": "^6.1.7",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^5.4.21",
-    "vitest": "^3.2.4"
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
   },
   "scripts": {
     "dev": "vite",
