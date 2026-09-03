@@ -6,6 +6,43 @@ import { useAuth } from '../../context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
 import { ExplanationDisplay } from './ExplanationDisplay';
 import DiscussionThread from './DiscussionThread';
+import DragDropBoard from './DragDropBoard';
+import OrderableList from './OrderableList';
+
+/** Deterministic shuffle (seeded by question_id) so build_list/ordering starts
+ *  scrambled but stable across renders and refreshes. Returns the labels. */
+function orderingDisplayOrder(q: {
+  question_id: string;
+  correct_order?: string[];
+  drag_items?: { id: string; label: string }[];
+  options?: Record<string, string>;
+}): string[] {
+  const labels =
+    q.correct_order ||
+    q.drag_items?.map((d) => d.label) ||
+    (q.options ? Object.values(q.options) : []);
+  const arr = [...labels];
+  // Seeded PRNG (mulberry32) from the question_id hash
+  let h = 0;
+  for (let i = 0; i < q.question_id.length; i++) h = (h * 31 + q.question_id.charCodeAt(i)) >>> 0;
+  const rand = () => {
+    h |= 0;
+    h = (h + 0x6d2b79f5) | 0;
+    let t = Math.imul(h ^ (h >>> 15), 1 | h);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  // Fisher–Yates
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  // Guard: if the shuffle happened to reproduce the correct order, rotate by one
+  if (q.correct_order && arr.join('|') === q.correct_order.join('|') && arr.length > 1) {
+    arr.push(arr.shift() as string);
+  }
+  return arr;
+}
 
 interface QuestionDisplayProps {
   session: PracticeSession;
@@ -142,24 +179,29 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   const handleOrderingMove = (from: number, to: number) => {
     const qid = currentQuestion.question_id;
     const prev = answers[qid];
-    const items = currentQuestion.correct_order || currentQuestion.drag_items?.map((d) => d.id) || [];
-    // current order is either saved answer or default items
-    let arr: string[] = Array.isArray(prev) && prev.length ? [...(prev as string[])] : [...items];
-    // if items are labels not ids, use items as is
-    if (!arr.length) arr = [...items];
+    // Operate on the SAME source the list renders (labels), and on the current
+    // displayed order (shuffled) when the user hasn't moved anything yet.
+    let arr: string[] = Array.isArray(prev) && prev.length
+      ? [...(prev as string[])]
+      : orderingDisplayOrder(currentQuestion);
     const [moved] = arr.splice(from, 1);
     arr.splice(to, 0, moved);
     setAnswers({ ...answers, [qid]: arr });
     onAnswer(qid, arr);
   };
 
-  const handleDragMapping = (zoneId: string, itemId: string) => {
+  // DragDropBoard manages the whole zone→item mapping and hands back the full map.
+  const handleDragMappingReplace = (mapping: Record<string, string>) => {
     const qid = currentQuestion.question_id;
-    const prev = answers[qid];
-    const map: Record<string, string> = prev && typeof prev === 'object' && !Array.isArray(prev) ? { ...(prev as Record<string, string>) } : {};
-    const next = { ...map, [zoneId]: itemId };
-    setAnswers({ ...answers, [qid]: next as unknown as UserAnswer });
-    onAnswer(qid, next as unknown as UserAnswer);
+    if (Object.keys(mapping).length === 0) {
+      const copy = { ...answers };
+      delete copy[qid];
+      setAnswers(copy);
+      onAnswer(qid, {});
+      return;
+    }
+    setAnswers({ ...answers, [qid]: mapping as unknown as UserAnswer });
+    onAnswer(qid, mapping as unknown as UserAnswer);
   };
 
   const handleClearAnswer = () => {
@@ -360,38 +402,28 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             </div>
           </div>
         ) : currentQuestion.question_type === 'drag_drop' && currentQuestion.drag_items && currentQuestion.drop_zones ? (
-          <div className="space-y-3">
-            {currentQuestion.drop_zones.map((zone) => {
-              const map = isAnswered && typeof isAnswered === 'object' && !Array.isArray(isAnswered) ? (isAnswered as Record<string, string>) : {};
-              const sel = map[zone.id] || '';
-              const isChecked = checkedQuestions.has(currentQuestion.question_id);
-              const corr = currentQuestion.correct_mapping?.[zone.id];
-              return (
-                <div key={zone.id} className={`flex items-center gap-2 p-2 border rounded ${isChecked ? (sel === corr ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500') : 'bg-white'}`}>
-                  <span className="text-sm font-medium min-w-24">{zone.label}:</span>
-                  <select value={sel} onChange={(e) => handleDragMapping(zone.id, e.target.value)} className="flex-1 text-sm border rounded px-2 py-1">
-                    <option value="">— select —</option>
-                    {currentQuestion.drag_items!.map((it) => <option key={it.id} value={it.id}>{it.label}</option>)}
-                  </select>
-                  {isChecked && sel === corr && <span className="text-green-600 text-xs">✓</span>}
-                </div>
-              );
-            })}
-          </div>
+          <DragDropBoard
+            items={currentQuestion.drag_items}
+            zones={currentQuestion.drop_zones}
+            mapping={isAnswered && typeof isAnswered === 'object' && !Array.isArray(isAnswered) ? (isAnswered as Record<string, string>) : {}}
+            onChange={(m) => handleDragMappingReplace(m)}
+            checked={checkedQuestions.has(currentQuestion.question_id)}
+            correctMapping={currentQuestion.correct_mapping}
+          />
         ) : currentQuestion.question_type === 'build_list' || currentQuestion.question_type === 'ordering' ? (
-          <div className="space-y-2">
-            {(() => {
-              const items = currentQuestion.correct_order || currentQuestion.drag_items?.map((d) => d.label) || Object.values(currentQuestion.options);
-              const order: string[] = Array.isArray(isAnswered) && isAnswered.length ? (isAnswered as string[]) : [...items];
-              return order.map((label, idx) => (
-                <div key={`${label}-${idx}`} className="flex items-center gap-2 p-3 border rounded bg-white">
-                  <span className="text-sm flex-1">{idx + 1}. {label}</span>
-                  <button onClick={() => idx > 0 && handleOrderingMove(idx, idx - 1)} disabled={idx === 0} className="px-2 py-1 text-xs bg-gray-100 rounded disabled:opacity-30">↑</button>
-                  <button onClick={() => idx < order.length - 1 && handleOrderingMove(idx, idx + 1)} disabled={idx === order.length - 1} className="px-2 py-1 text-xs bg-gray-100 rounded disabled:opacity-30">↓</button>
-                </div>
-              ));
-            })()}
-          </div>
+          (() => {
+            const order: string[] = Array.isArray(isAnswered) && isAnswered.length
+              ? (isAnswered as string[])
+              : orderingDisplayOrder(currentQuestion);
+            return (
+              <OrderableList
+                order={order}
+                onReorder={handleOrderingMove}
+                checked={checkedQuestions.has(currentQuestion.question_id)}
+                correctOrder={currentQuestion.correct_order}
+              />
+            );
+          })()
         ) : (
           <div className="space-y-2">
             {Object.entries(currentQuestion.options).map(([key, value]) => {
