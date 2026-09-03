@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePractice } from '../context/PracticeContext';
 import { useDashboard } from '../context/DashboardContext';
+import { UserAnswer } from '../types/index';
 import QuestionDisplay from '../components/Practice/QuestionDisplay';
 import MockTestResults from '../components/Practice/MockTestResults';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
@@ -25,11 +26,11 @@ const MockTestPage: React.FC = () => {
     }
   };
 
-  const handleAnswerQuestion = (questionId: string, answer: string) => {
-    console.log(`Question ${questionId} answered with ${answer}`);
+  const handleAnswerQuestion = (questionId: string, answer: UserAnswer) => {
+    console.log(`Question ${questionId} answered with`, answer);
   };
 
-  const handleSubmitMockTest = async (answers: Record<string, string>) => {
+  const handleSubmitMockTest = async (answers: Record<string, UserAnswer>) => {
     if (!current_session) return;
     
     setIsSubmitting(true);

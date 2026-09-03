@@ -4,7 +4,7 @@
  * On mount, restores any in-progress session so a page refresh doesn't lose progress.
  */
 import { useEffect, useRef } from 'react';
-import { PracticeSession } from '../types/index';
+import { PracticeSession, UserAnswer } from '../types/index';
 import { saveSession, loadSession, clearSession, PersistedSession } from '../lib/db';
 
 export type { PersistedSession };
@@ -12,7 +12,7 @@ export type { PersistedSession };
 /** Save current session state to IndexedDB (async, non-blocking) */
 export async function saveSessionState(
   session: PracticeSession,
-  answers: Record<string, string>,
+  answers: Record<string, UserAnswer>,
   timeLeft: number,
   currentQuestionIndex: number,
   reviewedQuestions: string[],
@@ -42,7 +42,7 @@ export async function clearSessionState(): Promise<void> {
 /** Hook that auto-saves session state whenever answers or timeLeft change */
 export function useSessionPersistence(
   session: PracticeSession | null,
-  answers: Record<string, string>,
+  answers: Record<string, UserAnswer>,
   timeLeft: number,
   currentQuestionIndex: number,
   reviewedQuestions: Set<string>,

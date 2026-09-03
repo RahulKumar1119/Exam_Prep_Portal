@@ -25,10 +25,14 @@ aws-exports.js
 
 # Python
 __pycache__/
+**/__pycache__/
 *.pyc
+**/*.pyc
 *.pyo
+**/*.pyo
 *.pyd
 .pytest_cache/
+**/.pytest_cache/
 *.egg-info/
 dist/
 build/

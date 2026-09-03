@@ -11,7 +11,6 @@
  */
 
 import '@testing-library/jest-dom';
-import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Timer } from '../components/Timer';
@@ -104,7 +103,7 @@ describe('Timer Component', () => {
 
   describe('Warning Messages', () => {
     it('should show 5 minutes remaining message', () => {
-      const { container } = render(
+      render(
         <Timer duration={300} onTimeUp={() => {}} />
       );
       
@@ -112,7 +111,7 @@ describe('Timer Component', () => {
     });
 
     it('should show 1 minute remaining message for 60 seconds', () => {
-      const { container } = render(
+      render(
         <Timer duration={60} onTimeUp={() => {}} />
       );
       
@@ -181,7 +180,7 @@ describe('Timer Component', () => {
     });
 
     it('should show auto-submit message when time is up', () => {
-      const { container } = render(
+      render(
         <Timer duration={0} onTimeUp={() => {}} />
       );
       
@@ -375,7 +374,7 @@ describe('Timer Component', () => {
 
     it('should display the time at which the timer was stopped (req 3.12)', async () => {
       const user = setup();
-      const { container } = render(<Timer duration={30} onTimeUp={() => {}} />);
+      render(<Timer duration={30} onTimeUp={() => {}} />);
 
       // Advance 10 seconds so timer is at 00:20
       act(() => { jest.advanceTimersByTime(10000); });

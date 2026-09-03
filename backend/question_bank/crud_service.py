@@ -31,7 +31,7 @@ VERSION_HISTORY_TABLE = 'jaiib-version-history'
 KMS_KEY_ID = 'arn:aws:kms:ap-south-1:438097524343:key/8f4e49c4-9d56-47c1-a24e-37fb003c8b77'
 
 # Valid values
-VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM']
+VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'AFM', 'RBWM', 'AI-300', 'ABM']
 VALID_DIFFICULTIES = ['easy', 'medium', 'hard']
 
 
@@ -45,6 +45,8 @@ def get_version_history_table():
     return dynamodb.Table(VERSION_HISTORY_TABLE)
 
 
+VALID_QUESTION_TYPES = ['single_choice', 'multi_select', 'yes_no', 'case_study', 'drag_drop', 'hot_area', 'build_list', 'ordering']
+
 def validate_mcq_fields(
     question_text: str,
     options: List[str],
@@ -52,7 +54,9 @@ def validate_mcq_fields(
     topic: str,
     difficulty: str,
     references: Dict[str, str],
-    paper: str
+    paper: str,
+    question_type: str = 'single_choice',
+    correct_answers: Optional[List[str]] = None
 ) -> Tuple[bool, str]:
     """
     Validate MCQ fields for creation or update.
@@ -76,22 +80,41 @@ def validate_mcq_fields(
     if len(question_text.strip()) < 10:
         return False, "Question text must be at least 10 characters"
     
-    # Validate options
-    if not options or not isinstance(options, list):
-        return False, "Options must be a list"
-    
-    if len(options) != 4:
-        return False, "Must provide exactly 4 options"
-    
-    for i, option in enumerate(options):
-        if not option or not isinstance(option, str):
-            return False, f"Option {chr(65+i)} must be a non-empty string"
-        if len(option.strip()) < 2:
-            return False, f"Option {chr(65+i)} must be at least 2 characters"
-    
-    # Validate correct answer
-    if correct_answer not in ['A', 'B', 'C', 'D']:
-        return False, "Correct answer must be A, B, C, or D"
+    # Validate question_type
+    if question_type not in VALID_QUESTION_TYPES:
+        return False, f"question_type must be one of: {', '.join(VALID_QUESTION_TYPES)}"
+
+    # Validate options — only strict for choice types.
+    # Accept either a list [a,b,c,d] or a map {A:..,B:..,C:..,D:..}.
+    if question_type in ('single_choice', 'multi_select'):
+        if isinstance(options, dict):
+            option_values = list(options.values())
+        elif isinstance(options, list):
+            option_values = options
+        else:
+            return False, "Options must be a list or an {A,B,C,D} map"
+        if len(option_values) != 4:
+            return False, "Must provide exactly 4 options"
+        for i, option in enumerate(option_values):
+            if not option or not isinstance(option, str):
+                return False, f"Option {chr(65+i)} must be a non-empty string"
+            if len(option.strip()) < 2:
+                return False, f"Option {chr(65+i)} must be at least 2 characters"
+
+    # Validate correct answer(s) per type
+    if question_type == 'single_choice':
+        if correct_answer not in ['A', 'B', 'C', 'D']:
+            return False, "Correct answer must be A, B, C, or D"
+    elif question_type == 'multi_select':
+        answers = correct_answers or ([c.strip() for c in correct_answer.split(',')] if correct_answer else [])
+        if not answers or len(answers) < 2:
+            return False, "Multi-select requires at least 2 correct answers"
+        for ans in answers:
+            if ans not in ['A', 'B', 'C', 'D']:
+                return False, f"Invalid correct answer: {ans}"
+    elif question_type == 'yes_no':
+        # options validation skipped, correct_answers checked below
+        pass
     
     # Validate topic
     if not topic or not isinstance(topic, str):
@@ -121,6 +144,15 @@ def validate_mcq_fields(
     return True, ""
 
 
+# Optional fields for the extended Microsoft question types (issue #51).
+# Any of these present in `typed_fields` is persisted as-is.
+TYPED_OPTIONAL_FIELDS = (
+    'correct_answers', 'statements', 'case_study_id', 'scenario', 'exhibits',
+    'drag_items', 'drop_zones', 'correct_mapping', 'correct_order',
+    'image_url', 'hot_areas', 'correct_area',
+)
+
+
 def create_mcq(
     question_text: str,
     options: List[str],
@@ -129,29 +161,39 @@ def create_mcq(
     difficulty: str,
     references: Dict[str, str],
     paper: str,
-    creator_user_id: str
+    creator_user_id: str,
+    question_type: str = 'single_choice',
+    typed_fields: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Create a new MCQ in the question bank.
-    
-    Validates all required fields and creates a new question with unique ID.
-    
+    Create a question in the question bank.
+
+    Supports single_choice (default) plus the extended Microsoft types
+    (multi_select, yes_no, case_study, drag_drop, hot_area, build_list, ordering).
+
     Args:
         question_text: The question text
-        options: List of 4 options [A, B, C, D]
-        correct_answer: Correct answer (A, B, C, or D)
+        options: List of options (exactly 4 for choice types; may be empty for others)
+        correct_answer: Correct answer key for single_choice (A-D); comma string for multi_select
         topic: Topic name
         difficulty: Difficulty level
         references: Dictionary with rbi_reference and iibf_reference
-        paper: JAIIB paper name
+        paper: Paper name
         creator_user_id: User ID of the creator
-        
+        question_type: One of VALID_QUESTION_TYPES (defaults to 'single_choice')
+        typed_fields: Optional dict of type-specific fields (correct_answers, statements,
+                      scenario, drag_items, correct_mapping, hot_areas, etc.)
+
     Returns:
         Dictionary with question_id, version, and success status
     """
-    # Validate fields
+    typed_fields = typed_fields or {}
+
+    # Validate fields (type-aware)
     is_valid, error_msg = validate_mcq_fields(
-        question_text, options, correct_answer, topic, difficulty, references, paper
+        question_text, options, correct_answer, topic, difficulty, references, paper,
+        question_type=question_type,
+        correct_answers=typed_fields.get('correct_answers')
     )
     
     if not is_valid:
@@ -178,6 +220,7 @@ def create_mcq(
             'question_text': question_text,
             'options': options,
             'correct_answer': correct_answer,
+            'question_type': question_type,
             'rbi_reference': references.get('rbi_reference', ''),
             'iibf_reference': references.get('iibf_reference', ''),
             'created_at': timestamp,
@@ -186,22 +229,30 @@ def create_mcq(
             'updated_by': creator_user_id,
             'status': 'active'
         }
+
+        # Persist any provided type-specific fields
+        for f in TYPED_OPTIONAL_FIELDS:
+            if typed_fields.get(f) is not None:
+                question_item[f] = typed_fields[f]
         
         # Store in DynamoDB
         table.put_item(Item=question_item)
         
-        # Publish metric
-        cloudwatch.put_metric_data(
-            Namespace='JAIIB-QuestionBank',
-            MetricData=[
-                {
-                    'MetricName': 'MCQCreated',
-                    'Value': 1,
-                    'Unit': 'Count',
-                    'Timestamp': datetime.utcnow()
-                }
-            ]
-        )
+        # Publish metric — best-effort telemetry, never fail the create on this
+        try:
+            cloudwatch.put_metric_data(
+                Namespace='JAIIB-QuestionBank',
+                MetricData=[
+                    {
+                        'MetricName': 'MCQCreated',
+                        'Value': 1,
+                        'Unit': 'Count',
+                        'Timestamp': datetime.utcnow()
+                    }
+                ]
+            )
+        except Exception as metric_err:
+            print(f"Warning: metric publish failed (non-fatal): {metric_err}")
         
         return {
             'success': True,

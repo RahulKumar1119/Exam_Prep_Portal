@@ -1,11 +1,11 @@
 import { get, set, del } from 'idb-keyval';
-import { PracticeSession } from '../types/index';
+import { PracticeSession, UserAnswer } from '../types/index';
 
 const SESSION_KEY = 'jaiib_practice_session';
 
 export interface PersistedSession {
   session: PracticeSession;
-  answers: Record<string, string>;
+  answers: Record<string, UserAnswer>;
   timeLeft: number;
   currentQuestionIndex: number;
   reviewedQuestions: string[];

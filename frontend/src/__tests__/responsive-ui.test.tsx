@@ -1,8 +1,6 @@
-import React from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { PaperSelection } from '../components/PaperSelection';
-import { PracticeSetInterface } from '../components/PracticeSetInterface';
 import { ResultsDisplay } from '../components/ResultsDisplay';
 import { PracticeProvider } from '../context/PracticeContext';
 import { NotificationProvider } from '../context/NotificationContext';
@@ -96,7 +94,6 @@ describe('Property 16: Responsive layout adapts to viewport', () => {
     it('should have touch-friendly buttons (≥44×44px)', () => {
       renderWithProviders(<PaperSelection />);
       const startButton = screen.getByText('Start Practice');
-      const styles = window.getComputedStyle(startButton);
       // Verify button has adequate padding for touch targets
       expect(startButton).toHaveClass('py-3', 'px-8');
     });
@@ -192,7 +189,7 @@ describe('Property 17: Mobile load time performance', () => {
     });
 
     it('should render ResultsDisplay component within acceptable time', () => {
-      const mockResult = {
+      const mockResult: any = {
         score: 75,
         results: [
           {
@@ -252,7 +249,7 @@ describe('Property 17: Mobile load time performance', () => {
     });
 
     it('should render ResultsDisplay with all required elements', () => {
-      const mockResult = {
+      const mockResult: any = {
         score: 85,
         results: [
           {

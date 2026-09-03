@@ -1,16 +1,54 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PracticeSession } from '../../types/index';
+import { PracticeSession, UserAnswer } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
 import { useBookmarks } from '../../hooks/useBookmarks';
 import { useAuth } from '../../context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
 import { ExplanationDisplay } from './ExplanationDisplay';
 import DiscussionThread from './DiscussionThread';
+import DragDropBoard from './DragDropBoard';
+import OrderableList from './OrderableList';
+import CaseStudyTabs from './CaseStudyTabs';
+
+/** Deterministic shuffle (seeded by question_id) so build_list/ordering starts
+ *  scrambled but stable across renders and refreshes. Returns the labels. */
+function orderingDisplayOrder(q: {
+  question_id: string;
+  correct_order?: string[];
+  drag_items?: { id: string; label: string }[];
+  options?: Record<string, string>;
+}): string[] {
+  const labels =
+    q.correct_order ||
+    q.drag_items?.map((d) => d.label) ||
+    (q.options ? Object.values(q.options) : []);
+  const arr = [...labels];
+  // Seeded PRNG (mulberry32) from the question_id hash
+  let h = 0;
+  for (let i = 0; i < q.question_id.length; i++) h = (h * 31 + q.question_id.charCodeAt(i)) >>> 0;
+  const rand = () => {
+    h |= 0;
+    h = (h + 0x6d2b79f5) | 0;
+    let t = Math.imul(h ^ (h >>> 15), 1 | h);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  // Fisher–Yates
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  // Guard: if the shuffle happened to reproduce the correct order, rotate by one
+  if (q.correct_order && arr.join('|') === q.correct_order.join('|') && arr.length > 1) {
+    arr.push(arr.shift() as string);
+  }
+  return arr;
+}
 
 interface QuestionDisplayProps {
   session: PracticeSession;
-  onAnswer: (questionId: string, answer: string) => void;
-  onSubmit: (answers: Record<string, string>) => void;
+  onAnswer: (questionId: string, answer: UserAnswer) => void;
+  onSubmit: (answers: Record<string, UserAnswer>) => void;
   isSubmitting?: boolean;
   isMockTest?: boolean;
 }
@@ -42,7 +80,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     loadSessionState().then(setPersisted);
   }, [session.session_id]);
 
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, UserAnswer>>({});
   const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [reviewedQuestions, setReviewedQuestions] = useState<Set<string>>(new Set());
@@ -99,8 +137,72 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
   const handleSelectAnswer = (optionKey: string) => {
     const questionId = currentQuestion.question_id;
-    setAnswers({ ...answers, [questionId]: optionKey });
-    onAnswer(questionId, optionKey);
+    const isMulti = currentQuestion.question_type === 'multi_select';
+    if (isMulti) {
+      const prev = answers[questionId];
+      const prevArr: string[] = Array.isArray(prev) ? prev : prev ? [prev as string] : [];
+      const next = prevArr.includes(optionKey) ? prevArr.filter((k) => k !== optionKey) : [...prevArr, optionKey];
+      if (next.length === 0) {
+        const copy = { ...answers };
+        delete copy[questionId];
+        setAnswers(copy);
+        onAnswer(questionId, []);
+      } else {
+        setAnswers({ ...answers, [questionId]: next });
+        onAnswer(questionId, next);
+      }
+    } else {
+      setAnswers({ ...answers, [questionId]: optionKey });
+      onAnswer(questionId, optionKey);
+    }
+  };
+
+  const handleYesNoAnswer = (idx: number, value: string) => {
+    const qid = currentQuestion.question_id;
+    const prev = answers[qid];
+    const arr: string[] = Array.isArray(prev) ? [...(prev as string[])] : [];
+    // ensure length
+    const stmtsLen = currentQuestion.statements?.length || 0;
+    while (arr.length < stmtsLen) arr.push('');
+    arr[idx] = value;
+    const hasAny = arr.some((v) => v);
+    if (!hasAny) {
+      const copy = { ...answers };
+      delete copy[qid];
+      setAnswers(copy);
+      onAnswer(qid, []);
+    } else {
+      setAnswers({ ...answers, [qid]: arr });
+      onAnswer(qid, arr);
+    }
+  };
+
+  const handleOrderingMove = (from: number, to: number) => {
+    const qid = currentQuestion.question_id;
+    const prev = answers[qid];
+    // Operate on the SAME source the list renders (labels), and on the current
+    // displayed order (shuffled) when the user hasn't moved anything yet.
+    let arr: string[] = Array.isArray(prev) && prev.length
+      ? [...(prev as string[])]
+      : orderingDisplayOrder(currentQuestion);
+    const [moved] = arr.splice(from, 1);
+    arr.splice(to, 0, moved);
+    setAnswers({ ...answers, [qid]: arr });
+    onAnswer(qid, arr);
+  };
+
+  // DragDropBoard manages the whole zone→item mapping and hands back the full map.
+  const handleDragMappingReplace = (mapping: Record<string, string>) => {
+    const qid = currentQuestion.question_id;
+    if (Object.keys(mapping).length === 0) {
+      const copy = { ...answers };
+      delete copy[qid];
+      setAnswers(copy);
+      onAnswer(qid, {});
+      return;
+    }
+    setAnswers({ ...answers, [qid]: mapping as unknown as UserAnswer });
+    onAnswer(qid, mapping as unknown as UserAnswer);
   };
 
   const handleClearAnswer = () => {
@@ -146,22 +248,37 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             const isActive = idx === currentQuestionIndex;
             const isAns = !!answers[q.question_id];
             const isRev = reviewedQuestions.has(q.question_id);
+            // Group case-study questions visually: show a small purple cap on
+            // buttons that belong to a case study, and start a new row before
+            // the first question of each case study.
+            const csId = q.case_study_id;
+            const prevCsId = idx > 0 ? session.questions[idx - 1].case_study_id : undefined;
+            const startsCaseStudy = !!csId && csId !== prevCsId;
             return (
-              <button
-                key={q.question_id}
-                onClick={() => setCurrentQuestionIndex(idx)}
-                className={`w-7 h-7 md:w-8 md:h-8 rounded text-[10px] md:text-xs font-bold transition-all border ${
-                  isActive
-                    ? 'bg-indigo-600 text-white border-indigo-700 ring-2 ring-indigo-300'
-                    : isRev
-                    ? 'bg-orange-400 text-white border-orange-500'
-                    : isAns
-                    ? 'bg-green-500 text-white border-green-600'
-                    : 'bg-gray-100 text-gray-700 border-gray-300'
-                }`}
-              >
-                {idx + 1}
-              </button>
+              <React.Fragment key={q.question_id}>
+                {startsCaseStudy && (
+                  <span className="basis-full text-[10px] font-semibold text-purple-700 mt-1 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-sm bg-purple-500 inline-block" /> Case study: {csId}
+                  </span>
+                )}
+                <button
+                  onClick={() => setCurrentQuestionIndex(idx)}
+                  title={csId ? `Case study ${csId}` : `Question ${idx + 1}`}
+                  className={`w-7 h-7 md:w-8 md:h-8 rounded text-[10px] md:text-xs font-bold transition-all border ${
+                    csId ? 'ring-1 ring-purple-300' : ''
+                  } ${
+                    isActive
+                      ? 'bg-indigo-600 text-white border-indigo-700 ring-2 ring-indigo-300'
+                      : isRev
+                      ? 'bg-orange-400 text-white border-orange-500'
+                      : isAns
+                      ? 'bg-green-500 text-white border-green-600'
+                      : 'bg-gray-100 text-gray-700 border-gray-300'
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              </React.Fragment>
             );
           })}
         </div>
@@ -229,62 +346,125 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
       {/* Question Card */}
       <div className="bg-white rounded-lg shadow border p-4 md:p-6">
+        {/* Case Study panel (Overview + exhibit tabs) */}
+        {(currentQuestion.scenario || currentQuestion.case_study_id) && (
+          <CaseStudyTabs
+            caseStudyId={currentQuestion.case_study_id}
+            scenario={currentQuestion.scenario}
+            exhibits={currentQuestion.exhibits}
+            questionCount={
+              currentQuestion.case_study_id
+                ? session.questions.filter((q) => q.case_study_id === currentQuestion.case_study_id).length
+                : undefined
+            }
+          />
+        )}
+
         {/* Question text */}
         <div className="mb-4 md:mb-6">
           <h3 className="text-sm md:text-base font-bold text-gray-900">
-            {currentQuestionIndex + 1}. Question
+            {currentQuestionIndex + 1}. Question {currentQuestion.question_type && currentQuestion.question_type !== 'single_choice' ? `— ${currentQuestion.question_type.replace('_',' ')}` : ''}
           </h3>
           <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
             {currentQuestion.question_text}
           </p>
         </div>
 
-        {/* Options */}
-        <div className="space-y-2">
-          {Object.entries(currentQuestion.options).map(([key, value]) => {
-            const isChecked = checkedQuestions.has(currentQuestion.question_id);
-            const isSelected = isAnswered === key;
-            const isCorrectOption = key === currentQuestion.correct_answer;
-
-            let optionStyle = 'border-gray-200 hover:border-gray-300 hover:bg-gray-50';
-            if (isChecked) {
-              if (isCorrectOption) {
-                optionStyle = 'border-green-500 bg-green-50';
-              } else if (isSelected && !isCorrectOption) {
-                optionStyle = 'border-red-500 bg-red-50';
-              } else {
-                optionStyle = 'border-gray-200 bg-white';
-              }
-            } else if (isSelected) {
-              optionStyle = 'border-indigo-500 bg-indigo-50';
-            }
-
+        {/* Options — type-switched */}
+        {currentQuestion.question_type === 'yes_no' && currentQuestion.statements ? (
+          <div className="space-y-3">
+            {currentQuestion.statements.map((stmt, idx) => {
+              const selArr = Array.isArray(isAnswered) ? (isAnswered as string[]) : [];
+              const sel = selArr[idx] || '';
+              const correct = currentQuestion.correct_answers?.[idx];
+              const isChecked = checkedQuestions.has(currentQuestion.question_id);
+              return (
+                <div key={idx} className={`p-3 border rounded-lg ${isChecked ? (sel === correct ? 'bg-green-50 border-green-500' : sel ? 'bg-red-50 border-red-500' : 'bg-white') : 'bg-white'}`}>
+                  <p className="text-sm text-gray-800 mb-2">{idx + 1}. {stmt}</p>
+                  <div className="flex gap-4">
+                    {['Yes', 'No'].map((v) => (
+                      <label key={v} className="flex items-center gap-1 cursor-pointer">
+                        <input type="radio" name={`q-${currentQuestion.question_id}-${idx}`} checked={sel === v} onChange={() => handleYesNoAnswer(idx, v)} className="w-4 h-4 text-indigo-600" />
+                        <span className="text-sm">{v}</span>
+                        {isChecked && v === correct && <span className="text-green-600 text-xs">✓</span>}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : currentQuestion.question_type === 'hot_area' && currentQuestion.image_url ? (
+          <div className="space-y-3">
+            <div className="relative border rounded overflow-hidden bg-gray-50">
+              <img src={currentQuestion.image_url} alt="Hot area" className="w-full h-auto" />
+              {(currentQuestion.hot_areas || []).map((area) => {
+                const isSel = isAnswered === area.id;
+                const isCorr = area.id === currentQuestion.correct_area;
+                const isChecked = checkedQuestions.has(currentQuestion.question_id);
+                return (
+                  <button key={area.id} onClick={() => handleSelectAnswer(area.id)} className={`absolute border-2 rounded ${isSel ? 'border-indigo-600 bg-indigo-200/50' : 'border-transparent hover:border-indigo-300'} ${isChecked && isCorr ? '!border-green-500 bg-green-200/50' : ''}`} style={{ left: `${area.coords[0]}%`, top: `${area.coords[1]}%`, width: `${area.coords[2]}%`, height: `${area.coords[3]}%` }} aria-label={`Area ${area.id}`} />
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(currentQuestion.hot_areas || []).map((a) => (
+                <button key={a.id} onClick={() => handleSelectAnswer(a.id)} className={`px-3 py-1 rounded-full text-xs font-medium border ${isAnswered === a.id ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white'}`}>{a.id}</button>
+              ))}
+            </div>
+          </div>
+        ) : currentQuestion.question_type === 'drag_drop' && currentQuestion.drag_items && currentQuestion.drop_zones ? (
+          <DragDropBoard
+            items={currentQuestion.drag_items}
+            zones={currentQuestion.drop_zones}
+            mapping={isAnswered && typeof isAnswered === 'object' && !Array.isArray(isAnswered) ? (isAnswered as Record<string, string>) : {}}
+            onChange={(m) => handleDragMappingReplace(m)}
+            checked={checkedQuestions.has(currentQuestion.question_id)}
+            correctMapping={currentQuestion.correct_mapping}
+          />
+        ) : currentQuestion.question_type === 'build_list' || currentQuestion.question_type === 'ordering' ? (
+          (() => {
+            const order: string[] = Array.isArray(isAnswered) && isAnswered.length
+              ? (isAnswered as string[])
+              : orderingDisplayOrder(currentQuestion);
             return (
-              <label
-                key={key}
-                className={`flex items-start p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}
-              >
-                <input
-                  type="radio"
-                  name={`question-${currentQuestion.question_id}`}
-                  value={key}
-                  checked={isSelected}
-                  onChange={() => handleSelectAnswer(key)}
-                  className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5"
-                />
-                <span className="ml-2 md:ml-3 text-sm md:text-base text-gray-800">
-                  <span className="font-medium">{key}.</span> {value}
-                </span>
-                {isChecked && isCorrectOption && (
-                  <span className="ml-auto text-green-600 font-bold text-xs flex-shrink-0">✓</span>
-                )}
-                {isChecked && isSelected && !isCorrectOption && (
-                  <span className="ml-auto text-red-600 font-bold text-xs flex-shrink-0">✗</span>
-                )}
-              </label>
+              <OrderableList
+                order={order}
+                onReorder={handleOrderingMove}
+                checked={checkedQuestions.has(currentQuestion.question_id)}
+                correctOrder={currentQuestion.correct_order}
+              />
             );
-          })}
-        </div>
+          })()
+        ) : (
+          <div className="space-y-2">
+            {Object.entries(currentQuestion.options).map(([key, value]) => {
+              const isChecked = checkedQuestions.has(currentQuestion.question_id);
+              const isMulti = currentQuestion.question_type === 'multi_select';
+              const correctSet = currentQuestion.correct_answers || (currentQuestion.correct_answer ? [currentQuestion.correct_answer] : []);
+              const isCorrectOption = isMulti ? correctSet.includes(key) : key === currentQuestion.correct_answer;
+              const selectedArr: string[] = Array.isArray(isAnswered) ? isAnswered as string[] : isAnswered ? [isAnswered as string] : [];
+              const isSelected = isMulti ? selectedArr.includes(key) : isAnswered === key;
+
+              let optionStyle = 'border-gray-200 hover:border-gray-300 hover:bg-gray-50';
+              if (isChecked) {
+                if (isCorrectOption) optionStyle = 'border-green-500 bg-green-50';
+                else if (isSelected && !isCorrectOption) optionStyle = 'border-red-500 bg-red-50';
+                else optionStyle = 'border-gray-200 bg-white';
+              } else if (isSelected) optionStyle = 'border-indigo-500 bg-indigo-50';
+
+              return (
+                <label key={key} className={`flex items-start p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}>
+                  <input type={isMulti ? 'checkbox' : 'radio'} name={`question-${currentQuestion.question_id}`} value={key} checked={isSelected} onChange={() => handleSelectAnswer(key)} className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
+                  <span className="ml-2 md:ml-3 text-sm md:text-base text-gray-800"><span className="font-medium">{key}.</span> {value}</span>
+                  {isChecked && isCorrectOption && <span className="ml-auto text-green-600 font-bold text-xs flex-shrink-0">✓</span>}
+                  {isChecked && isSelected && !isCorrectOption && <span className="ml-auto text-red-600 font-bold text-xs flex-shrink-0">✗</span>}
+                </label>
+              );
+            })}
+            {currentQuestion.question_type === 'multi_select' && <p className="text-xs text-gray-500 italic">Select all that apply</p>}
+          </div>
+        )}
 
         {/* Explanation after Check */}
         {checkedQuestions.has(currentQuestion.question_id) && (
@@ -294,7 +474,14 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               questionText={currentQuestion.question_text}
               options={currentQuestion.options}
               correctAnswer={currentQuestion.correct_answer}
-              isCorrect={isAnswered === currentQuestion.correct_answer}
+              isCorrect={(() => {
+                if (currentQuestion.question_type === 'multi_select' && currentQuestion.correct_answers) {
+                  const sel = Array.isArray(isAnswered) ? (isAnswered as string[]) : isAnswered ? [isAnswered as string] : [];
+                  const corr = currentQuestion.correct_answers;
+                  return sel.length === corr.length && sel.every((k) => corr.includes(k));
+                }
+                return isAnswered === currentQuestion.correct_answer;
+              })()}
             />
             <DiscussionThread questionId={currentQuestion.question_id} />
           </div>

@@ -1,5 +1,20 @@
 import React from 'react';
-import { Question, QuestionResult } from '../types/index';
+import { Question, QuestionResult, UserAnswer } from '../types/index';
+
+/** Render any answer shape (single key, multi-key array, or mapping) as readable text. */
+function formatAnswer(answer: UserAnswer | undefined, options: Record<string, string>): string {
+  if (answer == null) return '';
+  if (typeof answer === 'string') {
+    return answer ? `${answer}${options[answer] ? `. ${options[answer]}` : ''}` : '';
+  }
+  if (Array.isArray(answer)) {
+    return answer.map((k) => (options[k] ? `${k}. ${options[k]}` : k)).join(', ');
+  }
+  // Mapping (drag_drop): zone → item
+  return Object.entries(answer)
+    .map(([zone, item]) => `${zone} → ${item}`)
+    .join(', ');
+}
 
 interface QuestionReviewProps {
   question: Question;
@@ -68,8 +83,15 @@ export const QuestionReview: React.FC<QuestionReviewProps> = ({
       {/* Options */}
       <div className="space-y-3 mb-6">
         {Object.entries(question.options).map(([label, option]) => {
-          const isCorrect = label === result.correct_answer;
-          const isUserAnswer = label === result.user_answer;
+          // Normalise possibly-array answers (multi_select / yes_no) to a set of keys
+          const correctKeys = result.correct_answers ?? (typeof result.correct_answer === 'string' ? [result.correct_answer] : []);
+          const userKeys = Array.isArray(result.user_answer)
+            ? result.user_answer
+            : typeof result.user_answer === 'string' && result.user_answer
+            ? [result.user_answer]
+            : [];
+          const isCorrect = correctKeys.includes(label);
+          const isUserAnswer = userKeys.includes(label);
           const isWrongAnswer = isUserAnswer && !isCorrect;
 
           let optionStyle = 'border-gray-300 bg-white';
@@ -122,13 +144,13 @@ export const QuestionReview: React.FC<QuestionReviewProps> = ({
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Your Answer:</span>
           <span className="font-semibold text-gray-900">
-            {result.user_answer ? `${result.user_answer}. ${question.options[result.user_answer]}` : 'Not answered'}
+            {formatAnswer(result.user_answer, question.options) || 'Not answered'}
           </span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Correct Answer:</span>
           <span className="font-semibold text-green-700">
-            {result.correct_answer}. {question.options[result.correct_answer]}
+            {formatAnswer(result.correct_answers ?? result.correct_answer, question.options)}
           </span>
         </div>
       </div>

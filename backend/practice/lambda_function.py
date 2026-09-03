@@ -291,17 +291,28 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
 
         questions = questions[:QUESTIONS_PER_SET]
 
-    formatted = [
-        {
+    # Fields carried through for the extended Microsoft question types (issue #51).
+    # Only include keys that are actually present so single_choice items stay lean.
+    TYPED_FIELDS = (
+        'question_type', 'correct_answers', 'statements',
+        'case_study_id', 'scenario', 'exhibits',
+        'drag_items', 'drop_zones', 'correct_mapping',
+        'correct_order', 'image_url', 'hot_areas', 'correct_area',
+    )
+    formatted = []
+    for q in questions:
+        item = {
             'question_id':   q.get('question_id', str(uuid.uuid4())),
             'question_text': q['question_text'],
-            'options':       q['options'],
+            'options':       q.get('options', {}),
             'difficulty':    q.get('difficulty', 'medium'),
             'topic':         q.get('topic', 'General'),
-            'correct_answer': q.get('correct_answer')
+            'correct_answer': q.get('correct_answer'),
         }
-        for q in questions
-    ]
+        for f in TYPED_FIELDS:
+            if q.get(f) is not None:
+                item[f] = q[f]
+        formatted.append(item)
 
     status = 'ready' if formatted else 'failed'
 
@@ -560,9 +571,33 @@ def handler(event, context):
             for q in questions:
                 qid          = q['question_id']
                 user_ans     = answers.get(qid)
+                q_type       = q.get('question_type', 'single_choice')
                 correct_ans  = q.get('correct_answer')
-                is_correct   = user_ans == correct_ans
+                correct_answers = q.get('correct_answers')
                 difficulty   = q.get('difficulty', 'medium')
+
+                # Scoring per type — supports string / string[] / mapping
+                if q_type == 'multi_select' and correct_answers:
+                    if isinstance(user_ans, str) and user_ans:
+                        user_set = set([s.strip() for s in user_ans.split(',') if s.strip()])
+                    elif isinstance(user_ans, list):
+                        user_set = set(user_ans)
+                    else:
+                        user_set = set()
+                    is_correct = user_set == set(correct_answers)
+                elif q_type == 'yes_no' and correct_answers:
+                    # statements: user_ans is Yes/No array
+                    is_correct = user_ans == correct_answers if isinstance(user_ans, list) else user_ans == correct_ans
+                elif q_type in ('ordering', 'build_list') and q.get('correct_order'):
+                    corr = q.get('correct_order')
+                    is_correct = isinstance(user_ans, list) and user_ans == corr
+                elif q_type == 'drag_drop' and q.get('correct_mapping'):
+                    corr = q.get('correct_mapping')
+                    is_correct = isinstance(user_ans, dict) and user_ans == corr
+                elif q_type == 'hot_area' and q.get('correct_area'):
+                    is_correct = user_ans == q.get('correct_area')
+                else:
+                    is_correct = user_ans == correct_ans
                 
                 # Calculate marks based on difficulty
                 if session_mode == 'mock_test':
