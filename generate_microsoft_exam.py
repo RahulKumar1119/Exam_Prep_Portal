@@ -49,6 +49,33 @@ bedrock = boto3.client(
 dynamodb = boto3.resource('dynamodb', region_name=REGION)
 
 
+def _build_invoke_body(model_id: str, prompt: str, max_tokens: int = 12000) -> Dict[str, Any]:
+    """Build the InvokeModel request body for the model's provider schema.
+
+    Different Bedrock model families expect different request shapes:
+      - Anthropic (Claude): requires "anthropic_version" and a messages array.
+      - OpenAI-style Chat Completions (ZhipuAI GLM 'zai.*', DeepSeek, GPT-OSS):
+        a plain {"messages": [...], "max_tokens": ...} body, NO anthropic_version.
+    Sending the Anthropic schema to a non-Anthropic model fails, so pick by id.
+    """
+    mid = (model_id or '').lower()
+    # Strip any region/inference-profile prefix like 'apac.anthropic....'
+    provider = mid.split('.')[-2] if mid.count('.') >= 2 else mid.split('.')[0]
+
+    if 'anthropic' in mid or 'claude' in mid:
+        return {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": max_tokens,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+    # GLM (zai.*), DeepSeek, and other OpenAI-style chat models
+    return {
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": max_tokens,
+        "temperature": 0.7,
+    }
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # MODE 1: GENERATE — Use Claude to create questions from documentation PDF
 # ══════════════════════════════════════════════════════════════════════════════
@@ -212,11 +239,7 @@ CRITICAL OUTPUT RULES:
 ]"""
 
         try:
-            body = {
-                "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 12000,
-                "messages": [{"role": "user", "content": prompt}]
-            }
+            body = _build_invoke_body(BEDROCK_MODEL_ID, prompt, max_tokens=12000)
             resp = bedrock.invoke_model(modelId=BEDROCK_MODEL_ID, body=json.dumps(body))
             result = json.loads(resp['body'].read())
 
