@@ -8,6 +8,7 @@ import { ExplanationDisplay } from './ExplanationDisplay';
 import DiscussionThread from './DiscussionThread';
 import DragDropBoard from './DragDropBoard';
 import OrderableList from './OrderableList';
+import CaseStudyTabs from './CaseStudyTabs';
 
 /** Deterministic shuffle (seeded by question_id) so build_list/ordering starts
  *  scrambled but stable across renders and refreshes. Returns the labels. */
@@ -247,22 +248,37 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             const isActive = idx === currentQuestionIndex;
             const isAns = !!answers[q.question_id];
             const isRev = reviewedQuestions.has(q.question_id);
+            // Group case-study questions visually: show a small purple cap on
+            // buttons that belong to a case study, and start a new row before
+            // the first question of each case study.
+            const csId = q.case_study_id;
+            const prevCsId = idx > 0 ? session.questions[idx - 1].case_study_id : undefined;
+            const startsCaseStudy = !!csId && csId !== prevCsId;
             return (
-              <button
-                key={q.question_id}
-                onClick={() => setCurrentQuestionIndex(idx)}
-                className={`w-7 h-7 md:w-8 md:h-8 rounded text-[10px] md:text-xs font-bold transition-all border ${
-                  isActive
-                    ? 'bg-indigo-600 text-white border-indigo-700 ring-2 ring-indigo-300'
-                    : isRev
-                    ? 'bg-orange-400 text-white border-orange-500'
-                    : isAns
-                    ? 'bg-green-500 text-white border-green-600'
-                    : 'bg-gray-100 text-gray-700 border-gray-300'
-                }`}
-              >
-                {idx + 1}
-              </button>
+              <React.Fragment key={q.question_id}>
+                {startsCaseStudy && (
+                  <span className="basis-full text-[10px] font-semibold text-purple-700 mt-1 flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-sm bg-purple-500 inline-block" /> Case study: {csId}
+                  </span>
+                )}
+                <button
+                  onClick={() => setCurrentQuestionIndex(idx)}
+                  title={csId ? `Case study ${csId}` : `Question ${idx + 1}`}
+                  className={`w-7 h-7 md:w-8 md:h-8 rounded text-[10px] md:text-xs font-bold transition-all border ${
+                    csId ? 'ring-1 ring-purple-300' : ''
+                  } ${
+                    isActive
+                      ? 'bg-indigo-600 text-white border-indigo-700 ring-2 ring-indigo-300'
+                      : isRev
+                      ? 'bg-orange-400 text-white border-orange-500'
+                      : isAns
+                      ? 'bg-green-500 text-white border-green-600'
+                      : 'bg-gray-100 text-gray-700 border-gray-300'
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              </React.Fragment>
             );
           })}
         </div>
@@ -330,22 +346,18 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
       {/* Question Card */}
       <div className="bg-white rounded-lg shadow border p-4 md:p-6">
-        {/* Case Study Scenario */}
+        {/* Case Study panel (Overview + exhibit tabs) */}
         {(currentQuestion.scenario || currentQuestion.case_study_id) && (
-          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-            <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">Case Study {currentQuestion.case_study_id ? `— ${currentQuestion.case_study_id}` : ''}</p>
-            {currentQuestion.scenario && <p className="text-sm text-amber-900 whitespace-pre-wrap">{currentQuestion.scenario}</p>}
-            {currentQuestion.exhibits && currentQuestion.exhibits.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-2">
-                {currentQuestion.exhibits.map((ex, i) => (
-                  <details key={i} className="text-xs bg-white border rounded px-2 py-1">
-                    <summary className="cursor-pointer font-medium">{ex.title}</summary>
-                    <p className="mt-1 whitespace-pre-wrap">{ex.content}</p>
-                  </details>
-                ))}
-              </div>
-            )}
-          </div>
+          <CaseStudyTabs
+            caseStudyId={currentQuestion.case_study_id}
+            scenario={currentQuestion.scenario}
+            exhibits={currentQuestion.exhibits}
+            questionCount={
+              currentQuestion.case_study_id
+                ? session.questions.filter((q) => q.case_study_id === currentQuestion.case_study_id).length
+                : undefined
+            }
+          />
         )}
 
         {/* Question text */}

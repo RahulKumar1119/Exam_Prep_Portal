@@ -279,6 +279,10 @@ export interface MCQFormData {
   correct_answers?: string[]; // multi_select: ["A","C"]; yes_no: ["Yes","No",...]
   statements?: string[]; // yes_no
   correct_order?: string[]; // build_list / ordering
+  // hot_area authoring
+  image_url?: string;
+  hot_areas?: { id: string; coords: number[]; shape?: string }[];
+  correct_area?: string;
 }
 
 export interface QuestionBankVersion {

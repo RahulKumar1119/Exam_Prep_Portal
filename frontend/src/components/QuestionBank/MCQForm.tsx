@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MCQFormData, QuestionType } from '../../types/index';
+import HotAreaEditor from './HotAreaEditor';
 
 interface MCQFormProps {
   onSubmit: (data: MCQFormData) => Promise<void>;
@@ -8,13 +9,14 @@ interface MCQFormProps {
   is_edit?: boolean;
 }
 
-// Types the admin form can author directly. drag_drop / hot_area / case_study
-// need richer editors and are produced by the generator instead (issue #51).
+// Types the admin form can author directly. drag_drop / case_study are
+// produced by the generator; multi-step editors would be heavier (issue #51).
 const AUTHORABLE_TYPES: { value: QuestionType; label: string }[] = [
   { value: 'single_choice', label: 'Single choice (pick one)' },
   { value: 'multi_select', label: 'Multi-select (pick 2+)' },
   { value: 'yes_no', label: 'Yes/No statements' },
   { value: 'build_list', label: 'Build list (ordering)' },
+  { value: 'hot_area', label: 'Hot area (click image region)' },
 ];
 
 const LETTERS = ['A', 'B', 'C', 'D'];
@@ -33,6 +35,9 @@ const MCQForm: React.FC<MCQFormProps> = ({ onSubmit, initial_data, is_loading = 
       correct_answers: [],
       statements: ['', '', ''],
       correct_order: ['', '', ''],
+      image_url: '',
+      hot_areas: [],
+      correct_area: '',
     }
   );
 
@@ -65,6 +70,13 @@ const MCQForm: React.FC<MCQFormProps> = ({ onSubmit, initial_data, is_loading = 
     } else if (qType === 'build_list') {
       const steps = (form_data.correct_order || []).filter((s) => s.trim());
       if (steps.length < 2) e.correct_order = 'Add at least 2 ordered steps';
+    } else if (qType === 'hot_area') {
+      if (!form_data.image_url?.trim()) e.hot_area = 'Image URL is required';
+      const validAreas = (form_data.hot_areas || []).filter((a) => a.id.trim() && a.coords.length === 4);
+      if (validAreas.length < 2) e.hot_area = 'Add at least 2 regions';
+      else if (!form_data.correct_area || !validAreas.some((a) => a.id === form_data.correct_area)) {
+        e.hot_area = 'Select the correct region';
+      }
     }
 
     setErrors(e);
@@ -100,6 +112,10 @@ const MCQForm: React.FC<MCQFormProps> = ({ onSubmit, initial_data, is_loading = 
       payload.correct_answers = form_data.correct_answers || [];
     } else if (qType === 'build_list') {
       payload.correct_order = (form_data.correct_order || []).filter((s) => s.trim());
+    } else if (qType === 'hot_area') {
+      payload.image_url = form_data.image_url?.trim();
+      payload.hot_areas = (form_data.hot_areas || []).filter((a) => a.id.trim() && a.coords.length === 4);
+      payload.correct_area = form_data.correct_area;
     }
 
     try {
@@ -308,6 +324,28 @@ const MCQForm: React.FC<MCQFormProps> = ({ onSubmit, initial_data, is_loading = 
           </button>
           {errors.correct_order && <p className="text-red-600 text-sm">{errors.correct_order}</p>}
         </div>
+      )}
+
+      {/* Hot area */}
+      {qType === 'hot_area' && (
+        <HotAreaEditor
+          imageUrl={form_data.image_url || ''}
+          onImageUrlChange={(url) => {
+            setFormData({ ...form_data, image_url: url });
+            if (errors.hot_area) setErrors({ ...errors, hot_area: '' });
+          }}
+          areas={form_data.hot_areas || []}
+          onAreasChange={(areas) => {
+            setFormData({ ...form_data, hot_areas: areas });
+            if (errors.hot_area) setErrors({ ...errors, hot_area: '' });
+          }}
+          correctArea={form_data.correct_area || ''}
+          onCorrectAreaChange={(id) => {
+            setFormData({ ...form_data, correct_area: id });
+            if (errors.hot_area) setErrors({ ...errors, hot_area: '' });
+          }}
+          error={errors.hot_area}
+        />
       )}
 
       {/* Topic and Difficulty */}

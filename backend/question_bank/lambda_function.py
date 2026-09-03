@@ -95,6 +95,9 @@ def validate_request(event: dict) -> Tuple[bool, str]:
         elif q_type in ('build_list', 'ordering'):
             if not event.get('correct_order'):
                 return False, "build_list requires 'correct_order'"
+        elif q_type == 'hot_area':
+            if not event.get('image_url') or not event.get('hot_areas') or not event.get('correct_area'):
+                return False, "hot_area requires 'image_url', 'hot_areas' and 'correct_area'"
         if not event.get('topic'):
             return False, "Missing 'topic'"
         if not event.get('difficulty'):
@@ -317,10 +320,14 @@ def handler(event, context):
             # questions render/score correctly (issue #51).
             raw_options = body.get('options')
             q_type_in = body.get('question_type', 'single_choice')
-            if isinstance(raw_options, list) and q_type_in in ('single_choice', 'multi_select'):
-                options_map = {chr(65 + i): opt for i, opt in enumerate(raw_options)}
+            if q_type_in in ('single_choice', 'multi_select'):
+                if isinstance(raw_options, list):
+                    options_map = {chr(65 + i): opt for i, opt in enumerate(raw_options)}
+                else:
+                    options_map = raw_options
             else:
-                options_map = raw_options
+                # Non-choice types (yes_no, build_list, hot_area, …) have no options
+                options_map = {}
             result = create_mcq(
                 question_text=body.get('question_text'),
                 options=options_map,
