@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PracticeSession } from '../../types/index';
+import { PracticeSession, UserAnswer } from '../../types/index';
 import { loadSessionState, useSessionPersistence } from '../../hooks/useSessionPersistence';
 import { useBookmarks } from '../../hooks/useBookmarks';
 import { useAuth } from '../../context/AuthContext';
@@ -9,8 +9,8 @@ import DiscussionThread from './DiscussionThread';
 
 interface QuestionDisplayProps {
   session: PracticeSession;
-  onAnswer: (questionId: string, answer: string) => void;
-  onSubmit: (answers: Record<string, string>) => void;
+  onAnswer: (questionId: string, answer: UserAnswer) => void;
+  onSubmit: (answers: Record<string, UserAnswer>) => void;
   isSubmitting?: boolean;
   isMockTest?: boolean;
 }
@@ -42,7 +42,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     loadSessionState().then(setPersisted);
   }, [session.session_id]);
 
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, UserAnswer>>({});
   const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [reviewedQuestions, setReviewedQuestions] = useState<Set<string>>(new Set());
@@ -99,8 +99,24 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
   const handleSelectAnswer = (optionKey: string) => {
     const questionId = currentQuestion.question_id;
-    setAnswers({ ...answers, [questionId]: optionKey });
-    onAnswer(questionId, optionKey);
+    const isMulti = currentQuestion.question_type === 'multi_select';
+    if (isMulti) {
+      const prev = answers[questionId];
+      const prevArr: string[] = Array.isArray(prev) ? prev : prev ? [prev as string] : [];
+      const next = prevArr.includes(optionKey) ? prevArr.filter((k) => k !== optionKey) : [...prevArr, optionKey];
+      if (next.length === 0) {
+        const copy = { ...answers };
+        delete copy[questionId];
+        setAnswers(copy);
+        onAnswer(questionId, []);
+      } else {
+        setAnswers({ ...answers, [questionId]: next });
+        onAnswer(questionId, next);
+      }
+    } else {
+      setAnswers({ ...answers, [questionId]: optionKey });
+      onAnswer(questionId, optionKey);
+    }
   };
 
   const handleClearAnswer = () => {
@@ -239,12 +255,15 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           </p>
         </div>
 
-        {/* Options */}
+        {/* Options — radio for single_choice, checkbox for multi_select */}
         <div className="space-y-2">
           {Object.entries(currentQuestion.options).map(([key, value]) => {
             const isChecked = checkedQuestions.has(currentQuestion.question_id);
-            const isSelected = isAnswered === key;
-            const isCorrectOption = key === currentQuestion.correct_answer;
+            const isMulti = currentQuestion.question_type === 'multi_select';
+            const correctSet = currentQuestion.correct_answers || (currentQuestion.correct_answer ? [currentQuestion.correct_answer] : []);
+            const isCorrectOption = isMulti ? correctSet.includes(key) : key === currentQuestion.correct_answer;
+            const selectedArr: string[] = Array.isArray(isAnswered) ? isAnswered as string[] : isAnswered ? [isAnswered as string] : [];
+            const isSelected = isMulti ? selectedArr.includes(key) : isAnswered === key;
 
             let optionStyle = 'border-gray-200 hover:border-gray-300 hover:bg-gray-50';
             if (isChecked) {
@@ -265,7 +284,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 className={`flex items-start p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}
               >
                 <input
-                  type="radio"
+                  type={isMulti ? 'checkbox' : 'radio'}
                   name={`question-${currentQuestion.question_id}`}
                   value={key}
                   checked={isSelected}
@@ -284,6 +303,9 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               </label>
             );
           })}
+          {currentQuestion.question_type === 'multi_select' && (
+            <p className="text-xs text-gray-500 italic">Select all that apply (multiple answers allowed)</p>
+          )}
         </div>
 
         {/* Explanation after Check */}
@@ -294,7 +316,14 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               questionText={currentQuestion.question_text}
               options={currentQuestion.options}
               correctAnswer={currentQuestion.correct_answer}
-              isCorrect={isAnswered === currentQuestion.correct_answer}
+              isCorrect={(() => {
+                if (currentQuestion.question_type === 'multi_select' && currentQuestion.correct_answers) {
+                  const sel = Array.isArray(isAnswered) ? (isAnswered as string[]) : isAnswered ? [isAnswered as string] : [];
+                  const corr = currentQuestion.correct_answers;
+                  return sel.length === corr.length && sel.every((k) => corr.includes(k));
+                }
+                return isAnswered === currentQuestion.correct_answer;
+              })()}
             />
             <DiscussionThread questionId={currentQuestion.question_id} />
           </div>

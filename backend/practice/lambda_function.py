@@ -560,9 +560,26 @@ def handler(event, context):
             for q in questions:
                 qid          = q['question_id']
                 user_ans     = answers.get(qid)
+                q_type       = q.get('question_type', 'single_choice')
                 correct_ans  = q.get('correct_answer')
-                is_correct   = user_ans == correct_ans
+                correct_answers = q.get('correct_answers')
                 difficulty   = q.get('difficulty', 'medium')
+
+                # Scoring per type — supports string or string[] answers
+                if q_type == 'multi_select' and correct_answers:
+                    # Normalize user answer to sorted set
+                    if isinstance(user_ans, str) and user_ans:
+                        user_set = set([s.strip() for s in user_ans.split(',') if s.strip()])
+                    elif isinstance(user_ans, list):
+                        user_set = set(user_ans)
+                    else:
+                        user_set = set()
+                    correct_set = set(correct_answers)
+                    is_correct = user_set == correct_set
+                elif q_type == 'yes_no' and correct_answers:
+                    is_correct = user_ans == correct_ans or (isinstance(user_ans, list) and user_ans == correct_answers)
+                else:
+                    is_correct = user_ans == correct_ans
                 
                 # Calculate marks based on difficulty
                 if session_mode == 'mock_test':

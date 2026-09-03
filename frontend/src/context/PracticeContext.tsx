@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { PracticeSession, SessionResult } from '../types/index';
+import { PracticeSession, SessionResult, UserAnswer } from '../types/index';
 import { apiClient } from '../services/api';
 import { useAuth } from './AuthContext';
 import { loadSessionState, clearSessionState } from '../hooks/useSessionPersistence';
@@ -12,7 +12,7 @@ interface PracticeContextType {
   is_restoring: boolean;
   error: string | null;
   generatePracticeSet: (paper_name: string, mode?: 'practice' | 'mock_test', set_number?: number) => Promise<void>;
-  submitPracticeSet: (session_id: string, answers: Record<string, string>, onComplete?: () => void) => Promise<void>;
+  submitPracticeSet: (session_id: string, answers: Record<string, UserAnswer>, onComplete?: () => void) => Promise<void>;
   getSession: (session_id: string) => Promise<void>;
   clearSession: () => void;
   clearError: () => void;
@@ -106,7 +106,7 @@ export const PracticeProvider: React.FC<{ children: ReactNode }> = ({ children }
     }
   };
 
-  const submitPracticeSet = async (session_id: string, answers: Record<string, string>, onComplete?: () => void) => {
+  const submitPracticeSet = async (session_id: string, answers: Record<string, UserAnswer>, onComplete?: () => void) => {
     setIsLoading(true);
     setError(null);
     try {

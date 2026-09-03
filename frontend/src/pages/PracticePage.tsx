@@ -7,6 +7,7 @@ import DiscussionThread from '../components/Practice/DiscussionThread';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 import { useExamPreference, ExamId } from '../hooks/useExamPreference';
 import ExamSelector from '../components/ExamSelector';
+import { UserAnswer } from '../types/index';
 
 const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: string; totalQuestions: number; sets: number }[]> = {
   'JAIIB': [
@@ -52,11 +53,11 @@ const PracticePage: React.FC = () => {
     }
   };
 
-  const handleAnswerQuestion = (questionId: string, answer: string) => {
-    console.log(`Question ${questionId} answered with ${answer}`);
+  const handleAnswerQuestion = (questionId: string, answer: UserAnswer) => {
+    console.log(`Question ${questionId} answered with ${JSON.stringify(answer)}`);
   };
 
-  const handleSubmitPracticeSet = async (answers: Record<string, string>) => {
+  const handleSubmitPracticeSet = async (answers: Record<string, UserAnswer>) => {
     if (!current_session) return;
     
     setIsSubmitting(true);

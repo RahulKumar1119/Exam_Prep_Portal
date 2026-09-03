@@ -45,6 +45,8 @@ def get_version_history_table():
     return dynamodb.Table(VERSION_HISTORY_TABLE)
 
 
+VALID_QUESTION_TYPES = ['single_choice', 'multi_select', 'yes_no', 'case_study', 'drag_drop', 'hot_area', 'build_list', 'ordering']
+
 def validate_mcq_fields(
     question_text: str,
     options: List[str],
@@ -52,7 +54,9 @@ def validate_mcq_fields(
     topic: str,
     difficulty: str,
     references: Dict[str, str],
-    paper: str
+    paper: str,
+    question_type: str = 'single_choice',
+    correct_answers: Optional[List[str]] = None
 ) -> Tuple[bool, str]:
     """
     Validate MCQ fields for creation or update.
@@ -89,9 +93,24 @@ def validate_mcq_fields(
         if len(option.strip()) < 2:
             return False, f"Option {chr(65+i)} must be at least 2 characters"
     
-    # Validate correct answer
-    if correct_answer not in ['A', 'B', 'C', 'D']:
-        return False, "Correct answer must be A, B, C, or D"
+    # Validate question_type
+    if question_type not in VALID_QUESTION_TYPES:
+        return False, f"question_type must be one of: {', '.join(VALID_QUESTION_TYPES)}"
+
+    # Validate correct answer(s) per type
+    if question_type == 'single_choice':
+        if correct_answer not in ['A', 'B', 'C', 'D']:
+            return False, "Correct answer must be A, B, C, or D"
+    elif question_type == 'multi_select':
+        answers = correct_answers or ([c.strip() for c in correct_answer.split(',')] if correct_answer else [])
+        if not answers or len(answers) < 2:
+            return False, "Multi-select requires at least 2 correct answers"
+        for ans in answers:
+            if ans not in ['A', 'B', 'C', 'D']:
+                return False, f"Invalid correct answer: {ans}"
+    elif question_type == 'yes_no':
+        # options validation skipped, correct_answers checked below
+        pass
     
     # Validate topic
     if not topic or not isinstance(topic, str):

@@ -21,24 +21,49 @@ export interface AuthState {
 }
 
 // Practice types
+export type QuestionType =
+  | 'single_choice'
+  | 'multi_select'
+  | 'yes_no'
+  | 'case_study'
+  | 'drag_drop'
+  | 'hot_area'
+  | 'build_list'
+  | 'ordering';
+
 export interface Question {
   question_id: string;
   paper_name: string;
   topic: string;
   difficulty: 'easy' | 'medium' | 'hard';
   question_text: string;
-  options: Record<string, string>;  // Changed from array to object with A, B, C, D keys
-  correct_answer: string;
+  options: Record<string, string>;
+  correct_answer: string; // single_choice: "A", multi_select: also stored as "A,C" for backward compat
+  question_type?: QuestionType; // defaults to 'single_choice' for backward compat
+  correct_answers?: string[]; // multi_select / yes_no: ["A","C"] or ["Yes","No"]
+  statements?: string[]; // yes_no per-statement text
+  case_study_id?: string;
+  scenario?: string;
+  exhibits?: { title: string; content: string }[];
+  drag_items?: { id: string; label: string }[];
+  drop_zones?: { id: string; label: string }[];
+  correct_mapping?: Record<string, string>;
+  correct_order?: string[];
+  image_url?: string;
+  hot_areas?: { id: string; coords: number[]; shape?: string }[];
+  correct_area?: string;
   rbi_reference?: string;
   iibf_reference?: string;
 }
+
+export type UserAnswer = string | string[];
 
 export interface PracticeSession {
   session_id: string;
   user_id: string;
   paper_name: string;
   questions: Question[];
-  user_answers: Record<string, string>;
+  user_answers: Record<string, UserAnswer>;
   score?: number;
   time_taken?: number;
   submitted_at?: string;
@@ -78,8 +103,10 @@ export interface QuestionResult {
   question_text: string;
   options: Record<string, string>;
   correct: boolean;
-  user_answer: string;
+  user_answer: UserAnswer;
   correct_answer: string;
+  correct_answers?: string[];
+  question_type?: QuestionType;
   difficulty?: string;
   marks?: number;
   max_marks?: number;
