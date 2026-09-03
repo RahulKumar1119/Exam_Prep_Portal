@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
-import { SessionResult } from '../../types/index';
+import { SessionResult, UserAnswer } from '../../types/index';
 import { ExplanationDisplay } from './ExplanationDisplay';
+
+/** Render any answer shape (single key, multi-key array, or mapping) as readable text. */
+function formatAnswer(answer: UserAnswer | undefined): string {
+  if (answer == null) return '';
+  if (typeof answer === 'string') return answer;
+  if (Array.isArray(answer)) return answer.join(', ');
+  return Object.entries(answer).map(([zone, item]) => `${zone} → ${item}`).join(', ');
+}
+
+/** True if a given option key is (part of) the user's answer, across answer shapes. */
+function answerIncludes(answer: UserAnswer | undefined, key: string): boolean {
+  if (answer == null) return false;
+  if (typeof answer === 'string') return answer === key;
+  if (Array.isArray(answer)) return answer.includes(key);
+  return Object.values(answer).includes(key);
+}
 
 interface MockTestResultsProps {
   result: SessionResult;
@@ -225,9 +241,9 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
                     <div
                       key={key}
                       className={`px-3 py-1.5 rounded ${
-                        key === r.correct_answer
+                        answerIncludes(r.correct_answers ?? r.correct_answer, key)
                           ? 'bg-green-200 text-green-900 font-medium'
-                          : key === r.user_answer && !r.correct
+                          : answerIncludes(r.user_answer, key) && !r.correct
                           ? 'bg-red-200 text-red-900'
                           : 'bg-white text-gray-700'
                       }`}
@@ -238,8 +254,8 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
                 </div>
                 {!r.correct && (
                   <p className="text-xs text-gray-600 mt-2">
-                    Your answer: <span className="font-medium text-red-700">{r.user_answer || 'Not answered'}</span> | 
-                    Correct: <span className="font-medium text-green-700">{r.correct_answer}</span>
+                    Your answer: <span className="font-medium text-red-700">{formatAnswer(r.user_answer) || 'Not answered'}</span> | 
+                    Correct: <span className="font-medium text-green-700">{formatAnswer(r.correct_answers ?? r.correct_answer)}</span>
                   </p>
                 )}
                 {/* Explanation */}

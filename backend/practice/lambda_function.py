@@ -291,17 +291,28 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
 
         questions = questions[:QUESTIONS_PER_SET]
 
-    formatted = [
-        {
+    # Fields carried through for the extended Microsoft question types (issue #51).
+    # Only include keys that are actually present so single_choice items stay lean.
+    TYPED_FIELDS = (
+        'question_type', 'correct_answers', 'statements',
+        'case_study_id', 'scenario', 'exhibits',
+        'drag_items', 'drop_zones', 'correct_mapping',
+        'correct_order', 'image_url', 'hot_areas', 'correct_area',
+    )
+    formatted = []
+    for q in questions:
+        item = {
             'question_id':   q.get('question_id', str(uuid.uuid4())),
             'question_text': q['question_text'],
-            'options':       q['options'],
+            'options':       q.get('options', {}),
             'difficulty':    q.get('difficulty', 'medium'),
             'topic':         q.get('topic', 'General'),
-            'correct_answer': q.get('correct_answer')
+            'correct_answer': q.get('correct_answer'),
         }
-        for q in questions
-    ]
+        for f in TYPED_FIELDS:
+            if q.get(f) is not None:
+                item[f] = q[f]
+        formatted.append(item)
 
     status = 'ready' if formatted else 'failed'
 

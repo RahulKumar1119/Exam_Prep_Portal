@@ -377,19 +377,27 @@ def upload_to_dynamodb(questions: List[Dict], exam: str, topic: str = 'General')
             if len(options) < 2:
                 continue
 
-            batch.put_item(Item={
+            item = {
                 'question_id': str(uuid.uuid4()),
                 'version': '1',
                 'paper_name': exam,
                 'topic': q.get('topic', topic) or topic,
                 'difficulty': q.get('difficulty', 'medium') or 'medium',
-                'question_type': 'multiple_choice',
+                # Use the app's canonical value; default single_choice (issue #51)
+                'question_type': q.get('question_type', 'single_choice') or 'single_choice',
                 'question_text': q['question_text'],
                 'options': options,
                 'correct_answer': q.get('correct_answer', '') or '',
                 'created_at': now,
                 'updated_at': now,
-            })
+            }
+            # Carry through extended-type fields when present
+            for f in ('correct_answers', 'statements', 'case_study_id', 'scenario',
+                      'exhibits', 'drag_items', 'drop_zones', 'correct_mapping',
+                      'correct_order', 'image_url', 'hot_areas', 'correct_area'):
+                if q.get(f) is not None:
+                    item[f] = q[f]
+            batch.put_item(Item=item)
             uploaded += 1
 
     print(f"  ✓ {uploaded} questions uploaded to DynamoDB (paper: {exam})")

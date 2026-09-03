@@ -139,6 +139,15 @@ def validate_mcq_fields(
     return True, ""
 
 
+# Optional fields for the extended Microsoft question types (issue #51).
+# Any of these present in `typed_fields` is persisted as-is.
+TYPED_OPTIONAL_FIELDS = (
+    'correct_answers', 'statements', 'case_study_id', 'scenario', 'exhibits',
+    'drag_items', 'drop_zones', 'correct_mapping', 'correct_order',
+    'image_url', 'hot_areas', 'correct_area',
+)
+
+
 def create_mcq(
     question_text: str,
     options: List[str],
@@ -147,29 +156,39 @@ def create_mcq(
     difficulty: str,
     references: Dict[str, str],
     paper: str,
-    creator_user_id: str
+    creator_user_id: str,
+    question_type: str = 'single_choice',
+    typed_fields: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Create a new MCQ in the question bank.
-    
-    Validates all required fields and creates a new question with unique ID.
-    
+    Create a question in the question bank.
+
+    Supports single_choice (default) plus the extended Microsoft types
+    (multi_select, yes_no, case_study, drag_drop, hot_area, build_list, ordering).
+
     Args:
         question_text: The question text
-        options: List of 4 options [A, B, C, D]
-        correct_answer: Correct answer (A, B, C, or D)
+        options: List of options (exactly 4 for choice types; may be empty for others)
+        correct_answer: Correct answer key for single_choice (A-D); comma string for multi_select
         topic: Topic name
         difficulty: Difficulty level
         references: Dictionary with rbi_reference and iibf_reference
-        paper: JAIIB paper name
+        paper: Paper name
         creator_user_id: User ID of the creator
-        
+        question_type: One of VALID_QUESTION_TYPES (defaults to 'single_choice')
+        typed_fields: Optional dict of type-specific fields (correct_answers, statements,
+                      scenario, drag_items, correct_mapping, hot_areas, etc.)
+
     Returns:
         Dictionary with question_id, version, and success status
     """
-    # Validate fields
+    typed_fields = typed_fields or {}
+
+    # Validate fields (type-aware)
     is_valid, error_msg = validate_mcq_fields(
-        question_text, options, correct_answer, topic, difficulty, references, paper
+        question_text, options, correct_answer, topic, difficulty, references, paper,
+        question_type=question_type,
+        correct_answers=typed_fields.get('correct_answers')
     )
     
     if not is_valid:
@@ -196,6 +215,7 @@ def create_mcq(
             'question_text': question_text,
             'options': options,
             'correct_answer': correct_answer,
+            'question_type': question_type,
             'rbi_reference': references.get('rbi_reference', ''),
             'iibf_reference': references.get('iibf_reference', ''),
             'created_at': timestamp,
@@ -204,6 +224,11 @@ def create_mcq(
             'updated_by': creator_user_id,
             'status': 'active'
         }
+
+        # Persist any provided type-specific fields
+        for f in TYPED_OPTIONAL_FIELDS:
+            if typed_fields.get(f) is not None:
+                question_item[f] = typed_fields[f]
         
         # Store in DynamoDB
         table.put_item(Item=question_item)
