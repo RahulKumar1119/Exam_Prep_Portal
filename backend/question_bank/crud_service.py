@@ -31,7 +31,7 @@ VERSION_HISTORY_TABLE = 'jaiib-version-history'
 KMS_KEY_ID = 'arn:aws:kms:ap-south-1:438097524343:key/8f4e49c4-9d56-47c1-a24e-37fb003c8b77'
 
 # Valid values
-VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'RBWM']
+VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'AFM', 'RBWM', 'AI-300', 'ABM']
 VALID_DIFFICULTIES = ['easy', 'medium', 'hard']
 
 
@@ -84,13 +84,18 @@ def validate_mcq_fields(
     if question_type not in VALID_QUESTION_TYPES:
         return False, f"question_type must be one of: {', '.join(VALID_QUESTION_TYPES)}"
 
-    # Validate options — only strict for choice types
+    # Validate options — only strict for choice types.
+    # Accept either a list [a,b,c,d] or a map {A:..,B:..,C:..,D:..}.
     if question_type in ('single_choice', 'multi_select'):
-        if not options or not isinstance(options, list):
-            return False, "Options must be a list"
-        if len(options) != 4:
+        if isinstance(options, dict):
+            option_values = list(options.values())
+        elif isinstance(options, list):
+            option_values = options
+        else:
+            return False, "Options must be a list or an {A,B,C,D} map"
+        if len(option_values) != 4:
             return False, "Must provide exactly 4 options"
-        for i, option in enumerate(options):
+        for i, option in enumerate(option_values):
             if not option or not isinstance(option, str):
                 return False, f"Option {chr(65+i)} must be a non-empty string"
             if len(option.strip()) < 2:
@@ -233,18 +238,21 @@ def create_mcq(
         # Store in DynamoDB
         table.put_item(Item=question_item)
         
-        # Publish metric
-        cloudwatch.put_metric_data(
-            Namespace='JAIIB-QuestionBank',
-            MetricData=[
-                {
-                    'MetricName': 'MCQCreated',
-                    'Value': 1,
-                    'Unit': 'Count',
-                    'Timestamp': datetime.utcnow()
-                }
-            ]
-        )
+        # Publish metric — best-effort telemetry, never fail the create on this
+        try:
+            cloudwatch.put_metric_data(
+                Namespace='JAIIB-QuestionBank',
+                MetricData=[
+                    {
+                        'MetricName': 'MCQCreated',
+                        'Value': 1,
+                        'Unit': 'Count',
+                        'Timestamp': datetime.utcnow()
+                    }
+                ]
+            )
+        except Exception as metric_err:
+            print(f"Warning: metric publish failed (non-fatal): {metric_err}")
         
         return {
             'success': True,

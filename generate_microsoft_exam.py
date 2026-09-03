@@ -38,7 +38,7 @@ from botocore.config import Config as BotoConfig
 # Config
 REGION = 'ap-south-1'
 TABLE_NAME = 'jaiib-question-bank'
-BEDROCK_MODEL_ID = 'deepseek.v3.2'
+BEDROCK_MODEL_ID = 'zai.glm-5'
 
 # AWS clients
 bedrock = boto3.client(
@@ -64,8 +64,13 @@ def extract_text_from_pdf(path: str, max_chars: int = 50000) -> str:
     return text[:max_chars]
 
 
-def generate_questions_from_pdf(pdf_path: str, exam: str, count: int) -> List[Dict]:
-    """Use Claude to generate exam questions from PDF documentation content."""
+def generate_questions_from_pdf(pdf_path: str, exam: str, count: int, mixed_types: bool = False) -> List[Dict]:
+    """Use Claude to generate exam questions from PDF documentation content.
+
+    When mixed_types is True, the model is instructed to produce a realistic
+    Microsoft-style mix: single_choice, multi_select, yes_no, drag_drop and
+    build_list questions (issue #51). Otherwise only single_choice is produced.
+    """
     print(f"  📄 Reading: {pdf_path}")
     pdf_text = extract_text_from_pdf(pdf_path)
     print(f"  Extracted {len(pdf_text)} chars")
@@ -81,7 +86,20 @@ def generate_questions_from_pdf(pdf_path: str, exam: str, count: int) -> List[Di
 
     while remaining > 0:
         batch = min(chunk_size, remaining)
-        print(f"  🤖 Generating {batch} questions via Claude...")
+        print(f"  🤖 Generating {batch} {'mixed-type ' if mixed_types else ''}questions via Claude...")
+
+        if mixed_types:
+            type_instructions = """
+
+QUESTION TYPE MIX (issue #51) — produce a realistic Microsoft exam distribution across this batch:
+- ~55% "single_choice": one correct option A-D (as described above).
+- ~20% "multi_select": 5 options A-E, 2 or 3 correct. Set "question_type":"multi_select", keep "correct_answer" as a comma string like "A,C", and ALSO add "correct_answers": ["A","C"]. End the question text with "(Select all that apply.)".
+- ~10% "yes_no": present 3 related statements the candidate must judge. Set "question_type":"yes_no", OMIT "options", add "statements": ["stmt 1","stmt 2","stmt 3"] and "correct_answers": ["Yes","No","Yes"] (one Yes/No per statement, same order).
+- ~8% "drag_drop": match items to zones. Set "question_type":"drag_drop", OMIT "options", add "drag_items": [{{"id":"i1","label":"..."}}, ...], "drop_zones": [{{"id":"z1","label":"..."}}, ...], and "correct_mapping": {{"z1":"i1","z2":"i2"}} mapping each zone id to the correct item id.
+- ~7% "build_list": order steps correctly. Set "question_type":"build_list", OMIT "options", add "correct_order": ["First step","Second step","Third step","Fourth step"] in the correct sequence.
+For every question ALWAYS include "question_type", "topic" and "difficulty". Only choice types use "options"."""
+        else:
+            type_instructions = ""
 
         prompt = f"""You are a senior Microsoft certification exam writer for the {exam} exam.
 
@@ -168,15 +186,17 @@ Options should be 4 different multi-step approaches (each 2-3 sentences describi
 STYLE 3 — Troubleshooting & Debugging (25% of questions):
 "A production ML pipeline at [company] has been failing intermittently for 3 days. The pipeline trains a [model type] using [compute]. Error logs show [specific error message or symptom]. The pipeline was working correctly before [recent change]. Monitoring shows [specific metric pattern]. What is the most likely root cause and the correct remediation?"
 Options should describe different root causes + their fixes (each 2 sentences).
-
+{type_instructions}
 CRITICAL OUTPUT RULES:
 - Return ONLY a valid JSON array
 - No markdown fences, no text before or after the JSON
 - Do NOT use unescaped double quotes inside string values
 - Use backticks (`) for code references inside strings
+- EVERY object MUST have "question_type" (default "single_choice")
 
 [
   {{
+    "question_type": "single_choice",
     "question_text": "You are a senior MLOps engineer at Contoso Financial Services. Your team has trained a real-time fraud detection model using PyTorch that processes credit card transactions. The model requires GPU inference with P99 latency under 50ms to meet SLA requirements. Your company processes 25,000 transactions per second during peak hours (Black Friday) but only 2,000 TPS during normal periods. The security team mandates that all inference must occur within a private virtual network with no public internet exposure. Your infrastructure budget is capped at $3,500/month and the team has no Kubernetes experience. The model artifact is 4.2GB and requires CUDA 11.8. Which deployment architecture satisfies all constraints?",
     "options": {{
       "A": "Deploy to a managed online endpoint with Standard_NC6s_v3 GPU instances, configure auto-scaling from 1 to 8 instances based on request latency, and enable private endpoint connectivity by attaching the workspace to your VNet with a private link",
@@ -361,59 +381,147 @@ def parse_questions_from_pdf(pdf_path: str) -> List[Dict]:
 # COMMON: Upload & Preview
 # ══════════════════════════════════════════════════════════════════════════════
 
+CHOICE_TYPES = ('single_choice', 'multi_select')
+VALID_TYPES = ('single_choice', 'multi_select', 'yes_no', 'drag_drop', 'build_list', 'ordering', 'case_study', 'hot_area')
+TYPED_FIELDS = ('correct_answers', 'statements', 'case_study_id', 'scenario', 'exhibits',
+                'drag_items', 'drop_zones', 'correct_mapping', 'correct_order',
+                'image_url', 'hot_areas', 'correct_area')
+
+
+def normalize_question(q: Dict, default_topic: str) -> Optional[Dict]:
+    """Validate + clean a generated question by its type.
+
+    Returns a DynamoDB-ready item dict, or None if the question is malformed
+    for its declared type (so it gets skipped rather than stored broken).
+    """
+    text = (q.get('question_text') or '').strip()
+    if len(text) < 15:
+        return None
+
+    qtype = q.get('question_type') or 'single_choice'
+    if qtype not in VALID_TYPES:
+        qtype = 'single_choice'
+
+    item: Dict[str, Any] = {
+        'question_type': qtype,
+        'question_text': text,
+        'topic': q.get('topic', default_topic) or default_topic,
+        'difficulty': q.get('difficulty', 'medium') or 'medium',
+        'correct_answer': q.get('correct_answer', '') or '',
+    }
+
+    if qtype in CHOICE_TYPES:
+        options = {k: v for k, v in (q.get('options') or {}).items() if k and v}
+        if len(options) < 2:
+            return None
+        item['options'] = options
+        if qtype == 'multi_select':
+            answers = q.get('correct_answers')
+            if not answers and q.get('correct_answer'):
+                answers = [a.strip() for a in q['correct_answer'].split(',') if a.strip()]
+            answers = [a for a in (answers or []) if a in options]
+            if len(answers) < 2:
+                return None
+            item['correct_answers'] = answers
+            item['correct_answer'] = ','.join(answers)
+        else:  # single_choice
+            if item['correct_answer'] not in options:
+                return None
+    elif qtype == 'yes_no':
+        stmts = q.get('statements') or []
+        answers = q.get('correct_answers') or []
+        if len(stmts) < 2 or len(stmts) != len(answers):
+            return None
+        if any(a not in ('Yes', 'No') for a in answers):
+            return None
+        item['options'] = {}
+        item['statements'] = stmts
+        item['correct_answers'] = answers
+    elif qtype == 'drag_drop':
+        items = q.get('drag_items') or []
+        zones = q.get('drop_zones') or []
+        mapping = q.get('correct_mapping') or {}
+        if len(items) < 2 or len(zones) < 2 or not mapping:
+            return None
+        item['options'] = {}
+        item['drag_items'] = items
+        item['drop_zones'] = zones
+        item['correct_mapping'] = mapping
+    elif qtype in ('build_list', 'ordering'):
+        order = q.get('correct_order') or []
+        if len(order) < 2:
+            return None
+        item['options'] = {}
+        item['correct_order'] = order
+    else:
+        # case_study / hot_area need media/authoring — skip if incomplete
+        options = {k: v for k, v in (q.get('options') or {}).items() if k and v}
+        if len(options) < 2:
+            return None
+        item['options'] = options
+
+    return item
+
+
 def upload_to_dynamodb(questions: List[Dict], exam: str, topic: str = 'General'):
-    """Upload questions to DynamoDB."""
+    """Upload questions to DynamoDB (type-aware)."""
     table = dynamodb.Table(TABLE_NAME)
     now = datetime.utcnow().isoformat()
     uploaded = 0
+    skipped = 0
+    by_type: Dict[str, int] = {}
 
     with table.batch_writer() as batch:
         for q in questions:
-            # Skip questions with empty fields
-            if not q.get('question_text') or not q.get('options'):
-                continue
-            # Remove empty keys from options
-            options = {k: v for k, v in q.get('options', {}).items() if k and v}
-            if len(options) < 2:
+            norm = normalize_question(q, topic)
+            if norm is None:
+                skipped += 1
                 continue
 
             item = {
                 'question_id': str(uuid.uuid4()),
                 'version': '1',
                 'paper_name': exam,
-                'topic': q.get('topic', topic) or topic,
-                'difficulty': q.get('difficulty', 'medium') or 'medium',
-                # Use the app's canonical value; default single_choice (issue #51)
-                'question_type': q.get('question_type', 'single_choice') or 'single_choice',
-                'question_text': q['question_text'],
-                'options': options,
-                'correct_answer': q.get('correct_answer', '') or '',
                 'created_at': now,
                 'updated_at': now,
+                **norm,
             }
-            # Carry through extended-type fields when present
-            for f in ('correct_answers', 'statements', 'case_study_id', 'scenario',
-                      'exhibits', 'drag_items', 'drop_zones', 'correct_mapping',
-                      'correct_order', 'image_url', 'hot_areas', 'correct_area'):
-                if q.get(f) is not None:
-                    item[f] = q[f]
+            # Carry through any remaining extended-type fields already validated
+            for f in TYPED_FIELDS:
+                if norm.get(f) is not None:
+                    item[f] = norm[f]
+
             batch.put_item(Item=item)
             uploaded += 1
+            by_type[norm['question_type']] = by_type.get(norm['question_type'], 0) + 1
 
-    print(f"  ✓ {uploaded} questions uploaded to DynamoDB (paper: {exam})")
+    dist = ', '.join(f"{k}:{v}" for k, v in sorted(by_type.items()))
+    print(f"  ✓ {uploaded} uploaded to DynamoDB (paper: {exam}) — {dist}")
+    if skipped:
+        print(f"  ⚠ {skipped} skipped (malformed for their type)")
 
 
-def preview(questions: List[Dict], limit: int = 3):
-    """Preview questions."""
+def preview(questions: List[Dict], limit: int = 5):
+    """Preview questions (type-aware)."""
     print(f"\n{'─'*60}")
     for i, q in enumerate(questions[:limit]):
-        print(f"\n  Q{i+1} ({q.get('difficulty','?')}) — {q.get('topic','?')}")
+        qtype = q.get('question_type', 'single_choice')
+        print(f"\n  Q{i+1} [{qtype}] ({q.get('difficulty','?')}) — {q.get('topic','?')}")
         print(f"  {q['question_text'][:150]}")
-        for k, v in q.get('options', {}).items():
-            mark = ' ✓' if k == q.get('correct_answer') else ''
-            print(f"    {k}. {v[:80]}{mark}")
-        if q.get('explanation'):
-            print(f"  💡 {q['explanation'][:100]}...")
+        if qtype in ('single_choice', 'multi_select'):
+            correct = set(q.get('correct_answers') or [q.get('correct_answer')])
+            for k, v in q.get('options', {}).items():
+                mark = ' ✓' if k in correct else ''
+                print(f"    {k}. {str(v)[:80]}{mark}")
+        elif qtype == 'yes_no':
+            for s, a in zip(q.get('statements', []), q.get('correct_answers', [])):
+                print(f"    - {str(s)[:70]} → {a}")
+        elif qtype == 'drag_drop':
+            print(f"    items: {[it.get('label') for it in q.get('drag_items', [])]}")
+            print(f"    mapping: {q.get('correct_mapping')}")
+        elif qtype in ('build_list', 'ordering'):
+            for n, step in enumerate(q.get('correct_order', []), 1):
+                print(f"    {n}. {str(step)[:80]}")
     print(f"{'─'*60}")
 
 
@@ -429,13 +537,15 @@ def main():
     parser.add_argument('--topic', default='General', help='Topic override')
     parser.add_argument('--mode', default='generate', choices=['generate', 'parse'],
                         help='generate = Claude creates questions from docs; parse = extract from exam-dump PDF')
+    parser.add_argument('--types', default='single', choices=['single', 'mixed'],
+                        help="single = single_choice only; mixed = multi_select/yes_no/drag_drop/build_list mix (issue #51)")
     parser.add_argument('--upload', action='store_true', help='Upload to DynamoDB')
 
     args = parser.parse_args()
 
     print(f"\n{'═'*60}")
     print(f"  Microsoft Exam Question Generator")
-    print(f"  Mode: {args.mode.upper()}")
+    print(f"  Mode: {args.mode.upper()} | Types: {args.types}")
     print(f"  Exam: {args.exam} | Count: {args.count}")
     print(f"  Upload: {'Yes' if args.upload else 'Dry run'}")
     print(f"{'═'*60}")
@@ -452,7 +562,7 @@ def main():
 
     for pdf_path in pdfs:
         if args.mode == 'generate':
-            qs = generate_questions_from_pdf(pdf_path, args.exam, args.count)
+            qs = generate_questions_from_pdf(pdf_path, args.exam, args.count, mixed_types=(args.types == 'mixed'))
         else:
             qs = parse_questions_from_pdf(pdf_path)
         all_questions.extend(qs)

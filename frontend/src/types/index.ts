@@ -274,6 +274,11 @@ export interface MCQFormData {
   difficulty: 'easy' | 'medium' | 'hard';
   rbi_reference?: string;
   iibf_reference?: string;
+  // Extended Microsoft question types (issue #51). Defaults to single_choice.
+  question_type?: QuestionType;
+  correct_answers?: string[]; // multi_select: ["A","C"]; yes_no: ["Yes","No",...]
+  statements?: string[]; // yes_no
+  correct_order?: string[]; // build_list / ordering
 }
 
 export interface QuestionBankVersion {

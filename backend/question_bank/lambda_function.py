@@ -82,10 +82,19 @@ def validate_request(event: dict) -> Tuple[bool, str]:
     elif action == 'create_mcq':
         if not event.get('question_text'):
             return False, "Missing 'question_text'"
-        if not event.get('options'):
-            return False, "Missing 'options'"
-        if not event.get('correct_answer'):
-            return False, "Missing 'correct_answer'"
+        q_type = event.get('question_type', 'single_choice')
+        # Only choice types require options + a single correct_answer.
+        if q_type in ('single_choice', 'multi_select'):
+            if not event.get('options'):
+                return False, "Missing 'options'"
+            if not event.get('correct_answer') and not event.get('correct_answers'):
+                return False, "Missing 'correct_answer'"
+        elif q_type == 'yes_no':
+            if not event.get('statements') or not event.get('correct_answers'):
+                return False, "yes_no requires 'statements' and 'correct_answers'"
+        elif q_type in ('build_list', 'ordering'):
+            if not event.get('correct_order'):
+                return False, "build_list requires 'correct_order'"
         if not event.get('topic'):
             return False, "Missing 'topic'"
         if not event.get('difficulty'):
@@ -291,15 +300,38 @@ def handler(event, context):
         
         # Handle create_mcq action
         elif action == 'create_mcq':
+            # NOTE: request fields live in the parsed `body` (API Gateway proxy),
+            # not at the top level of `event`.
+            # Collect extended-type fields (issue #51) if present
+            typed_fields = {
+                f: body.get(f)
+                for f in (
+                    'correct_answers', 'statements', 'case_study_id', 'scenario', 'exhibits',
+                    'drag_items', 'drop_zones', 'correct_mapping', 'correct_order',
+                    'image_url', 'hot_areas', 'correct_area',
+                )
+                if body.get(f) is not None
+            }
+            # Frontend sends options as a 4-item array; the app consumes options
+            # as an {A,B,C,D} map. Convert here for choice types so authored
+            # questions render/score correctly (issue #51).
+            raw_options = body.get('options')
+            q_type_in = body.get('question_type', 'single_choice')
+            if isinstance(raw_options, list) and q_type_in in ('single_choice', 'multi_select'):
+                options_map = {chr(65 + i): opt for i, opt in enumerate(raw_options)}
+            else:
+                options_map = raw_options
             result = create_mcq(
-                question_text=event.get('question_text'),
-                options=event.get('options'),
-                correct_answer=event.get('correct_answer'),
-                topic=event.get('topic'),
-                difficulty=event.get('difficulty'),
-                references=event.get('references'),
-                paper=event.get('paper'),
-                creator_user_id=event.get('creator_user_id')
+                question_text=body.get('question_text'),
+                options=options_map,
+                correct_answer=body.get('correct_answer'),
+                topic=body.get('topic'),
+                difficulty=body.get('difficulty'),
+                references=body.get('references'),
+                paper=body.get('paper'),
+                creator_user_id=body.get('creator_user_id'),
+                question_type=body.get('question_type', 'single_choice'),
+                typed_fields=typed_fields
             )
             
             if not result.get('success'):
