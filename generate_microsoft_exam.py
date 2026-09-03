@@ -92,11 +92,12 @@ def generate_questions_from_pdf(pdf_path: str, exam: str, count: int, mixed_type
             type_instructions = """
 
 QUESTION TYPE MIX (issue #51) — produce a realistic Microsoft exam distribution across this batch:
-- ~55% "single_choice": one correct option A-D (as described above).
-- ~20% "multi_select": 5 options A-E, 2 or 3 correct. Set "question_type":"multi_select", keep "correct_answer" as a comma string like "A,C", and ALSO add "correct_answers": ["A","C"]. End the question text with "(Select all that apply.)".
+- ~45% "single_choice": one correct option A-D (as described above).
+- ~18% "multi_select": 5 options A-E, 2 or 3 correct. Set "question_type":"multi_select", keep "correct_answer" as a comma string like "A,C", and ALSO add "correct_answers": ["A","C"]. End the question text with "(Select all that apply.)".
 - ~10% "yes_no": present 3 related statements the candidate must judge. Set "question_type":"yes_no", OMIT "options", add "statements": ["stmt 1","stmt 2","stmt 3"] and "correct_answers": ["Yes","No","Yes"] (one Yes/No per statement, same order).
 - ~8% "drag_drop": match items to zones. Set "question_type":"drag_drop", OMIT "options", add "drag_items": [{{"id":"i1","label":"..."}}, ...], "drop_zones": [{{"id":"z1","label":"..."}}, ...], and "correct_mapping": {{"z1":"i1","z2":"i2"}} mapping each zone id to the correct item id.
 - ~7% "build_list": order steps correctly. Set "question_type":"build_list", OMIT "options", add "correct_order": ["First step","Second step","Third step","Fourth step"] in the correct sequence.
+- CASE STUDY (~12%, i.e. ONE cluster of 3-4 linked questions per batch): write a detailed 6-10 sentence enterprise scenario, then 3-4 questions that all reference it. Each such question is a normal ANSWERABLE question (use "question_type":"single_choice" or "multi_select" with real options + correct_answer), and MUST ALSO carry these THREE identical fields on every question in the cluster: "case_study_id" (e.g. "CS-CONTOSO-1"), "scenario" (the full shared scenario text), and "exhibits" (an array like [{{"title":"Network","content":"..."}}, {{"title":"Budget","content":"..."}}]). Different clusters use different case_study_id values. Questions NOT part of a case study MUST NOT include case_study_id/scenario/exhibits.
 For every question ALWAYS include "question_type", "topic" and "difficulty". Only choice types use "options"."""
         else:
             type_instructions = ""
@@ -410,6 +411,16 @@ def normalize_question(q: Dict, default_topic: str) -> Optional[Dict]:
         'correct_answer': q.get('correct_answer', '') or '',
     }
 
+    # Case-study grouping fields ride along on ANY answerable question so a
+    # cluster of questions can share one scenario (issue #51). These are not a
+    # separate question_type — each child keeps its real answerable type.
+    if q.get('case_study_id'):
+        item['case_study_id'] = q['case_study_id']
+    if q.get('scenario'):
+        item['scenario'] = q['scenario']
+    if q.get('exhibits'):
+        item['exhibits'] = q['exhibits']
+
     if qtype in CHOICE_TYPES:
         options = {k: v for k, v in (q.get('options') or {}).items() if k and v}
         if len(options) < 2:
@@ -470,6 +481,7 @@ def upload_to_dynamodb(questions: List[Dict], exam: str, topic: str = 'General')
     uploaded = 0
     skipped = 0
     by_type: Dict[str, int] = {}
+    case_study_ids: set = set()
 
     with table.batch_writer() as batch:
         for q in questions:
@@ -494,9 +506,13 @@ def upload_to_dynamodb(questions: List[Dict], exam: str, topic: str = 'General')
             batch.put_item(Item=item)
             uploaded += 1
             by_type[norm['question_type']] = by_type.get(norm['question_type'], 0) + 1
+            if norm.get('case_study_id'):
+                case_study_ids.add(norm['case_study_id'])
 
     dist = ', '.join(f"{k}:{v}" for k, v in sorted(by_type.items()))
     print(f"  ✓ {uploaded} uploaded to DynamoDB (paper: {exam}) — {dist}")
+    if case_study_ids:
+        print(f"  📎 {len(case_study_ids)} case study cluster(s): {', '.join(sorted(case_study_ids))}")
     if skipped:
         print(f"  ⚠ {skipped} skipped (malformed for their type)")
 
@@ -506,7 +522,10 @@ def preview(questions: List[Dict], limit: int = 5):
     print(f"\n{'─'*60}")
     for i, q in enumerate(questions[:limit]):
         qtype = q.get('question_type', 'single_choice')
-        print(f"\n  Q{i+1} [{qtype}] ({q.get('difficulty','?')}) — {q.get('topic','?')}")
+        cs = f" {{case_study: {q['case_study_id']}}}" if q.get('case_study_id') else ''
+        print(f"\n  Q{i+1} [{qtype}]{cs} ({q.get('difficulty','?')}) — {q.get('topic','?')}")
+        if q.get('scenario'):
+            print(f"  scenario: {q['scenario'][:100]}...")
         print(f"  {q['question_text'][:150]}")
         if qtype in ('single_choice', 'multi_select'):
             correct = set(q.get('correct_answers') or [q.get('correct_answer')])
