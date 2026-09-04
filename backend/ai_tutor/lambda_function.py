@@ -91,18 +91,27 @@ def generate_explanation_with_timeout(
                 'automl', 'mlflow', 'onnx', 'inference', 'docker', 'yaml'
             ])
 
+            # Options block only for choice-style questions. Non-choice types
+            # (yes_no, drag_drop, build_list, hot_area) have no A-D options —
+            # their answer detail is already folded into question_text and
+            # correct_answer by the caller, so we omit an empty options list.
+            if options and any(options.get(k) for k in ('A', 'B', 'C', 'D')):
+                options_block = (
+                    "Options:\n"
+                    f"A. {options.get('A', '')}\n"
+                    f"B. {options.get('B', '')}\n"
+                    f"C. {options.get('C', '')}\n"
+                    f"D. {options.get('D', '')}\n\n"
+                )
+            else:
+                options_block = ""
+
             if is_azure:
                 prompt = f"""You are an expert Microsoft Azure AI/ML certification tutor. Provide a comprehensive, detailed explanation for this exam question.
 
 Question: {question_text}
 
-Options:
-A. {options.get('A', '')}
-B. {options.get('B', '')}
-C. {options.get('C', '')}
-D. {options.get('D', '')}
-
-Correct Answer: {correct_answer}
+{options_block}Correct Answer: {correct_answer}
 
 Provide a DETAILED explanation covering ALL of the following:
 
@@ -124,13 +133,7 @@ Write 400-500 words. Use clear headings and formatting."""
 
 Question: {question_text}
 
-Options:
-A. {options.get('A', '')}
-B. {options.get('B', '')}
-C. {options.get('C', '')}
-D. {options.get('D', '')}
-
-Correct Answer: {correct_answer}
+{options_block}Correct Answer: {correct_answer}
 
 Your explanation must include:
 1. Why {correct_answer} is correct
