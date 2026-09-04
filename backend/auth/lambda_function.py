@@ -6,6 +6,7 @@ Handles user registration, login, email verification, and password reset flows.
 
 import json
 import os
+import re
 import uuid
 import hashlib
 import hmac
@@ -33,6 +34,8 @@ JWT_ALGORITHM = 'HS256'
 JWT_EXPIRY_MINUTES = 30
 RESET_TOKEN_EXPIRY_HOURS = 24
 VERIFICATION_TOKEN_EXPIRY_HOURS = 24
+# Unverified signups auto-purge after this many days (DynamoDB TTL on expires_at)
+UNVERIFIED_TTL_DAYS = int(os.environ.get('UNVERIFIED_TTL_DAYS', '7'))
 SENDER_EMAIL = os.environ.get('SES_SENDER_EMAIL', 'noreply@mockmaster.fun')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://mockmaster.fun')
 
@@ -110,17 +113,65 @@ def verify_token(token: str, token_type: str = None) -> Tuple[bool, Dict[str, An
         return False, {'error': 'Invalid token'}
 
 
-def validate_email(email: str) -> bool:
-    """Basic email validation."""
-    if not email or '@' not in email:
-        return False
-    parts = email.split('@')
-    if len(parts) != 2:
-        return False
-    local, domain = parts
-    if not local or not domain or '.' not in domain:
-        return False
-    return True
+# RFC-5322-inspired practical email regex: validates local part, domain labels
+# and a TLD of at least two letters. Deliberately not the full RFC grammar
+# (which allows quoted strings etc.) — this matches real-world deliverable emails.
+EMAIL_REGEX = re.compile(
+    r"^(?=.{3,254}$)"                      # overall length 3..254
+    r"[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+"      # local part (first atom)
+    r"(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*"  # additional dot-atoms
+    r"@"
+    r"(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+"  # domain labels
+    r"[A-Za-z]{2,}$"                        # TLD, 2+ letters
+)
+
+# Disposable / throwaway email domains — bounces and abuse. Rejected outright.
+DISPOSABLE_DOMAINS = {
+    'mailinator.com', 'guerrillamail.com', 'guerrillamail.info', 'grr.la',
+    '10minutemail.com', '10minutemail.net', 'yopmail.com', 'yopmail.net',
+    'tempmail.com', 'temp-mail.org', 'trashmail.com', 'trashmail.net',
+    'getnada.com', 'nada.email', 'dispostable.com', 'fakeinbox.com',
+    'maildrop.cc', 'mailnesia.com', 'sharklasers.com', 'throwawaymail.com',
+    'mytemp.email', 'mohmal.com', 'emailondeck.com', 'moakt.com',
+    'tempmailo.com', 'mailcatch.com', 'spam4.me', 'discard.email',
+}
+
+# Obvious placeholder / test domains that are syntactically valid but not real.
+PLACEHOLDER_DOMAINS = {
+    'test.com', 'example.com', 'example.org', 'example.net', 'mail.com',
+    'email.com', 'domain.com', 'test.test', 'foo.com', 'bar.com',
+    'abc.com', 'xyz.com', 'sample.com', 'demo.com', 'localhost',
+}
+
+
+def validate_email(email: str) -> Tuple[bool, str]:
+    """Validate email format and reject disposable/placeholder domains.
+
+    Returns (is_valid, error_message). error_message is '' when valid.
+    """
+    if not email:
+        return False, 'Email address is required'
+
+    email = email.strip()
+
+    if not EMAIL_REGEX.match(email):
+        return False, 'Please enter a valid email address'
+
+    local, domain = email.rsplit('@', 1)
+    domain = domain.lower()
+
+    # Reject a local part that is a single generic char (a@, x@, e@ …) —
+    # a strong signal of a throwaway/test address.
+    if len(local) < 2:
+        return False, 'Please enter a valid email address'
+
+    if domain in DISPOSABLE_DOMAINS:
+        return False, 'Disposable email addresses are not allowed'
+
+    if domain in PLACEHOLDER_DOMAINS:
+        return False, 'Please use a real email address'
+
+    return True, ''
 
 
 def validate_password(password: str) -> Tuple[bool, str]:
@@ -278,8 +329,9 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
     exam_preference = body.get('exam_preference', '').strip()
     
     # Validation
-    if not email or not validate_email(email):
-        return error_response(400, 'Invalid email address')
+    email_valid, email_err = validate_email(email)
+    if not email_valid:
+        return error_response(400, email_err)
     
     if not password:
         return error_response(400, 'Password is required')
@@ -301,6 +353,10 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
     verification_token = generate_verification_token(user_id, email)
     
     try:
+        # Unverified signups get a TTL so junk/abandoned accounts auto-purge.
+        # The DynamoDB TTL attribute is 'expires_at'; it is removed on
+        # verification so confirmed accounts persist. (7-day window.)
+        unverified_ttl = int((datetime.utcnow() + timedelta(days=UNVERIFIED_TTL_DAYS)).timestamp())
         users_table.put_item(
             Item={
                 'user_id': user_id,
@@ -309,6 +365,7 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
                 'password_hash': password_hash,
                 'email_verified': False,  # Must verify email before login
                 'created_at': int(datetime.utcnow().timestamp()),
+                'expires_at': unverified_ttl,  # DynamoDB TTL — cleared on verify
                 'last_login': None,
                 'role': 'bank_officer',
                 'status': 'active',
@@ -349,10 +406,11 @@ def verify_email(body: Dict[str, Any]) -> Dict[str, Any]:
     user_id = payload.get('user_id')
     
     try:
-        # Update user
+        # Mark verified and remove the TTL so the account is no longer
+        # eligible for auto-purge.
         users_table.update_item(
             Key={'user_id': user_id},
-            UpdateExpression='SET email_verified = :verified',
+            UpdateExpression='SET email_verified = :verified REMOVE expires_at',
             ExpressionAttributeValues={':verified': True}
         )
         
@@ -369,8 +427,9 @@ def resend_verification_email(body: Dict[str, Any]) -> Dict[str, Any]:
     """Resend email verification link."""
     email = body.get('email', '').strip().lower()
     
-    if not email or not validate_email(email):
-        return error_response(400, 'Valid email is required')
+    email_valid, email_err = validate_email(email)
+    if not email_valid:
+        return error_response(400, email_err)
     
     try:
         # Get user by email
@@ -394,6 +453,17 @@ def resend_verification_email(body: Dict[str, Any]) -> Dict[str, Any]:
         
         # Generate new verification token
         verification_token = generate_verification_token(user['user_id'], user['email'])
+        
+        # Refresh the auto-purge window while the user is actively verifying
+        try:
+            new_ttl = int((datetime.utcnow() + timedelta(days=UNVERIFIED_TTL_DAYS)).timestamp())
+            users_table.update_item(
+                Key={'user_id': user['user_id']},
+                UpdateExpression='SET expires_at = :ttl',
+                ExpressionAttributeValues={':ttl': new_ttl}
+            )
+        except ClientError as ttl_err:
+            print(f"Warning: could not refresh TTL (non-fatal): {ttl_err}")
         
         # Send verification email
         email_sent = send_verification_email(email, user['user_id'], verification_token)
