@@ -81,6 +81,19 @@ const PaperBreakdown: React.FC<PaperBreakdownProps> = ({ paper_performance }) =>
             <p className="font-semibold text-gray-900">{paper.paper_name}</p>
             <p className="text-sm text-gray-600">Score: {paper.average_score.toFixed(1)}%</p>
             <p className="text-sm text-gray-600">Sessions: {paper.sessions_completed}</p>
+            {paper.accuracy_by_topic && Object.keys(paper.accuracy_by_topic).length > 0 && (
+              <details className="mt-2">
+                <summary className="text-xs text-indigo-600 cursor-pointer">Topics ({Object.keys(paper.accuracy_by_topic).length})</summary>
+                <div className="mt-1 space-y-1">
+                  {Object.entries(paper.accuracy_by_topic).map(([topic, acc]) => (
+                    <div key={topic} className="flex justify-between text-xs">
+                      <span className="truncate mr-2">{topic}</span>
+                      <span className={`font-medium ${acc < 50 ? 'text-red-600' : acc >= 70 ? 'text-green-600' : 'text-amber-600'}`}>{acc}%</span>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            )}
           </div>
         ))}
       </div>

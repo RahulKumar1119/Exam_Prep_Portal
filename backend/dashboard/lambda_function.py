@@ -384,13 +384,25 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
             qtype = q.get('question_type', 'single_choice')
             qid = q.get('question_id', '')
             ua = s.get('user_answers', {}).get(qid, '')
-            # reuse correctness logic (simplified: string equality, multi handled above for topic)
-            corr = q.get('correct_answer', '')
-            c_ans = q.get('correct_answers')
-            if qtype == 'multi_select' and c_ans:
-                is_c = set(ua) == set(c_ans) if isinstance(ua, list) else set([s.strip() for s in ua.split(',')]) == set(c_ans) if isinstance(ua, str) and ua else False
+            # type-aware correctness (reuse same logic as topic block)
+            if qtype == 'multi_select' and q.get('correct_answers'):
+                c_ans = q.get('correct_answers')
+                if isinstance(ua, list):
+                    is_c = set(ua) == set(c_ans)
+                elif isinstance(ua, str) and ua:
+                    is_c = set([s.strip() for s in ua.split(',')]) == set(c_ans)
+                else:
+                    is_c = False
+            elif qtype == 'yes_no' and q.get('correct_answers'):
+                is_c = ua == q.get('correct_answers') if isinstance(ua, list) else ua == q.get('correct_answer')
+            elif qtype in ('ordering', 'build_list') and q.get('correct_order'):
+                is_c = isinstance(ua, list) and ua == q.get('correct_order')
+            elif qtype == 'drag_drop' and q.get('correct_mapping'):
+                is_c = isinstance(ua, dict) and ua == q.get('correct_mapping')
+            elif qtype == 'hot_area' and q.get('correct_area'):
+                is_c = ua == q.get('correct_area')
             else:
-                is_c = bool(ua) and ua == corr
+                is_c = bool(ua) and ua == q.get('correct_answer', '')
             diff_total[diff] = diff_total.get(diff, 0) + 1
             type_total[qtype] = type_total.get(qtype, 0) + 1
             if is_c:
