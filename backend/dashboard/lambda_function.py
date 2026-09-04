@@ -316,14 +316,35 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
             if topic is None:
                 continue
             qid = q.get('question_id', '')
+            q_type = q.get('question_type', 'single_choice')
             correct_answer = q.get('correct_answer', '')
+            correct_answers = q.get('correct_answers')
             user_answer = user_answers.get(qid, '')
-            
+
             topic_total.setdefault(topic, 0)
             topic_correct.setdefault(topic, 0)
             topic_total[topic] += 1
-            
-            if user_answer and user_answer == correct_answer:
+
+            # Type-aware correctness
+            if q_type == 'multi_select' and correct_answers:
+                if isinstance(user_answer, list):
+                    is_corr = set(user_answer) == set(correct_answers)
+                elif isinstance(user_answer, str) and user_answer:
+                    is_corr = set([s.strip() for s in user_answer.split(',')]) == set(correct_answers)
+                else:
+                    is_corr = False
+            elif q_type == 'yes_no' and correct_answers:
+                is_corr = user_answer == correct_answers if isinstance(user_answer, list) else user_answer == correct_answer
+            elif q_type in ('ordering', 'build_list') and q.get('correct_order'):
+                is_corr = isinstance(user_answer, list) and user_answer == q.get('correct_order')
+            elif q_type == 'drag_drop' and q.get('correct_mapping'):
+                is_corr = isinstance(user_answer, dict) and user_answer == q.get('correct_mapping')
+            elif q_type == 'hot_area' and q.get('correct_area'):
+                is_corr = user_answer == q.get('correct_area')
+            else:
+                is_corr = bool(user_answer) and user_answer == correct_answer
+
+            if is_corr:
                 topic_correct[topic] += 1
 
     # Calculate topic accuracy
@@ -335,6 +356,63 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
             )
         else:
             topic_accuracy[topic] = 0.0
+
+    # Fill accuracy_by_topic per paper
+    # Build per-paper topic map
+    paper_topic_map: Dict[str, Dict[str, float]] = {}
+    for topic, acc in topic_accuracy.items():
+        # Find which paper this topic belongs to via syllabus
+        for paper_name, paper_data in PAPER_SYLLABUS.items():
+            for module_topics in paper_data.get('modules', {}).values():
+                if topic in module_topics:
+                    paper_topic_map.setdefault(paper_name, {})[topic] = acc
+                    break
+    for pp in paper_performance:
+        pp['accuracy_by_topic'] = paper_topic_map.get(pp['paper_name'], {})
+
+    # --- Difficulty accuracy ---
+    diff_correct: Dict[str, int] = {'easy': 0, 'medium': 0, 'hard': 0}
+    diff_total: Dict[str, int] = {'easy': 0, 'medium': 0, 'hard': 0}
+    type_correct: Dict[str, int] = {}
+    type_total: Dict[str, int] = {}
+    time_per_paper: Dict[str, list] = {}
+    for s in completed:
+        pn = s.get('paper_name', 'Unknown')
+        time_per_paper.setdefault(pn, []).append(int(s.get('time_taken', 0)))
+        for q in s.get('questions', []):
+            diff = q.get('difficulty', 'medium')
+            qtype = q.get('question_type', 'single_choice')
+            qid = q.get('question_id', '')
+            ua = s.get('user_answers', {}).get(qid, '')
+            # type-aware correctness (reuse same logic as topic block)
+            if qtype == 'multi_select' and q.get('correct_answers'):
+                c_ans = q.get('correct_answers')
+                if isinstance(ua, list):
+                    is_c = set(ua) == set(c_ans)
+                elif isinstance(ua, str) and ua:
+                    is_c = set([s.strip() for s in ua.split(',')]) == set(c_ans)
+                else:
+                    is_c = False
+            elif qtype == 'yes_no' and q.get('correct_answers'):
+                is_c = ua == q.get('correct_answers') if isinstance(ua, list) else ua == q.get('correct_answer')
+            elif qtype in ('ordering', 'build_list') and q.get('correct_order'):
+                is_c = isinstance(ua, list) and ua == q.get('correct_order')
+            elif qtype == 'drag_drop' and q.get('correct_mapping'):
+                is_c = isinstance(ua, dict) and ua == q.get('correct_mapping')
+            elif qtype == 'hot_area' and q.get('correct_area'):
+                is_c = ua == q.get('correct_area')
+            else:
+                is_c = bool(ua) and ua == q.get('correct_answer', '')
+            diff_total[diff] = diff_total.get(diff, 0) + 1
+            type_total[qtype] = type_total.get(qtype, 0) + 1
+            if is_c:
+                diff_correct[diff] = diff_correct.get(diff, 0) + 1
+                type_correct[qtype] = type_correct.get(qtype, 0) + 1
+
+    difficulty_accuracy = {k: round((diff_correct.get(k, 0) / v) * 100, 1) if v else 0 for k, v in diff_total.items()}
+    question_type_accuracy = {k: round((type_correct.get(k, 0) / v) * 100, 1) if v else 0 for k, v in type_total.items()}
+    avg_time_per_paper = {k: round(sum(v) / len(v), 1) if v else 0 for k, v in time_per_paper.items()}
+    time_trend = [{'date': s.get('submitted_at', '')[:10], 'time_taken': int(s.get('time_taken', 0))} for s in sorted(completed, key=lambda x: x.get('submitted_at', ''))[-10:]]
 
     # Weak areas: topics with < 50% accuracy (at least 2 questions attempted)
     weak_areas = [
@@ -388,12 +466,34 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
     # Prioritize: unattempted first, then lowest-performing
     recommended_areas = (unique_unattempted + low_accuracy_topics)[:10]
 
-    # --- Trend data (last 10 completed sessions) ---
-    sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
-    trend_data = [
-        {'date': s.get('submitted_at', ''), 'score': float(s.get('score', 0))}
-        for s in sorted_sessions[-10:]
-    ]
+    # --- Coverage viz per paper (for syllabus sunburst) ---
+    coverage = {}
+    for paper in set(list(papers_attempted) + list(paper_stats.keys())):
+        paper_data = PAPER_SYLLABUS.get(paper, {})
+        total_topics = sum(len(v) for v in paper_data.get('modules', {}).values())
+        attempted_for_paper = sum(1 for t in paper_topic_map.get(paper, {}).keys() if t in attempted_topics_set)
+        # Fallback: topics derived from attempted set that belong to paper
+        if total_topics == 0:
+            continue
+        pct = round((attempted_for_paper / total_topics) * 100, 1) if total_topics else 0
+        coverage[paper] = {'total': total_topics, 'covered': attempted_for_paper, 'pct': pct, 'gaps': get_coverage_gaps(list(attempted_topics_set), paper)[:5]}
+
+    # --- Trend data: last 30 days bucketed daily avg + 30-day date range ---
+    from collections import defaultdict
+    cutoff = (datetime.utcnow() - timedelta(days=30)).isoformat()
+    recent_completed = [s for s in completed if s.get('submitted_at', '') >= cutoff]
+    # bucket by YYYY-MM-DD
+    bucket: Dict[str, list] = defaultdict(list)
+    for s in recent_completed:
+        day = s.get('submitted_at', '')[:10]
+        if day:
+            bucket[day].append(float(s.get('score', 0)))
+    # also include older if <10 points (fallback to last 10)
+    if len(bucket) < 5 and completed:
+        sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
+        trend_data = [{'date': s.get('submitted_at', ''), 'score': float(s.get('score', 0))} for s in sorted_sessions[-10:]]
+    else:
+        trend_data = [{'date': d, 'score': round(sum(v) / len(v), 1)} for d, v in sorted(bucket.items())]
 
     # --- Exam Readiness Score (per paper) ---
     # Algorithm: weighted combination of recent performance, consistency, and coverage
@@ -436,9 +536,9 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         # Factor 4: Volume bonus (more practice = more confidence)
         volume_bonus = min(10, len(scores) * 0.5)
         
-        # Combined readiness score (pass mark is 50 out of 100)
-        # Scale weighted_avg to percentage of pass threshold
-        pass_threshold = 50  # JAIIB pass mark
+        # Combined readiness score — per-paper pass mark (JAIIB 50, AI-300 70)
+        paper_pass = {'IE & IFS': 50, 'PPB': 50, 'AFM': 50, 'RBWM': 50, 'AI-300': 70}
+        pass_threshold = paper_pass.get(paper, 50)
         raw_readiness = (weighted_avg / pass_threshold) * 60  # 60% weight on score
         raw_readiness += consistency * 0.2  # 20% weight on consistency
         raw_readiness += trend_bonus  # trend bonus/penalty
@@ -561,28 +661,43 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
 
     # --- Percentile Ranking (per paper) ---
     # Compare this user's average score against all other users
+    # Paginated scan with limit to avoid full-table blowup; Lambda container caches for 5 min
     percentile_ranking = {}
-    if paper_stats:
+    # simple in-memory cache (Lambda container reuse)
+    if not hasattr(get_dashboard_data, '_cache'):
+        get_dashboard_data._cache = {}  # type: ignore
+    cache_key = 'percentile_v1'
+    cached = get_dashboard_data._cache.get(cache_key)  # type: ignore
+    if cached and (datetime.utcnow() - cached['ts']).seconds < 300:
+        all_items = cached['items']
+    elif paper_stats:
         try:
-            # Scan all completed sessions (projection: user_id, paper_name, score)
-            all_sessions_resp = sessions_table.scan(
-                FilterExpression='#s = :completed',
-                ExpressionAttributeNames={'#s': 'status'},
-                ExpressionAttributeValues={':completed': 'completed'},
-                ProjectionExpression='user_id, paper_name, score'
-            )
-            all_items = all_sessions_resp.get('Items', [])
-            
-            # Handle pagination
-            while 'LastEvaluatedKey' in all_sessions_resp:
-                all_sessions_resp = sessions_table.scan(
-                    FilterExpression='#s = :completed',
-                    ExpressionAttributeNames={'#s': 'status'},
-                    ExpressionAttributeValues={':completed': 'completed'},
-                    ProjectionExpression='user_id, paper_name, score',
-                    ExclusiveStartKey=all_sessions_resp['LastEvaluatedKey']
-                )
-                all_items.extend(all_sessions_resp.get('Items', []))
+            # Paginated scan with limit (max 1000 items per page, up to 5 pages → 5000 sessions)
+            all_items = []
+            scan_kwargs: Dict[str, Any] = {
+                'FilterExpression': '#s = :completed',
+                'ExpressionAttributeNames': {'#s': 'status'},
+                'ExpressionAttributeValues': {':completed': 'completed'},
+                'ProjectionExpression': 'user_id, paper_name, score',
+                'Limit': 1000,
+            }
+            resp = sessions_table.scan(**scan_kwargs)
+            all_items.extend(resp.get('Items', []))
+            pages = 1
+            while 'LastEvaluatedKey' in resp and pages < 5:
+                scan_kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+                resp = sessions_table.scan(**scan_kwargs)
+                all_items.extend(resp.get('Items', []))
+                pages += 1
+            get_dashboard_data._cache[cache_key] = {'items': all_items, 'ts': datetime.utcnow()}  # type: ignore
+        except ClientError as e:
+            print(f"Error computing percentile scan: {e}")
+            all_items = []
+    else:
+        all_items = []
+
+    if paper_stats and 'all_items' in locals() and all_items:
+        try:
             
             # Group by (user_id, paper_name) → average score
             user_paper_scores: Dict[str, Dict[str, list]] = {}
@@ -638,6 +753,11 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         'exam_readiness': exam_readiness,
         'study_streak': streak,
         'percentile_ranking': percentile_ranking,
+        'difficulty_accuracy': difficulty_accuracy,
+        'question_type_accuracy': question_type_accuracy,
+        'avg_time_per_paper': avg_time_per_paper,
+        'time_trend': time_trend,
+        'coverage': coverage,
     }
 
 
@@ -656,21 +776,23 @@ def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
             valid_papers.update(papers)
 
     try:
-        # Scan all completed sessions
+        # Scan completed sessions with limit + batch (avoid full-table blowup)
         all_items = []
         scan_kwargs = {
             'FilterExpression': '#s = :completed',
             'ExpressionAttributeNames': {'#s': 'status'},
             'ExpressionAttributeValues': {':completed': 'completed'},
-            'ProjectionExpression': 'user_id, paper_name, score, submitted_at'
+            'ProjectionExpression': 'user_id, paper_name, score, submitted_at',
+            'Limit': 1000,
         }
-
-        while True:
+        pages = 0
+        while pages < 5:
             resp = sessions_table.scan(**scan_kwargs)
             all_items.extend(resp.get('Items', []))
             if 'LastEvaluatedKey' not in resp:
                 break
             scan_kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+            pages += 1
 
         # Filter by exam papers
         all_items = [item for item in all_items if item.get('paper_name', '') in valid_papers]
@@ -698,17 +820,25 @@ def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
             if submitted > user_stats[uid]['last_active']:
                 user_stats[uid]['last_active'] = submitted
 
-        # Fetch user names
+        # Fetch user names via batch_get_item (avoid N+1)
         user_names: Dict[str, str] = {}
-        for uid in user_stats:
-            try:
-                user_resp = users_table.get_item(
-                    Key={'user_id': uid},
-                    ProjectionExpression='full_name'
+        uids = list(user_stats.keys())
+        try:
+            # Batch in groups of 100 (DynamoDB limit)
+            for i in range(0, len(uids), 100):
+                batch_keys = [{'user_id': uid} for uid in uids[i:i+100]]
+                batch_resp = dynamodb.meta.client.batch_get_item(
+                    RequestItems={
+                        users_table.name: {'Keys': batch_keys, 'ProjectionExpression': 'user_id, full_name'}
+                    }
                 )
-                name = user_resp.get('Item', {}).get('full_name', 'Anonymous')
-                user_names[uid] = name
-            except Exception:
+                for item in batch_resp.get('Responses', {}).get(users_table.name, []):
+                    user_names[item['user_id']] = item.get('full_name', 'Anonymous')
+            # Fallback for missing names
+            for uid in uids:
+                user_names.setdefault(uid, 'Anonymous')
+        except Exception:
+            for uid in uids:
                 user_names[uid] = 'Anonymous'
 
         # Build leaderboard entries

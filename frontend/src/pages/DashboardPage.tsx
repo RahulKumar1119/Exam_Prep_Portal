@@ -12,6 +12,10 @@ import StudyStreak from '../components/Dashboard/StudyStreak';
 import PercentileRanking from '../components/Dashboard/PercentileRanking';
 import ExamCountdown from '../components/Dashboard/ExamCountdown';
 import AzureResources from '../components/Dashboard/AzureResources';
+import DifficultyAccuracy from '../components/Dashboard/DifficultyAccuracy';
+import QuestionTypeAccuracy from '../components/Dashboard/QuestionTypeAccuracy';
+import TimeStats from '../components/Dashboard/TimeStats';
+import CoverageViz from '../components/Dashboard/CoverageViz';
 import { useExamPreference } from '../hooks/useExamPreference';
 
 const DashboardPage: React.FC = () => {
@@ -72,6 +76,18 @@ const DashboardPage: React.FC = () => {
 
           {/* Paper Breakdown Chart */}
           <PaperBreakdown paper_performance={dashboard_data.paper_performance} />
+
+          {/* Difficulty & Question Type Accuracy */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <DifficultyAccuracy difficulty_accuracy={dashboard_data.difficulty_accuracy} />
+            <QuestionTypeAccuracy question_type_accuracy={dashboard_data.question_type_accuracy} />
+          </div>
+
+          {/* Time Analytics */}
+          <TimeStats avg_time_per_paper={dashboard_data.avg_time_per_paper} time_trend={dashboard_data.time_trend} />
+
+          {/* Syllabus Coverage */}
+          <CoverageViz coverage={dashboard_data.coverage} />
 
           {/* Weak and Strong Areas */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
