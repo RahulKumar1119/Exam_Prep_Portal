@@ -139,6 +139,10 @@ export interface DashboardData {
   exam_readiness?: Record<string, ExamReadinessData>;
   study_streak?: StudyStreakData;
   percentile_ranking?: Record<string, PercentileData>;
+  difficulty_accuracy?: Record<string, number>;
+  question_type_accuracy?: Record<string, number>;
+  avg_time_per_paper?: Record<string, number>;
+  time_trend?: { date: string; time_taken: number }[];
 }
 
 export interface ExamReadinessData {

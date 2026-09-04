@@ -1,5 +1,19 @@
 import React from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import { TrendPoint } from '../../types/index';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 interface ScoreTrendsProps {
   trend_data: TrendPoint[];
@@ -17,73 +31,64 @@ const ScoreTrends: React.FC<ScoreTrendsProps> = ({ trend_data }) => {
     );
   }
 
-  // Find min and max scores for scaling
   const scores = trend_data.map((d) => d.score);
-  const min_score = Math.min(...scores);
-  const max_score = Math.max(...scores);
-  const score_range = max_score - min_score || 1;
+  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const max = Math.max(...scores);
+  const min = Math.min(...scores);
 
-  // Calculate chart dimensions
-  const chart_height = 250;
-  const chart_width = Math.max(600, trend_data.length * 20);
-  const padding = 40;
+  const data = {
+    labels: trend_data.map((d) => {
+      try {
+        return new Date(d.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+      } catch {
+        return d.date;
+      }
+    }),
+    datasets: [
+      {
+        label: 'Score %',
+        data: scores,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#3b82f6',
+      },
+    ],
+  };
 
-  // Create SVG path for line chart
-  const points = trend_data.map((point, index) => {
-    const x = padding + (index / (trend_data.length - 1 || 1)) * (chart_width - 2 * padding);
-    const normalized_score = (point.score - min_score) / score_range;
-    const y = chart_height - padding - normalized_score * (chart_height - 2 * padding);
-    return { x, y, score: point.score, date: point.date };
-  });
-
-  const path_data = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index' as const, intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          title: (items: any[]) => trend_data[items[0].dataIndex]?.date || '',
+          label: (item: any) => ` Score: ${item.parsed.y.toFixed(1)}%`,
+        },
+      },
+      title: { display: false },
+    },
+    scales: {
+      y: { min: 0, max: 100, ticks: { callback: (v: any) => `${v}%` }, grid: { color: '#e5e7eb' } },
+      x: { grid: { display: false } },
+    },
+  };
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">30-Day Score Trends</h3>
-      <div className="overflow-x-auto">
-        <svg width={chart_width} height={chart_height} className="mx-auto">
-          {/* Grid lines */}
-          {[0, 0.25, 0.5, 0.75, 1].map((ratio, i) => {
-            const y = chart_height - padding - ratio * (chart_height - 2 * padding);
-            const score_label = Math.round(min_score + ratio * score_range);
-            return (
-              <g key={`grid-${i}`}>
-                <line
-                  x1={padding}
-                  y1={y}
-                  x2={chart_width - padding}
-                  y2={y}
-                  stroke="#e5e7eb"
-                  strokeDasharray="4"
-                />
-                <text x={padding - 10} y={y + 4} fontSize="12" fill="#9ca3af" textAnchor="end">
-                  {score_label}%
-                </text>
-              </g>
-            );
-          })}
-
-          {/* Line chart */}
-          <path d={path_data} stroke="#3b82f6" strokeWidth="2" fill="none" />
-
-          {/* Data points */}
-          {points.map((point, i) => (
-            <g key={`point-${i}`}>
-              <circle cx={point.x} cy={point.y} r="4" fill="#3b82f6" />
-              <title>{`${point.date}: ${point.score}%`}</title>
-            </g>
-          ))}
-
-          {/* Axes */}
-          <line x1={padding} y1={chart_height - padding} x2={chart_width - padding} y2={chart_height - padding} stroke="#d1d5db" strokeWidth="1" />
-          <line x1={padding} y1={padding} x2={padding} y2={chart_height - padding} stroke="#d1d5db" strokeWidth="1" />
-        </svg>
+      <div className="h-64">
+        <Line data={data} options={options as any} />
       </div>
-      <div className="mt-4 text-sm text-gray-600">
-        <p>Average: {(scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)}%</p>
-        <p>Highest: {max_score.toFixed(1)}%</p>
-        <p>Lowest: {min_score.toFixed(1)}%</p>
+      <div className="mt-4 flex gap-6 text-sm text-gray-600">
+        <span>Average: <strong>{avg.toFixed(1)}%</strong></span>
+        <span>Highest: <strong>{max.toFixed(1)}%</strong></span>
+        <span>Lowest: <strong>{min.toFixed(1)}%</strong></span>
       </div>
     </div>
   );

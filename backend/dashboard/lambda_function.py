@@ -316,14 +316,35 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
             if topic is None:
                 continue
             qid = q.get('question_id', '')
+            q_type = q.get('question_type', 'single_choice')
             correct_answer = q.get('correct_answer', '')
+            correct_answers = q.get('correct_answers')
             user_answer = user_answers.get(qid, '')
-            
+
             topic_total.setdefault(topic, 0)
             topic_correct.setdefault(topic, 0)
             topic_total[topic] += 1
-            
-            if user_answer and user_answer == correct_answer:
+
+            # Type-aware correctness
+            if q_type == 'multi_select' and correct_answers:
+                if isinstance(user_answer, list):
+                    is_corr = set(user_answer) == set(correct_answers)
+                elif isinstance(user_answer, str) and user_answer:
+                    is_corr = set([s.strip() for s in user_answer.split(',')]) == set(correct_answers)
+                else:
+                    is_corr = False
+            elif q_type == 'yes_no' and correct_answers:
+                is_corr = user_answer == correct_answers if isinstance(user_answer, list) else user_answer == correct_answer
+            elif q_type in ('ordering', 'build_list') and q.get('correct_order'):
+                is_corr = isinstance(user_answer, list) and user_answer == q.get('correct_order')
+            elif q_type == 'drag_drop' and q.get('correct_mapping'):
+                is_corr = isinstance(user_answer, dict) and user_answer == q.get('correct_mapping')
+            elif q_type == 'hot_area' and q.get('correct_area'):
+                is_corr = user_answer == q.get('correct_area')
+            else:
+                is_corr = bool(user_answer) and user_answer == correct_answer
+
+            if is_corr:
                 topic_correct[topic] += 1
 
     # Calculate topic accuracy
@@ -335,6 +356,51 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
             )
         else:
             topic_accuracy[topic] = 0.0
+
+    # Fill accuracy_by_topic per paper
+    # Build per-paper topic map
+    paper_topic_map: Dict[str, Dict[str, float]] = {}
+    for topic, acc in topic_accuracy.items():
+        # Find which paper this topic belongs to via syllabus
+        for paper_name, paper_data in PAPER_SYLLABUS.items():
+            for module_topics in paper_data.get('modules', {}).values():
+                if topic in module_topics:
+                    paper_topic_map.setdefault(paper_name, {})[topic] = acc
+                    break
+    for pp in paper_performance:
+        pp['accuracy_by_topic'] = paper_topic_map.get(pp['paper_name'], {})
+
+    # --- Difficulty accuracy ---
+    diff_correct: Dict[str, int] = {'easy': 0, 'medium': 0, 'hard': 0}
+    diff_total: Dict[str, int] = {'easy': 0, 'medium': 0, 'hard': 0}
+    type_correct: Dict[str, int] = {}
+    type_total: Dict[str, int] = {}
+    time_per_paper: Dict[str, list] = {}
+    for s in completed:
+        pn = s.get('paper_name', 'Unknown')
+        time_per_paper.setdefault(pn, []).append(int(s.get('time_taken', 0)))
+        for q in s.get('questions', []):
+            diff = q.get('difficulty', 'medium')
+            qtype = q.get('question_type', 'single_choice')
+            qid = q.get('question_id', '')
+            ua = s.get('user_answers', {}).get(qid, '')
+            # reuse correctness logic (simplified: string equality, multi handled above for topic)
+            corr = q.get('correct_answer', '')
+            c_ans = q.get('correct_answers')
+            if qtype == 'multi_select' and c_ans:
+                is_c = set(ua) == set(c_ans) if isinstance(ua, list) else set([s.strip() for s in ua.split(',')]) == set(c_ans) if isinstance(ua, str) and ua else False
+            else:
+                is_c = bool(ua) and ua == corr
+            diff_total[diff] = diff_total.get(diff, 0) + 1
+            type_total[qtype] = type_total.get(qtype, 0) + 1
+            if is_c:
+                diff_correct[diff] = diff_correct.get(diff, 0) + 1
+                type_correct[qtype] = type_correct.get(qtype, 0) + 1
+
+    difficulty_accuracy = {k: round((diff_correct.get(k, 0) / v) * 100, 1) if v else 0 for k, v in diff_total.items()}
+    question_type_accuracy = {k: round((type_correct.get(k, 0) / v) * 100, 1) if v else 0 for k, v in type_total.items()}
+    avg_time_per_paper = {k: round(sum(v) / len(v), 1) if v else 0 for k, v in time_per_paper.items()}
+    time_trend = [{'date': s.get('submitted_at', '')[:10], 'time_taken': int(s.get('time_taken', 0))} for s in sorted(completed, key=lambda x: x.get('submitted_at', ''))[-10:]]
 
     # Weak areas: topics with < 50% accuracy (at least 2 questions attempted)
     weak_areas = [
@@ -638,6 +704,10 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         'exam_readiness': exam_readiness,
         'study_streak': streak,
         'percentile_ranking': percentile_ranking,
+        'difficulty_accuracy': difficulty_accuracy,
+        'question_type_accuracy': question_type_accuracy,
+        'avg_time_per_paper': avg_time_per_paper,
+        'time_trend': time_trend,
     }
 
 
