@@ -48,3 +48,7 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 ai-300_azure-machine-learning-azureml-api-2_20260809_164721.json
+
+# Generated question dumps and data backups (may contain user PII) — never commit
+ai-300_generate_*.json
+*_backup_*.json

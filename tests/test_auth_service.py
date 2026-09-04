@@ -147,18 +147,69 @@ class TestTokenGeneration:
 
 
 class TestEmailValidation:
-    """Test email validation."""
-    
-    def test_validate_email_accepts_valid_email(self, auth_module):
-        """Test that valid email is accepted."""
-        assert auth_module.validate_email("test@example.com")
-        assert auth_module.validate_email("user.name@domain.co.uk")
-    
-    def test_validate_email_rejects_invalid_email(self, auth_module):
-        """Test that invalid email is rejected."""
-        assert not auth_module.validate_email("invalid")
-        assert not auth_module.validate_email("@example.com")
-        assert not auth_module.validate_email("test@")
+    """Test email validation (issue #55). validate_email returns (bool, msg)."""
+
+    @pytest.mark.parametrize("email", [
+        "john.doe@gmail.com",
+        "user.name@domain.co.uk",
+        "jane+jaiib@company.co.in",
+        "a.b@sub.domain.org",
+        "Rahul.Good66@gmail.com",
+        "first_last@bank-corp.com",
+    ])
+    def test_validate_email_accepts_real_emails(self, auth_module, email):
+        """Real-world emails (incl. +tags, subdomains, dashes) are accepted."""
+        valid, msg = auth_module.validate_email(email)
+        assert valid, f"expected valid: {email} ({msg})"
+        assert msg == ""
+
+    @pytest.mark.parametrize("email", [
+        "invalid",           # no @
+        "@example.com",      # no local part
+        "test@",             # no domain
+        "x@x",               # no TLD
+        "x@x.co",            # single-char local part
+        "a@mail.com",        # single-char local + placeholder domain
+        "foo bar@gmail.com", # space in local
+        "user@domain",       # no dot in domain
+        "user@@gmail.com",   # double @
+        "",                  # empty
+    ])
+    def test_validate_email_rejects_malformed(self, auth_module, email):
+        """Malformed / obviously invalid emails are rejected."""
+        valid, msg = auth_module.validate_email(email)
+        assert not valid, f"expected invalid: {email}"
+        assert msg  # a user-facing reason is provided
+
+    @pytest.mark.parametrize("email", [
+        "foo@mailinator.com",
+        "bar@guerrillamail.com",
+        "spam@10minutemail.com",
+        "throwaway@yopmail.com",
+        "x1@trashmail.com",
+    ])
+    def test_validate_email_rejects_disposable(self, auth_module, email):
+        """Disposable / throwaway domains are rejected with a clear message."""
+        valid, msg = auth_module.validate_email(email)
+        assert not valid
+        assert "disposable" in msg.lower()
+
+    @pytest.mark.parametrize("email", [
+        "test@test.com",
+        "user@example.com",
+        "hello@mail.com",
+        "demo@demo.com",
+    ])
+    def test_validate_email_rejects_placeholder(self, auth_module, email):
+        """Placeholder / test domains are rejected."""
+        valid, msg = auth_module.validate_email(email)
+        assert not valid
+        assert "real email" in msg.lower()
+
+    def test_validate_email_trims_whitespace(self, auth_module):
+        """Surrounding whitespace does not affect a valid email."""
+        valid, _ = auth_module.validate_email("  john.doe@gmail.com  ")
+        assert valid
 
 
 class TestPasswordValidation:
@@ -198,7 +249,7 @@ class TestRegistration:
         mock_ses.send_email.return_value = {}
         
         body = {
-            'email': 'newuser@example.com',
+            'email': 'newuser@gmail.com',
             'password': 'StrongPass123',
             'full_name': 'Test User',
             'bank_affiliation': 'Test Bank'
@@ -224,12 +275,12 @@ class TestRegistration:
         
         assert response['statusCode'] == 400
         data = json.loads(response['body'])
-        assert 'Invalid email' in data['error']
+        assert 'valid email' in data['error'].lower()
     
     def test_register_user_rejects_weak_password(self, auth_module):
         """Test that registration rejects weak password."""
         body = {
-            'email': 'test@example.com',
+            'email': 'weakpass@gmail.com',
             'password': 'weak',
             'full_name': 'Test User',
             'bank_affiliation': 'Test Bank'
@@ -244,7 +295,7 @@ class TestRegistration:
         mock_dynamodb.query.return_value = {'Items': [{'user_id': 'existing'}]}
         
         body = {
-            'email': 'existing@example.com',
+            'email': 'existing@gmail.com',
             'password': 'StrongPass123',
             'full_name': 'Test User',
             'bank_affiliation': 'Test Bank'
@@ -262,7 +313,7 @@ class TestRegistration:
         mock_ses.send_email.return_value = {}
         
         body = {
-            'email': 'newuser@example.com',
+            'email': 'hashme@gmail.com',
             'password': 'StrongPass123',
             'full_name': 'Test User',
             'bank_affiliation': 'Test Bank'
