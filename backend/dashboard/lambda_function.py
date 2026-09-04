@@ -466,12 +466,34 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
     # Prioritize: unattempted first, then lowest-performing
     recommended_areas = (unique_unattempted + low_accuracy_topics)[:10]
 
-    # --- Trend data (last 10 completed sessions) ---
-    sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
-    trend_data = [
-        {'date': s.get('submitted_at', ''), 'score': float(s.get('score', 0))}
-        for s in sorted_sessions[-10:]
-    ]
+    # --- Coverage viz per paper (for syllabus sunburst) ---
+    coverage = {}
+    for paper in set(list(papers_attempted) + list(paper_stats.keys())):
+        paper_data = PAPER_SYLLABUS.get(paper, {})
+        total_topics = sum(len(v) for v in paper_data.get('modules', {}).values())
+        attempted_for_paper = sum(1 for t in paper_topic_map.get(paper, {}).keys() if t in attempted_topics_set)
+        # Fallback: topics derived from attempted set that belong to paper
+        if total_topics == 0:
+            continue
+        pct = round((attempted_for_paper / total_topics) * 100, 1) if total_topics else 0
+        coverage[paper] = {'total': total_topics, 'covered': attempted_for_paper, 'pct': pct, 'gaps': get_coverage_gaps(list(attempted_topics_set), paper)[:5]}
+
+    # --- Trend data: last 30 days bucketed daily avg + 30-day date range ---
+    from collections import defaultdict
+    cutoff = (datetime.utcnow() - timedelta(days=30)).isoformat()
+    recent_completed = [s for s in completed if s.get('submitted_at', '') >= cutoff]
+    # bucket by YYYY-MM-DD
+    bucket: Dict[str, list] = defaultdict(list)
+    for s in recent_completed:
+        day = s.get('submitted_at', '')[:10]
+        if day:
+            bucket[day].append(float(s.get('score', 0)))
+    # also include older if <10 points (fallback to last 10)
+    if len(bucket) < 5 and completed:
+        sorted_sessions = sorted(completed, key=lambda x: x.get('submitted_at', ''))
+        trend_data = [{'date': s.get('submitted_at', ''), 'score': float(s.get('score', 0))} for s in sorted_sessions[-10:]]
+    else:
+        trend_data = [{'date': d, 'score': round(sum(v) / len(v), 1)} for d, v in sorted(bucket.items())]
 
     # --- Exam Readiness Score (per paper) ---
     # Algorithm: weighted combination of recent performance, consistency, and coverage
@@ -514,9 +536,9 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         # Factor 4: Volume bonus (more practice = more confidence)
         volume_bonus = min(10, len(scores) * 0.5)
         
-        # Combined readiness score (pass mark is 50 out of 100)
-        # Scale weighted_avg to percentage of pass threshold
-        pass_threshold = 50  # JAIIB pass mark
+        # Combined readiness score — per-paper pass mark (JAIIB 50, AI-300 70)
+        paper_pass = {'IE & IFS': 50, 'PPB': 50, 'AFM': 50, 'RBWM': 50, 'AI-300': 70}
+        pass_threshold = paper_pass.get(paper, 50)
         raw_readiness = (weighted_avg / pass_threshold) * 60  # 60% weight on score
         raw_readiness += consistency * 0.2  # 20% weight on consistency
         raw_readiness += trend_bonus  # trend bonus/penalty
@@ -639,28 +661,43 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
 
     # --- Percentile Ranking (per paper) ---
     # Compare this user's average score against all other users
+    # Paginated scan with limit to avoid full-table blowup; Lambda container caches for 5 min
     percentile_ranking = {}
-    if paper_stats:
+    # simple in-memory cache (Lambda container reuse)
+    if not hasattr(get_dashboard_data, '_cache'):
+        get_dashboard_data._cache = {}  # type: ignore
+    cache_key = 'percentile_v1'
+    cached = get_dashboard_data._cache.get(cache_key)  # type: ignore
+    if cached and (datetime.utcnow() - cached['ts']).seconds < 300:
+        all_items = cached['items']
+    elif paper_stats:
         try:
-            # Scan all completed sessions (projection: user_id, paper_name, score)
-            all_sessions_resp = sessions_table.scan(
-                FilterExpression='#s = :completed',
-                ExpressionAttributeNames={'#s': 'status'},
-                ExpressionAttributeValues={':completed': 'completed'},
-                ProjectionExpression='user_id, paper_name, score'
-            )
-            all_items = all_sessions_resp.get('Items', [])
-            
-            # Handle pagination
-            while 'LastEvaluatedKey' in all_sessions_resp:
-                all_sessions_resp = sessions_table.scan(
-                    FilterExpression='#s = :completed',
-                    ExpressionAttributeNames={'#s': 'status'},
-                    ExpressionAttributeValues={':completed': 'completed'},
-                    ProjectionExpression='user_id, paper_name, score',
-                    ExclusiveStartKey=all_sessions_resp['LastEvaluatedKey']
-                )
-                all_items.extend(all_sessions_resp.get('Items', []))
+            # Paginated scan with limit (max 1000 items per page, up to 5 pages → 5000 sessions)
+            all_items = []
+            scan_kwargs: Dict[str, Any] = {
+                'FilterExpression': '#s = :completed',
+                'ExpressionAttributeNames': {'#s': 'status'},
+                'ExpressionAttributeValues': {':completed': 'completed'},
+                'ProjectionExpression': 'user_id, paper_name, score',
+                'Limit': 1000,
+            }
+            resp = sessions_table.scan(**scan_kwargs)
+            all_items.extend(resp.get('Items', []))
+            pages = 1
+            while 'LastEvaluatedKey' in resp and pages < 5:
+                scan_kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+                resp = sessions_table.scan(**scan_kwargs)
+                all_items.extend(resp.get('Items', []))
+                pages += 1
+            get_dashboard_data._cache[cache_key] = {'items': all_items, 'ts': datetime.utcnow()}  # type: ignore
+        except ClientError as e:
+            print(f"Error computing percentile scan: {e}")
+            all_items = []
+    else:
+        all_items = []
+
+    if paper_stats and 'all_items' in locals() and all_items:
+        try:
             
             # Group by (user_id, paper_name) → average score
             user_paper_scores: Dict[str, Dict[str, list]] = {}
@@ -720,6 +757,7 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         'question_type_accuracy': question_type_accuracy,
         'avg_time_per_paper': avg_time_per_paper,
         'time_trend': time_trend,
+        'coverage': coverage,
     }
 
 
@@ -738,21 +776,23 @@ def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
             valid_papers.update(papers)
 
     try:
-        # Scan all completed sessions
+        # Scan completed sessions with limit + batch (avoid full-table blowup)
         all_items = []
         scan_kwargs = {
             'FilterExpression': '#s = :completed',
             'ExpressionAttributeNames': {'#s': 'status'},
             'ExpressionAttributeValues': {':completed': 'completed'},
-            'ProjectionExpression': 'user_id, paper_name, score, submitted_at'
+            'ProjectionExpression': 'user_id, paper_name, score, submitted_at',
+            'Limit': 1000,
         }
-
-        while True:
+        pages = 0
+        while pages < 5:
             resp = sessions_table.scan(**scan_kwargs)
             all_items.extend(resp.get('Items', []))
             if 'LastEvaluatedKey' not in resp:
                 break
             scan_kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+            pages += 1
 
         # Filter by exam papers
         all_items = [item for item in all_items if item.get('paper_name', '') in valid_papers]
@@ -780,17 +820,25 @@ def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
             if submitted > user_stats[uid]['last_active']:
                 user_stats[uid]['last_active'] = submitted
 
-        # Fetch user names
+        # Fetch user names via batch_get_item (avoid N+1)
         user_names: Dict[str, str] = {}
-        for uid in user_stats:
-            try:
-                user_resp = users_table.get_item(
-                    Key={'user_id': uid},
-                    ProjectionExpression='full_name'
+        uids = list(user_stats.keys())
+        try:
+            # Batch in groups of 100 (DynamoDB limit)
+            for i in range(0, len(uids), 100):
+                batch_keys = [{'user_id': uid} for uid in uids[i:i+100]]
+                batch_resp = dynamodb.meta.client.batch_get_item(
+                    RequestItems={
+                        users_table.name: {'Keys': batch_keys, 'ProjectionExpression': 'user_id, full_name'}
+                    }
                 )
-                name = user_resp.get('Item', {}).get('full_name', 'Anonymous')
-                user_names[uid] = name
-            except Exception:
+                for item in batch_resp.get('Responses', {}).get(users_table.name, []):
+                    user_names[item['user_id']] = item.get('full_name', 'Anonymous')
+            # Fallback for missing names
+            for uid in uids:
+                user_names.setdefault(uid, 'Anonymous')
+        except Exception:
+            for uid in uids:
                 user_names[uid] = 'Anonymous'
 
         # Build leaderboard entries

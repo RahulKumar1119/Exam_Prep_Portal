@@ -20,10 +20,12 @@ interface ScoreTrendsProps {
 }
 
 const ScoreTrends: React.FC<ScoreTrendsProps> = ({ trend_data }) => {
+  const [range, setRange] = React.useState<'7' | '30' | 'all'>('30');
+
   if (!trend_data || trend_data.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">30-Day Score Trends</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Score Trends</h3>
         <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
           <p className="text-gray-500">No data available yet</p>
         </div>
@@ -31,13 +33,21 @@ const ScoreTrends: React.FC<ScoreTrendsProps> = ({ trend_data }) => {
     );
   }
 
-  const scores = trend_data.map((d) => d.score);
+  const filtered = React.useMemo(() => {
+    if (range === 'all') return trend_data;
+    const days = range === '7' ? 7 : 30;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return trend_data.filter((d) => new Date(d.date) >= cutoff);
+  }, [trend_data, range]);
+
+  const scores = filtered.map((d) => d.score);
   const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
   const max = Math.max(...scores);
   const min = Math.min(...scores);
 
   const data = {
-    labels: trend_data.map((d) => {
+    labels: filtered.map((d) => {
       try {
         return new Date(d.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
       } catch {
@@ -67,7 +77,7 @@ const ScoreTrends: React.FC<ScoreTrendsProps> = ({ trend_data }) => {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          title: (items: any[]) => trend_data[items[0].dataIndex]?.date || '',
+          title: (items: any[]) => filtered[items[0].dataIndex]?.date || '',
           label: (item: any) => ` Score: ${item.parsed.y.toFixed(1)}%`,
         },
       },
@@ -81,7 +91,14 @@ const ScoreTrends: React.FC<ScoreTrendsProps> = ({ trend_data }) => {
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">30-Day Score Trends</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">Score Trends (30-day bucketed)</h3>
+        <div className="flex gap-1">
+          {(['7', '30', 'all'] as const).map((r) => (
+            <button key={r} onClick={() => setRange(r)} className={`px-2 py-1 text-xs rounded ${range === r ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}>{r === 'all' ? 'All' : `${r}d`}</button>
+          ))}
+        </div>
+      </div>
       <div className="h-64">
         <Line data={data} options={options as any} />
       </div>

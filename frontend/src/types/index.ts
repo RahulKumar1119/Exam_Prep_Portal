@@ -143,6 +143,7 @@ export interface DashboardData {
   question_type_accuracy?: Record<string, number>;
   avg_time_per_paper?: Record<string, number>;
   time_trend?: { date: string; time_taken: number }[];
+  coverage?: Record<string, { total: number; covered: number; pct: number; gaps: string[] }>;
 }
 
 export interface ExamReadinessData {
