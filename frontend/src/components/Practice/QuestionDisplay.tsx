@@ -10,6 +10,62 @@ import DragDropBoard from './DragDropBoard';
 import OrderableList from './OrderableList';
 import CaseStudyTabs from './CaseStudyTabs';
 
+/** Build a human-readable "correct answer" string per question type, so the
+ *  AI-explain endpoint (which requires a non-empty correct_answer and is
+ *  prompt-driven) works for the extended Microsoft types, not just A-D. */
+function explanationCorrectAnswer(q: {
+  question_type?: string;
+  correct_answer?: string;
+  correct_answers?: string[];
+  statements?: string[];
+  correct_order?: string[];
+  correct_mapping?: Record<string, string>;
+  drag_items?: { id: string; label: string }[];
+  drop_zones?: { id: string; label: string }[];
+}): string {
+  switch (q.question_type) {
+    case 'multi_select':
+      return (q.correct_answers && q.correct_answers.length ? q.correct_answers.join(', ') : q.correct_answer) || '';
+    case 'yes_no':
+      if (q.statements && q.correct_answers) {
+        return q.statements.map((s, i) => `Statement ${i + 1} (${s}): ${q.correct_answers![i] ?? '?'}`).join('; ');
+      }
+      return (q.correct_answers || []).join(', ');
+    case 'build_list':
+    case 'ordering':
+      return (q.correct_order || []).map((s, i) => `${i + 1}. ${s}`).join('  ');
+    case 'drag_drop': {
+      const zoneLabel = (id: string) => q.drop_zones?.find((z) => z.id === id)?.label || id;
+      const itemLabel = (id: string) => q.drag_items?.find((it) => it.id === id)?.label || id;
+      return Object.entries(q.correct_mapping || {}).map(([z, i]) => `${zoneLabel(z)} → ${itemLabel(i)}`).join('; ');
+    }
+    default:
+      return q.correct_answer || '';
+  }
+}
+
+/** Include per-statement text in the question sent for explanation (yes_no has
+ *  no options, so the statements ARE the content the tutor must reason about). */
+function explanationQuestionText(q: {
+  question_type?: string;
+  question_text: string;
+  statements?: string[];
+  drag_items?: { id: string; label: string }[];
+  drop_zones?: { id: string; label: string }[];
+  correct_order?: string[];
+}): string {
+  if (q.question_type === 'yes_no' && q.statements?.length) {
+    return `${q.question_text}\n\nStatements:\n${q.statements.map((s, i) => `${i + 1}. ${s}`).join('\n')}`;
+  }
+  if (q.question_type === 'drag_drop' && q.drag_items && q.drop_zones) {
+    return `${q.question_text}\n\nItems: ${q.drag_items.map((i) => i.label).join(', ')}\nZones: ${q.drop_zones.map((z) => z.label).join(', ')}`;
+  }
+  if ((q.question_type === 'build_list' || q.question_type === 'ordering') && q.correct_order) {
+    return `${q.question_text}\n\nSteps to order: ${q.correct_order.join(', ')}`;
+  }
+  return q.question_text;
+}
+
 /** Deterministic shuffle (seeded by question_id) so build_list/ordering starts
  *  scrambled but stable across renders and refreshes. Returns the labels. */
 function orderingDisplayOrder(q: {
@@ -471,9 +527,9 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           <div className="mt-4">
             <ExplanationDisplay
               questionId={currentQuestion.question_id}
-              questionText={currentQuestion.question_text}
+              questionText={explanationQuestionText(currentQuestion)}
               options={currentQuestion.options}
-              correctAnswer={currentQuestion.correct_answer}
+              correctAnswer={explanationCorrectAnswer(currentQuestion)}
               isCorrect={(() => {
                 if (currentQuestion.question_type === 'multi_select' && currentQuestion.correct_answers) {
                   const sel = Array.isArray(isAnswered) ? (isAnswered as string[]) : isAnswered ? [isAnswered as string] : [];
