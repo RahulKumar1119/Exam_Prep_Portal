@@ -16,6 +16,7 @@ import DifficultyAccuracy from '../components/Dashboard/DifficultyAccuracy';
 import QuestionTypeAccuracy from '../components/Dashboard/QuestionTypeAccuracy';
 import TimeStats from '../components/Dashboard/TimeStats';
 import CoverageViz from '../components/Dashboard/CoverageViz';
+import NewsFeed from '../components/NewsFeed';
 import { useExamPreference } from '../hooks/useExamPreference';
 
 const DashboardPage: React.FC = () => {
@@ -103,6 +104,9 @@ const DashboardPage: React.FC = () => {
 
           {/* Percentile Ranking */}
           <PercentileRanking percentile_ranking={dashboard_data.percentile_ranking || {}} />
+
+          {/* RBI News Feed */}
+          <NewsFeed />
 
           {/* Recommended Practice */}
           <RecommendedPractice
