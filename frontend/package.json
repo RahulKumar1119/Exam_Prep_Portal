@@ -55,7 +55,7 @@
     "serve-handler": "^6.1.7",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^5.4.21",
+    "vite": "^8.2.2",
     "vitest": "^3.2.4"
   },
   "scripts": {
