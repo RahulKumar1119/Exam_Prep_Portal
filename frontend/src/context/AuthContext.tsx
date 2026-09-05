@@ -14,6 +14,7 @@ interface AuthContextType extends AuthState {
   resendVerificationEmail: (email: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (token: string, new_password: string) => Promise<void>;
+  updateProfile: (data: { full_name?: string; exam_preference?: string }) => Promise<void>;
   clearError: () => void;
   sessionWarning: boolean;
   extendSession: () => void;
@@ -306,6 +307,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateProfile = async (data: { full_name?: string; exam_preference?: string }) => {
+    if (!authState.user) throw new Error('Not authenticated');
+    setAuthState((prev) => ({ ...prev, is_loading: true, error: null }));
+    try {
+      const resp = await apiClient.put<{ user: User }>('/auth/profile', { user_id: authState.user.user_id, ...data });
+      if (!resp.success || !resp.data?.user) throw new Error(resp.error || 'Update failed');
+      const updatedUser = { ...authState.user, ...resp.data.user } as User;
+      sessionStorage.setItem('user', JSON.stringify(updatedUser));
+      // keep exam pref in localStorage as well
+      if (data.exam_preference) {
+        try { localStorage.setItem('jaiib_selected_exam', data.exam_preference); } catch {}
+      }
+      setAuthState((prev) => ({ ...prev, user: updatedUser, is_loading: false }));
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Update failed';
+      setAuthState((prev) => ({ ...prev, is_loading: false, error: msg }));
+      throw e;
+    }
+  };
+
   const clearError = () => {
     setAuthState((prev) => ({
       ...prev,
@@ -324,6 +345,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         resendVerificationEmail,
         requestPasswordReset,
         resetPassword,
+        updateProfile,
         clearError,
         sessionWarning,
         extendSession,

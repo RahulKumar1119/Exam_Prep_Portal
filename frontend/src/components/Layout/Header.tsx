@@ -76,10 +76,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
           {/* User Profile */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:block text-right">
+            <Link to="/profile" className="hidden sm:block text-right hover:opacity-80">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user?.full_name}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">{user?.role}</p>
-            </div>
+            </Link>
+            <Link to="/profile" className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-bold">
+              {user?.full_name?.charAt(0).toUpperCase() || '?'}
+            </Link>
             <button
               onClick={handleLogout}
               className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
