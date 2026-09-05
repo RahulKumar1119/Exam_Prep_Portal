@@ -1033,6 +1033,59 @@ def clear_bookmarks(body: Dict[str, Any]) -> Dict[str, Any]:
         return error_response(500, 'Failed to clear bookmarks')
 
 
+def get_profile(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Get user profile by user_id."""
+    user_id = params.get('user_id', '')
+    if not user_id:
+        return error_response(400, 'user_id is required')
+    try:
+        resp = users_table.get_item(Key={'user_id': user_id}, ProjectionExpression='user_id, email, full_name, #r, email_verified, created_at, #s, exam_preference', ExpressionAttributeNames={'#r': 'role', '#s': 'status'})
+        item = resp.get('Item')
+        if not item:
+            return error_response(404, 'User not found')
+        return success_response(200, {'user': item})
+    except ClientError as e:
+        print(f"Error fetching profile: {e}")
+        return error_response(500, 'Failed to fetch profile')
+
+
+def update_profile(body: Dict[str, Any]) -> Dict[str, Any]:
+    """Update user profile: full_name, exam_preference."""
+    user_id = body.get('user_id', '')
+    if not user_id:
+        return error_response(400, 'user_id is required')
+    full_name = body.get('full_name')
+    exam_preference = body.get('exam_preference')
+
+    if full_name is not None:
+        if not isinstance(full_name, str) or len(full_name.strip()) < 2:
+            return error_response(400, 'full_name must be at least 2 characters')
+    if exam_preference is not None:
+        valid = ['JAIIB', 'CAIIB', 'AI-300', 'ALL']
+        if exam_preference not in valid:
+            return error_response(400, f'exam_preference must be one of: {", ".join(valid)}')
+
+    update_expr = []
+    attr_vals: Dict[str, Any] = {}
+    if full_name is not None:
+        update_expr.append('full_name = :fn')
+        attr_vals[':fn'] = full_name.strip()
+    if exam_preference is not None:
+        update_expr.append('exam_preference = :ep')
+        attr_vals[':ep'] = exam_preference
+
+    if not update_expr:
+        return error_response(400, 'No fields to update')
+
+    try:
+        users_table.update_item(Key={'user_id': user_id}, UpdateExpression='SET ' + ', '.join(update_expr), ExpressionAttributeValues=attr_vals)
+        resp = users_table.get_item(Key={'user_id': user_id}, ProjectionExpression='user_id, email, full_name, #r, email_verified, created_at, #s, exam_preference', ExpressionAttributeNames={'#r': 'role', '#s': 'status'})
+        return success_response(200, {'user': resp.get('Item', {}), 'message': 'Profile updated'})
+    except ClientError as e:
+        print(f"Error updating profile: {e}")
+        return error_response(500, 'Failed to update profile')
+
+
 def handler(event, context):
     """Lambda handler for authentication requests."""
     try:
@@ -1116,6 +1169,11 @@ def handler(event, context):
             query_params = event.get('queryStringParameters', {}) or {}
             query_params['question_id'] = question_id
             return delete_bookmark(query_params)
+        elif path == '/auth/profile' and http_method == 'GET':
+            query_params = event.get('queryStringParameters', {}) or {}
+            return get_profile(query_params)
+        elif path == '/auth/profile' and http_method == 'PUT':
+            return update_profile(body)
         else:
             return error_response(404, f'Endpoint not found: {path}')
     

@@ -18,6 +18,7 @@ import NotFoundPage from './pages/NotFoundPage';
 
 // Lazy: heavy / less critical routes (code-split)
 const PasswordResetPage = lazy(() => import('./pages/PasswordResetPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
@@ -186,6 +187,18 @@ const AppContent: React.FC = () => {
           <ProtectedRoute>
             <Layout>
               <BookmarksPage />
+            </Layout>
+          </ProtectedRoute>
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ErrorBoundary>
+          <ProtectedRoute>
+            <Layout>
+              <ProfilePage />
             </Layout>
           </ProtectedRoute>
           </ErrorBoundary>

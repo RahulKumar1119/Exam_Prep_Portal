@@ -9,6 +9,7 @@ export interface User {
   created_at: string;
   last_login?: string;
   status: 'active' | 'inactive' | 'suspended';
+  exam_preference?: string;
 }
 
 export interface AuthState {

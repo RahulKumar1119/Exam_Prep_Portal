@@ -19,6 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     { path: '/leaderboard', label: 'Leaderboard', icon: 'leaderboard' },
     { path: '/bookmarks', label: 'Saved Questions', icon: 'bookmarks' },
     { path: '/previous-attempts', label: 'Previous Attempts', icon: 'history' },
+    { path: '/profile', label: 'Profile', icon: 'profile' },
   ];
 
   // Add admin items if user is admin or trainer
