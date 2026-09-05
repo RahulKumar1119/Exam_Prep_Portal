@@ -1,5 +1,6 @@
 import React from 'react';
 import TopicPageLayout from './TopicPageLayout';
+import { BlockMath } from '../../components/MathDisplay';
 
 const BaselNormsPage: React.FC = () => {
   const relatedTopics = [
@@ -116,9 +117,7 @@ const BaselNormsPage: React.FC = () => {
       <p className="text-gray-700 mb-4">
         Capital to Risk-Weighted Assets Ratio (CRAR), also known as Capital Adequacy Ratio (CAR), is the core metric of the Basel framework. While the international Basel standard requires 8%, India's RBI mandates a higher minimum of 9% CRAR for all scheduled commercial banks. The formula is:
       </p>
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 font-mono text-center">
-        <p className="text-lg font-semibold text-gray-900">CRAR = (Tier 1 Capital + Tier 2 Capital) / Risk-Weighted Assets × 100</p>
-      </div>
+      <div className="bg-gray-50 border rounded-lg p-4 mb-6"><BlockMath math="CRAR = \frac{Tier1 + Tier2}{RWA} \ge 11.5\%" /></div>
 
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Capital Structure — Tier 1 & Tier 2</h2>
       <div className="overflow-x-auto mb-6">

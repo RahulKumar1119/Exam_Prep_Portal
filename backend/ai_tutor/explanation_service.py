@@ -94,6 +94,7 @@ REQUIREMENTS:
 5. Address common misconceptions
 6. Keep explanation between 150-300 words
 7. Use simple, clear language appropriate for {user_level} level
+8. When including formulas (CAR, Basel III, NPV, IRR, EMI, ratios), use LaTeX: inline $...$ and display $$...$$ for KaTeX. Example: $$NPV = \\sum_{{t=1}}^{{n}} \\frac{{CF_t}}{{(1+r)^t}} - C_0$$ and $CAR = \\frac{{Tier1+Tier2}}{{RWA}}$
 
 EXPLANATION:"""
         

@@ -1,5 +1,6 @@
 import React from 'react';
 import TopicPageLayout from './TopicPageLayout';
+import { BlockMath } from '../../components/MathDisplay';
 
 const RatioAnalysisPage: React.FC = () => {
   const relatedTopics = [
@@ -22,6 +23,7 @@ const RatioAnalysisPage: React.FC = () => {
       </p>
 
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Categories of Financial Ratios</h2>
+      <BlockMath math="ROE = \\frac{Net\\ Profit}{Equity} \\times 100" />
       <p className="text-gray-700 mb-4">
         Financial ratios are broadly classified into four categories: (1) Liquidity Ratios — measure ability to meet short-term obligations (Current Ratio, Quick Ratio); (2) Solvency/Leverage Ratios — measure long-term financial stability (Debt-Equity Ratio, Interest Coverage Ratio); (3) Profitability Ratios — measure earning capacity (ROE, Net Profit Margin, ROCE); (4) Activity/Turnover Ratios — measure operational efficiency (Inventory Turnover, Debtors Turnover, Fixed Asset Turnover).
       </p>

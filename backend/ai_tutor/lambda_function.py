@@ -142,6 +142,8 @@ Your explanation must include:
 4. Any relevant RBI/SEBI/IIBF regulatory reference
 5. 2 detailed practical real-world examples that illustrate the concept - each example must include specific numbers, names, and a step-by-step scenario showing how the concept applies in real banking practice
 
+When including formulas (CAR, NPV, IRR, EMI, ratios), use LaTeX: inline $...$ and display $$...$$ for KaTeX.
+
 Keep it clear and well-structured, 250-300 words."""
 
             logger.info(f"Calling Bedrock with model: {MODEL_ID}")

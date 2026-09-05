@@ -1,5 +1,6 @@
 import React from 'react';
 import TopicPageLayout from './TopicPageLayout';
+import { BlockMath } from '../../components/MathDisplay';
 
 const NpvIrrPage: React.FC = () => {
   const relatedTopics = [
@@ -29,11 +30,9 @@ const NpvIrrPage: React.FC = () => {
 
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">NPV Formula</h2>
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-        <p className="font-mono text-center text-lg font-semibold text-gray-900 mb-2">
-          NPV = Σ [CFₜ / (1 + r)ᵗ] − C₀
-        </p>
+        <BlockMath math="NPV = \\sum_{t=1}^{n} \\frac{CF_t}{(1+r)^t} - C_0" />
         <p className="text-sm text-gray-600 text-center">
-          Where: CFₜ = Cash flow at time t | r = Discount rate (cost of capital) | t = Time period | C₀ = Initial investment
+          Where: CF<sub>t</sub> = Cash flow at time t | r = Discount rate | t = Time period | C<sub>0</sub> = Initial investment
         </p>
       </div>
       <p className="text-gray-700 mb-4">

@@ -1,5 +1,6 @@
 import React from 'react';
 import TopicPageLayout from './TopicPageLayout';
+import { BlockMath } from '../../components/MathDisplay';
 
 const BreakEvenPage: React.FC = () => {
   const relatedTopics = [
@@ -31,7 +32,7 @@ const BreakEvenPage: React.FC = () => {
 
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Key Formulas</h2>
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 space-y-3">
-        <p className="font-mono text-gray-900"><strong>Contribution = Sales - Variable Costs</strong></p>
+        <BlockMath math="BEP = \frac{FC}{PV \text{ Ratio}}" />
         <p className="font-mono text-gray-900"><strong>Contribution per unit = Selling Price per unit - Variable Cost per unit</strong></p>
         <p className="font-mono text-gray-900"><strong>P/V Ratio = (Contribution / Sales) × 100</strong></p>
         <p className="font-mono text-gray-900"><strong>BEP (units) = Fixed Costs / Contribution per unit</strong></p>
