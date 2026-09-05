@@ -67,6 +67,8 @@ const PAGES = [
   '/home',
   '/dashboard',
   '/bookmarks',
+  '/notifications',
+  '/profile',
   '/leaderboard',
   '/previous-attempts',
 ];
