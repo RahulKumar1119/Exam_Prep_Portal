@@ -32,6 +32,7 @@ const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const BookmarksPage = lazy(() => import('./pages/BookmarksPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const FreeQuizPage = lazy(() => import('./pages/FreeQuizPage'));
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
 const AI300PracticeTestPage = lazy(() => import('./pages/AI300PracticeTestPage'));
 const BrowseExamsPage = lazy(() => import('./pages/BrowseExamsPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -199,6 +200,18 @@ const AppContent: React.FC = () => {
           <ProtectedRoute>
             <Layout>
               <ProfilePage />
+            </Layout>
+          </ProtectedRoute>
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <ErrorBoundary>
+          <ProtectedRoute>
+            <Layout>
+              <NotificationsPage />
             </Layout>
           </ProtectedRoute>
           </ErrorBoundary>
