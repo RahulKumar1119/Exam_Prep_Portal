@@ -1,5 +1,6 @@
 import React from 'react';
 import TopicPageLayout from './TopicPageLayout';
+import { BlockMath } from '../../components/MathDisplay';
 
 const DepreciationPage: React.FC = () => {
   const relatedTopics = [
@@ -33,10 +34,7 @@ const DepreciationPage: React.FC = () => {
       <p className="text-gray-700 mb-4">
         Under SLM (also called Fixed Instalment Method), an equal amount of depreciation is charged every year throughout the useful life of the asset. The depreciation charge remains constant year after year.
       </p>
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 font-mono text-center space-y-2">
-        <p className="text-lg font-semibold text-gray-900">Annual Depreciation = (Cost - Residual Value) / Useful Life</p>
-        <p className="text-lg font-semibold text-gray-900">Rate of Depreciation (SLM) = (Annual Depreciation / Cost) × 100</p>
-      </div>
+      <div className="bg-gray-50 border rounded-lg p-4 mb-6"><BlockMath math="Dep = \frac{Cost - Residual}{Useful\ Life}" /></div>
 
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Written Down Value Method (WDV)</h2>
       <p className="text-gray-700 mb-4">
