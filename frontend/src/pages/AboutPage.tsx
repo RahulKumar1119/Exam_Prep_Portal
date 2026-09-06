@@ -9,7 +9,7 @@ const AboutPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="About MockMaster — Free Certification Exam Practice Platform"
-        description="MockMaster helps professionals pass certification exams with AI-powered practice tests, detailed explanations, and performance analytics. JAIIB, CAIIB, and Microsoft AI-300."
+        description="MockMaster helps professionals pass certification exams with AI-powered practice tests, detailed explanations, and performance analytics. JAIIB, CAIIB, Microsoft AI-300, and PMI CAPM."
         canonical="https://mockmaster.fun/about"
       />
 
@@ -38,7 +38,7 @@ const AboutPage: React.FC = () => {
             About <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">MockMaster</span>
           </h1>
           <p className="text-lg text-gray-400 leading-relaxed">
-            Free AI-powered practice tests for banking professionals and cloud engineers. Built to help you pass on your first attempt.
+            Free AI-powered practice tests for banking professionals, cloud engineers, and project managers. Built to help you pass on your first attempt.
           </p>
         </div>
       </section>
@@ -64,9 +64,9 @@ const AboutPage: React.FC = () => {
               <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">📚</span>
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">4,300+ Questions</h3>
+              <h3 className="text-lg font-bold text-white mb-2">5,000+ Questions</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                JAIIB (IE&IFS, PPB, AFM, RBWM) + Microsoft AI-300. Previous year papers included. Updated regularly with new content.
+                JAIIB (IE&IFS, PPB, AFM, RBWM) + CAIIB + Microsoft AI-300 + PMI CAPM. Previous year papers included. Updated regularly with new content.
               </p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition">
@@ -75,7 +75,7 @@ const AboutPage: React.FC = () => {
               </div>
               <h3 className="text-lg font-bold text-white mb-2">AI Explanations</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Every question gets a detailed AI explanation citing RBI circulars, IIBF textbooks, or Azure documentation. Not generic — exam-specific.
+                Every question gets a detailed AI explanation citing RBI circulars, IIBF textbooks, Azure documentation, or PMI references. Not generic — exam-specific.
               </p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-green-500/30 transition">
@@ -112,7 +112,7 @@ const AboutPage: React.FC = () => {
               We combined modern AI technology with expert-curated content to create a platform that actually helps you pass. Our questions are sourced from official textbooks and previous exam papers. Our AI explanations cite specific regulatory references so you understand the "why" behind every answer.
             </p>
             <p>
-              Whether you're a bank officer preparing for JAIIB/CAIIB or a cloud engineer studying for Microsoft AI-300, MockMaster gives you the practice and feedback you need — without spending a rupee.
+              Whether you're a bank officer preparing for JAIIB/CAIIB, a cloud engineer studying for Microsoft AI-300, or an aspiring project manager working toward PMI CAPM, MockMaster gives you the practice and feedback you need — without spending a rupee.
             </p>
           </div>
         </div>
@@ -122,7 +122,7 @@ const AboutPage: React.FC = () => {
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">Exams We Cover</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-2xl">🏦</span>
@@ -153,6 +153,21 @@ const AboutPage: React.FC = () => {
                 <li>• Expert-level difficulty</li>
               </ul>
             </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl">📋</span>
+                <div>
+                  <h3 className="font-bold text-white">PMI CAPM</h3>
+                  <p className="text-xs text-gray-500">Certified Associate in Project Management</p>
+                </div>
+              </div>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>• 225 scenario-based questions (3 sets of 75)</li>
+                <li>• Fundamentals 36%, BA 27%, Agile 20%</li>
+                <li>• Predictive, WBS, critical path, RTM</li>
+                <li>• Entry-level difficulty</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -168,7 +183,7 @@ const AboutPage: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-bold text-white mb-1">Official Sources Only</h3>
-                <p className="text-gray-400 text-sm">Questions mapped to current IIBF syllabus and Microsoft Learn study guides. Explanations reference RBI circulars, Master Directions, and Azure documentation.</p>
+                <p className="text-gray-400 text-sm">Questions mapped to current IIBF syllabus, Microsoft Learn study guides, and the PMI CAPM Exam Content Outline. Explanations reference RBI circulars, Master Directions, Azure documentation, and PMBOK guidance.</p>
               </div>
             </div>
             <div className="flex items-start gap-4 bg-gray-900 border border-gray-800 rounded-xl p-5">
