@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
-import PassBadge from '../components/PassBadge';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -60,9 +59,6 @@ const LandingPage: React.FC = () => {
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-6">No credit card. No trial period. Free forever.</p>
-          <div className="flex justify-center mt-8">
-            <PassBadge size={170} />
-          </div>
         </div>
       </section>
 
