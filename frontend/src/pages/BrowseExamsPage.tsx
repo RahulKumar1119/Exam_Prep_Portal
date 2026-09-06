@@ -286,7 +286,7 @@ const BrowseExamsPage: React.FC = () => {
           {/* Trending Articles from Dev.to */}
           <div className="mt-16 pt-12 border-t border-gray-800">
             <DevToArticles
-              tags={['azure', 'machinelearning', 'mlops', 'devops', 'kubernetes']}
+              tags={['azure', 'machinelearning', 'mlops', 'devops', 'kubernetes', 'projectmanagement']}
               title="Trending Articles"
               limit={6}
               darkMode={true}

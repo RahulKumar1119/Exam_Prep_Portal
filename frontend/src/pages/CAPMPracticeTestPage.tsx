@@ -163,25 +163,25 @@ const CAPMPracticeTestPage: React.FC = () => {
             <div>
               <h4 className="text-white font-bold mb-4">Exams</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/practice-tests" className="hover:text-white transition">JAIIB Practice Tests</a></li>
-                <li><a href="/ai-300-practice-test" className="hover:text-white transition">AI-300 Practice Test</a></li>
-                <li><a href="/capm-practice-test" className="hover:text-white transition">CAPM Practice Test</a></li>
+                <li><button onClick={() => navigate('/practice-tests')} className="hover:text-white transition">JAIIB Practice Tests</button></li>
+                <li><button onClick={() => navigate('/ai-300-practice-test')} className="hover:text-white transition">AI-300 Practice Test</button></li>
+                <li><button onClick={() => navigate('/capm-practice-test')} className="hover:text-white transition">CAPM Practice Test</button></li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-bold mb-4">Resources</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/blog" className="hover:text-white transition">Blog</a></li>
-                <li><a href="/blog/capm-exam-complete-guide-2026" className="hover:text-white transition">CAPM Complete Guide</a></li>
-                <li><a href="/faq" className="hover:text-white transition">FAQ</a></li>
+                <li><button onClick={() => navigate('/blog')} className="hover:text-white transition">Blog</button></li>
+                <li><button onClick={() => navigate('/blog/capm-exam-complete-guide-2026')} className="hover:text-white transition">CAPM Complete Guide</button></li>
+                <li><button onClick={() => navigate('/faq')} className="hover:text-white transition">FAQ</button></li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-bold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><a href="/privacy-policy" className="hover:text-white transition">Privacy Policy</a></li>
-                <li><a href="/terms-of-service" className="hover:text-white transition">Terms of Service</a></li>
-                <li><a href="/contact" className="hover:text-white transition">Contact</a></li>
+                <li><button onClick={() => navigate('/privacy-policy')} className="hover:text-white transition">Privacy Policy</button></li>
+                <li><button onClick={() => navigate('/terms-of-service')} className="hover:text-white transition">Terms of Service</button></li>
+                <li><button onClick={() => navigate('/contact')} className="hover:text-white transition">Contact</button></li>
               </ul>
             </div>
           </div>
