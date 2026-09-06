@@ -128,7 +128,8 @@ class TestValidateMCQFields:
             paper="Invalid Paper"
         )
         assert is_valid is False
-        assert "IE & IFS, PPB, AFB, RBWM" in error
+        assert "IE & IFS, PPB, AFB" in error
+        assert "CAPM" in error
     
     def test_missing_rbi_reference(self):
         """Test validation fails for missing RBI reference"""

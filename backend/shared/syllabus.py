@@ -23,6 +23,8 @@ PAPER_DISPLAY_NAMES = {
     'Retail Banking & Wealth Management': 'RBWM',
     'Retail Banking and Wealth Management': 'RBWM',
     'RBWM': 'RBWM',
+    'Certified Associate in Project Management': 'CAPM',
+    'CAPM': 'CAPM',
 }
 
 # Exam categories for multi-exam support
@@ -36,6 +38,11 @@ EXAM_CATEGORIES = {
         'name': 'AI-300',
         'full_name': 'Microsoft Certified: Operationalizing ML & GenAI Solutions',
         'papers': ['AI-300'],
+    },
+    'CAPM': {
+        'name': 'CAPM',
+        'full_name': 'Certified Associate in Project Management',
+        'papers': ['CAPM'],
     },
 }
 
@@ -177,6 +184,38 @@ PAPER_SYLLABUS = {
                 'Azure ML model monitoring', 'Logging and alerting for AI systems',
                 'Model retraining triggers', 'A/B testing for models',
                 'Cost monitoring for AI workloads', 'Incident response for AI failures'
+            ]
+        }
+    },
+    'CAPM': {
+        'modules': {
+            'Domain 1 - Project Management Fundamentals and Core Concepts (36%)': [
+                'How projects create value', 'Project vs program vs portfolio',
+                'Project vs operations', 'Predictive vs adaptive approaches',
+                'Organizational structures', 'PMO roles and functions',
+                'Project manager responsibilities', 'Project team roles',
+                'Leadership vs management', 'Project life cycle phases',
+                'Common project artifacts and documents', 'Risk vs issue vs assumption vs constraint',
+                'Risk register interpretation', 'Stakeholder register interpretation',
+            ],
+            'Domain 2 - Predictive, Plan-Based Methodologies (17%)': [
+                'When predictive is appropriate', 'WBS and work packages',
+                'Scope decomposition', 'Critical path basics', 'Schedule dependencies',
+                'Schedule variance interpretation', 'Cost variance interpretation',
+                'Project baselines', 'Project controls artifacts',
+            ],
+            'Domain 3 - Agile Frameworks/Methodologies (20%)': [
+                'Agile mindset and values', 'When adaptive delivery fits',
+                'Scrum roles events artifacts', 'Sprint planning daily scrum review retrospective',
+                'Kanban boards WIP limits', 'Backlog prioritization',
+                'Success criteria and acceptance criteria', 'Iterative delivery and feedback',
+                'XP and SAFe basics', 'Hybrid approaches',
+            ],
+            'Domain 4 - Business Analysis Frameworks (27%)': [
+                'Requirements elicitation', 'Requirements documentation',
+                'Stakeholder identification and analysis', 'Requirements traceability RTM',
+                'Requirements validation vs business needs', 'Acceptance criteria logic',
+                'Business analysis and delivery integration', 'What should you do next scenarios',
             ]
         }
     }

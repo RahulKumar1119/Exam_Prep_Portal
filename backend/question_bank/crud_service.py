@@ -13,6 +13,7 @@ Implements:
 
 import json
 import boto3
+import os
 import uuid
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple
@@ -23,16 +24,22 @@ dynamodb = boto3.resource('dynamodb')
 kms_client = boto3.client('kms')
 cloudwatch = boto3.client('cloudwatch')
 
-# Table names
-QUESTION_BANK_TABLE = 'jaiib-question-bank'
+# Table names (env override allows CAPM table reuse of same code)
+QUESTION_BANK_TABLE = os.environ.get('QUESTION_BANK_TABLE', 'jaiib-question-bank')
+CAPM_QUESTION_BANK_TABLE = os.environ.get('CAPM_QUESTION_BANK_TABLE', 'jaiib-capm-question-bank')
 VERSION_HISTORY_TABLE = 'jaiib-version-history'
 
 # KMS key for encryption
 KMS_KEY_ID = 'arn:aws:kms:ap-south-1:438097524343:key/8f4e49c4-9d56-47c1-a24e-37fb003c8b77'
 
 # Valid values
-VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'AFM', 'RBWM', 'AI-300', 'ABM']
+VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM']
 VALID_DIFFICULTIES = ['easy', 'medium', 'hard']
+
+
+def get_capm_question_bank_table():
+    """Get DynamoDB CAPM question bank table"""
+    return dynamodb.Table(CAPM_QUESTION_BANK_TABLE)
 
 
 def get_question_bank_table():
@@ -131,16 +138,20 @@ def validate_mcq_fields(
     if paper not in VALID_PAPERS:
         return False, f"Paper must be one of: {', '.join(VALID_PAPERS)}"
     
-    # Validate references
+    # Validate references (paper-aware: CAPM uses PMI refs, others use RBI/IIBF)
     if not references or not isinstance(references, dict):
         return False, "References must be a dictionary"
-    
-    if 'rbi_reference' not in references or not references['rbi_reference']:
-        return False, "RBI reference is required"
-    
-    if 'iibf_reference' not in references or not references['iibf_reference']:
-        return False, "IIBF reference is required"
-    
+
+    if paper == 'CAPM':
+        if 'pmi_reference' not in references or not references['pmi_reference']:
+            return False, "PMI reference is required for CAPM"
+    else:
+        if 'rbi_reference' not in references or not references['rbi_reference']:
+            return False, "RBI reference is required"
+
+        if 'iibf_reference' not in references or not references['iibf_reference']:
+            return False, "IIBF reference is required"
+
     return True, ""
 
 
@@ -203,13 +214,14 @@ def create_mcq(
         }
     
     try:
-        table = get_question_bank_table()
-        
+        # Route CAPM questions to dedicated CAPM table
+        table = get_capm_question_bank_table() if paper == 'CAPM' else get_question_bank_table()
+
         # Generate question ID and version
         question_id = str(uuid.uuid4())
         version = 'v1.0'
         timestamp = datetime.utcnow().isoformat()
-        
+
         # Create question item
         question_item = {
             'question_id': question_id,
@@ -223,6 +235,8 @@ def create_mcq(
             'question_type': question_type,
             'rbi_reference': references.get('rbi_reference', ''),
             'iibf_reference': references.get('iibf_reference', ''),
+            'pmi_reference': references.get('pmi_reference', ''),
+            'domain': typed_fields.get('domain', ''),
             'created_at': timestamp,
             'created_by': creator_user_id,
             'updated_at': timestamp,
@@ -521,24 +535,26 @@ def search_mcqs(
     difficulty: Optional[str] = None,
     keyword: Optional[str] = None,
     limit: int = 50,
-    start_key: Optional[str] = None
+    start_key: Optional[str] = None,
+    domain: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Search MCQs with filtering by paper, topic, difficulty, and keyword.
-    
+
     Args:
-        paper: Filter by paper name (optional)
+        paper: Filter by paper name (optional, 'CAPM' routes to CAPM table)
         topic: Filter by topic (optional)
         difficulty: Filter by difficulty (optional)
         keyword: Search in question text (optional)
         limit: Maximum number of results
         start_key: Pagination token
-        
+        domain: Filter by CAPM domain (optional)
+
     Returns:
         Dictionary with search results and pagination info
     """
     try:
-        table = get_question_bank_table()
+        table = get_capm_question_bank_table() if paper == 'CAPM' else get_question_bank_table()
         
         # Build filter expression
         filter_expressions = []
@@ -549,6 +565,7 @@ def search_mcqs(
         filter_expressions.append('#status = :active')
         expression_values[':active'] = 'active'
         expression_names['#status'] = 'status'
+        expression_names['#domain_attr'] = 'domain'
         
         # Add paper filter
         if paper:
@@ -564,7 +581,12 @@ def search_mcqs(
         if difficulty:
             filter_expressions.append('difficulty = :difficulty')
             expression_values[':difficulty'] = difficulty
-        
+
+        # Add CAPM domain filter
+        if domain:
+            filter_expressions.append('#domain_attr = :domain')
+            expression_values[':domain'] = domain
+
         # Add keyword filter (searches question_text)
         if keyword:
             filter_expressions.append('contains(question_text, :keyword)')
@@ -576,7 +598,7 @@ def search_mcqs(
         # Perform scan
         scan_kwargs = {
             'Limit': limit,
-            'ProjectionExpression': 'question_id, version, paper, topic, difficulty, question_text, correct_answer, created_at, updated_at'
+            'ProjectionExpression': 'question_id, version, paper, topic, #domain_attr, difficulty, question_text, correct_answer, created_at, updated_at'
         }
         
         if filter_expression:
