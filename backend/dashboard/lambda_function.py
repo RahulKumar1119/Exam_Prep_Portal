@@ -536,8 +536,8 @@ def get_dashboard_data(user_id: str) -> Dict[str, Any]:
         # Factor 4: Volume bonus (more practice = more confidence)
         volume_bonus = min(10, len(scores) * 0.5)
         
-        # Combined readiness score — per-paper pass mark (JAIIB 50, AI-300 70)
-        paper_pass = {'IE & IFS': 50, 'PPB': 50, 'AFM': 50, 'RBWM': 50, 'AI-300': 70}
+        # Combined readiness score — per-paper pass mark (JAIIB 50, AI-300 70, CAPM 70)
+        paper_pass = {'IE & IFS': 50, 'PPB': 50, 'AFM': 50, 'RBWM': 50, 'AI-300': 70, 'CAPM': 70}
         pass_threshold = paper_pass.get(paper, 50)
         raw_readiness = (weighted_avg / pass_threshold) * 60  # 60% weight on score
         raw_readiness += consistency * 0.2  # 20% weight on consistency
@@ -767,6 +767,7 @@ def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
     exam_papers = {
         'JAIIB': {'IE & IFS', 'PPB', 'AFM', 'RBWM'},
         'AI-300': {'AI-300'},
+        'CAPM': {'CAPM'},
     }
     valid_papers = exam_papers.get(exam, exam_papers.get('JAIIB', set()))
     # ALL = combine everything

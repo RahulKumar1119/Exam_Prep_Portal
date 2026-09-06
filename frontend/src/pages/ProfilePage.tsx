@@ -103,6 +103,7 @@ const ProfilePage: React.FC = () => {
                 <SelectItem value="JAIIB">JAIIB</SelectItem>
                 <SelectItem value="CAIIB">CAIIB</SelectItem>
                 <SelectItem value="AI-300">AI-300</SelectItem>
+                <SelectItem value="CAPM">CAPM</SelectItem>
                 <SelectItem value="ALL">ALL</SelectItem>
               </SelectContent>
             </Select>

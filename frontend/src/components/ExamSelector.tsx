@@ -27,9 +27,9 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
           >
             <div className="flex items-start gap-4">
               <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                exam.id === 'JAIIB' ? 'bg-blue-100' : exam.id === 'CAIIB' ? 'bg-emerald-100' : 'bg-purple-100'
+                exam.id === 'JAIIB' ? 'bg-blue-100' : exam.id === 'CAIIB' ? 'bg-emerald-100' : exam.id === 'CAPM' ? 'bg-orange-100' : 'bg-purple-100'
               }`}>
-                <span className="text-2xl">{exam.id === 'JAIIB' ? '🏦' : exam.id === 'CAIIB' ? '🎓' : '🤖'}</span>
+                <span className="text-2xl">{exam.id === 'JAIIB' ? '🏦' : exam.id === 'CAIIB' ? '🎓' : exam.id === 'CAPM' ? '📋' : '🤖'}</span>
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg group-hover:text-indigo-600 transition">
@@ -44,6 +44,9 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
                 )}
                 {exam.id === 'AI-300' && (
                   <p className="text-xs text-purple-600 mt-2 font-medium">600 questions available</p>
+                )}
+                {exam.id === 'CAPM' && (
+                  <p className="text-xs text-orange-600 mt-2 font-medium">New — CAPM practice launching</p>
                 )}
               </div>
             </div>

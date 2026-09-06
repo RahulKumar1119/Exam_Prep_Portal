@@ -22,6 +22,9 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
   'AI-300': [
     { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 600, sets: 12 },
   ],
+  'CAPM': [
+    { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management', totalQuestions: 0, sets: 1 },
+  ],
 };
 
 const PracticePage: React.FC = () => {
@@ -33,7 +36,7 @@ const PracticePage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const papers = selectedExam === 'ALL'
-    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || [])]
+    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || []), ...(PAPERS_BY_EXAM['CAPM'] || [])]
     : selectedExam === 'JAIIB'
     ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || [])]
     : PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];

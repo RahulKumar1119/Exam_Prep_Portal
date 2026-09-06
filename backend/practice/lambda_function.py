@@ -71,6 +71,31 @@ def _dynamodb():
     r = boto3.resource('dynamodb', region_name=REGION)
     return r.Table('jaiib-question-bank'), r.Table('jaiib-practice-sessions')
 
+
+def _capm_table():
+    return boto3.resource('dynamodb', region_name=REGION).Table('jaiib-capm-question-bank')
+
+
+def _is_capm(paper_name: str) -> bool:
+    return paper_name == 'CAPM'
+
+
+def _db_fallback_capm(capm_table, count: int, difficulty: Optional[str] = None) -> List[Dict]:
+    """Fetch CAPM questions (paper=CAPM) via scan — CAPM table has no paper_name GSI."""
+    try:
+        resp = capm_table.scan(
+            FilterExpression='#s = :active AND paper = :p',
+            ExpressionAttributeNames={'#s': 'status'},
+            ExpressionAttributeValues={':active': 'active', ':p': 'CAPM'},
+        )
+        items = resp.get('Items', [])
+        if difficulty:
+            items = [q for q in items if q.get('difficulty', 'medium') == difficulty]
+        return random.sample(items, min(count, len(items)))
+    except Exception as e:
+        print(f"CAPM DB fallback error: {e}")
+        return []
+
 def _bedrock():
     return boto3.client('bedrock-runtime', region_name=REGION)
 
@@ -92,6 +117,30 @@ def _build_prompt(paper_name: str) -> str:
     modules_text = ''
     for module, topics in syllabus.get('modules', {}).items():
         modules_text += f"\n{module}:\n" + '\n'.join(f'  - {t}' for t in topics)
+
+    if paper_name == 'CAPM':
+        return f"""You are a senior PMI CAPM exam question setter.
+
+Generate exactly 50 challenging multiple-choice questions for CAPM (Certified Associate in Project Management) per PMI ECO (36% Fundamentals, 17% Predictive, 20% Agile, 27% Business Analysis).
+
+STRICT distribution:
+- 20 EASY (definitions, roles, artifacts)
+- 15 MEDIUM (scenario application, what-should-you-do-next)
+- 15 HARD (multi-statement correct/incorrect, WBS/critical-path/variance/RTM logic)
+
+Syllabus (cover ALL domains evenly):
+{modules_text}
+
+Return ONLY a valid JSON array of exactly 50 objects. No markdown.
+[
+  {{{{
+    "question_text": "...",
+    "options": {{{{"A": "...", "B": "...", "C": "...", "D": "..."}}}},
+    "correct_answer": "A",
+    "topic": "<one syllabus topic above>",
+    "difficulty": "easy|medium|hard"
+  }}}}
+]"""
 
     if paper_name == 'AFB':
         hard_style = (
@@ -242,35 +291,44 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
     elif set_number > 0:
         # Fixed set mode — deterministic slice of questions from DB
         # Fetch ALL questions for this paper, sort by question_id for consistency
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM')
         if paper_name in DB_PAPERS:
             try:
-                items = []
-                kwargs = {
-                    'IndexName': 'paper-topic-index',
-                    'KeyConditionExpression': 'paper_name = :p',
-                    'ExpressionAttributeValues': {':p': paper_name}
-                }
-                while True:
-                    resp = questions_table.query(**kwargs)
-                    items.extend(resp.get('Items', []))
-                    if 'LastEvaluatedKey' not in resp:
-                        break
-                    kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
-                
-                # Sort deterministically by question_id
-                items.sort(key=lambda x: x.get('question_id', ''))
-                
-                # Slice: set 1 = items[0:50], set 2 = items[50:100], etc.
-                start = (set_number - 1) * QUESTIONS_PER_SET
-                end = start + QUESTIONS_PER_SET
-                questions = items[start:end]
-                
-                # If not enough questions for this set, wrap around
-                if len(questions) < QUESTIONS_PER_SET and items:
-                    remaining = QUESTIONS_PER_SET - len(questions)
-                    questions += items[:remaining]
-                    
+                if _is_capm(paper_name):
+                    capm_items = _db_fallback_capm(_capm_table(), 500)
+                    capm_items.sort(key=lambda x: x.get('question_id', ''))
+                    start = (set_number - 1) * QUESTIONS_PER_SET
+                    end = start + QUESTIONS_PER_SET
+                    questions = capm_items[start:end]
+                    if len(questions) < QUESTIONS_PER_SET and capm_items:
+                        questions += capm_items[:QUESTIONS_PER_SET - len(questions)]
+                else:
+                    items = []
+                    kwargs = {
+                        'IndexName': 'paper-topic-index',
+                        'KeyConditionExpression': 'paper_name = :p',
+                        'ExpressionAttributeValues': {':p': paper_name}
+                    }
+                    while True:
+                        resp = questions_table.query(**kwargs)
+                        items.extend(resp.get('Items', []))
+                        if 'LastEvaluatedKey' not in resp:
+                            break
+                        kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+
+                    # Sort deterministically by question_id
+                    items.sort(key=lambda x: x.get('question_id', ''))
+
+                    # Slice: set 1 = items[0:50], set 2 = items[50:100], etc.
+                    start = (set_number - 1) * QUESTIONS_PER_SET
+                    end = start + QUESTIONS_PER_SET
+                    questions = items[start:end]
+
+                    # If not enough questions for this set, wrap around
+                    if len(questions) < QUESTIONS_PER_SET and items:
+                        remaining = QUESTIONS_PER_SET - len(questions)
+                        questions += items[:remaining]
+
             except Exception as e:
                 print(f"Fixed set fetch error: {e}")
                 questions = _call_bedrock(paper_name)
@@ -278,9 +336,12 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
             questions = _call_bedrock(paper_name)
     else:
         # Original practice mode — random from DB, fallback to Bedrock
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM')
         if paper_name in DB_PAPERS:
-            questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
+            if _is_capm(paper_name):
+                questions = _db_fallback_capm(_capm_table(), QUESTIONS_PER_SET)
+            else:
+                questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
             if not questions:
                 questions = _call_bedrock(paper_name)
         else:
@@ -298,6 +359,7 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
         'case_study_id', 'scenario', 'exhibits',
         'drag_items', 'drop_zones', 'correct_mapping',
         'correct_order', 'image_url', 'hot_areas', 'correct_area',
+        'domain',
     )
     formatted = []
     for q in questions:
@@ -356,7 +418,17 @@ def _generate_mock_test(paper_name: str, questions_table) -> List[Dict]:
     }
     
     # Try to fetch from DB grouped by difficulty
-    db_grouped = _db_fetch_by_difficulty(questions_table, paper_name)
+    if _is_capm(paper_name):
+        try:
+            capm_items = _db_fallback_capm(_capm_table(), 500)
+        except Exception:
+            capm_items = []
+        db_grouped = {'easy': [], 'medium': [], 'hard': []}
+        for q in capm_items:
+            diff = q.get('difficulty', 'medium')
+            (db_grouped.get(diff) or db_grouped['medium']).append(q)
+    else:
+        db_grouped = _db_fetch_by_difficulty(questions_table, paper_name)
     
     selected = {'easy': [], 'medium': [], 'hard': []}
     
@@ -503,7 +575,7 @@ def handler(event, context):
         if action == 'generate':
             if not paper_name:
                 return err(400, 'paper_name is required')
-            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300', 'ABM']
+            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM']
             if paper_name not in valid:
                 return err(400, f"paper_name must be one of: {', '.join(valid)}")
 
