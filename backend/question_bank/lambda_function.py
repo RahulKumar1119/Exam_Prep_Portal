@@ -396,7 +396,8 @@ def handler(event, context):
                 difficulty=event.get('difficulty'),
                 keyword=event.get('keyword'),
                 limit=event.get('limit', 50),
-                start_key=event.get('start_key')
+                start_key=event.get('start_key'),
+                domain=event.get('domain'),
             )
             
             if not result.get('success'):

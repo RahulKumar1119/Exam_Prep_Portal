@@ -860,7 +860,7 @@ def update_user_preference(body: Dict[str, Any]) -> Dict[str, Any]:
     if not exam_preference:
         return error_response(400, 'exam_preference is required')
 
-    valid_exams = ['JAIIB', 'CAIIB', 'AI-300', 'ALL']
+    valid_exams = ['JAIIB', 'CAIIB', 'AI-300', 'CAPM', 'ALL']
     if exam_preference not in valid_exams:
         return error_response(400, f'exam_preference must be one of: {", ".join(valid_exams)}')
 
@@ -1061,7 +1061,7 @@ def update_profile(body: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(full_name, str) or len(full_name.strip()) < 2:
             return error_response(400, 'full_name must be at least 2 characters')
     if exam_preference is not None:
-        valid = ['JAIIB', 'CAIIB', 'AI-300', 'ALL']
+        valid = ['JAIIB', 'CAIIB', 'AI-300', 'CAPM', 'ALL']
         if exam_preference not in valid:
             return error_response(400, f'exam_preference must be one of: {", ".join(valid)}')
 

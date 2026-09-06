@@ -6,7 +6,7 @@
  */
 import { useState, useCallback, useEffect } from 'react';
 
-export type ExamId = 'JAIIB' | 'CAIIB' | 'AI-300' | 'ALL';
+export type ExamId = 'JAIIB' | 'CAIIB' | 'AI-300' | 'CAPM' | 'ALL';
 
 export interface ExamInfo {
   id: ExamId;
@@ -18,6 +18,7 @@ export const AVAILABLE_EXAMS: ExamInfo[] = [
   { id: 'JAIIB', name: 'JAIIB', fullName: 'Junior Associate of Indian Institute of Bankers' },
   { id: 'CAIIB', name: 'CAIIB', fullName: 'Certified Associate of Indian Institute of Bankers' },
   { id: 'AI-300', name: 'AI-300', fullName: 'Microsoft: Operationalizing ML & GenAI Solutions' },
+  { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management' },
 ];
 
 const STORAGE_KEY = 'jaiib_selected_exam';
@@ -25,7 +26,7 @@ const STORAGE_KEY = 'jaiib_selected_exam';
 function loadPreference(): ExamId | null {
   try {
     const val = localStorage.getItem(STORAGE_KEY);
-    if (val === 'JAIIB' || val === 'CAIIB' || val === 'AI-300' || val === 'ALL') return val;
+    if (val === 'JAIIB' || val === 'CAIIB' || val === 'AI-300' || val === 'CAPM' || val === 'ALL') return val;
     return null;
   } catch {
     return null;
