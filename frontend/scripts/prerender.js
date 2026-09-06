@@ -15,7 +15,7 @@ const PAGES = [
   '/',
   '/practice-tests',
   '/ai-300-practice-test',
-  '/study-topics',
+  '/capm-practice-test',  '/study-topics',
   '/practice-tests/ie-ifs',
   '/practice-tests/ppb',
   '/practice-tests/afm',

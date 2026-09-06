@@ -64,7 +64,7 @@ const LandingPage: React.FC = () => {
 
       {/* Exam Cards */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Choose Your Exam</h2>
             <p className="text-gray-400">Select an exam to start practicing. More exams coming soon.</p>
@@ -74,7 +74,7 @@ const LandingPage: React.FC = () => {
             {/* JAIIB */}
             <div
               onClick={() => navigate('/register')}
-              className="bg-gray-900 border border-gray-800 rounded-2xl p-8 cursor-pointer hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group"
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
@@ -86,7 +86,7 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-400 mb-5">4 papers: IE&IFS, PPB, AFM, RBWM. Banking operations, financial management, wealth management.</p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <span className="text-2xl font-bold text-white">3,700+</span>
                   <span className="text-xs text-gray-500">questions</span>
@@ -102,8 +102,9 @@ const LandingPage: React.FC = () => {
             {/* CAIIB */}
             <div
               onClick={() => navigate('/register')}
-              className="bg-gray-900 border border-gray-800 rounded-2xl p-8 cursor-pointer hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group"
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group"
             >
+              <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center">
                   <span className="text-2xl">🎓</span>
@@ -114,7 +115,7 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-400 mb-5">ABM paper live. Statistics, HRM, credit management, compliance & corporate governance.</p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <span className="text-2xl font-bold text-white">740</span>
                   <span className="text-xs text-gray-500">questions</span>
@@ -124,18 +125,15 @@ const LandingPage: React.FC = () => {
                   <span className="text-lg font-bold text-white">14</span>
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
-                <div className="w-px h-6 bg-gray-800" />
-                <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-green-400">NEW</span>
-                </div>
               </div>
             </div>
 
             {/* AI-300 */}
             <div
               onClick={() => navigate('/ai-300-practice-test')}
-              className="bg-gray-900 border border-gray-800 rounded-2xl p-8 cursor-pointer hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/5 transition-all group"
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/5 transition-all group"
             >
+              <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
                   <span className="text-2xl">🤖</span>
@@ -146,7 +144,7 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-400 mb-5">Operationalizing ML & GenAI Solutions. Azure ML, MLOps, Foundry, RAG, fine-tuning, and model deployment.</p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <span className="text-2xl font-bold text-white">600</span>
                   <span className="text-xs text-gray-500">questions</span>
@@ -156,18 +154,15 @@ const LandingPage: React.FC = () => {
                   <span className="text-lg font-bold text-white">12</span>
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
-                <div className="w-px h-6 bg-gray-800" />
-                <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-green-400">NEW</span>
-                </div>
               </div>
             </div>
 
             {/* CAPM */}
             <div
-              onClick={() => navigate('/exams')}
-              className="bg-gray-900 border border-gray-800 rounded-2xl p-8 cursor-pointer hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all group"
+              onClick={() => navigate('/capm-practice-test')}
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all group"
             >
+              <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center">
                   <span className="text-2xl">📋</span>
@@ -178,7 +173,7 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-400 mb-5">Certified Associate in Project Management. Fundamentals, predictive, agile & business analysis.</p>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
                   <span className="text-2xl font-bold text-white">225</span>
                   <span className="text-xs text-gray-500">questions</span>
@@ -187,10 +182,6 @@ const LandingPage: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   <span className="text-lg font-bold text-white">3</span>
                   <span className="text-xs text-gray-500">sets</span>
-                </div>
-                <div className="w-px h-6 bg-gray-800" />
-                <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-green-400">NEW</span>
                 </div>
               </div>
             </div>
@@ -302,7 +293,7 @@ const LandingPage: React.FC = () => {
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><a href="/practice-tests" className="hover:text-white transition">JAIIB Practice</a></li>
                 <li><a href="/ai-300-practice-test" className="hover:text-white transition">AI-300 Practice</a></li>
-                <li><a href="/exams" className="hover:text-white transition">CAPM Practice</a></li>
+                <li><a href="/capm-practice-test" className="hover:text-white transition">CAPM Practice</a></li>
               </ul>
             </div>
             <div>

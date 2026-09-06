@@ -101,7 +101,7 @@ const EXAMS: ExamCard[] = [
     difficulty: 'Moderate',
     status: 'live',
     color: 'from-orange-500 to-amber-700',
-    link: '/practice',
+    link: '/capm-practice-test',
   },
   {
     id: 'az-400',
