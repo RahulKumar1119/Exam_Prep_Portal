@@ -9,9 +9,9 @@ const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="MockMaster — Free IT Certification & Banking Exam Practice Tests"
-        description="Free practice tests for JAIIB 2026 (3700+ questions) and Microsoft AI-300 certification (600 questions). AI explanations, leaderboard, timed mock tests. No payment required."
+        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (600 questions), and PMI CAPM (225 questions). AI explanations, leaderboard, timed mock tests. No payment required."
         canonical="https://mockmaster.fun/"
-        keywords="JAIIB mock test 2026, AI-300 practice test, free certification practice, Microsoft AI-300, IIBF exam prep, Azure ML certification"
+        keywords="JAIIB mock test 2026, AI-300 practice test, CAPM practice test, free certification practice, Microsoft AI-300, PMI CAPM, IIBF exam prep, Azure ML certification"
       />
 
       {/* Navigation */}
@@ -48,7 +48,7 @@ const LandingPage: React.FC = () => {
             </span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            AI-powered practice tests with instant explanations, leaderboard rankings, and performance analytics. Built for bank officers and cloud engineers.
+            AI-powered practice tests with instant explanations, leaderboard rankings, and performance analytics. Built for bank officers, cloud engineers, and project managers.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={() => navigate('/register')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-base transition shadow-lg shadow-indigo-600/25">
@@ -70,7 +70,7 @@ const LandingPage: React.FC = () => {
             <p className="text-gray-400">Select an exam to start practicing. More exams coming soon.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* JAIIB */}
             <div
               onClick={() => navigate('/register')}
@@ -154,6 +154,38 @@ const LandingPage: React.FC = () => {
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
                   <span className="text-lg font-bold text-white">12</span>
+                  <span className="text-xs text-gray-500">sets</span>
+                </div>
+                <div className="w-px h-6 bg-gray-800" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold text-green-400">NEW</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CAPM */}
+            <div
+              onClick={() => navigate('/exams')}
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-8 cursor-pointer hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all group"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center">
+                  <span className="text-2xl">📋</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold group-hover:text-orange-400 transition">CAPM</h3>
+                  <p className="text-xs text-gray-500">PMI Certification</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-400 mb-5">Certified Associate in Project Management. Fundamentals, predictive, agile & business analysis.</p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-2xl font-bold text-white">225</span>
+                  <span className="text-xs text-gray-500">questions</span>
+                </div>
+                <div className="w-px h-6 bg-gray-800" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold text-white">3</span>
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
@@ -270,6 +302,7 @@ const LandingPage: React.FC = () => {
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><a href="/practice-tests" className="hover:text-white transition">JAIIB Practice</a></li>
                 <li><a href="/ai-300-practice-test" className="hover:text-white transition">AI-300 Practice</a></li>
+                <li><a href="/exams" className="hover:text-white transition">CAPM Practice</a></li>
               </ul>
             </div>
             <div>

@@ -96,10 +96,10 @@ const EXAMS: ExamCard[] = [
     provider: 'PMI',
     providerIcon: '📋',
     category: 'Project Management',
-    questions: 0,
-    sets: 1,
+    questions: 225,
+    sets: 3,
     difficulty: 'Moderate',
-    status: 'coming_soon',
+    status: 'live',
     color: 'from-orange-500 to-amber-700',
     link: '/practice',
   },
@@ -147,7 +147,7 @@ const EXAMS: ExamCard[] = [
   },
 ];
 
-const CATEGORIES = ['All', 'Banking', 'Cloud & AI'];
+const CATEGORIES = ['All', 'Banking', 'Cloud & AI', 'Project Management'];
 
 const BrowseExamsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -166,9 +166,9 @@ const BrowseExamsPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="Browse Exams — Free Practice Tests | MockMaster"
-        description="Browse all available certification practice tests. JAIIB banking exams, Microsoft AI-300, AZ-400, and more. Free practice with AI explanations."
+        description="Browse all available certification practice tests. JAIIB banking exams, Microsoft AI-300, PMI CAPM, AZ-400, and more. Free practice with AI explanations."
         canonical="https://mockmaster.fun/exams"
-        keywords="free certification practice test, JAIIB practice, AI-300 practice, AZ-400 practice, Microsoft certification free"
+        keywords="free certification practice test, JAIIB practice, AI-300 practice, CAPM practice test, PMI CAPM, AZ-400 practice, Microsoft certification free"
       />
 
       {/* Nav */}

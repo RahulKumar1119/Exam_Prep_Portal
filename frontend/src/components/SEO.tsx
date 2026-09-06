@@ -19,7 +19,22 @@ const SEO: React.FC<SEOProps> = ({
   keywords,
 }) => {
   const fullTitle = title.includes('MockMaster') ? title : `${title} | MockMaster`;
-  const url = canonical || 'https://mockmaster.fun/';
+  // The site is served as static prerendered files, so every route resolves to
+  // its trailing-slash URL (e.g. /blog/x/ ; /blog/x 301s to it). Normalize the
+  // canonical to the trailing-slash form so it matches the actually-served URL
+  // and never points at a redirecting URL. Leaves query/hash-less paths only.
+  const normalizeCanonical = (u: string): string => {
+    try {
+      const parsed = new URL(u);
+      if (parsed.pathname !== '/' && !parsed.pathname.endsWith('/')) {
+        parsed.pathname += '/';
+      }
+      return parsed.toString();
+    } catch {
+      return u;
+    }
+  };
+  const url = normalizeCanonical(canonical || 'https://mockmaster.fun/');
 
   return (
     <Helmet>

@@ -23,9 +23,15 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
     { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 600, sets: 12 },
   ],
   'CAPM': [
-    { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management', totalQuestions: 0, sets: 1 },
+    { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management', totalQuestions: 225, sets: 3 },
   ],
 };
+
+// Questions per practice set (CAPM sets are longer)
+const QUESTIONS_PER_SET: Record<string, number> = {
+  'CAPM': 75,
+};
+const questionsPerSet = (paperId: string) => QUESTIONS_PER_SET[paperId] ?? 50;
 
 const PracticePage: React.FC = () => {
   const { current_session, session_result, is_loading, is_restoring, error, generatePracticeSet, submitPracticeSet, clearSession } = usePractice();
@@ -89,7 +95,7 @@ const PracticePage: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-64 space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <p className="text-gray-600 font-medium">Generating Practice Set...</p>
-        <p className="text-gray-400 text-sm">Preparing 50 questions for you</p>
+        <p className="text-gray-400 text-sm">Preparing {questionsPerSet(selectedPaper)} questions for you</p>
       </div>
     );
   }
@@ -98,7 +104,7 @@ const PracticePage: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Practice Sets</h1>
-        <p className="text-gray-600 mt-2">50 questions per set • No time limit • Instant feedback</p>
+        <p className="text-gray-600 mt-2">{questionsPerSet(selectedPaper)} questions per set • No time limit • Instant feedback</p>
       </div>
 
       {error && (
@@ -203,7 +209,7 @@ const PracticePage: React.FC = () => {
             <h3 className="font-bold text-gray-900 mb-3">📝 Practice Set Format</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <p className="text-xl font-bold text-blue-600">50</p>
+                <p className="text-xl font-bold text-blue-600">{questionsPerSet(selectedPaper)}</p>
                 <p className="text-xs text-gray-600">Questions</p>
               </div>
               <div className="bg-white rounded-lg p-3 shadow-sm">

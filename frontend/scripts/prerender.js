@@ -79,6 +79,24 @@ const PAGES = [
   '/previous-attempts',
 ];
 
+/**
+ * Collapse duplicate head tags to a single value so search engines see one
+ * canonical/title/og per page. react-helmet-async injects its (correct) tag
+ * near the START of <head>, while the static fallback from index.html sits at
+ * its original position later — so we keep the FIRST match (Helmet's) and drop
+ * the rest.
+ */
+function dedupeHeadTag(html, regex) {
+  const matches = html.match(regex);
+  if (!matches || matches.length <= 1) return html;
+  const keep = matches[0];
+  let seen = false;
+  return html.replace(regex, (m) => {
+    if (!seen) { seen = true; return keep; }
+    return '';
+  });
+}
+
 async function prerender() {
   const puppeteer = require('puppeteer');
   const handler = require('serve-handler');
@@ -132,7 +150,17 @@ async function prerender() {
     // Wait a bit for React to fully render (page.waitForTimeout removed in puppeteer 22+)
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const html = await page.content();
+    let html = await page.content();
+
+    // De-duplicate head tags that must be unique for SEO. react-helmet-async
+    // can leave more than one <title>/canonical/og:url in the prerendered
+    // markup; Google uses the FIRST canonical it sees, so stale duplicates
+    // (e.g. a homepage canonical) would make every page look like a dup of "/".
+    // Keep only the LAST occurrence of each (Helmet's final, correct value).
+    html = dedupeHeadTag(html, /<title>[\s\S]*?<\/title>/gi);
+    html = dedupeHeadTag(html, /<link[^>]*rel="canonical"[^>]*>/gi);
+    html = dedupeHeadTag(html, /<meta[^>]*property="og:url"[^>]*>/gi);
+    html = dedupeHeadTag(html, /<meta[^>]*property="og:title"[^>]*>/gi);
 
     // Determine output path
     const outputDir = path.join(buildDir, route === '/' ? '' : route);

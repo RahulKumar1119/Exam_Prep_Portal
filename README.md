@@ -1,15 +1,24 @@
-# JAIIB-CAIIB Exam Prep Portal
+# Exam Prep Portal (MockMaster)
 
-A full-stack web application designed to help bank officers prepare for IIBF (Indian Institute of Banking and Finance) certification exams with adaptive practice sets, AI-powered tutoring, and comprehensive performance tracking.
+A full-stack web application for certification exam prep — IIBF JAIIB/CAIIB for bank officers, Microsoft AI-300, and PMI CAPM — with adaptive practice sets, AI-powered tutoring, and comprehensive performance tracking. Live at [mockmaster.fun](https://mockmaster.fun).
 
 ## 🎯 Overview
 
-The JAIIB-CAIIB Exam Prep Portal provides:
-- **Interactive Practice Sets**: 4-question adaptive practice sets for 4 JAIIB papers (IE & IFS, PPB, AFB, RBWM)
-- **AI-Powered Tutoring**: AWS Bedrock Claude 4.5 Haiku explanations with RBI/IIBF regulatory citations
+The Exam Prep Portal provides:
+- **Interactive Practice Sets**: 50-question practice sets (75 for CAPM) across JAIIB papers (IE & IFS, PPB, AFM, RBWM), CAIIB (ABM), AI-300, and CAPM
+- **AI-Powered Tutoring**: AWS Bedrock explanations with RBI/IIBF regulatory citations (banking) and official references per exam
 - **Performance Tracking**: Real-time dashboards with score trends, weak/strong areas, and learning analytics
 - **Admin Analytics**: System-wide metrics, user engagement tracking, and compliance reporting
 - **Secure & Scalable**: End-to-end encryption, auto-scaling for 100+ concurrent users, 99.9% uptime target
+
+## 📝 Exams Covered
+
+| Exam | Papers / Domains | Questions | Set size |
+|------|------------------|-----------|----------|
+| JAIIB | IE & IFS, PPB, AFM, RBWM | 3,700+ | 50 |
+| CAIIB | ABM | 740 | 50 |
+| AI-300 | Operationalizing ML & GenAI Solutions | 600 | 50 |
+| CAPM | Fundamentals 36%, Predictive 17%, Agile 20%, Business Analysis 27% | 225 | 75 |
 
 ## 🏗️ Architecture
 
@@ -103,10 +112,10 @@ The JAIIB-CAIIB Exam Prep Portal provides:
 - Bcrypt password hashing (12-character salt rounds)
 
 #### 2. Practice Set Generation
-- Adaptive 4-question practice sets for 4 JAIIB papers
-- Random selection for new users (<10 completed sets)
-- Weak-area weighted selection for experienced users (≥10 sets)
-- <500ms generation latency
+- 50-question practice sets (75 for CAPM), fixed-set (deterministic paging) and random modes
+- Timed mock tests (100 questions, 100 marks, 120 min)
+- CAPM served from dedicated `jaiib-capm-question-bank` table (domain-topic GSI)
+- Question generators: `generate_microsoft_exam.py` (AI-300) and `generate_capm_exam.py` (CAPM, `--types mixed` for multi/yes-no/drag-drop/ordering + case studies)
 
 #### 3. Session Timer Management
 - 10-minute countdown timer with MM:SS display
@@ -370,6 +379,7 @@ For issues or questions:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1 | Sep 2026 | CAPM exam support: `jaiib-capm-question-bank` table, ECO syllabus, 75-question sets, `generate_capm_exam.py`, CAPM blog + landing/exams/practice/register pages |
 | 1.0 | 2026 | Initial release with 15 core requirements, complete technical design, and 21 implementation tasks |
 
 ---
