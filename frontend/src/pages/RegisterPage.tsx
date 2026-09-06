@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { validateEmail } from '../utils/validateEmail';
 
 interface FormErrors {
+  exam?: string;
   email?: string;
   password?: string;
   confirm_password?: string;
@@ -45,7 +46,7 @@ const RegisterPage: React.FC = () => {
     const errors: FormErrors = {};
 
     if (!examPreference) {
-      errors.full_name = 'Please select an exam first';
+      errors.exam = 'Please select an exam first';
     }
 
     if (!formData.full_name.trim()) {
@@ -178,7 +179,7 @@ const RegisterPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 I'm preparing for
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <button
                   type="button"
                   onClick={() => setExamPreference('JAIIB')}
@@ -218,8 +219,21 @@ const RegisterPage: React.FC = () => {
                   <p className="font-bold text-white text-sm mt-1">AI-300</p>
                   <p className="text-xs text-gray-400">Microsoft ML</p>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setExamPreference('CAPM')}
+                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                    examPreference === 'CAPM'
+                      ? 'border-orange-500 bg-orange-500/10 ring-2 ring-orange-500/30'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
+                  }`}
+                >
+                  <span className="text-lg">📋</span>
+                  <p className="font-bold text-white text-sm mt-1">CAPM</p>
+                  <p className="text-xs text-gray-400">PMI Project Mgmt</p>
+                </button>
               </div>
-              {!examPreference && formErrors.full_name && (
+              {!examPreference && formErrors.exam && (
                 <p className="text-xs text-red-500 mt-1">Please select an exam</p>
               )}
             </div>
