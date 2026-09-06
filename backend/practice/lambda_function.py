@@ -40,6 +40,12 @@ class DecimalEncoder(json.JSONEncoder):
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
+# Per-paper overrides — CAPM practice sets are longer (75 vs default 50)
+QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75}
+
+
+def _questions_per_set(paper_name: str) -> int:
+    return QUESTIONS_PER_SET_BY_PAPER.get(paper_name, QUESTIONS_PER_SET)
 BEDROCK_MODEL_ID  = 'arn:aws:bedrock:ap-south-1:438097524343:inference-profile/apac.anthropic.claude-sonnet-4-20250514-v1:0'
 REGION            = 'ap-south-1'
 LAMBDA_FUNC_NAME = 'jaiib-practice'   # self-invoke for async generation
@@ -112,7 +118,7 @@ def err(code, msg):
 
 
 # ── Bedrock question generation ───────────────────────────────────────────────
-def _build_prompt(paper_name: str) -> str:
+def _build_prompt(paper_name: str, count: int = QUESTIONS_PER_SET) -> str:
     syllabus = PAPER_SYLLABUS.get(paper_name, {})
     modules_text = ''
     for module, topics in syllabus.get('modules', {}).items():
@@ -121,17 +127,17 @@ def _build_prompt(paper_name: str) -> str:
     if paper_name == 'CAPM':
         return f"""You are a senior PMI CAPM exam question setter.
 
-Generate exactly 50 challenging multiple-choice questions for CAPM (Certified Associate in Project Management) per PMI ECO (36% Fundamentals, 17% Predictive, 20% Agile, 27% Business Analysis).
+Generate exactly {count} challenging multiple-choice questions for CAPM (Certified Associate in Project Management) per PMI ECO (36% Fundamentals, 17% Predictive, 20% Agile, 27% Business Analysis).
 
-STRICT distribution:
-- 20 EASY (definitions, roles, artifacts)
-- 15 MEDIUM (scenario application, what-should-you-do-next)
-- 15 HARD (multi-statement correct/incorrect, WBS/critical-path/variance/RTM logic)
+STRICT distribution (scale to {count} total: ~25% easy, ~45% medium, ~30% hard):
+- EASY (definitions, roles, artifacts)
+- MEDIUM (scenario application, what-should-you-do-next)
+- HARD (multi-statement correct/incorrect, WBS/critical-path/variance/RTM logic)
 
 Syllabus (cover ALL domains evenly):
 {modules_text}
 
-Return ONLY a valid JSON array of exactly 50 objects. No markdown.
+Return ONLY a valid JSON array of exactly {count} objects. No markdown.
 [
   {{{{
     "question_text": "...",
@@ -204,14 +210,14 @@ Return ONLY a valid JSON array of exactly 50 objects. No markdown, no explanatio
 ]"""
 
 
-def _call_bedrock(paper_name: str) -> List[Dict]:
+def _call_bedrock(paper_name: str, count: int = QUESTIONS_PER_SET) -> List[Dict]:
     """Call Bedrock Claude with a text-only prompt."""
     try:
         client = _bedrock()
         body = {
             "anthropic_version": "bedrock-2023-05-31",
             "max_tokens": 16000,
-            "messages": [{"role": "user", "content": _build_prompt(paper_name)}]
+            "messages": [{"role": "user", "content": _build_prompt(paper_name, count)}]
         }
         resp = client.invoke_model(modelId=BEDROCK_MODEL_ID, body=json.dumps(body))
         text = json.loads(resp['body'].read())['content'][0]['text'].strip()
@@ -291,17 +297,18 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
     elif set_number > 0:
         # Fixed set mode — deterministic slice of questions from DB
         # Fetch ALL questions for this paper, sort by question_id for consistency
+        per_set = _questions_per_set(paper_name)
         DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM')
         if paper_name in DB_PAPERS:
             try:
                 if _is_capm(paper_name):
                     capm_items = _db_fallback_capm(_capm_table(), 500)
                     capm_items.sort(key=lambda x: x.get('question_id', ''))
-                    start = (set_number - 1) * QUESTIONS_PER_SET
-                    end = start + QUESTIONS_PER_SET
+                    start = (set_number - 1) * per_set
+                    end = start + per_set
                     questions = capm_items[start:end]
-                    if len(questions) < QUESTIONS_PER_SET and capm_items:
-                        questions += capm_items[:QUESTIONS_PER_SET - len(questions)]
+                    if len(questions) < per_set and capm_items:
+                        questions += capm_items[:per_set - len(questions)]
                 else:
                     items = []
                     kwargs = {
@@ -320,37 +327,38 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
                     items.sort(key=lambda x: x.get('question_id', ''))
 
                     # Slice: set 1 = items[0:50], set 2 = items[50:100], etc.
-                    start = (set_number - 1) * QUESTIONS_PER_SET
-                    end = start + QUESTIONS_PER_SET
+                    start = (set_number - 1) * per_set
+                    end = start + per_set
                     questions = items[start:end]
 
                     # If not enough questions for this set, wrap around
-                    if len(questions) < QUESTIONS_PER_SET and items:
-                        remaining = QUESTIONS_PER_SET - len(questions)
+                    if len(questions) < per_set and items:
+                        remaining = per_set - len(questions)
                         questions += items[:remaining]
 
             except Exception as e:
                 print(f"Fixed set fetch error: {e}")
-                questions = _call_bedrock(paper_name)
+                questions = _call_bedrock(paper_name, per_set)
         else:
-            questions = _call_bedrock(paper_name)
+            questions = _call_bedrock(paper_name, per_set)
     else:
         # Original practice mode — random from DB, fallback to Bedrock
+        per_set = _questions_per_set(paper_name)
         DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM')
         if paper_name in DB_PAPERS:
             if _is_capm(paper_name):
-                questions = _db_fallback_capm(_capm_table(), QUESTIONS_PER_SET)
+                questions = _db_fallback_capm(_capm_table(), per_set)
             else:
-                questions = _db_fallback(questions_table, paper_name, QUESTIONS_PER_SET)
+                questions = _db_fallback(questions_table, paper_name, per_set)
             if not questions:
-                questions = _call_bedrock(paper_name)
+                questions = _call_bedrock(paper_name, per_set)
         else:
-            questions = _call_bedrock(paper_name)
-            if len(questions) < QUESTIONS_PER_SET:
-                needed = QUESTIONS_PER_SET - len(questions)
+            questions = _call_bedrock(paper_name, per_set)
+            if len(questions) < per_set:
+                needed = per_set - len(questions)
                 questions += _db_fallback(questions_table, paper_name, needed)
 
-        questions = questions[:QUESTIONS_PER_SET]
+        questions = questions[:per_set]
 
     # Fields carried through for the extended Microsoft question types (issue #51).
     # Only include keys that are actually present so single_choice items stay lean.

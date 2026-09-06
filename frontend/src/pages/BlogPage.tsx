@@ -17,6 +17,132 @@ interface BlogPost {
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'capm-exam-complete-guide-2026',
+    title: 'CAPM Exam Complete Guide (2026) — Format, Domains, Eligibility & Study Plan',
+    description: 'Everything about PMI\'s Certified Associate in Project Management: 150-question format, 4 ECO domains with weightage, eligibility (23 contact hours), fees, and a 4-week study plan.',
+    date: '2026-09-06',
+    readTime: '10 min read',
+    category: 'Certification Guide',
+    coverImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">
+          The CAPM (Certified Associate in Project Management) is PMI's entry-level credential for people who want into project work but can't sit the PMP yet — students, career changers, and coordinators. Here's the current exam in one place: format, domains, eligibility, cost, and how to prepare.
+        </p>
+
+        <h2>CAPM Exam at a Glance</h2>
+
+        <div className="not-prose bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-200 my-6">
+          <h3 className="text-lg font-bold text-orange-900 mb-4">📋 CAPM Exam at a Glance</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-orange-600">150</p>
+              <p className="text-xs text-gray-600">Questions (135 scored)</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-amber-600">3 hrs</p>
+              <p className="text-xs text-gray-600">180 minutes + 1 break</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-green-600">$300</p>
+              <p className="text-xs text-gray-600">Non-member fee ($225 member)</p>
+            </div>
+            <div className="bg-white rounded-lg p-4 text-center shadow-sm">
+              <p className="text-2xl font-bold text-purple-600">3 yrs</p>
+              <p className="text-xs text-gray-600">Certification validity</p>
+            </div>
+          </div>
+        </div>
+
+        <ul>
+          <li><strong>Format:</strong> 150 questions in 180 minutes — 135 scored + 15 unscored pretest (you can't tell which is which, so answer everything).</li>
+          <li><strong>Break:</strong> one 10-minute break after question 75.</li>
+          <li><strong>Types:</strong> mostly multiple-choice, plus multiple-response, matching, and hot-spot items. Questions are largely scenario-based — "what should you do next?" — not vocabulary tests.</li>
+          <li><strong>Delivery:</strong> Pearson VUE test center or online with remote proctoring, offered in 8 languages.</li>
+          <li><strong>Attempts:</strong> up to 3 tries within your one-year eligibility window.</li>
+        </ul>
+
+        <h2>The 4 Domains & Weightage</h2>
+        <p>
+          PMI builds every CAPM exam from the Exam Content Outline (ECO): 4 domains, 19 tasks, with fixed domain-level coverage. Agile + Business Analysis together are nearly half the exam — candidates who prep predictive-only walk in ready for barely half the test.
+        </p>
+
+        <div className="not-prose bg-white rounded-xl border border-gray-200 p-6 my-6 shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">Domain Weightage in Exam</h3>
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Domain 1 — PM Fundamentals & Core Concepts</span><span className="text-orange-600 font-bold">36%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-orange-500 rounded-full" style={{width: '36%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Domain 4 — Business Analysis Frameworks</span><span className="text-blue-600 font-bold">27%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-blue-500 rounded-full" style={{width: '27%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Domain 3 — Agile Frameworks/Methodologies</span><span className="text-green-600 font-bold">20%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-green-500 rounded-full" style={{width: '20%'}}></div></div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1"><span className="font-medium">Domain 2 — Predictive, Plan-Based Methodologies</span><span className="text-purple-600 font-bold">17%</span></div>
+              <div className="h-3 bg-gray-200 rounded-full"><div className="h-3 bg-purple-500 rounded-full" style={{width: '17%'}}></div></div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Domain 1 — Fundamentals & Core Concepts (36%, 5 tasks)</h3>
+        <p>
+          The scoring engine. How projects create value; project vs program vs portfolio; predictive vs adaptive; org structures and PMO; PM/team roles; life-cycle phases; artifacts and documents; risk vs issue vs assumption vs constraint; reading risk and stakeholder registers.
+        </p>
+        <p><strong>Pro Tip:</strong> learn to place any scenario in the right phase and identify who owns what — this skill powers the other three domains too.</p>
+
+        <h3>Domain 4 — Business Analysis Frameworks (27%, 6 tasks)</h3>
+        <p>
+          The most underestimated domain. Requirements elicitation and documentation; stakeholder identification and analysis; traceability (RTM); validating requirements against business needs; acceptance-criteria logic.
+        </p>
+        <p><strong>Pro Tip:</strong> drill "traceability trap" questions — where a requirement looks done but isn't linked back to a business need.</p>
+
+        <h3>Domain 3 — Agile Frameworks/Methodologies (20%, 5 tasks)</h3>
+        <p>
+          Adaptive delivery as a first-class approach: agile mindset and values; when adaptive fits better than predictive; Scrum roles, events, artifacts; Kanban boards and WIP limits; backlog prioritization; iterative delivery and feedback.
+        </p>
+        <p><strong>Pro Tip:</strong> study agile as decision-making ("requirements changed — what now?"), not vocabulary lists.</p>
+
+        <h3>Domain 2 — Predictive, Plan-Based Methodologies (17%, 3 tasks)</h3>
+        <p>
+          The smallest domain but easy marks: WBS and work packages; building and reading schedules; critical-path basics; schedule/cost variance logic; baselines and controls.
+        </p>
+        <p><strong>Pro Tip:</strong> do 30–50 targeted reps on WBS, dependencies, and critical-path reasoning — the highest marks-per-hour in the exam.</p>
+
+        <h2>Eligibility & Cost</h2>
+        <ul>
+          <li><strong>Education:</strong> secondary degree (high school / GED / associate or global equivalent).</li>
+          <li><strong>Training:</strong> 23 contact hours of project management education completed before the exam (PMI removed the 1,500-hour experience path in Aug 2024 — education is now the only route).</li>
+          <li><strong>Exam fee:</strong> ~$225 (PMI member) / ~$300 (non-member). Membership (~$139–159/yr) doesn't pay for itself on CAPM savings alone — confirm current fees at pmi.org before budgeting.</li>
+          <li><strong>Scoring:</strong> PMI publishes no flat pass mark; your report shows Above Target / Target / Below Target / Needs Improvement per domain. Practical benchmark: consistently scoring 72%+ on realistic full-length mocks means you're ready.</li>
+        </ul>
+
+        <h2>4-Week Study Plan (Weighted by ECO)</h2>
+        <ul>
+          <li><strong>Week 1 — Fundamentals:</strong> life cycles, roles, artifacts, registers. Goal: read any scenario and name the phase, owner, and right tool.</li>
+          <li><strong>Week 2 — Business Analysis:</strong> requirements, RTM, acceptance criteria, stakeholders. Goal: stop losing marks on "what should you do next?" traps.</li>
+          <li><strong>Week 3 — Predictive mechanics:</strong> WBS, critical path, variance logic, baselines. Goal: bank the easy structured marks.</li>
+          <li><strong>Week 4 — Agile + full mocks:</strong> Scrum/Kanban decisions, then 2+ timed 150-question mocks to build 3-hour stamina.</li>
+        </ul>
+
+        <h2>Practice on MockMaster</h2>
+        <p>
+          Our CAPM practice sets follow the same ECO weights — 75 questions per set across all four domains, with scenario-based items and instant explanations. Select <strong>CAPM</strong> as your exam after registering, then start with Domain 1 before moving to Business Analysis.
+        </p>
+
+        <h2>FAQs</h2>
+        <p><strong>Do I need project experience for CAPM?</strong><br />No — PMI removed the experience option in 2024. Secondary degree + 23 contact hours is the full bar.</p>
+        <p><strong>How many questions are scored?</strong><br />135 of 150. The other 15 are unscored pretest items mixed invisibly into the exam.</p>
+        <p><strong>CAPM or PMP?</strong><br />If you qualify for the PMP (experience + 35 hours), go straight there. Otherwise CAPM is the clean entry point — and the hours overlap when you bridge later.</p>
+        <p className="text-sm text-gray-500 mt-8">Sources: PMI CAPM Exam Content Outline & certification page (pmi.org) — confirm current fees and policies there before applying.</p>
+      </div>
+    ),
+  },
+  {
     slug: 'how-to-clear-ie-ifs-first-attempt',
     title: 'How to Clear IE & IFS in the First Attempt — Complete Strategy Guide (2026)',
     description: 'A proven study plan covering all 4 modules of Indian Economy & Indian Financial System with topic-wise weightage, recommended books, and last-minute revision tips for JAIIB 2026.',
