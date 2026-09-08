@@ -1,11 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, MotionConfig } from 'motion/react';
 import SEO from '../components/SEO';
+
+// Shared scroll-reveal: fade up once when entering the viewport.
+const reveal = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-64px' },
+} as const;
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="MockMaster — Free IT Certification & Banking Exam Practice Tests"
@@ -36,39 +45,63 @@ const LandingPage: React.FC = () => {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/50 via-transparent to-transparent" />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-32 sm:pb-24 text-center relative">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6"
+          >
             Master your certification.
             <br />
             <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               Pass on first attempt.
             </span>
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+            className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+          >
             AI-powered practice tests with instant explanations, leaderboard rankings, and performance analytics. Built for bank officers, cloud engineers, and project managers.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={() => navigate('/register')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-base transition shadow-lg shadow-indigo-600/25">
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/register')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-base transition shadow-lg shadow-indigo-600/25">
               Create Free Account
-            </button>
-            <button onClick={() => navigate('/exams')} className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl text-base transition">
+            </motion.button>
+            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/exams')} className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl text-base transition">
               Browse Exams
-            </button>
-          </div>
-          <p className="text-xs text-gray-500 mt-6">No credit card. No trial period. Free forever.</p>
+            </motion.button>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+            className="text-xs text-gray-500 mt-6"
+          >
+            No credit card. No trial period. Free forever.
+          </motion.p>
         </div>
       </section>
 
       {/* Exam Cards */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
+          <motion.div {...reveal} transition={{ duration: 0.5 }} className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Choose Your Exam</h2>
             <p className="text-gray-400">Select an exam to start practicing. More exams coming soon.</p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* JAIIB */}
-            <div
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0 }}
               onClick={() => navigate('/register')}
               className="bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group"
             >
@@ -93,10 +126,12 @@ const LandingPage: React.FC = () => {
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* CAIIB */}
-            <div
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.08 }}
               onClick={() => navigate('/register')}
               className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group"
             >
@@ -122,10 +157,12 @@ const LandingPage: React.FC = () => {
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* AI-300 */}
-            <div
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.16 }}
               onClick={() => navigate('/ai-300-practice-test')}
               className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/5 transition-all group"
             >
@@ -151,10 +188,12 @@ const LandingPage: React.FC = () => {
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* CAPM */}
-            <div
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.24 }}
               onClick={() => navigate('/capm-practice-test')}
               className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all group"
             >
@@ -180,7 +219,7 @@ const LandingPage: React.FC = () => {
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -188,12 +227,16 @@ const LandingPage: React.FC = () => {
       {/* Features Grid */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
+          <motion.div {...reveal} transition={{ duration: 0.5 }} className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">Everything you need to pass</h2>
             <p className="text-gray-400">No fluff. Just the tools that actually help.</p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <motion.div
+            {...reveal}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition">
               <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4"><span className="text-xl">🤖</span></div>
               <h3 className="font-bold text-white mb-2">AI Explanations</h3>
@@ -229,18 +272,22 @@ const LandingPage: React.FC = () => {
               <h3 className="font-bold text-white mb-2">Performance Analytics</h3>
               <p className="text-sm text-gray-400">Score trends, weak areas, exam readiness score, percentile ranking, and study streak.</p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Leaderboard Preview */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-3">Climb the leaderboard</h2>
-          <p className="text-gray-400 mb-10">Earn points for every question you master. See how you stack up against candidates across India.</p>
+          <motion.h2 {...reveal} transition={{ duration: 0.5 }} className="text-2xl sm:text-3xl font-bold mb-3">Climb the leaderboard</motion.h2>
+          <motion.p {...reveal} transition={{ duration: 0.5, delay: 0.08 }} className="text-gray-400 mb-10">Earn points for every question you master. See how you stack up against candidates across India.</motion.p>
 
           {/* Mock leaderboard */}
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden max-w-lg mx-auto">
+          <motion.div
+            {...reveal}
+            transition={{ duration: 0.5, delay: 0.12 }}
+            className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden max-w-lg mx-auto"
+          >
             <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
               <span className="text-sm font-semibold text-gray-300">Top Performers</span>
               <span className="text-xs text-gray-500">Updated in real-time</span>
@@ -252,32 +299,46 @@ const LandingPage: React.FC = () => {
                 { rank: '🥉', name: 'Veerababu M.', score: '78%', sessions: 15 },
                 { rank: '4', name: 'You?', score: '—', sessions: 0 },
               ].map((user, i) => (
-                <div key={i} className={`px-6 py-3.5 flex items-center justify-between ${i === 3 ? 'bg-indigo-500/5' : ''}`}>
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.07 }}
+                  className={`px-6 py-3.5 flex items-center justify-between ${i === 3 ? 'bg-indigo-500/5' : ''}`}
+                >
                   <div className="flex items-center gap-3">
                     <span className="text-base w-6 text-center">{user.rank}</span>
                     <span className={`text-sm font-medium ${i === 3 ? 'text-indigo-400' : 'text-gray-200'}`}>{user.name}</span>
                   </div>
                   <span className={`text-sm font-bold ${i === 3 ? 'text-indigo-400' : 'text-white'}`}>{user.score}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <button onClick={() => navigate('/register')} className="mt-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-xl transition">
+          <motion.button
+            {...reveal}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => navigate('/register')}
+            className="mt-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-xl transition"
+          >
             Join the Leaderboard
-          </button>
+          </motion.button>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-950 to-indigo-950/30">
-        <div className="max-w-3xl mx-auto text-center">
+        <motion.div {...reveal} transition={{ duration: 0.5 }} className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to start?</h2>
           <p className="text-gray-400 mb-8 text-lg">Create your free account in 10 seconds. No credit card needed.</p>
-          <button onClick={() => navigate('/register')} className="px-10 py-4 bg-white text-gray-900 font-bold rounded-xl text-lg hover:bg-gray-100 transition shadow-2xl">
+          <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/register')} className="px-10 py-4 bg-white text-gray-900 font-bold rounded-xl text-lg hover:bg-gray-100 transition shadow-2xl">
             Create Free Account
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </section>
 
       {/* Footer */}
@@ -322,6 +383,7 @@ const LandingPage: React.FC = () => {
         </div>
       </footer>
     </div>
+    </MotionConfig>
   );
 };
 
