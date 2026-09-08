@@ -40,6 +40,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage'));
 const StudyTopicsPage = lazy(() => import('./pages/StudyTopicsPage'));
+const AdminAnalyticsPage = lazy(() => import('./pages/AdminAnalyticsPage'));
 
 // Topic Pages (lazy - large set)
 const CrrExplainedPage = lazy(() => import('./pages/topics/CrrExplainedPage'));
@@ -214,6 +215,18 @@ const AppContent: React.FC = () => {
           <ProtectedRoute>
             <Layout>
               <NotificationsPage />
+            </Layout>
+          </ProtectedRoute>
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="/admin/analytics"
+        element={
+          <ErrorBoundary>
+          <ProtectedRoute adminOnly>
+            <Layout>
+              <AdminAnalyticsPage />
             </Layout>
           </ProtectedRoute>
           </ErrorBoundary>
