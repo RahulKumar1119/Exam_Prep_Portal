@@ -232,20 +232,113 @@ export interface NewPasswordFormData {
   confirm_password: string;
 }
 
-// Admin Analytics types
-export interface AdminAnalyticsData {
+// Admin Analytics types (GET /dashboard/analytics?range=7|30|90&exam=ALL|JAIIB|...)
+export interface AnalyticsDeltas {
+  active_users: number | null;
+  test_attempts: number | null;
+  avg_score: number | null;
+  avg_time_sec: number | null;
+  retention_pct: number | null;
+}
+
+export interface AnalyticsOverviewData {
   total_users: number;
-  active_users_7d: number;
-  active_users_30d: number;
-  active_users_90d: number;
-  total_practice_sets: number;
-  average_score: number;
-  daily_active_users: TrendPoint[];
-  performance_by_paper: PaperPerformance[];
-  most_attempted_questions: QuestionStats[];
-  most_skipped_questions: QuestionStats[];
-  system_metrics: SystemMetrics;
+  total_registered: number;
+  unverified_pending: number;
+  active_users: number;
+  test_attempts: number;
+  avg_score: number;
+  avg_time_sec: number;
+  retention_pct: number;
+  deltas: AnalyticsDeltas;
+}
+
+export interface AnalyticsGrowthPoint {
+  date: string;
+  new_users: number;
+  active_users: number;
+  attempts: number;
+}
+
+export interface AnalyticsExamRow {
+  paper_name: string;
+  exam: string;
+  attempts: number;
+  avg_score: number;
+  avg_time_sec: number;
+  delta_score: number | null;
+}
+
+export interface AnalyticsSubjectRow {
+  topic: string;
+  attempts: number;
+  accuracy: number;
+}
+
+export interface AnalyticsInsight {
+  level: 'warn' | 'good' | 'info';
+  text: string;
+}
+
+export interface AnalyticsActivityRow {
+  user_id: string;
+  name: string;
+  email: string;
+  paper_name: string;
+  exam: string;
+  score: number;
+  attempts: number;
+  last_active: string;
+}
+
+// Phase 2: product intelligence
+export interface AnalyticsFunnelStage {
+  stage: string;
+  label: string;
+  count: number;
+  conversion: number;
+}
+
+export interface AnalyticsCohort {
+  cohort: string;
+  size: number;
+  w0: number | null;
+  w1: number | null;
+  w2: number | null;
+  w3: number | null;
+}
+
+export interface AnalyticsDifficultQuestion {
+  question_id: string;
+  paper_name: string;
+  topic: string;
+  question_text: string;
+  attempts: number;
+  accuracy: number;
+  skip_count: number;
+  suspect: boolean;
+}
+
+export interface AnalyticsDropoff {
+  label: string;
+  count: number;
+  detail: string;
+}
+
+export interface AdminAnalyticsData {
+  range_days: number;
+  exam: string;
+  overview: AnalyticsOverviewData;
+  growth: AnalyticsGrowthPoint[];
+  exam_performance: AnalyticsExamRow[];
+  subject_performance: AnalyticsSubjectRow[];
+  insights: AnalyticsInsight[];
+  recent_activity: AnalyticsActivityRow[];
   top_users: TopUser[];
+  funnel: AnalyticsFunnelStage[];
+  cohorts: AnalyticsCohort[];
+  difficult_questions: AnalyticsDifficultQuestion[];
+  dropoff: AnalyticsDropoff[];
 }
 
 export interface QuestionStats {

@@ -7,7 +7,7 @@ Provides performance metrics and analytics for the user dashboard.
 import json
 import os
 import sys
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 from typing import Dict, Any
 from decimal import Decimal
 
@@ -876,6 +876,559 @@ def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
         return {'leaderboard': [], 'total_participants': 0}
 
 
+EXAM_PAPERS = {
+    'JAIIB': {'IE & IFS', 'PPB', 'AFM', 'RBWM'},
+    'CAIIB': {'ABM'},
+    'AI-300': {'AI-300'},
+    'CAPM': {'CAPM'},
+}
+
+
+def _num(value, default=0.0) -> float:
+    """Coerce DynamoDB/str/None values to float (scores/times are stored as strings)."""
+    try:
+        if value is None or value == '':
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _to_epoch(value) -> int:
+    """Normalize epoch seconds (int/str) or ISO-8601 strings to epoch seconds."""
+    if value is None or value == '':
+        return 0
+    if isinstance(value, (int, float)):
+        return int(value)
+    if isinstance(value, str):
+        s = value.strip()
+        if s.isdigit():
+            try:
+                return int(s)
+            except ValueError:
+                return 0
+        try:
+            # fromisoformat handles 'YYYY-MM-DDTHH:MM:SS.ffffff' (naive = UTC here)
+            dt = datetime.fromisoformat(s)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return int(dt.timestamp())
+        except ValueError:
+            return 0
+    try:
+        return int(value)  # Decimal and friends
+    except (TypeError, ValueError):
+        return 0
+
+
+def _scan_all(table, **kwargs) -> list:
+    """Paginated scan with a page cap to avoid full-table blowup (1000 x 5)."""
+    items: list = []
+    scan_kwargs: Dict[str, Any] = dict(kwargs)
+    scan_kwargs.setdefault('Limit', 1000)
+    pages = 0
+    while pages < 5:
+        resp = table.scan(**scan_kwargs)
+        items.extend(resp.get('Items', []))
+        if 'LastEvaluatedKey' not in resp:
+            break
+        scan_kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+        pages += 1
+    return items
+
+
+def _paper_exam(paper_name: str) -> str:
+    """Map a paper name to its exam group (default JAIIB for legacy papers)."""
+    for exam, papers in EXAM_PAPERS.items():
+        if paper_name in papers:
+            return exam
+    return 'JAIIB'
+
+
+def _pct_change(current: float, previous: float):
+    """Percent change vs previous period; None when there is no baseline."""
+    if previous is None or previous == 0:
+        return None
+    return round(((current - previous) / abs(previous)) * 100, 1)
+
+
+def _require_admin_response(user_id: str):
+    """Return an error response unless user_id belongs to an admin; else None."""
+    try:
+        resp = users_table.get_item(
+            Key={'user_id': user_id},
+            ProjectionExpression='user_id, #r',
+            ExpressionAttributeNames={'#r': 'role'},
+        )
+    except ClientError as e:
+        print(f"Error checking admin role: {e}")
+        return error_response(500, 'Failed to verify admin access')
+    item = resp.get('Item')
+    if not item or item.get('role') != 'admin':
+        return error_response(403, 'Admin access required')
+    return None
+
+
+def get_admin_analytics(range_days: int = 30, exam: str = 'ALL') -> Dict[str, Any]:
+    """System-wide admin analytics over users + completed practice sessions.
+
+    Range-scoped metrics (active users, attempts, avg score/time, retention,
+    growth, exam/subject performance, insights, recent activity) are computed
+    for [now - range_days, now] with deltas against the previous equal-length
+    period. User totals are global. `exam` filters session-scoped metrics.
+    """
+    now = datetime.now(timezone.utc)
+    now_ts = int(now.timestamp())
+    start_ts = now_ts - range_days * 86400
+    prev_start_ts = start_ts - range_days * 86400
+    exam = (exam or 'ALL').upper()
+
+    def allowed(paper: str) -> bool:
+        if exam == 'ALL':
+            return True
+        return paper in EXAM_PAPERS.get(exam, set())
+
+    empty: Dict[str, Any] = {
+        'range_days': range_days,
+        'exam': exam,
+        'overview': {
+            'total_users': 0, 'total_registered': 0, 'unverified_pending': 0,
+            'active_users': 0, 'test_attempts': 0, 'avg_score': 0,
+            'avg_time_sec': 0, 'retention_pct': 0,
+            'deltas': {'active_users': None, 'test_attempts': None,
+                       'avg_score': None, 'avg_time_sec': None, 'retention_pct': None},
+        },
+        'growth': [], 'exam_performance': [], 'subject_performance': [],
+        'insights': [{'level': 'info', 'text': 'Not enough data yet.'}],
+        'recent_activity': [], 'top_users': [],
+        'funnel': [], 'cohorts': [], 'difficult_questions': [], 'dropoff': [],
+    }
+
+    try:
+        users = _scan_all(
+            users_table,
+            ProjectionExpression='user_id, email, full_name, created_at, last_login, email_verified',
+        )
+        sessions = _scan_all(
+            sessions_table,
+            FilterExpression='#s = :completed',
+            ExpressionAttributeNames={'#s': 'status'},
+            ExpressionAttributeValues={':completed': 'completed'},
+            ProjectionExpression='user_id, paper_name, score, submitted_at, created_at, time_taken, questions, user_answers',
+        )
+        all_sessions = _scan_all(
+            sessions_table,
+            ProjectionExpression='user_id, paper_name, #s, submitted_at, created_at',
+            ExpressionAttributeNames={'#s': 'status'},
+        )
+    except ClientError as e:
+        print(f"Error scanning for admin analytics: {e}")
+        return empty
+
+    # --- Users ---
+    verified = [u for u in users if u.get('email_verified') is True]
+    user_map = {u.get('user_id', ''): u for u in users if u.get('user_id')}
+
+    # --- Sessions: normalize + exam filter ---
+    norm_sessions = []
+    for s in sessions:
+        paper = s.get('paper_name', 'Unknown') or 'Unknown'
+        if not allowed(paper):
+            continue
+        ts = _to_epoch(s.get('submitted_at')) or _to_epoch(s.get('created_at'))
+        if not ts:
+            continue
+        norm_sessions.append({
+            'user_id': s.get('user_id', ''),
+            'paper_name': paper,
+            'exam': _paper_exam(paper),
+            'score': _num(s.get('score')),
+            'time_taken': int(_num(s.get('time_taken'))),
+            'ts': ts,
+            'questions': s.get('questions', []) or [],
+            'user_answers': s.get('user_answers', {}) or {},
+        })
+
+    cur = [s for s in norm_sessions if s['ts'] >= start_ts]
+    prev = [s for s in norm_sessions if prev_start_ts <= s['ts'] < start_ts]
+
+    def period_stats(items: list) -> Dict[str, Any]:
+        users_active = {s['user_id'] for s in items if s['user_id']}
+        scores = [s['score'] for s in items]
+        times = [s['time_taken'] for s in items]
+        returning = sum(
+            1 for u in users_active
+            if any(s['user_id'] == u and s['ts'] < start_ts for s in norm_sessions)
+        )
+        return {
+            'active': len(users_active),
+            'attempts': len(items),
+            'avg_score': round(sum(scores) / len(scores), 1) if scores else 0,
+            'avg_time': round(sum(times) / len(times), 1) if times else 0,
+            'retention': round((returning / len(users_active)) * 100, 1) if users_active else 0,
+        }
+
+    c, p = period_stats(cur), period_stats(prev)
+    overview = {
+        'total_users': len(verified),
+        'total_registered': len(users),
+        'unverified_pending': len(users) - len(verified),
+        'active_users': c['active'],
+        'test_attempts': c['attempts'],
+        'avg_score': c['avg_score'],
+        'avg_time_sec': c['avg_time'],
+        'retention_pct': c['retention'],
+        'deltas': {
+            'active_users': _pct_change(c['active'], p['active']),
+            'test_attempts': _pct_change(c['attempts'], p['attempts']),
+            'avg_score': round(c['avg_score'] - p['avg_score'], 1) if p['attempts'] else None,
+            'avg_time_sec': round(c['avg_time'] - p['avg_time'], 1) if p['attempts'] else None,
+            'retention_pct': round(c['retention'] - p['retention'], 1) if p['active'] else None,
+        },
+    }
+
+    # --- Growth: daily buckets (fill zeros) ---
+    growth = []
+    active_by_day: Dict[str, set] = {}
+    attempts_by_day: Dict[str, int] = {}
+    new_by_day: Dict[str, int] = {}
+    for s in cur:
+        day = datetime.fromtimestamp(s['ts'], tz=timezone.utc).date().isoformat()
+        active_by_day.setdefault(day, set()).add(s['user_id'])
+        attempts_by_day[day] = attempts_by_day.get(day, 0) + 1
+    for u in users:
+        cts = _to_epoch(u.get('created_at'))
+        if cts >= start_ts:
+            day = datetime.fromtimestamp(cts, tz=timezone.utc).date().isoformat()
+            new_by_day[day] = new_by_day.get(day, 0) + 1
+        login_ts = _to_epoch(u.get('last_login'))
+        if login_ts >= start_ts:
+            day = datetime.fromtimestamp(login_ts, tz=timezone.utc).date().isoformat()
+            active_by_day.setdefault(day, set())
+    for i in range(range_days):
+        day = (now - timedelta(days=range_days - 1 - i)).date().isoformat()
+        growth.append({
+            'date': day,
+            'new_users': new_by_day.get(day, 0),
+            'active_users': len(active_by_day.get(day, set())),
+            'attempts': attempts_by_day.get(day, 0),
+        })
+
+    # --- Exam performance per paper ---
+    def paper_stats(items: list) -> Dict[str, Dict[str, Any]]:
+        agg: Dict[str, Dict[str, Any]] = {}
+        for s in items:
+            a = agg.setdefault(s['paper_name'], {'scores': [], 'times': []})
+            a['scores'].append(s['score'])
+            a['times'].append(s['time_taken'])
+        return agg
+
+    cur_papers, prev_papers = paper_stats(cur), paper_stats(prev)
+    exam_performance = []
+    for paper in sorted(cur_papers):
+        scores = cur_papers[paper]['scores']
+        times = cur_papers[paper]['times']
+        avg = sum(scores) / len(scores)
+        prev_avg = (sum(prev_papers[paper]['scores']) / len(prev_papers[paper]['scores'])
+                    if paper in prev_papers and prev_papers[paper]['scores'] else None)
+        exam_performance.append({
+            'paper_name': paper,
+            'exam': _paper_exam(paper),
+            'attempts': len(scores),
+            'avg_score': round(avg, 1),
+            'avg_time_sec': round(sum(times) / len(times), 1) if times else 0,
+            'delta_score': round(avg - prev_avg, 1) if prev_avg is not None else None,
+        })
+    exam_performance.sort(key=lambda x: (-x['attempts'], -x['avg_score']))
+
+    # --- Subject performance: topic accuracy from embedded questions ---
+    topic_correct: Dict[str, int] = {}
+    topic_total: Dict[str, int] = {}
+    for s in cur:
+        answers = s['user_answers']
+        if not isinstance(answers, dict) or not answers:
+            continue
+        for q in s['questions']:
+            if not isinstance(q, dict):
+                continue
+            topic = q.get('topic', 'General') or 'General'
+            qid = q.get('question_id', '')
+            ua = answers.get(qid)
+            if ua is None or ua == '':
+                continue
+            topic_total[topic] = topic_total.get(topic, 0) + 1
+            correct = q.get('correct_answer', '')
+            qtype = q.get('question_type', 'single_choice')
+            if qtype == 'multi_select' and q.get('correct_answers'):
+                expected = set(q.get('correct_answers'))
+                got = set(ua) if isinstance(ua, list) else {t.strip() for t in str(ua).split(',')}
+                is_corr = got == expected
+            else:
+                is_corr = ua == correct
+            if is_corr:
+                topic_correct[topic] = topic_correct.get(topic, 0) + 1
+    subject_performance = [
+        {'topic': t, 'attempts': n,
+         'accuracy': round((topic_correct.get(t, 0) / n) * 100, 1)}
+        for t, n in topic_total.items() if n >= 2
+    ]
+    subject_performance.sort(key=lambda x: (-x['attempts'], x['accuracy']))
+    subject_performance = subject_performance[:12]
+
+    # --- Actionable insights (rule-based) ---
+    insights = []
+    drops = [e for e in exam_performance
+             if e['delta_score'] is not None and e['delta_score'] <= -3 and e['attempts'] >= 2]
+    if drops:
+        worst = min(drops, key=lambda e: e['delta_score'])
+        insights.append({'level': 'warn',
+                         'text': f"{worst['paper_name']} avg score dropped {abs(worst['delta_score'])} pts vs prior period."})
+    # Inactive 14+ days (verified users, latest session or login)
+    latest_activity: Dict[str, int] = {}
+    for s in norm_sessions:
+        if s['user_id']:
+            latest_activity[s['user_id']] = max(latest_activity.get(s['user_id'], 0), s['ts'])
+    for u in verified:
+        uid = u.get('user_id', '')
+        login_ts = _to_epoch(u.get('last_login'))
+        if login_ts > latest_activity.get(uid, 0):
+            latest_activity[uid] = login_ts
+    inactive = sum(1 for uid in (u.get('user_id', '') for u in verified)
+                   if now_ts - latest_activity.get(uid, 0) >= 14 * 86400)
+    if inactive:
+        insights.append({'level': 'warn',
+                         'text': f"{inactive} users haven't attempted a test in 14+ days."})
+    gains = [e for e in exam_performance
+             if e['delta_score'] is not None and e['delta_score'] >= 3 and e['attempts'] >= 2]
+    if gains:
+        best = max(gains, key=lambda e: e['delta_score'])
+        insights.append({'level': 'good',
+                         'text': f"{best['paper_name']} avg score up {best['delta_score']} pts vs prior period."})
+    attempts_per_user: Dict[str, int] = {}
+    for s in cur:
+        if s['user_id']:
+            attempts_per_user[s['user_id']] = attempts_per_user.get(s['user_id'], 0) + 1
+    power = sum(1 for n in attempts_per_user.values() if n >= 5)
+    if power:
+        insights.append({'level': 'good',
+                         'text': f"{power} users completed 5+ tests in the last {range_days} days."})
+    if not insights:
+        insights.append({'level': 'info', 'text': 'Not enough data for insights yet.'})
+
+    # --- Recent activity + top users ---
+    try:
+        uids = list({s['user_id'] for s in cur if s['user_id']})
+        names: Dict[str, Dict[str, str]] = {}
+        for i in range(0, len(uids), 100):
+            batch = [{'user_id': uid} for uid in uids[i:i + 100]]
+            batch_resp = dynamodb.meta.client.batch_get_item(
+                RequestItems={users_table.name: {
+                    'Keys': batch,
+                    'ProjectionExpression': 'user_id, full_name, email'}})
+            for item in batch_resp.get('Responses', {}).get(users_table.name, []):
+                names[item['user_id']] = {
+                    'name': item.get('full_name', 'Anonymous'),
+                    'email': item.get('email', '')}
+    except Exception as e:
+        print(f"Error batch-fetching user names for analytics: {e}")
+        names = {}
+
+    latest = sorted(cur, key=lambda s: s['ts'], reverse=True)[:10]
+    recent_activity = [{
+        'user_id': s['user_id'],
+        'name': names.get(s['user_id'], {}).get('name', 'Anonymous'),
+        'email': names.get(s['user_id'], {}).get('email', ''),
+        'paper_name': s['paper_name'],
+        'exam': s['exam'],
+        'score': s['score'],
+        'attempts': attempts_per_user.get(s['user_id'], 0),
+        'last_active': datetime.fromtimestamp(s['ts'], tz=timezone.utc).isoformat(),
+    } for s in latest]
+
+    user_scores: Dict[str, list] = {}
+    for s in cur:
+        if s['user_id']:
+            user_scores.setdefault(s['user_id'], []).append(s['score'])
+    ranked = sorted(user_scores.items(), key=lambda kv: (-len(kv[1]), -(sum(kv[1]) / len(kv[1]))))[:10]
+    top_users = [{
+        'user_id': uid,
+        'full_name': names.get(uid, {}).get('name', 'Anonymous'),
+        'email': names.get(uid, {}).get('email', ''),
+        'completion_count': len(scores),
+        'average_score': round(sum(scores) / len(scores), 1),
+    } for uid, scores in ranked]
+
+    # --- Phase 2: funnel, cohorts, difficult questions, drop-off ---
+    # Per-user completed timestamps (all time, exam-filtered) + started sets
+    # from the any-status scan (started = any session incl. ready/in_progress).
+    completed_by_user: Dict[str, list] = {}
+    for s in norm_sessions:
+        if s['user_id']:
+            completed_by_user.setdefault(s['user_id'], []).append(s['ts'])
+    started_users = {
+        (a.get('user_id', ''))
+        for a in all_sessions
+        if a.get('user_id')
+        and (exam == 'ALL' or (a.get('paper_name', '') or '') in EXAM_PAPERS.get(exam, set()))
+    }
+    verified_uids = [u.get('user_id', '') for u in verified if u.get('user_id')]
+
+    def _stage_count(pred) -> int:
+        return sum(1 for uid in verified_uids if pred(uid))
+
+    active_30d_cutoff = now_ts - 30 * 86400
+    funnel_counts = [
+        ('registered', 'Registered', len(verified_uids)),
+        ('started', 'Started First Test',
+         _stage_count(lambda uid: uid in started_users)),
+        ('completed_first', 'Completed First Test',
+         _stage_count(lambda uid: len(completed_by_user.get(uid, [])) >= 1)),
+        ('second_test', 'Attempted 2nd Test',
+         _stage_count(lambda uid: len(completed_by_user.get(uid, [])) >= 2)),
+        ('five_plus', 'Attempted 5+ Tests',
+         _stage_count(lambda uid: len(completed_by_user.get(uid, [])) >= 5)),
+        ('active', 'Active Learners (30d)',
+         _stage_count(lambda uid: any(t >= active_30d_cutoff
+                                      for t in completed_by_user.get(uid, [])))),
+    ]
+    funnel = []
+    for i, (stage, label, count) in enumerate(funnel_counts):
+        prev_count = funnel_counts[i - 1][2] if i > 0 else count
+        funnel.append({
+            'stage': stage, 'label': label, 'count': count,
+            'conversion': round((count / prev_count) * 100, 1) if prev_count else 0,
+        })
+
+    # --- Cohorts: signup week -> completed-test activity in weeks 0..3 ---
+    from collections import defaultdict as _dd
+    cohort_members: Dict[str, list] = _dd(list)  # monday -> [(uid, created_ts)]
+    for u in verified:
+        cts = _to_epoch(u.get('created_at'))
+        if not cts or not u.get('user_id'):
+            continue
+        monday = (datetime.fromtimestamp(cts, tz=timezone.utc)
+                  - timedelta(days=datetime.fromtimestamp(cts, tz=timezone.utc).weekday()))
+        cohort_members[monday.date().isoformat()].append((u['user_id'], cts))
+    cohorts = []
+    for monday in sorted(cohort_members, reverse=True)[:6]:
+        members = cohort_members[monday]
+        size = len(members)
+        weeks = []
+        for w in range(4):
+            # window relative to each member's own signup, aggregated:
+            # only members whose window has fully elapsed count toward denom.
+            denom = sum(1 for _, cts in members if cts + (w + 1) * 7 * 86400 <= now_ts)
+            if not denom:
+                weeks.append(None)
+                continue
+            hits = sum(
+                1 for uid, cts in members
+                if cts + (w + 1) * 7 * 86400 <= now_ts
+                and any(cts + w * 7 * 86400 <= t < cts + (w + 1) * 7 * 86400
+                        for t in completed_by_user.get(uid, []))
+            )
+            weeks.append(round((hits / denom) * 100, 1))
+        cohorts.append({'cohort': monday, 'size': size,
+                        'w0': weeks[0], 'w1': weeks[1], 'w2': weeks[2], 'w3': weeks[3]})
+
+    # --- Difficult questions: per-question accuracy in range ---
+    qstats: Dict[str, Dict[str, Any]] = {}
+    for s in cur:
+        answers = s['user_answers']
+        if not isinstance(answers, dict) or not answers:
+            continue
+        for q in s['questions']:
+            if not isinstance(q, dict):
+                continue
+            qid = q.get('question_id', '')
+            if not qid:
+                continue
+            e = qstats.setdefault(qid, {
+                'question_id': qid,
+                'paper_name': s['paper_name'],
+                'topic': q.get('topic', 'General') or 'General',
+                'question_text': str(q.get('question_text', ''))[:120],
+                'attempts': 0, 'correct': 0, 'skips': 0,
+                '_correct_answer': q.get('correct_answer', ''),
+                '_correct_answers': q.get('correct_answers'),
+                '_qtype': q.get('question_type', 'single_choice'),
+            })
+            ua = answers.get(qid)
+            if ua is None or ua == '':
+                e['skips'] += 1
+                continue
+            e['attempts'] += 1
+            if e['_qtype'] == 'multi_select' and e['_correct_answers']:
+                expected = set(e['_correct_answers'])
+                got = set(ua) if isinstance(ua, list) else {t.strip() for t in str(ua).split(',')}
+                if got == expected:
+                    e['correct'] += 1
+            elif ua == e['_correct_answer']:
+                e['correct'] += 1
+    difficult_questions = []
+    for e in qstats.values():
+        if e['attempts'] < 2:
+            continue
+        acc = round((e['correct'] / e['attempts']) * 100, 1)
+        difficult_questions.append({
+            'question_id': e['question_id'],
+            'paper_name': e['paper_name'],
+            'topic': e['topic'],
+            'question_text': e['question_text'],
+            'attempts': e['attempts'],
+            'accuracy': acc,
+            'skip_count': e['skips'],
+            'suspect': acc < 25 and e['attempts'] >= 5,
+        })
+    difficult_questions.sort(key=lambda x: (x['accuracy'], -x['attempts']))
+    difficult_questions = difficult_questions[:15]
+
+    # --- Drop-off analysis ---
+    one_and_done = _stage_count(lambda uid: len(completed_by_user.get(uid, [])) == 1)
+    abandoned = 0
+    for a in all_sessions:
+        status = a.get('status', '')
+        if status == 'expired':
+            abandoned += 1
+        elif status in ('ready', 'in_progress'):
+            cts = _to_epoch(a.get('created_at'))
+            if cts and now_ts - cts > 24 * 3600 and not _to_epoch(a.get('submitted_at')):
+                abandoned += 1
+    dropoff = [
+        {'label': 'Signed up but never verified',
+         'count': len(users) - len(verified),
+         'detail': 'Unverified accounts pending email confirmation (auto-purge via TTL).'},
+        {'label': 'Started a test but never completed one',
+         'count': max(0, funnel[1]['count'] - funnel[2]['count']),
+         'detail': 'Users with a session but zero completions — onboarding friction.'},
+        {'label': 'Completed exactly one test, never returned',
+         'count': one_and_done,
+         'detail': 'One-and-done users; prime re-engagement targets.'},
+        {'label': 'Abandoned sessions (expired/stale)',
+         'count': abandoned,
+         'detail': 'Sessions expired by timer or stale >24h without submit.'},
+        {'label': 'Inactive 14+ days',
+         'count': inactive,
+         'detail': 'Verified users with no test activity in 14+ days (churn risk).'},
+    ]
+
+    return {
+        'range_days': range_days,
+        'exam': exam,
+        'overview': overview,
+        'growth': growth,
+        'exam_performance': exam_performance,
+        'subject_performance': subject_performance,
+        'insights': insights,
+        'recent_activity': recent_activity,
+        'top_users': top_users,
+        'funnel': funnel,
+        'cohorts': cohorts,
+        'difficult_questions': difficult_questions,
+        'dropoff': dropoff,
+    }
+
+
 def success_response(status_code: int, data: Dict[str, Any]) -> Dict[str, Any]:
     """Return success response."""
     return {
@@ -964,7 +1517,20 @@ def handler(event, context):
             return error_response(401, 'User ID required')
         
         # Route to appropriate handler
-        if (path == '/dashboard/performance' or path == '/dashboard') and http_method == 'GET':
+        if path == '/dashboard/analytics' and http_method == 'GET':
+            query_params = event.get('queryStringParameters', {}) or {}
+            admin_err = _require_admin_response(user_id)
+            if admin_err:
+                return admin_err
+            try:
+                range_days = int(query_params.get('range', '30'))
+            except (TypeError, ValueError):
+                range_days = 30
+            if range_days not in (7, 30, 90):
+                range_days = 30
+            exam_filter = (query_params.get('exam') or 'ALL').upper()
+            return success_response(200, get_admin_analytics(range_days, exam_filter))
+        elif (path == '/dashboard/performance' or path == '/dashboard') and http_method == 'GET':
             dashboard_data = get_dashboard_data(user_id)
             return success_response(200, dashboard_data)
         elif path == '/dashboard/leaderboard' and http_method == 'GET':
