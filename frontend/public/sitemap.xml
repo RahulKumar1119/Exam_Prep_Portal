@@ -169,18 +169,6 @@
     <lastmod>2026-07-01</lastmod>
   </url>
   <url>
-    <loc>https://mockmaster.fun/login/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-    <lastmod>2026-05-23</lastmod>
-  </url>
-  <url>
-    <loc>https://mockmaster.fun/register/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-    <lastmod>2026-05-23</lastmod>
-  </url>
-  <url>
     <loc>https://mockmaster.fun/privacy-policy/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
@@ -233,5 +221,101 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <lastmod>2026-09-06</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/exams/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/study-topics/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/ai-300-practice-test/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/capm-practice-test/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/ppb/slr-explained/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/ppb/kyc-norms/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/ppb/negotiable-instruments-act/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/ppb/basel-norms/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/ppb/deposit-insurance-dicgc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/ppb/repo-rate-explained/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/afm/break-even-analysis/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/afm/depreciation-methods/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/afm/ratio-analysis/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/rbwm/mutual-funds-guide/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/ppb/upi-payments-system/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://mockmaster.fun/jaiib/rbwm/home-loan-guide/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-09-09</lastmod>
   </url>
 </urlset>

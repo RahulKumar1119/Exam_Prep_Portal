@@ -4,11 +4,15 @@ Allow: /
 # Sitemap
 Sitemap: https://mockmaster.fun/sitemap.xml
 
-# Disallow admin/protected routes from crawling
+# Disallow admin/protected/auth routes from crawling
 Disallow: /dashboard
 Disallow: /practice
 Disallow: /previous-attempts
 Disallow: /home
+Disallow: /login
+Disallow: /register
+Disallow: /verify-email
+Disallow: /password-reset
 
 # Allow all public pages
 Allow: /blog
@@ -21,5 +25,7 @@ Allow: /faq
 Allow: /disclaimer
 Allow: /free-quiz
 Allow: /free-quiz/
-Allow: /login
-Allow: /register
+Allow: /exams
+Allow: /study-topics
+Allow: /ai-300-practice-test
+Allow: /capm-practice-test

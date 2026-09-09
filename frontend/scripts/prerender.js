@@ -14,6 +14,7 @@ const buildDir = path.resolve(__dirname, '..', 'dist');
 const PAGES = [
   '/',
   '/practice-tests',
+  '/exams',
   '/ai-300-practice-test',
   '/capm-practice-test',  '/study-topics',
   '/practice-tests/ie-ifs',
@@ -86,14 +87,22 @@ const PAGES = [
  * its original position later — so we keep the FIRST match (Helmet's) and drop
  * the rest.
  */
-function dedupeHeadTag(html, regex) {
+function dedupeHeadTag(html, regex, keepLast = false) {
   const matches = html.match(regex);
   if (!matches || matches.length <= 1) return html;
-  const keep = matches[0];
-  let seen = false;
-  return html.replace(regex, (m) => {
-    if (!seen) { seen = true; return keep; }
-    return '';
+  if (!keepLast) {
+    const keep = matches[0];
+    let seen = false;
+    return html.replace(regex, (m) => {
+      if (!seen) { seen = true; return keep; }
+      return '';
+    });
+  }
+  const keep = matches[matches.length - 1];
+  let skipped = 0;
+  return html.replace(regex, () => {
+    skipped++;
+    return skipped === matches.length ? keep : '';
   });
 }
 
@@ -102,12 +111,22 @@ async function prerender() {
   const handler = require('serve-handler');
   const http = require('http');
 
-  // Start a local server to serve the build
+  // Start a local server to serve the build.
+  // IMPORTANT: the '/' crawl overwrites dist/index.html with landing-rendered
+  // HTML (including its <head> SEO tags). If later routes fall back to that
+  // file, React hydrates on top of the landing's head tags and every page
+  // inherits the homepage canonical/og:url. So navigation requests ALWAYS get
+  // the pristine build template captured here, before any crawling happens.
+  const pristineTemplate = fs.readFileSync(path.join(buildDir, 'index.html'));
   const server = http.createServer((req, res) => {
-    return handler(req, res, {
-      public: buildDir,
-      rewrites: [{ source: '**', destination: '/index.html' }],
-    });
+    const urlPath = (req.url || '/').split('?')[0];
+    const isAsset = /\.[a-z0-9]+$/i.test(urlPath) && !urlPath.endsWith('.html');
+    if (!isAsset) {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(pristineTemplate);
+      return;
+    }
+    return handler(req, res, { public: buildDir });
   });
 
   await new Promise((resolve) => server.listen(45678, resolve));
@@ -161,6 +180,11 @@ async function prerender() {
     html = dedupeHeadTag(html, /<link[^>]*rel="canonical"[^>]*>/gi);
     html = dedupeHeadTag(html, /<meta[^>]*property="og:url"[^>]*>/gi);
     html = dedupeHeadTag(html, /<meta[^>]*property="og:title"[^>]*>/gi);
+    // Descriptions: the static template ships a generic one and Helmet
+    // appends the page-specific one after it — keep the LAST (page-specific).
+    html = dedupeHeadTag(html, /<meta[^>]*name="description"[^>]*>/gi, true);
+    html = dedupeHeadTag(html, /<meta[^>]*property="og:description"[^>]*>/gi, true);
+    html = dedupeHeadTag(html, /<meta[^>]*name="twitter:description"[^>]*>/gi, true);
 
     // Determine output path
     const outputDir = path.join(buildDir, route === '/' ? '' : route);
