@@ -1,32 +1,41 @@
 """
 Send verification reminder emails to unverified users.
-Generates fresh JWT tokens and sends via SES.
+Pulls the live unverified list from DynamoDB, generates fresh JWT tokens,
+sends via SES, and refreshes the auto-purge TTL (mirrors resend-verification).
 """
 import boto3
 import jwt
 from datetime import datetime, timedelta
 
-# Config
-JWT_SECRET = 'your-secret-key'  # Must match your Lambda's JWT_SECRET env var
+# Config — must match backend/auth/lambda_function.py defaults
+JWT_SECRET = 'your-secret-key'  # Lambda has no JWT_SECRET env var, uses default
 JWT_ALGORITHM = 'HS256'
 FRONTEND_URL = 'https://mockmaster.fun'
 SENDER_EMAIL = 'noreply@mockmaster.fun'
 REGION = 'ap-south-1'
+USERS_TABLE = 'jaiib-users'
+UNVERIFIED_TTL_DAYS = 7
 
 ses_client = boto3.client('ses', region_name=REGION)
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
+users_table = dynamodb.Table(USERS_TABLE)
 
-# Users to remind
-USERS = [
-    {'user_id': '74e47991-3d45-404c-ab8b-a57d51e27db9', 'email': 'ymonal463@gmail.com', 'name': 'Monal'},
-    {'user_id': '293ee784-26ab-4cea-b76c-61488c2f1d31', 'email': 'vijay.ingle281285@gmail.com', 'name': 'Vijay'},
-    {'user_id': '4ef86337-92bf-4f8d-99c8-7613b5634982', 'email': 'deepanjali6847@gmail.com', 'name': 'Deepanjali'},
-    {'user_id': 'df112411-c144-4071-a52e-554f4994777c', 'email': 'vijayalakshmissh2023@gmail.com', 'name': 'Vijayalakshmi'},
-    {'user_id': '36158703-c041-4ac7-a471-875ad28beee1', 'email': 'papupachani22@gmail.com', 'name': 'Monjit'},
-    {'user_id': 'ee4d3223-1472-448b-a440-e461d4e28dde', 'email': 'susanth31@gmail.com', 'name': 'Susanth'},
-    {'user_id': 'f7fba9da-b576-4bc6-a334-75684bab50f8', 'email': 'vaibhav007pintu@gmail.com', 'name': 'Yatendra'},
-    {'user_id': '1f655495-1d2c-4272-9bfe-17da36f48ab8', 'email': 'meowsnow456@gmail.com', 'name': 'LOGaN'},
-    {'user_id': '89ea5990-5688-41e8-8e1a-dc7e38427b8b', 'email' : 'dasj59050@gmail.com', 'name': 'Jayanta'},
-]
+
+def fetch_unverified_users():
+    """Scan for users with email_verified=false. Paginates fully."""
+    users = []
+    kwargs = {
+        'FilterExpression': 'email_verified = :v',
+        'ExpressionAttributeValues': {':v': False},
+        'ProjectionExpression': 'user_id, email, full_name',
+    }
+    while True:
+        resp = users_table.scan(**kwargs)
+        users.extend(resp.get('Items', []))
+        if 'LastEvaluatedKey' not in resp:
+            break
+        kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+    return users
 
 
 def generate_verification_token(user_id, email):
@@ -40,7 +49,18 @@ def generate_verification_token(user_id, email):
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 
+def refresh_ttl(user_id):
+    """Extend the auto-purge window while the user is actively verifying."""
+    new_ttl = int((datetime.utcnow() + timedelta(days=UNVERIFIED_TTL_DAYS)).timestamp())
+    users_table.update_item(
+        Key={'user_id': user_id},
+        UpdateExpression='SET expires_at = :ttl',
+        ExpressionAttributeValues={':ttl': new_ttl},
+    )
+
+
 def send_reminder(user):
+    name = user.get('full_name', 'there')
     token = generate_verification_token(user['user_id'], user['email'])
     verification_link = f"{FRONTEND_URL}/verify-email?token={token}"
 
@@ -58,7 +78,7 @@ def send_reminder(user):
                 <div style="font-size: 24px; font-weight: bold; color: #4F46E5;">MockMaster</div>
                 <p style="color: #666;">JAIIB & CAIIB Exam Prep</p>
             </div>
-            <h2 style="color: #1a1a1a;">Hi {user['name']}, please verify your email 👋</h2>
+            <h2 style="color: #1a1a1a;">Hi {name}, please verify your email 👋</h2>
             <p>You signed up for MockMaster but haven't verified your email yet. Verify now to unlock:</p>
             <ul>
                 <li>✅ 3000+ JAIIB practice questions</li>
@@ -81,7 +101,7 @@ def send_reminder(user):
     </html>
     """
 
-    text_body = f"""Hi {user['name']},
+    text_body = f"""Hi {name},
 
 You signed up for MockMaster but haven't verified your email yet.
 
@@ -96,7 +116,7 @@ This link expires in 72 hours.
         Source=f"MockMaster <{SENDER_EMAIL}>",
         Destination={'ToAddresses': [user['email']]},
         Message={
-            'Subject': {'Data': f"{user['name']}, verify your email to start JAIIB practice 📚"},
+            'Subject': {'Data': f"{name}, verify your email to start JAIIB practice 📚"},
             'Body': {
                 'Html': {'Data': html_body},
                 'Text': {'Data': text_body},
@@ -107,10 +127,16 @@ This link expires in 72 hours.
 
 
 if __name__ == '__main__':
-    for user in USERS:
+    users = fetch_unverified_users()
+    print(f"Found {len(users)} unverified users")
+    sent, failed = 0, 0
+    for user in users:
         try:
             resp = send_reminder(user)
-            msg_id = resp['MessageId']
-            print(f"✅ Sent to {user['email']} (MessageId: {msg_id})")
+            refresh_ttl(user['user_id'])
+            sent += 1
+            print(f"✅ Sent to {user['email']} (MessageId: {resp['MessageId']})")
         except Exception as e:
-            print(f"❌ Failed for {user['email']}: {e}")
+            failed += 1
+            print(f"❌ Failed for {user.get('email')}: {e}")
+    print(f"\nDone: {sent} sent, {failed} failed")
