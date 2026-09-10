@@ -37,6 +37,7 @@ VERIFICATION_TOKEN_EXPIRY_HOURS = 24
 # Unverified signups auto-purge after this many days (DynamoDB TTL on expires_at)
 UNVERIFIED_TTL_DAYS = int(os.environ.get('UNVERIFIED_TTL_DAYS', '7'))
 SENDER_EMAIL = os.environ.get('SES_SENDER_EMAIL', 'noreply@mockmaster.fun')
+SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@mockmaster.fun')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://mockmaster.fun')
 
 # DynamoDB table
@@ -254,6 +255,33 @@ If you didn't create an account, you can safely ignore this email.
         return False
 
 
+def send_admin_signup_alert(email: str, full_name: str, exam_preference: str) -> bool:
+    """Notify support of a new signup. Best-effort: never blocks registration."""
+    try:
+        now = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
+        ses_client.send_email(
+            Source=f"MockMaster <{SENDER_EMAIL}>",
+            Destination={'ToAddresses': [SUPPORT_EMAIL]},
+            Message={
+                'Subject': {'Data': f'New signup: {full_name} ({email})'},
+                'Body': {
+                    'Text': {'Data': (
+                        f"New user registered on MockMaster.\n\n"
+                        f"Name: {full_name}\n"
+                        f"Email: {email}\n"
+                        f"Exam: {exam_preference or 'JAIIB'}\n"
+                        f"Time: {now}\n"
+                    )}
+                }
+            }
+        )
+        print(f"Admin signup alert sent for {email}")
+        return True
+    except ClientError as e:
+        print(f"Error sending admin signup alert (non-fatal): {e}")
+        return False
+
+
 def send_password_reset_email(email: str, user_id: str, token: str) -> bool:
     """Send password reset link via SES."""
     reset_link = f"{FRONTEND_URL}/password-reset?token={token}"
@@ -379,6 +407,12 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
         
         # Send verification email (skipped in dev mode)
         email_sent = send_verification_email(email, user_id, verification_token)
+
+        # Notify support of the new signup (best-effort, never fails registration)
+        try:
+            send_admin_signup_alert(email, full_name, exam_preference)
+        except Exception as alert_err:
+            print(f"Warning: admin signup alert failed (non-fatal): {alert_err}")
         
         return success_response(201, {
             'user_id': user_id,
