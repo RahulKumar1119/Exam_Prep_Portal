@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
+import ExamOrgLogo from '../components/ExamOrgLogo';
 
 const CAPMPracticeTestPage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const CAPMPracticeTestPage: React.FC = () => {
       <section className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-800 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            <ExamOrgLogo exam="CAPM" size={18} className="!rounded-md" />
             <span>PMI Certification</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, MotionConfig } from 'motion/react';
 import SEO from '../components/SEO';
+import ExamOrgLogo from '../components/ExamOrgLogo';
 
 // Shared scroll-reveal: fade up once when entering the viewport.
 const reveal = {
@@ -106,9 +107,7 @@ const LandingPage: React.FC = () => {
               className="bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">🏦</span>
-                </div>
+                <ExamOrgLogo exam="JAIIB" size={48} />
                 <div>
                   <h3 className="text-xl font-bold group-hover:text-indigo-400 transition">JAIIB</h3>
                   <p className="text-xs text-gray-500">Indian Institute of Banking & Finance</p>
@@ -137,9 +136,7 @@ const LandingPage: React.FC = () => {
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">🎓</span>
-                </div>
+                <ExamOrgLogo exam="CAIIB" size={48} />
                 <div>
                   <h3 className="text-xl font-bold group-hover:text-emerald-400 transition">CAIIB</h3>
                   <p className="text-xs text-gray-500">Certified Associate (Advanced)</p>
@@ -168,9 +165,7 @@ const LandingPage: React.FC = () => {
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">🤖</span>
-                </div>
+                <ExamOrgLogo exam="AI-300" size={48} />
                 <div>
                   <h3 className="text-xl font-bold group-hover:text-purple-400 transition">AI-300</h3>
                   <p className="text-xs text-gray-500">Microsoft Certification</p>
@@ -199,9 +194,7 @@ const LandingPage: React.FC = () => {
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                  <span className="text-2xl">📋</span>
-                </div>
+                <ExamOrgLogo exam="CAPM" size={48} />
                 <div>
                   <h3 className="text-xl font-bold group-hover:text-orange-400 transition">CAPM</h3>
                   <p className="text-xs text-gray-500">PMI Certification</p>

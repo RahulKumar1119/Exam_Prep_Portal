@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { validateEmail } from '../utils/validateEmail';
+import ExamOrgLogo from '../components/ExamOrgLogo';
 
 interface FormErrors {
   exam?: string;
@@ -189,7 +190,7 @@ const RegisterPage: React.FC = () => {
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <span className="text-lg">🏦</span>
+                  <ExamOrgLogo exam="JAIIB" size={28} />
                   <p className="font-bold text-white text-sm mt-1">JAIIB</p>
                   <p className="text-xs text-gray-400">Banking (Junior)</p>
                 </button>
@@ -202,7 +203,7 @@ const RegisterPage: React.FC = () => {
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <span className="text-lg">🎓</span>
+                  <ExamOrgLogo exam="CAIIB" size={28} />
                   <p className="font-bold text-white text-sm mt-1">CAIIB</p>
                   <p className="text-xs text-gray-400">Banking (Senior)</p>
                 </button>
@@ -215,7 +216,7 @@ const RegisterPage: React.FC = () => {
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <span className="text-lg">🤖</span>
+                  <ExamOrgLogo exam="AI-300" size={28} />
                   <p className="font-bold text-white text-sm mt-1">AI-300</p>
                   <p className="text-xs text-gray-400">Microsoft ML</p>
                 </button>
@@ -228,7 +229,7 @@ const RegisterPage: React.FC = () => {
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <span className="text-lg">📋</span>
+                  <ExamOrgLogo exam="CAPM" size={28} />
                   <p className="font-bold text-white text-sm mt-1">CAPM</p>
                   <p className="text-xs text-gray-400">PMI Project Mgmt</p>
                 </button>

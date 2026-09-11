@@ -1,5 +1,6 @@
 import React from 'react';
 import { AVAILABLE_EXAMS, ExamId } from '../hooks/useExamPreference';
+import ExamOrgLogo from './ExamOrgLogo';
 
 interface ExamSelectorProps {
   onSelect: (exam: ExamId) => void;
@@ -29,7 +30,7 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
               <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
                 exam.id === 'JAIIB' ? 'bg-blue-100' : exam.id === 'CAIIB' ? 'bg-emerald-100' : exam.id === 'CAPM' ? 'bg-orange-100' : 'bg-purple-100'
               }`}>
-                <span className="text-2xl">{exam.id === 'JAIIB' ? '🏦' : exam.id === 'CAIIB' ? '🎓' : exam.id === 'CAPM' ? '📋' : '🤖'}</span>
+                <ExamOrgLogo exam={exam.id} size={32} className="!rounded-lg" />
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-lg group-hover:text-indigo-600 transition">

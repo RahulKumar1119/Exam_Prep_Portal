@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
+import ExamOrgLogo from '../components/ExamOrgLogo';
 
 const AI300PracticeTestPage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const AI300PracticeTestPage: React.FC = () => {
       <section className="bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 py-12 sm:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            <ExamOrgLogo exam="AI-300" size={18} className="!rounded-md" />
             <span>Microsoft Certification</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">

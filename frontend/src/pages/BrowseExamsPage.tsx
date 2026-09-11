@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
+import ExamOrgLogo, { orgForProvider } from '../components/ExamOrgLogo';
 import DevToArticles from '../components/DevToArticles';
 
 interface ExamCard {
@@ -243,7 +244,7 @@ const BrowseExamsPage: React.FC = () => {
                   {/* Provider + Status */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">{exam.providerIcon}</span>
+                      <ExamOrgLogo org={orgForProvider(exam.provider)} size={24} />
                       <span className="text-xs text-gray-500 font-medium">{exam.provider}</span>
                     </div>
                     {exam.status === 'live' ? (
