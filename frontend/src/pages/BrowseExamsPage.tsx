@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
-import ExamOrgLogo, { orgForProvider } from '../components/ExamOrgLogo';
+import ExamOrgLogo, { orgForProvider, ExamOrg } from '../components/ExamOrgLogo';
 import DevToArticles from '../components/DevToArticles';
 
 interface ExamCard {
@@ -10,6 +10,7 @@ interface ExamCard {
   fullName: string;
   provider: string;
   providerIcon: string;
+  org?: ExamOrg;
   category: string;
   questions: number;
   sets: number;
@@ -146,9 +147,24 @@ const EXAMS: ExamCard[] = [
     color: 'from-emerald-500 to-teal-700',
     link: '/practice-tests/abm',
   },
+  {
+    id: 'quant',
+    name: 'QUANT',
+    fullName: 'Quantitative Aptitude — Bank, SSC, CAT, UPSC, Railways & all Govt exams',
+    provider: 'All Competitive Exams',
+    providerIcon: '%',
+    org: 'QUANT',
+    category: 'Aptitude',
+    questions: 30,
+    sets: 1,
+    difficulty: 'Moderate',
+    status: 'live',
+    color: 'from-rose-500 to-pink-700',
+    link: '/quant-practice-test',
+  },
 ];
 
-const CATEGORIES = ['All', 'Banking', 'Cloud & AI', 'Project Management'];
+const CATEGORIES = ['All', 'Banking', 'Cloud & AI', 'Project Management', 'Aptitude'];
 
 const BrowseExamsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -167,7 +183,7 @@ const BrowseExamsPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="Browse Exams — Free Practice Tests | MockMaster"
-        description="Browse all available certification practice tests. JAIIB banking exams, Microsoft AI-300, PMI CAPM, AZ-400, and more. Free practice with AI explanations."
+        description="Browse all available practice tests. JAIIB & CAIIB banking exams, Microsoft AI-300, PMI CAPM, Quantitative Aptitude for SSC/CAT/UPSC/Bank exams, and more. Free practice with AI explanations."
         canonical="https://mockmaster.fun/exams"
         keywords="free certification practice test, JAIIB practice, AI-300 practice, CAPM practice test, PMI CAPM, AZ-400 practice, Microsoft certification free"
       />
@@ -244,7 +260,7 @@ const BrowseExamsPage: React.FC = () => {
                   {/* Provider + Status */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <ExamOrgLogo org={orgForProvider(exam.provider)} size={24} />
+                      <ExamOrgLogo org={exam.org ?? orgForProvider(exam.provider)} size={24} />
                       <span className="text-xs text-gray-500 font-medium">{exam.provider}</span>
                     </div>
                     {exam.status === 'live' ? (
