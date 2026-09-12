@@ -26,7 +26,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
     { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management', totalQuestions: 225, sets: 3 },
   ],
   'QUANT': [
-    { id: 'QUANT', name: 'QUANT', fullName: 'Quantitative Aptitude for Competitive Exams', totalQuestions: 30, sets: 1 },
+    { id: 'QUANT', name: 'QUANT', fullName: 'Quantitative Aptitude for Competitive Exams', totalQuestions: 449, sets: 14 },
   ],
 };
 
