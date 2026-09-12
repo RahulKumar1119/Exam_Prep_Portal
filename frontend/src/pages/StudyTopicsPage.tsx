@@ -24,6 +24,7 @@ const StudyTopicsPage: React.FC = () => {
     { title: 'Break-Even Analysis', path: '/jaiib/afm/break-even-analysis' },
     { title: 'Depreciation Methods', path: '/jaiib/afm/depreciation-methods' },
     { title: 'Ratio Analysis', path: '/jaiib/afm/ratio-analysis' },
+    { title: 'Quantitative Aptitude Guide', path: '/jaiib/afm/quantitative-aptitude-guide' },
   ];
 
   const rbwmTopics = [

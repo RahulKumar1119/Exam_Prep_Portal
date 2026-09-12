@@ -57,6 +57,7 @@ const RepoRatePage = lazy(() => import('./pages/topics/RepoRatePage'));
 const BreakEvenPage = lazy(() => import('./pages/topics/BreakEvenPage'));
 const DepreciationPage = lazy(() => import('./pages/topics/DepreciationPage'));
 const RatioAnalysisPage = lazy(() => import('./pages/topics/RatioAnalysisPage'));
+const QuantAptitudePage = lazy(() => import('./pages/topics/QuantAptitudePage'));
 const MutualFundsPage = lazy(() => import('./pages/topics/MutualFundsPage'));
 const UpiPaymentsPage = lazy(() => import('./pages/topics/UpiPaymentsPage'));
 const HomeLoanPage = lazy(() => import('./pages/topics/HomeLoanPage'));
@@ -121,6 +122,7 @@ const AppContent: React.FC = () => {
       <Route path="/jaiib/afm/break-even-analysis" element={<BreakEvenPage />} />
       <Route path="/jaiib/afm/depreciation-methods" element={<DepreciationPage />} />
       <Route path="/jaiib/afm/ratio-analysis" element={<RatioAnalysisPage />} />
+      <Route path="/jaiib/afm/quantitative-aptitude-guide" element={<QuantAptitudePage />} />
       <Route path="/jaiib/rbwm/mutual-funds-guide" element={<MutualFundsPage />} />
       <Route path="/jaiib/ppb/upi-payments-system" element={<UpiPaymentsPage />} />
       <Route path="/jaiib/rbwm/home-loan-guide" element={<HomeLoanPage />} />
