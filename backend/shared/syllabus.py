@@ -224,24 +224,44 @@ PAPER_SYLLABUS = {
     'QUANT': {
         'modules': {
             'Arithmetic Foundations': [
-                'Number Systems and Simplification',
-                'HCF and LCM',
-                'Decimals Fractions and BODMAS',
+                'Number Systems',
+                'Simplification',
+                'Decimal Fractions & Bodmas',
+                'Square Roots & Cube Roots',
+                'HCF & LCM',
+                'Surds & Indices',
             ],
             'Commercial Maths': [
-                'Percentages and Ratios',
-                'Profit Loss and Averages',
-                'Simple and Compound Interest',
+                'Percentage',
+                'Ratios & Proportions',
+                'Average',
+                'Age Problems',
+                'Profit & Loss',
+                'Partnerships',
+                'Mixture & Alligations',
+                "Banker's Discount",
+                'Stocks & Shares',
+                'Interest – Simple & Compound',
             ],
-            'Time Work and Measurement': [
-                'Time Work and Speed',
-                'Trains Boats and Streams',
-                'Mensuration',
+            'Time Work Speed and Measurement': [
+                'Time & Work',
+                'Pipes & Cisterns',
+                'Time, Speed & Distance',
+                'Trains',
+                'Races and Games',
+                'Clocks',
+                'Calendar',
+                'Areas & Volumes',
+                'Height and Distance',
             ],
-            'Data and Reasoning Maths': [
-                'Data Interpretation Basics',
-                'Number Series',
-                'Quadratic Equations',
+            'Advanced and Reasoning Maths': [
+                'Series',
+                'Sequences & Functions',
+                'Permutations & Combinations',
+                'Probability',
+                'Data Interpretation',
+                'Data Sufficiency',
+                'Chain Rule – Unitary Methods',
             ]
         }
     }

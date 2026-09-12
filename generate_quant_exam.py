@@ -60,12 +60,38 @@ dynamodb = boto3.resource('dynamodb', region_name=REGION)
 
 # Quant syllabus — must match PAPER_SYLLABUS['QUANT'] in backend/shared/syllabus.py
 QUANT_TOPICS = [
-    'Percentages and Ratios',
-    'Simple and Compound Interest',
-    'Time Work and Speed',
-    'Profit Loss and Averages',
-    'Number Systems and Simplification',
-    'Data Interpretation Basics',
+    'Number Systems',
+    'Simplification',
+    'Decimal Fractions & Bodmas',
+    'Square Roots & Cube Roots',
+    'HCF & LCM',
+    'Percentage',
+    'Average',
+    'Age Problems',
+    "Banker's Discount",
+    'Races and Games',
+    'Chain Rule – Unitary Methods',
+    'Clocks',
+    'Calendar',
+    'Interest – Simple & Compound',
+    'Ratios & Proportions',
+    'Mixture & Alligations',
+    'Profit & Loss',
+    'Partnerships',
+    'Time & Work',
+    'Pipes & Cisterns',
+    'Stocks & Shares',
+    'Time, Speed & Distance',
+    'Trains',
+    'Surds & Indices',
+    'Series',
+    'Data Interpretation',
+    'Areas & Volumes',
+    'Permutations & Combinations',
+    'Sequences & Functions',
+    'Probability',
+    'Height and Distance',
+    'Data Sufficiency',
 ]
 
 
@@ -127,7 +153,8 @@ SOURCE CONTENT:
 {pdf_text[:40000]}
 ---
 
-COVER THESE TOPICS EVENLY (use exactly these topic names):
+COVER THESE TOPICS (use exactly these topic names — spread each batch across
+different topics so repeated runs cover the full list):
 {chr(10).join('- ' + t for t in QUANT_TOPICS)}
 
 REQUIREMENTS:

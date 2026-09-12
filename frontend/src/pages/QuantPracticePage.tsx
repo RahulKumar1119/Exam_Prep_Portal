@@ -5,12 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import { usePractice } from '../context/PracticeContext';
 
 const TOPICS = [
-  { name: 'Percentages and Ratios', desc: 'Percentages, ratios, proportion, successive change', count: 5 },
-  { name: 'Simple and Compound Interest', desc: 'SI, CI, doubling time, CI–SI difference', count: 5 },
-  { name: 'Time Work and Speed', desc: 'Time & work, trains, boats, average speed', count: 5 },
-  { name: 'Profit Loss and Averages', desc: 'Profit %, CP/SP, averages, discount', count: 5 },
-  { name: 'Number Systems and Simplification', desc: 'BODMAS, HCF/LCM, powers, divisibility', count: 5 },
-  { name: 'Data Interpretation Basics', desc: 'Tables, pie charts, growth rates, projections', count: 5 },
+  { name: 'Arithmetic Foundations', desc: 'Number systems, simplification, BODMAS, roots, HCF/LCM, surds', count: '6 topics' },
+  { name: 'Commercial Maths', desc: 'Percentage, ratios, averages, profit-loss, interest, partnerships', count: '10 topics' },
+  { name: 'Time, Speed & Measurement', desc: 'Time-work, trains, clocks, calendar, mensuration, height-distance', count: '9 topics' },
+  { name: 'Advanced & Reasoning Maths', desc: 'Series, permutations, probability, DI, data sufficiency', count: '7 topics' },
 ];
 
 const QuantPracticePage: React.FC = () => {
@@ -68,14 +66,14 @@ const QuantPracticePage: React.FC = () => {
             Quantitative Aptitude Practice Test
           </h1>
           <p className="text-base sm:text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-            30-question timed sets (20 min, −0.25 per wrong answer) across 6 core topics —
-            percentages, interest, time-work-speed, profit-loss, number systems, and data interpretation.
+            30-question timed sets (20 min, −0.25 per wrong answer) across 32 topics —
+            from number systems and interest to trains, clocks, probability, and data interpretation.
             Same maths as JAIIB, IBPS, SSC & CAT.
           </p>
           <div className="flex items-center justify-center gap-6 mb-8 text-sm">
             <div><span className="text-2xl font-bold text-gray-900">30</span> <span className="text-gray-600">questions</span></div>
             <div className="w-px h-6 bg-gray-300" />
-            <div><span className="text-2xl font-bold text-gray-900">6</span> <span className="text-gray-600">topics</span></div>
+            <div><span className="text-2xl font-bold text-gray-900">32</span> <span className="text-gray-600">topics</span></div>
             <div className="w-px h-6 bg-gray-300" />
             <div><span className="text-2xl font-bold text-gray-900">30</span> <span className="text-gray-600">per set</span></div>
           </div>
@@ -99,13 +97,13 @@ const QuantPracticePage: React.FC = () => {
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3">What each set covers</h2>
-          <p className="text-gray-600 text-center mb-10">Every 30-question set is sampled across all 6 topics.</p>
+          <p className="text-gray-600 text-center mb-10">Every 30-question set is sampled across all 4 modules. Bank growing weekly.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {TOPICS.map((t) => (
               <div key={t.name} className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-md transition">
                 <h3 className="font-bold text-gray-900 mb-2">{t.name}</h3>
                 <p className="text-sm text-gray-600 mb-3">{t.desc}</p>
-                <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">{t.count} questions live</span>
+                <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">{t.count}</span>
               </div>
             ))}
           </div>
