@@ -122,7 +122,7 @@ const AppContent: React.FC = () => {
       <Route path="/jaiib/afm/break-even-analysis" element={<BreakEvenPage />} />
       <Route path="/jaiib/afm/depreciation-methods" element={<DepreciationPage />} />
       <Route path="/jaiib/afm/ratio-analysis" element={<RatioAnalysisPage />} />
-      <Route path="/jaiib/afm/quantitative-aptitude-guide" element={<QuantAptitudePage />} />
+      <Route path="/guides/quantitative-aptitude-guide" element={<QuantAptitudePage />} />
       <Route path="/jaiib/rbwm/mutual-funds-guide" element={<MutualFundsPage />} />
       <Route path="/jaiib/ppb/upi-payments-system" element={<UpiPaymentsPage />} />
       <Route path="/jaiib/rbwm/home-loan-guide" element={<HomeLoanPage />} />

@@ -24,12 +24,15 @@ const StudyTopicsPage: React.FC = () => {
     { title: 'Break-Even Analysis', path: '/jaiib/afm/break-even-analysis' },
     { title: 'Depreciation Methods', path: '/jaiib/afm/depreciation-methods' },
     { title: 'Ratio Analysis', path: '/jaiib/afm/ratio-analysis' },
-    { title: 'Quantitative Aptitude Guide', path: '/jaiib/afm/quantitative-aptitude-guide' },
   ];
 
   const rbwmTopics = [
     { title: 'Mutual Funds Guide', path: '/jaiib/rbwm/mutual-funds-guide' },
     { title: 'Home Loan Guide', path: '/jaiib/rbwm/home-loan-guide' },
+  ];
+
+  const generalGuides = [
+    { title: 'Quantitative Aptitude Guide', path: '/guides/quantitative-aptitude-guide' },
   ];
 
   return (
@@ -168,6 +171,30 @@ const StudyTopicsPage: React.FC = () => {
                     >
                       <span>{topic.title}</span>
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-pink-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          {/* General Guides Card */}
+          <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-700 px-6 py-4">
+              <h2 className="text-white font-bold text-lg">General Guides — All Competitive Exams</h2>
+              <p className="text-emerald-100 text-sm mt-1">{generalGuides.length} Guides</p>
+            </div>
+            <div className="p-4">
+              <ul className="space-y-1">
+                {generalGuides.map((topic) => (
+                  <li key={topic.path}>
+                    <button
+                      onClick={() => navigate(topic.path)}
+                      className="w-full flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition group"
+                    >
+                      <span>{topic.title}</span>
+                      <svg className="w-4 h-4 text-gray-400 group-hover:text-emerald-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </button>

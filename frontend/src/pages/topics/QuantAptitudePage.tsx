@@ -4,11 +4,11 @@ import { BlockMath } from '../../components/MathDisplay';
 
 const QuantAptitudePage: React.FC = () => {
   const relatedTopics = [
-    { title: 'Ratio Analysis', url: '/jaiib/afm/ratio-analysis' },
-    { title: 'NPV & IRR — Capital Budgeting', url: '/jaiib/afm/npv-irr-explained' },
-    { title: 'Break-Even Analysis', url: '/jaiib/afm/break-even-analysis' },
-    { title: 'Simple vs Compound Interest', url: '/jaiib/afm/depreciation-methods' },
+    { title: 'Browse All Exams', url: '/exams' },
     { title: 'JAIIB AFM Practice Sets', url: '/practice-tests/afm' },
+    { title: 'Ratio Analysis', url: '/jaiib/afm/ratio-analysis' },
+    { title: 'Free Practice Quizzes', url: '/practice-tests' },
+    { title: 'Study Topics', url: '/study-topics' },
   ];
 
   const content = (
@@ -163,10 +163,10 @@ const QuantAptitudePage: React.FC = () => {
       </div>
 
       <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-6 text-center">
-        <p className="font-bold text-gray-900 mb-2">Practice 3,700+ JAIIB questions free</p>
+        <p className="font-bold text-gray-900 mb-2">Practice 5,000+ questions free</p>
         <p className="text-sm text-gray-600 mb-4">Timed sets with AI explanations for every wrong answer.</p>
-        <a href="/practice-tests/afm" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
-          Start AFM Practice
+        <a href="/exams" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+          Browse Exams
         </a>
       </div>
     </div>
@@ -174,14 +174,13 @@ const QuantAptitudePage: React.FC = () => {
 
   return (
     <TopicPageLayout
-      title="Quantitative Aptitude Guide for Bank & Competitive Exams | JAIIB AFM 2026"
+      title="Quantitative Aptitude Guide for Bank & Competitive Exams 2026"
       description="Master Quantitative Aptitude for JAIIB, IBPS, SSC, CAT & all competitive exams. Syllabus map, must-remember formulas, 30-day plan, sample MCQs with answers."
-      canonical="https://mockmaster.fun/jaiib/afm/quantitative-aptitude-guide"
-      keywords="quantitative aptitude, quant formulas, JAIIB AFM maths, IBPS quant syllabus, SI CI formula, time and work shortcuts"
+      canonical="https://mockmaster.fun/guides/quantitative-aptitude-guide"
+      keywords="quantitative aptitude, quant formulas, bank exam maths, IBPS quant syllabus, SI CI formula, time and work shortcuts"
       breadcrumb={[
         { label: 'Home', url: '/' },
-        { label: 'JAIIB', url: '/practice-tests' },
-        { label: 'AFM', url: '/practice-tests/afm' },
+        { label: 'Study Guides', url: '/study-topics' },
         { label: 'Quantitative Aptitude' },
       ]}
       content={content}

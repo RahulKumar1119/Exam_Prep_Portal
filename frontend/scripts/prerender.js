@@ -59,7 +59,7 @@ const PAGES = [
   '/jaiib/afm/break-even-analysis',
   '/jaiib/afm/depreciation-methods',
   '/jaiib/afm/ratio-analysis',
-  '/jaiib/afm/quantitative-aptitude-guide',
+  '/guides/quantitative-aptitude-guide',
   '/jaiib/rbwm/mutual-funds-guide',
   '/jaiib/ppb/upi-payments-system',
   '/jaiib/rbwm/home-loan-guide',
