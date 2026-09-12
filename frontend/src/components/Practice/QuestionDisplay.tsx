@@ -535,6 +535,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               questionText={explanationQuestionText(currentQuestion)}
               options={currentQuestion.options}
               correctAnswer={explanationCorrectAnswer(currentQuestion)}
+              paperName={session.paper_name}
               isCorrect={(() => {
                 if (currentQuestion.question_type === 'multi_select' && currentQuestion.correct_answers) {
                   const sel = Array.isArray(isAnswered) ? (isAnswered as string[]) : isAnswered ? [isAnswered as string] : [];

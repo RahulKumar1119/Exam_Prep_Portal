@@ -330,6 +330,7 @@ const PracticePage: React.FC = () => {
                     correctAnswer={result.correct_answer}
                     options={result.options}
                     isCorrect={result.correct}
+                    paperName={current_session?.paper_name}
                   />
                 )}
 

@@ -9,6 +9,7 @@ interface ExplanationDisplayProps {
   correctAnswer: string;
   options: Record<string, string>;
   isCorrect: boolean;
+  paperName?: string;
   onExplanationLoaded?: (explanation: string) => void;
 }
 
@@ -18,6 +19,7 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
   correctAnswer,
   options,
   isCorrect,
+  paperName,
   onExplanationLoaded
 }) => {
   const { user } = useAuth();
@@ -42,7 +44,8 @@ export const ExplanationDisplay: React.FC<ExplanationDisplayProps> = ({
           user_id: user.user_id,
           question_text: questionText,
           correct_answer: correctAnswer,
-          options: options
+          options: options,
+          ...(paperName ? { paper_name: paperName } : {}),
         });
 
         if (response.success) {

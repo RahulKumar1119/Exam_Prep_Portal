@@ -71,7 +71,8 @@ def generate_explanation_with_timeout(
     question_text: str,
     correct_answer: str,
     options: dict,
-    timeout: int = EXPLANATION_TIMEOUT
+    timeout: int = EXPLANATION_TIMEOUT,
+    paper_name: str = ''
 ) -> Tuple[str, bool]:
     """
     Generate AI explanation with timeout handling using threading.
@@ -91,6 +92,11 @@ def generate_explanation_with_timeout(
                 'automl', 'mlflow', 'onnx', 'inference', 'docker', 'yaml'
             ])
 
+            # Quant detection: explicit paper, else numbers-heavy text that
+            # isn't an Azure question (banking theory rarely has 6+ digits).
+            is_quant = (paper_name or '').upper() == 'QUANT' or (
+                not is_azure and len(re.findall(r'\d', combined_text)) >= 6
+            )
             # Options block only for choice-style questions. Non-choice types
             # (yes_no, drag_drop, build_list, hot_area) have no A-D options —
             # their answer detail is already folded into question_text and
@@ -108,7 +114,6 @@ def generate_explanation_with_timeout(
 
             if is_azure:
                 prompt = f"""You are an expert Microsoft Azure AI/ML certification tutor. Provide a comprehensive, detailed explanation for this exam question.
-
 Question: {question_text}
 
 {options_block}Correct Answer: {correct_answer}
@@ -128,6 +133,22 @@ Provide a DETAILED explanation covering ALL of the following:
 IMPORTANT: Do NOT include any URLs or hyperlinks. Do NOT make up documentation links.
 
 Write 400-500 words. Use clear headings and formatting."""
+            elif is_quant:
+                prompt = f"""You are an expert quantitative aptitude tutor for Indian competitive exams. Explain this maths question clearly in 200-250 words.
+
+Question: {question_text}
+
+{options_block}Correct Answer: {correct_answer}
+
+Your explanation must include:
+1. Step-by-step solution showing the calculation that leads to {correct_answer}
+2. The formula or shortcut used — state it explicitly
+3. Why each other option is numerically wrong (one line each)
+4. One exam tip: the fastest way to solve this type under time pressure
+
+When including formulas, use LaTeX: inline $...$ and display $$...$$ for KaTeX.
+
+Keep it clear and well-structured. Do NOT reference banking exams, JAIIB, CAIIB, RBI, SEBI or IIBF — this is a general aptitude question."""
             else:
                 prompt = f"""You are an expert JAIIB/CAIIB exam tutor. Explain this question clearly in 150-200 words.
 
@@ -338,6 +359,7 @@ def lambda_handler(event, context):
         question_text = body.get('question_text', '')
         correct_answer = body.get('correct_answer', '')
         options = body.get('options', {})
+        paper_name = body.get('paper_name', '') or ''
         
         # Validate required fields
         if not question_id:
@@ -372,7 +394,8 @@ def lambda_handler(event, context):
             question_text,
             correct_answer,
             options,
-            timeout=EXPLANATION_TIMEOUT
+            timeout=EXPLANATION_TIMEOUT,
+            paper_name=paper_name
         )
         generation_time = time.time() - start_time
         
