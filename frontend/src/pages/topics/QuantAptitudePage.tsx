@@ -123,7 +123,7 @@ const QuantAptitudePage: React.FC = () => {
         </div>
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
           <p className="font-semibold text-gray-900">Days 21–30: Mock mode</p>
-          <p className="text-sm text-gray-700">Full timed sets on MockMaster. Analyse every error into a notebook: concept gap, calculation slip, or time trap. Re-attempt wrong questions after 3 days.</p>
+          <p className="text-sm text-gray-700">Full timed sets on MockMaster — quant sets are 30 questions in 20 minutes with −0.25 negative marking, so practice skipping wisely. Analyse every error into a notebook: concept gap, calculation slip, or time trap. Re-attempt wrong questions after 3 days.</p>
         </div>
       </div>
 
@@ -163,8 +163,9 @@ const QuantAptitudePage: React.FC = () => {
       </div>
 
       <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-6 text-center">
-        <p className="font-bold text-gray-900 mb-2">Practice 30 quant questions free</p>
-        <p className="text-sm text-gray-600 mb-4">25-question timed sets with instant scoring.</p>
+        <p className="font-bold text-gray-900 mb-2">Practice 440+ quant questions free</p>
+        <p className="text-sm text-gray-600 mb-1">30-question timed sets · 20 minutes · −0.25 per wrong answer.</p>
+        <p className="text-sm text-gray-600 mb-4">Instant scoring with topic-wise accuracy across 35 chapters.</p>
         <a href="/quant-practice-test" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
           Start Quant Practice
         </a>

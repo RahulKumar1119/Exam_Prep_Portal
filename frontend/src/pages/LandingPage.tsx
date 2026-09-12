@@ -98,7 +98,7 @@ const LandingPage: React.FC = () => {
             <p className="text-gray-400">Select an exam to start practicing. More exams coming soon.</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* JAIIB */}
             <motion.div
               {...reveal}
@@ -209,6 +209,35 @@ const LandingPage: React.FC = () => {
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
                   <span className="text-lg font-bold text-white">3</span>
+                  <span className="text-xs text-gray-500">sets</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* QUANT */}
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.32 }}
+              onClick={() => navigate('/quant-practice-test')}
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-rose-500/50 hover:shadow-xl hover:shadow-rose-500/5 transition-all group"
+            >
+              <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
+              <div className="flex items-center gap-3 mb-4">
+                <ExamOrgLogo exam="QUANT" size={48} />
+                <div>
+                  <h3 className="text-xl font-bold group-hover:text-rose-400 transition">QUANT</h3>
+                  <p className="text-xs text-gray-500">All Competitive Exams</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-400 mb-5">Quantitative Aptitude for Bank, SSC, CAT, UPSC & Railways. 35 chapters, 20-min sets with negative marking.</p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-2xl font-bold text-white">440+</span>
+                  <span className="text-xs text-gray-500">questions</span>
+                </div>
+                <div className="w-px h-6 bg-gray-800" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold text-white">14</span>
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
               </div>

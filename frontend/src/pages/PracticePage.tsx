@@ -217,12 +217,12 @@ const PracticePage: React.FC = () => {
                 <p className="text-xs text-gray-600">Questions</p>
               </div>
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <p className="text-xl font-bold text-green-600">No Limit</p>
+                <p className="text-xl font-bold text-green-600">{selectedPaper === 'QUANT' ? '20 Min' : 'No Limit'}</p>
                 <p className="text-xs text-gray-600">Time</p>
               </div>
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <p className="text-xl font-bold text-purple-600">Instant</p>
-                <p className="text-xs text-gray-600">Feedback</p>
+                <p className="text-xl font-bold text-purple-600">{selectedPaper === 'QUANT' ? '−0.25' : 'Instant'}</p>
+                <p className="text-xs text-gray-600">{selectedPaper === 'QUANT' ? 'Negative Marking' : 'Feedback'}</p>
               </div>
               <div className="bg-white rounded-lg p-3 shadow-sm">
                 <p className="text-xl font-bold text-orange-600">AI</p>
