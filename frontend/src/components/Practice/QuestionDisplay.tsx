@@ -109,7 +109,12 @@ interface QuestionDisplayProps {
   isMockTest?: boolean;
 }
 
-const TIMER_DURATION = 120 * 60; // 120 minutes in seconds
+// Practice sessions run shorter clocks: QUANT gets 20 min, others keep legacy 120 min.
+const durationForSession = (s: PracticeSession): number => {
+  if (s.mode === 'mock_test') return 120 * 60;
+  if (s.paper_name === 'QUANT') return 20 * 60;
+  return 120 * 60;
+};
 
 const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   session,
@@ -137,7 +142,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   }, [session.session_id]);
 
   const [answers, setAnswers] = useState<Record<string, UserAnswer>>({});
-  const [timeLeft, setTimeLeft] = useState(TIMER_DURATION);
+  const [timeLeft, setTimeLeft] = useState(() => durationForSession(session));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [reviewedQuestions, setReviewedQuestions] = useState<Set<string>>(new Set());
   const [checkedQuestions, setCheckedQuestions] = useState<Set<string>>(new Set());
