@@ -25,6 +25,8 @@ PAPER_DISPLAY_NAMES = {
     'RBWM': 'RBWM',
     'Certified Associate in Project Management': 'CAPM',
     'CAPM': 'CAPM',
+    'Quantitative Aptitude': 'QUANT',
+    'QUANT': 'QUANT',
 }
 
 # Exam categories for multi-exam support
@@ -216,6 +218,30 @@ PAPER_SYLLABUS = {
                 'Stakeholder identification and analysis', 'Requirements traceability RTM',
                 'Requirements validation vs business needs', 'Acceptance criteria logic',
                 'Business analysis and delivery integration', 'What should you do next scenarios',
+            ]
+        }
+    },
+    'QUANT': {
+        'modules': {
+            'Arithmetic Foundations': [
+                'Number Systems and Simplification',
+                'HCF and LCM',
+                'Decimals Fractions and BODMAS',
+            ],
+            'Commercial Maths': [
+                'Percentages and Ratios',
+                'Profit Loss and Averages',
+                'Simple and Compound Interest',
+            ],
+            'Time Work and Measurement': [
+                'Time Work and Speed',
+                'Trains Boats and Streams',
+                'Mensuration',
+            ],
+            'Data and Reasoning Maths': [
+                'Data Interpretation Basics',
+                'Number Series',
+                'Quadratic Equations',
             ]
         }
     }

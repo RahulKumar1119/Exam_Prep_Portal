@@ -33,6 +33,7 @@ const StudyTopicsPage: React.FC = () => {
 
   const generalGuides = [
     { title: 'Quantitative Aptitude Guide', path: '/guides/quantitative-aptitude-guide' },
+    { title: 'Quant Practice Test (25 Qs)', path: '/quant-practice-test' },
   ];
 
   return (

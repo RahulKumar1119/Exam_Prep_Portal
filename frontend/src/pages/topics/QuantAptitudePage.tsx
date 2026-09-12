@@ -163,10 +163,10 @@ const QuantAptitudePage: React.FC = () => {
       </div>
 
       <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-6 text-center">
-        <p className="font-bold text-gray-900 mb-2">Practice 5,000+ questions free</p>
-        <p className="text-sm text-gray-600 mb-4">Timed sets with AI explanations for every wrong answer.</p>
-        <a href="/exams" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
-          Browse Exams
+        <p className="font-bold text-gray-900 mb-2">Practice 30 quant questions free</p>
+        <p className="text-sm text-gray-600 mb-4">25-question timed sets with instant scoring.</p>
+        <a href="/quant-practice-test" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+          Start Quant Practice
         </a>
       </div>
     </div>

@@ -768,6 +768,7 @@ def get_leaderboard(exam: str = 'JAIIB') -> Dict[str, Any]:
         'JAIIB': {'IE & IFS', 'PPB', 'AFM', 'RBWM'},
         'AI-300': {'AI-300'},
         'CAPM': {'CAPM'},
+        'QUANT': {'QUANT'},
     }
     valid_papers = exam_papers.get(exam, exam_papers.get('JAIIB', set()))
     # ALL = combine everything
@@ -881,6 +882,7 @@ EXAM_PAPERS = {
     'CAIIB': {'ABM'},
     'AI-300': {'AI-300'},
     'CAPM': {'CAPM'},
+    'QUANT': {'QUANT'},
 }
 
 

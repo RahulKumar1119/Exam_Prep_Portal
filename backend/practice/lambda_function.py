@@ -41,7 +41,7 @@ class DecimalEncoder(json.JSONEncoder):
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
 # Per-paper overrides — CAPM practice sets are longer (75 vs default 50)
-QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75}
+QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 25}
 
 
 def _questions_per_set(paper_name: str) -> int:
@@ -82,8 +82,39 @@ def _capm_table():
     return boto3.resource('dynamodb', region_name=REGION).Table('jaiib-capm-question-bank')
 
 
+def _quant_table():
+    return boto3.resource('dynamodb', region_name=REGION).Table('jaiib-quant-question-bank')
+
+
 def _is_capm(paper_name: str) -> bool:
     return paper_name == 'CAPM'
+
+
+def _is_quant(paper_name: str) -> bool:
+    return paper_name == 'QUANT'
+
+
+def _db_fallback_quant(quant_table, count: int, difficulty: Optional[str] = None) -> List[Dict]:
+    """Fetch QUANT questions via paper-topic-index (same shape as main bank)."""
+    try:
+        items = []
+        kwargs = {
+            'IndexName': 'paper-topic-index',
+            'KeyConditionExpression': 'paper_name = :p',
+            'ExpressionAttributeValues': {':p': 'QUANT'}
+        }
+        while True:
+            resp = quant_table.query(**kwargs)
+            items.extend(resp.get('Items', []))
+            if 'LastEvaluatedKey' not in resp:
+                break
+            kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+        if difficulty:
+            items = [q for q in items if q.get('difficulty', 'medium') == difficulty]
+        return random.sample(items, min(count, len(items)))
+    except Exception as e:
+        print(f"QUANT DB fallback error: {e}")
+        return []
 
 
 def _db_fallback_capm(capm_table, count: int, difficulty: Optional[str] = None) -> List[Dict]:
@@ -298,7 +329,7 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
         # Fixed set mode — deterministic slice of questions from DB
         # Fetch ALL questions for this paper, sort by question_id for consistency
         per_set = _questions_per_set(paper_name)
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT')
         if paper_name in DB_PAPERS:
             try:
                 if _is_capm(paper_name):
@@ -309,6 +340,14 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
                     questions = capm_items[start:end]
                     if len(questions) < per_set and capm_items:
                         questions += capm_items[:per_set - len(questions)]
+                elif _is_quant(paper_name):
+                    quant_items = _db_fallback_quant(_quant_table(), 500)
+                    quant_items.sort(key=lambda x: x.get('question_id', ''))
+                    start = (set_number - 1) * per_set
+                    end = start + per_set
+                    questions = quant_items[start:end]
+                    if len(questions) < per_set and quant_items:
+                        questions += quant_items[:per_set - len(questions)]
                 else:
                     items = []
                     kwargs = {
@@ -344,10 +383,12 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
     else:
         # Original practice mode — random from DB, fallback to Bedrock
         per_set = _questions_per_set(paper_name)
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT')
         if paper_name in DB_PAPERS:
             if _is_capm(paper_name):
                 questions = _db_fallback_capm(_capm_table(), per_set)
+            elif _is_quant(paper_name):
+                questions = _db_fallback_quant(_quant_table(), per_set)
             else:
                 questions = _db_fallback(questions_table, paper_name, per_set)
             if not questions:
@@ -583,7 +624,7 @@ def handler(event, context):
         if action == 'generate':
             if not paper_name:
                 return err(400, 'paper_name is required')
-            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM']
+            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT']
             if paper_name not in valid:
                 return err(400, f"paper_name must be one of: {', '.join(valid)}")
 
