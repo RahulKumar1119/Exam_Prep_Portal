@@ -256,9 +256,12 @@ PAPER_SYLLABUS = {
             ],
             'Advanced and Reasoning Maths': [
                 'Series',
+                'Missing Number Series',
+                'Odd Man Out Series',
                 'Sequences & Functions',
                 'Permutations & Combinations',
                 'Probability',
+                'Logarithms',
                 'Data Interpretation',
                 'Data Sufficiency',
                 'Chain Rule – Unitary Methods',

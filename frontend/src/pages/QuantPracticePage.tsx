@@ -5,10 +5,32 @@ import { useAuth } from '../context/AuthContext';
 import { usePractice } from '../context/PracticeContext';
 
 const TOPICS = [
-  { name: 'Arithmetic Foundations', desc: 'Number systems, simplification, BODMAS, roots, HCF/LCM, surds', count: '6 topics' },
-  { name: 'Commercial Maths', desc: 'Percentage, ratios, averages, profit-loss, interest, partnerships', count: '10 topics' },
-  { name: 'Time, Speed & Measurement', desc: 'Time-work, trains, clocks, calendar, mensuration, height-distance', count: '9 topics' },
-  { name: 'Advanced & Reasoning Maths', desc: 'Series, permutations, probability, DI, data sufficiency', count: '7 topics' },
+  {
+    name: 'Arithmetic Foundations',
+    desc: 'The building blocks — master these first.',
+    chapters: ['Number Systems', 'Simplification', 'Decimal Fractions & BODMAS', 'Square Roots & Cube Roots', 'HCF & LCM', 'Surds & Indices'],
+  },
+  {
+    name: 'Commercial Maths',
+    desc: 'The heart of bank-exam quant.',
+    chapters: ['Percentage', 'Ratios & Proportions', 'Average', 'Age Problems', 'Profit & Loss', 'Partnerships', 'Mixture & Alligations', "Banker's Discount", 'Stocks & Shares', 'Simple & Compound Interest'],
+  },
+  {
+    name: 'Time, Speed & Measurement',
+    desc: 'Formula-driven scoring areas.',
+    chapters: ['Time & Work', 'Pipes & Cisterns', 'Time, Speed & Distance', 'Trains', 'Boats & Streams', 'Races and Games', 'Clocks', 'Calendar', 'Areas & Volumes', 'Height and Distance'],
+  },
+  {
+    name: 'Advanced & Reasoning Maths',
+    desc: 'For CAT, GRE, GMAT and high-cutoff papers.',
+    chapters: ['Series', 'Missing Number Series', 'Odd Man Out Series', 'Sequences & Functions', 'Permutations & Combinations', 'Probability', 'Logarithms', 'Data Interpretation', 'Data Sufficiency', 'Chain Rule & Unitary Methods'],
+  },
+];
+
+const EXAMS = [
+  'Bank Exams (IBPS, SBI)', 'SSC & Railways', 'CAT', 'XAT', 'SNAP', 'MAT',
+  'GMAT', 'GRE', 'UPSC & CSAT', 'CLAT', 'LIC & GIC', 'TNPSC & KPSC',
+  'ICET', 'UGC', 'Defence Exams', 'IT Company Aptitude Tests', 'All Govt Exams',
 ];
 
 const QuantPracticePage: React.FC = () => {
@@ -35,7 +57,7 @@ const QuantPracticePage: React.FC = () => {
     <div className="min-h-screen bg-white">
       <SEO
         title="Quantitative Aptitude Practice Test — Free Bank & Competitive Exam Prep"
-        description="Free Quantitative Aptitude practice sets: percentages, SI/CI, time-work-speed, profit-loss, number systems & DI. 25-question timed sets with instant scoring."
+        description="Free Quantitative Aptitude practice for Bank, SSC, CAT, UPSC, Railways & all competitive exams. 30-question timed sets (20 min, −0.25 negative) across 35 chapters with instant scoring."
         canonical="https://mockmaster.fun/quant-practice-test"
         keywords="quantitative aptitude practice, quant mock test, IBPS quant questions, bank exam maths practice, SI CI practice"
       />
@@ -66,14 +88,14 @@ const QuantPracticePage: React.FC = () => {
             Quantitative Aptitude Practice Test
           </h1>
           <p className="text-base sm:text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-            30-question timed sets (20 min, −0.25 per wrong answer) across 32 topics —
+            30-question timed sets (20 min, −0.25 per wrong answer) across 35 chapters —
             from number systems and interest to trains, clocks, probability, and data interpretation.
             Same maths as JAIIB, IBPS, SSC & CAT.
           </p>
           <div className="flex items-center justify-center gap-6 mb-8 text-sm">
             <div><span className="text-2xl font-bold text-gray-900">30</span> <span className="text-gray-600">questions</span></div>
             <div className="w-px h-6 bg-gray-300" />
-            <div><span className="text-2xl font-bold text-gray-900">32</span> <span className="text-gray-600">topics</span></div>
+            <div><span className="text-2xl font-bold text-gray-900">35</span> <span className="text-gray-600">chapters</span></div>
             <div className="w-px h-6 bg-gray-300" />
             <div><span className="text-2xl font-bold text-gray-900">30</span> <span className="text-gray-600">per set</span></div>
           </div>
@@ -96,22 +118,39 @@ const QuantPracticePage: React.FC = () => {
       {/* Topics */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3">What each set covers</h2>
-          <p className="text-gray-600 text-center mb-10">Every 30-question set is sampled across all 4 modules. Bank growing weekly.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3">35 chapters, 4 modules</h2>
+          <p className="text-gray-600 text-center mb-10">Every 30-question set is sampled across all modules. Bank growing weekly.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {TOPICS.map((t) => (
               <div key={t.name} className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-md transition">
-                <h3 className="font-bold text-gray-900 mb-2">{t.name}</h3>
-                <p className="text-sm text-gray-600 mb-3">{t.desc}</p>
-                <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">{t.count}</span>
+                <h3 className="font-bold text-gray-900 mb-1">{t.name}</h3>
+                <p className="text-sm text-gray-500 mb-3">{t.desc}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {t.chapters.map((c) => (
+                    <span key={c} className="text-xs text-emerald-800 bg-emerald-50 px-2 py-1 rounded-full">{c}</span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* How it works */}
+      {/* Exams covered */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">One bank, every exam</h2>
+          <p className="text-gray-600 mb-8">The same quant toolkit appears across all of these — master it once here.</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {EXAMS.map((e) => (
+              <span key={e} className="text-sm font-medium text-gray-700 bg-white border border-gray-200 px-3 py-1.5 rounded-full">{e}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">How it works</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
