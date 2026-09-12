@@ -95,11 +95,15 @@ export const PracticeSetInterface: React.FC<PracticeSetInterfaceProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{current_session.paper_name}</h1>
-              <p className="text-gray-600 mt-1">Practice Session</p>
+              <p className="text-gray-600 mt-1">
+                {current_session.paper_name === 'QUANT'
+                  ? '30 questions · 20 min · −0.25 per wrong answer'
+                  : 'Practice Session'}
+              </p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4">
               <Timer
-                duration={600}
+                duration={current_session.paper_name === 'QUANT' ? 1200 : 600}
                 onTimeUp={handleTimeUp}
                 onStop={handleTimerStop}
               />

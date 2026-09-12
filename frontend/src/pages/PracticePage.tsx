@@ -33,7 +33,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
 // Questions per practice set (CAPM sets are longer, QUANT sets are shorter)
 const QUESTIONS_PER_SET: Record<string, number> = {
   'CAPM': 75,
-  'QUANT': 25,
+  'QUANT': 30,
 };
 const questionsPerSet = (paperId: string) => QUESTIONS_PER_SET[paperId] ?? 50;
 

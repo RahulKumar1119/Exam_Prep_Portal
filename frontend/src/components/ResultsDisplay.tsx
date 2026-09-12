@@ -23,6 +23,14 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result, timeTake
           <p className="text-lg text-gray-600">
             {correctCount} out of {totalQuestions} correct
           </p>
+          {result.marks_earned !== undefined && result.total_marks !== undefined && (
+            <p className="text-md text-gray-800 font-semibold mt-2">
+              {result.marks_earned}/{result.total_marks} marks
+              {(result.negative_marks ?? 0) > 0 && (
+                <span className="text-red-600 font-normal"> (−{result.negative_marks} negative)</span>
+              )}
+            </p>
+          )}
         </div>
 
         {/* Pass/Fail Badge */}

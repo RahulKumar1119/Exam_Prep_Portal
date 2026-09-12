@@ -91,6 +91,8 @@ export interface SessionResult {
   total_marks?: number;
   pass_marks?: number;
   correct_count?: number;
+  incorrect_count?: number;
+  negative_marks?: number;
   total_questions?: number;
   breakdown?: {
     easy: { total: number; correct: number; marks_per_q: number };

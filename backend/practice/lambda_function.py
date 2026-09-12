@@ -41,7 +41,7 @@ class DecimalEncoder(json.JSONEncoder):
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
 # Per-paper overrides — CAPM practice sets are longer (75 vs default 50)
-QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 25}
+QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30}
 
 
 def _questions_per_set(paper_name: str) -> int:
@@ -60,6 +60,10 @@ MOCK_TEST_MARKS = {'easy': 0.5, 'medium': 1.0, 'hard': 2.0}  # For scoring calcu
 MOCK_TEST_TOTAL_MARKS = 100  # 25 + 25 + 50
 MOCK_TEST_PASS_MARKS = 50    # 50% of 100 = 50 marks
 MOCK_TEST_DURATION = 120     # 120 minutes
+
+# QUANT practice config — 30 questions, 20 minutes, 0.25 negative per wrong answer
+QUANT_NEGATIVE_MARKS = 0.25
+QUANT_PASS_PCT = 50          # pass at 50% (JAIIB convention)
 
 # ── JAIIB syllabus ────────────────────────────────────────────────────────────
 # PAPER_SYLLABUS is imported from shared.syllabus (see imports above)
@@ -682,7 +686,9 @@ def handler(event, context):
 
             questions = session.get('questions', [])
             session_mode = session.get('mode', 'practice')
+            is_quant = session.get('paper_name') == 'QUANT' and session_mode != 'mock_test'
             correct_count = 0
+            incorrect_count = 0
             results = []
             
             # Weighted scoring for mock test
@@ -725,13 +731,20 @@ def handler(event, context):
                     marks_for_q = MOCK_TEST_MARKS.get(difficulty, 1.0)
                 else:
                     marks_for_q = 1.0
-                
+
                 total_marks_possible += marks_for_q
-                
+
                 if is_correct:
                     correct_count += 1
                     total_marks_earned += marks_for_q
-                    
+                    q_marks = marks_for_q
+                elif is_quant and user_ans:
+                    # QUANT: -0.25 for every answered-but-wrong question (skips are free)
+                    incorrect_count += 1
+                    q_marks = -QUANT_NEGATIVE_MARKS
+                else:
+                    q_marks = 0
+
                 results.append({
                     'question_id':    qid,
                     'question_text':  q.get('question_text', ''),
@@ -740,7 +753,7 @@ def handler(event, context):
                     'user_answer':    user_ans or '',
                     'correct_answer': correct_ans,
                     'difficulty':     difficulty,
-                    'marks':          marks_for_q if is_correct else 0,
+                    'marks':          q_marks,
                     'max_marks':      marks_for_q
                 })
 
@@ -750,6 +763,13 @@ def handler(event, context):
                 # Weighted score based on marks
                 score = round((total_marks_earned / total_marks_possible * 100), 1) if total_marks_possible else 0
                 passed = total_marks_earned >= MOCK_TEST_PASS_MARKS
+            elif is_quant:
+                # QUANT: +1 per correct, -0.25 per wrong answer, skips free
+                negative_marks = round(incorrect_count * QUANT_NEGATIVE_MARKS, 2)
+                total_marks_earned = round(correct_count - negative_marks, 2)
+                total_marks_possible = float(total)
+                score = round(max(0, total_marks_earned) / total_marks_possible * 100, 1) if total_marks_possible else 0
+                passed = score >= QUANT_PASS_PCT
             else:
                 # Simple percentage for practice mode
                 score = int(correct_count / total * 100) if total else 0
@@ -809,6 +829,15 @@ def handler(event, context):
                         'marks_per_q': 2.0
                     }
                 }
+
+            # QUANT scoring details (negative marking)
+            if is_quant:
+                response_data['marks_earned'] = total_marks_earned
+                response_data['total_marks'] = total_marks_possible
+                response_data['negative_marks'] = round(incorrect_count * QUANT_NEGATIVE_MARKS, 2)
+                response_data['correct_count'] = correct_count
+                response_data['incorrect_count'] = incorrect_count
+                response_data['total_questions'] = total
 
             return ok(response_data)
 

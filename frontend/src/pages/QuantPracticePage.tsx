@@ -68,15 +68,16 @@ const QuantPracticePage: React.FC = () => {
             Quantitative Aptitude Practice Test
           </h1>
           <p className="text-base sm:text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-            25-question timed sets across 6 core topics — percentages, interest, time-work-speed,
-            profit-loss, number systems, and data interpretation. Same maths as JAIIB, IBPS, SSC & CAT.
+            30-question timed sets (20 min, −0.25 per wrong answer) across 6 core topics —
+            percentages, interest, time-work-speed, profit-loss, number systems, and data interpretation.
+            Same maths as JAIIB, IBPS, SSC & CAT.
           </p>
           <div className="flex items-center justify-center gap-6 mb-8 text-sm">
             <div><span className="text-2xl font-bold text-gray-900">30</span> <span className="text-gray-600">questions</span></div>
             <div className="w-px h-6 bg-gray-300" />
             <div><span className="text-2xl font-bold text-gray-900">6</span> <span className="text-gray-600">topics</span></div>
             <div className="w-px h-6 bg-gray-300" />
-            <div><span className="text-2xl font-bold text-gray-900">25</span> <span className="text-gray-600">per set</span></div>
+            <div><span className="text-2xl font-bold text-gray-900">30</span> <span className="text-gray-600">per set</span></div>
           </div>
           <button
             onClick={startPractice}
@@ -98,7 +99,7 @@ const QuantPracticePage: React.FC = () => {
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-3">What each set covers</h2>
-          <p className="text-gray-600 text-center mb-10">Every 25-question set is sampled across all 6 topics.</p>
+          <p className="text-gray-600 text-center mb-10">Every 30-question set is sampled across all 6 topics.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {TOPICS.map((t) => (
               <div key={t.name} className="bg-white border border-gray-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-md transition">
@@ -118,7 +119,7 @@ const QuantPracticePage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
             <div className="bg-white rounded-xl p-5 border border-gray-200">
               <p className="text-2xl font-bold text-emerald-600 mb-2">1</p>
-              <p className="text-sm text-gray-700">Hit start — a fresh 25-question set is generated from the bank.</p>
+              <p className="text-sm text-gray-700">Hit start — a fresh 30-question set is generated from the bank.</p>
             </div>
             <div className="bg-white rounded-xl p-5 border border-gray-200">
               <p className="text-2xl font-bold text-emerald-600 mb-2">2</p>
