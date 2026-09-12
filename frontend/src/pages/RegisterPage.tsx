@@ -180,71 +180,71 @@ const RegisterPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 I'm preparing for
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 <button
                   type="button"
                   onClick={() => setExamPreference('JAIIB')}
-                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                  className={`p-4 sm:p-5 rounded-xl border-2 text-left transition-all ${
                     examPreference === 'JAIIB'
                       ? 'border-indigo-500 bg-indigo-500/10 ring-2 ring-indigo-500/30'
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <ExamOrgLogo exam="JAIIB" size={28} />
-                  <p className="font-bold text-white text-sm mt-1">JAIIB</p>
-                  <p className="text-xs text-gray-400">Banking (Junior)</p>
+                  <ExamOrgLogo exam="JAIIB" size={44} />
+                  <p className="font-bold text-white text-lg mt-2">JAIIB</p>
+                  <p className="text-sm text-gray-400">Banking (Junior)</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setExamPreference('CAIIB')}
-                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                  className={`p-4 sm:p-5 rounded-xl border-2 text-left transition-all ${
                     examPreference === 'CAIIB'
                       ? 'border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/30'
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <ExamOrgLogo exam="CAIIB" size={28} />
-                  <p className="font-bold text-white text-sm mt-1">CAIIB</p>
-                  <p className="text-xs text-gray-400">Banking (Senior)</p>
+                  <ExamOrgLogo exam="CAIIB" size={44} />
+                  <p className="font-bold text-white text-lg mt-2">CAIIB</p>
+                  <p className="text-sm text-gray-400">Banking (Senior)</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setExamPreference('AI-300')}
-                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                  className={`p-4 sm:p-5 rounded-xl border-2 text-left transition-all ${
                     examPreference === 'AI-300'
                       ? 'border-purple-500 bg-purple-500/10 ring-2 ring-purple-500/30'
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <ExamOrgLogo exam="AI-300" size={28} />
-                  <p className="font-bold text-white text-sm mt-1">AI-300</p>
-                  <p className="text-xs text-gray-400">Microsoft ML</p>
+                  <ExamOrgLogo exam="AI-300" size={44} />
+                  <p className="font-bold text-white text-lg mt-2">AI-300</p>
+                  <p className="text-sm text-gray-400">Microsoft ML</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setExamPreference('CAPM')}
-                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                  className={`p-4 sm:p-5 rounded-xl border-2 text-left transition-all ${
                     examPreference === 'CAPM'
                       ? 'border-orange-500 bg-orange-500/10 ring-2 ring-orange-500/30'
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <ExamOrgLogo exam="CAPM" size={28} />
-                  <p className="font-bold text-white text-sm mt-1">CAPM</p>
-                  <p className="text-xs text-gray-400">PMI Project Mgmt</p>
+                  <ExamOrgLogo exam="CAPM" size={44} />
+                  <p className="font-bold text-white text-lg mt-2">CAPM</p>
+                  <p className="text-sm text-gray-400">PMI Project Mgmt</p>
                 </button>
                 <button
                   type="button"
                   onClick={() => setExamPreference('QUANT')}
-                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                  className={`p-4 sm:p-5 rounded-xl border-2 text-left transition-all ${
                     examPreference === 'QUANT'
                       ? 'border-rose-500 bg-rose-500/10 ring-2 ring-rose-500/30'
                       : 'border-gray-700 hover:border-gray-600 bg-gray-800'
                   }`}
                 >
-                  <ExamOrgLogo exam="QUANT" size={28} />
-                  <p className="font-bold text-white text-sm mt-1">QUANT</p>
-                  <p className="text-xs text-gray-400">Aptitude Maths</p>
+                  <ExamOrgLogo exam="QUANT" size={44} />
+                  <p className="font-bold text-white text-lg mt-2">QUANT</p>
+                  <p className="text-sm text-gray-400">Aptitude Maths</p>
                 </button>
               </div>
               {!examPreference && formErrors.exam && (
