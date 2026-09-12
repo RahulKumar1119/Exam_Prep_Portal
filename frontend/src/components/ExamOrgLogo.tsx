@@ -6,11 +6,12 @@ import React from 'react';
  * Microsoft: authentic 4-square mark. IIBF / PMI: styled wordmark badges —
  * we name the exam body (nominative fair use) without copying their artwork.
  */
-export type ExamOrg = 'IIBF' | 'Microsoft' | 'PMI';
+export type ExamOrg = 'IIBF' | 'Microsoft' | 'PMI' | 'QUANT';
 
 export function orgForExam(exam: string): ExamOrg {
   if (exam === 'AI-300') return 'Microsoft';
   if (exam === 'CAPM') return 'PMI';
+  if (exam === 'QUANT') return 'QUANT';
   return 'IIBF';
 }
 
@@ -29,7 +30,7 @@ interface ExamOrgLogoProps {
 
 const ExamOrgLogo: React.FC<ExamOrgLogoProps> = ({ exam, org, size = 48, className = '' }) => {
   const resolved: ExamOrg = org || orgForExam(exam || '');
-  const label = resolved === 'Microsoft' ? 'Microsoft' : resolved === 'PMI' ? 'PMI' : 'IIBF';
+  const label = resolved === 'Microsoft' ? 'Microsoft' : resolved === 'PMI' ? 'PMI' : resolved === 'QUANT' ? 'Quantitative Aptitude' : 'IIBF';
 
   return (
     <svg
@@ -90,6 +91,21 @@ const ExamOrgLogo: React.FC<ExamOrgLogoProps> = ({ exam, org, size = 48, classNa
             PMI
           </text>
           <rect x="12" y="31" width="24" height="2.5" rx="1.25" fill="#00A9CE" />
+        </g>
+      )}
+      {resolved === 'QUANT' && (
+        <g>
+          <text
+            x="24"
+            y="32"
+            textAnchor="middle"
+            fontFamily="Arial, Helvetica, sans-serif"
+            fontWeight="800"
+            fontSize="24"
+            fill="#E11D48"
+          >
+            %
+          </text>
         </g>
       )}
     </svg>

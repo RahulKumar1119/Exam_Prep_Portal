@@ -25,11 +25,15 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
   'CAPM': [
     { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management', totalQuestions: 225, sets: 3 },
   ],
+  'QUANT': [
+    { id: 'QUANT', name: 'QUANT', fullName: 'Quantitative Aptitude for Competitive Exams', totalQuestions: 30, sets: 1 },
+  ],
 };
 
-// Questions per practice set (CAPM sets are longer)
+// Questions per practice set (CAPM sets are longer, QUANT sets are shorter)
 const QUESTIONS_PER_SET: Record<string, number> = {
   'CAPM': 75,
+  'QUANT': 25,
 };
 const questionsPerSet = (paperId: string) => QUESTIONS_PER_SET[paperId] ?? 50;
 
@@ -42,7 +46,7 @@ const PracticePage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const papers = selectedExam === 'ALL'
-    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || []), ...(PAPERS_BY_EXAM['CAPM'] || [])]
+    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || []), ...(PAPERS_BY_EXAM['CAPM'] || []), ...(PAPERS_BY_EXAM['QUANT'] || [])]
     : selectedExam === 'JAIIB'
     ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || [])]
     : PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];

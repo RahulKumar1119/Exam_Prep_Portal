@@ -180,7 +180,7 @@ const RegisterPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 I'm preparing for
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 <button
                   type="button"
                   onClick={() => setExamPreference('JAIIB')}
@@ -232,6 +232,19 @@ const RegisterPage: React.FC = () => {
                   <ExamOrgLogo exam="CAPM" size={28} />
                   <p className="font-bold text-white text-sm mt-1">CAPM</p>
                   <p className="text-xs text-gray-400">PMI Project Mgmt</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExamPreference('QUANT')}
+                  className={`p-3 rounded-lg border-2 text-left transition-all ${
+                    examPreference === 'QUANT'
+                      ? 'border-rose-500 bg-rose-500/10 ring-2 ring-rose-500/30'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
+                  }`}
+                >
+                  <ExamOrgLogo exam="QUANT" size={28} />
+                  <p className="font-bold text-white text-sm mt-1">QUANT</p>
+                  <p className="text-xs text-gray-400">Aptitude Maths</p>
                 </button>
               </div>
               {!examPreference && formErrors.exam && (
