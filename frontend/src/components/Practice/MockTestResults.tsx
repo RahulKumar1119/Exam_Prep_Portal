@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SessionResult, UserAnswer } from '../../types/index';
 import { ExplanationDisplay } from './ExplanationDisplay';
+import RichText from '../RichText';
 
 /** Render any answer shape (single key, multi-key array, or mapping) as readable text. */
 function formatAnswer(answer: UserAnswer | undefined): string {
@@ -219,7 +220,7 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
               >
                 <div className="flex items-start justify-between mb-2">
                   <p className="font-medium text-gray-900 flex-1 text-sm">
-                    {idx + 1}. {r.question_text}
+                    {idx + 1}. <RichText text={r.question_text} />
                   </p>
                   <div className="flex items-center gap-2 ml-2">
                     {r.difficulty && (

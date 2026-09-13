@@ -7,6 +7,7 @@ import DiscussionThread from '../components/Practice/DiscussionThread';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/ui/Select';
 import { useExamPreference, ExamId } from '../hooks/useExamPreference';
 import ExamSelector from '../components/ExamSelector';
+import RichText from '../components/RichText';
 import { UserAnswer } from '../types/index';
 
 const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: string; totalQuestions: number; sets: number }[]> = {
@@ -291,7 +292,7 @@ const PracticePage: React.FC = () => {
                 </div>
 
                 {/* Question text */}
-                <p className="text-gray-900 font-medium text-sm mb-3">{result.question_text}</p>
+                <p className="text-gray-900 font-medium text-sm mb-3"><RichText text={result.question_text} /></p>
 
                 {/* Options */}
                 <div className="space-y-1 mb-3">
@@ -310,7 +311,7 @@ const PracticePage: React.FC = () => {
                         }`}
                       >
                         <span className="font-semibold shrink-0">{key}.</span>
-                        <span>{val as string}</span>
+                        <span><RichText text={val as string} /></span>
                         {isCorrect && <span className="ml-auto shrink-0 text-green-600">✓</span>}
                         {isUserAnswer && !result.correct && <span className="ml-auto shrink-0 text-red-500">✗ Your answer</span>}
                       </div>

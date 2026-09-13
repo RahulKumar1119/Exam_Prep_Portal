@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '../ui/Dialog';
 import { ExplanationDisplay } from './ExplanationDisplay';
 import DiscussionThread from './DiscussionThread';
+import RichText from '../RichText';
 import DragDropBoard from './DragDropBoard';
 import OrderableList from './OrderableList';
 import CaseStudyTabs from './CaseStudyTabs';
@@ -427,7 +428,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             {currentQuestionIndex + 1}. Question {currentQuestion.question_type && currentQuestion.question_type !== 'single_choice' ? `— ${currentQuestion.question_type.replace('_',' ')}` : ''}
           </h3>
           <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
-            {currentQuestion.question_text}
+            <RichText text={currentQuestion.question_text} />
           </p>
         </div>
 
@@ -517,7 +518,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
               return (
                 <label key={key} className={`flex items-start p-3 border rounded-lg cursor-pointer transition-all ${optionStyle}`}>
                   <input type={isMulti ? 'checkbox' : 'radio'} name={`question-${currentQuestion.question_id}`} value={key} checked={isSelected} onChange={() => handleSelectAnswer(key)} className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
-                  <span className="ml-2 md:ml-3 text-sm md:text-base text-gray-800"><span className="font-medium">{key}.</span> {value}</span>
+                  <span className="ml-2 md:ml-3 text-sm md:text-base text-gray-800"><span className="font-medium">{key}.</span> <RichText text={String(value)} /></span>
                   {isChecked && isCorrectOption && <span className="ml-auto text-green-600 font-bold text-xs flex-shrink-0">✓</span>}
                   {isChecked && isSelected && !isCorrectOption && <span className="ml-auto text-red-600 font-bold text-xs flex-shrink-0">✗</span>}
                 </label>
