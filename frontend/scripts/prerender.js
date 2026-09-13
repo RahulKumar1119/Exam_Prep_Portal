@@ -42,6 +42,8 @@ const PAGES = [
   '/blog/jaiib-ppb-important-topics-2026',
   '/blog/jaiib-afm-important-topics-2026',
   '/blog/jaiib-rbwm-important-topics-2026',
+  '/blog/caiib-abm-statistics-hrm-cheat-sheet-2026',
+  '/blog/is-caiib-worth-it-after-jaiib-2026',
   '/free-quiz/ie-ifs',
   '/free-quiz/ppb',
   '/free-quiz/afm',

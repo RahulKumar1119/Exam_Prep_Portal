@@ -13,6 +13,124 @@ interface BlogPost {
 
 const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'caiib-abm-statistics-hrm-cheat-sheet-2026',
+    title: 'CAIIB ABM Statistics & HRM Theories Cheat Sheet 2026 — Mean, Median, Mode + Motivation Models',
+    description: 'CAIIB ABM crash sheet: mean/median/mode, standard deviation, correlation, plus Maslow, Herzberg, McGregor, Vroom theories — the two highest-yield ABM areas in one page.',
+    date: '2026-09-13',
+    readTime: '9 min read',
+    category: 'Study Strategy',
+    coverImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">Two areas decide your CAIIB ABM result: business statistics and HRM theories. Both are pure memory-plus-formula zones — no lengthy case analysis, just direct questions that reward a single revision sheet. This cheat sheet compresses both into one page you can revise the morning of the exam.</p>
+        <div className="not-prose bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 my-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div><div className="text-2xl font-bold text-blue-900">740</div><div className="text-sm text-gray-600">ABM Questions</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">2</div><div className="text-sm text-gray-600">High-Yield Areas</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">100</div><div className="text-sm text-gray-600">Total Marks</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">50</div><div className="text-sm text-gray-600">Marks to Pass</div></div>
+          </div>
+        </div>
+        <h2>Part 1 — Central Tendency in 5 Minutes</h2>
+        <p>Every statistics question in ABM starts here. Memorise the trio plus when examiners prefer each one.</p>
+        <ul>
+          <li><strong>Mean:</strong> sum of observations ÷ number of observations. Uses every value, but a single extreme outlier drags it. Preferred for symmetrical data like average branch business.</li>
+          <li><strong>Median:</strong> the middle value after sorting (average of two middle values for even counts). Immune to outliers — preferred for income or NPA data with extremes.</li>
+          <li><strong>Mode:</strong> the most frequent value. The only average usable for categorical data (e.g. most common complaint type). A dataset can have no mode, one mode, or several.</li>
+        </ul>
+        <p><strong>Exam trap:</strong> in a right-skewed distribution (a few very large loans), mean &gt; median &gt; mode. In left-skewed data the order reverses. This single relationship answers 2–3 questions every attempt.</p>
+        <h2>Part 2 — Dispersion and Relationships</h2>
+        <ul>
+          <li><strong>Range:</strong> max − min. Quick but crude — ignores everything between the extremes.</li>
+          <li><strong>Standard deviation:</strong> the average distance of observations from the mean. Larger SD means wilder, riskier data — directly analogous to volatility in credit portfolios.</li>
+          <li><strong>Correlation (r):</strong> ranges from −1 to +1. Sign shows direction, magnitude shows strength. r = +0.85 means strong positive co-movement, not causation — examiners love testing that distinction.</li>
+          <li><strong>Regression:</strong> correlation quantifies a relationship; regression predicts with it (Y on X). The regression line always passes through the point of means.</li>
+        </ul>
+        <h2>Part 3 — HRM Motivation Theories Cheat Table</h2>
+        <p>Learn each theory as <em>name → one-line idea → one keyword</em>. That is exactly how options are framed.</p>
+        <ul>
+          <li><strong>Maslow hierarchy:</strong> five needs from physiological to self-actualisation; a satisfied need stops motivating. Keyword: <em>hierarchy</em>.</li>
+          <li><strong>Herzberg two-factor:</strong> hygiene factors (salary, policy) prevent dissatisfaction but don&apos;t motivate; motivators (achievement, recognition) drive satisfaction. Keyword: <em>hygiene vs motivators</em>.</li>
+          <li><strong>McGregor Theory X / Theory Y:</strong> X assumes people dislike work and need control; Y assumes work is natural and people seek responsibility. Keyword: <em>assumptions about people</em>.</li>
+          <li><strong>Vroom expectancy:</strong> motivation = expectancy × instrumentality × valence. If any factor is zero, motivation is zero. Keyword: <em>multiplication</em>.</li>
+          <li><strong>Adams equity:</strong> people compare their input–output ratio with peers; perceived unfairness kills motivation. Keyword: <em>fairness</em>.</li>
+          <li><strong>McClelland needs:</strong> achievement, power, affiliation drive different people. Keyword: <em>three needs</em>.</li>
+        </ul>
+        <h2>Leadership Styles in One Glance</h2>
+        <ul>
+          <li><strong>Autocratic:</strong> leader decides alone — fast, suits crises and untrained teams.</li>
+          <li><strong>Democratic/participative:</strong> team consulted — slower, better quality and buy-in.</li>
+          <li><strong>Laissez-faire:</strong> hands off — works only with expert, self-driven teams.</li>
+          <li><strong>Transactional vs transformational:</strong> rewards-for-targets versus inspiring change and vision.</li>
+        </ul>
+        <div className="not-prose bg-indigo-50 rounded-xl p-6 border border-indigo-200 my-6">
+          <h3 className="text-lg font-bold text-indigo-900 mb-2">Practice ABM Free</h3>
+          <p className="text-gray-700 mb-4">740 ABM questions with stats and HRM coverage, timed sets, instant scoring.</p>
+          <a href="/practice-tests/abm" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg">Start ABM Practice →</a>
+        </div>
+        <h2>FAQs</h2>
+        <h3>How much statistics is in CAIIB ABM?</h3>
+        <p>Enough to decide your result — central tendency, dispersion, correlation, and basic probability appear in every attempt, mostly as direct one-mark questions. A single formula sheet covers nearly all of it.</p>
+        <h3>How do I stop confusing motivation theories?</h3>
+        <p>Anchor each to its keyword (hierarchy, hygiene, assumptions, multiplication, fairness, three needs) and practise matching questions. Examiners describe a situation and ask which theory fits — keywords unlock those in seconds.</p>
+        <h3>Are numericals asked from statistics?</h3>
+        <p>Yes, but small ones: compute a mean/median/mode, interpret a correlation value, or pick the right average for a dataset. Long calculations are rare — concept clarity beats computation speed here.</p>
+        <h3>Where can I practise ABM stats and HRM free?</h3>
+        <p>MockMaster&apos;s ABM bank has 740 questions across statistics, HRM, credit, and compliance with timed sets and topic-wise accuracy tracking.</p>
+      </div>
+    ),
+  },
+  {
+    slug: 'is-caiib-worth-it-after-jaiib-2026',
+    title: 'Is CAIIB Worth It After JAIIB? Salary, Increments & Promotion Math (2026)',
+    description: 'JAIIB vs CAIIB payoff compared: increments, promotion weightage, fees, effort and timelines — the honest maths to decide if CAIIB is worth it for you.',
+    date: '2026-09-13',
+    readTime: '8 min read',
+    category: 'Career Guide',
+    coverImage: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">You cleared JAIIB, got your increment, and now everyone says &quot;do CAIIB next.&quot; But CAIIB demands months of study on top of a full-time banking job. Here is the honest payoff maths — increments, promotions, costs, and effort — so you can decide with numbers instead of peer pressure.</p>
+        <div className="not-prose bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 my-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div><div className="text-2xl font-bold text-blue-900">1</div><div className="text-sm text-gray-600">JAIIB Increment</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">2</div><div className="text-sm text-gray-600">CAIIB Increments</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">3</div><div className="text-sm text-gray-600">Papers (ABM, BFM + elective)</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">4-6</div><div className="text-sm text-gray-600">Months of Prep</div></div>
+          </div>
+        </div>
+        <h2>The Increment Maths</h2>
+        <p>JAIIB earns you <strong>one increment</strong>; CAIIB earns <strong>two additional increments</strong> (three total with JAIIB). Depending on your scale and bank, each increment is typically ₹1,000–₹3,000+ per month — and increments compound into every future pay revision, DA calculation, and retirement benefit. Over a 20-year career, two extra increments are worth several lakhs, against an exam fee of a few thousand rupees. Purely on ROI, almost nothing in banking beats it.</p>
+        <h2>The Promotion Weightage</h2>
+        <p>Most public sector banks give CAIIB-cleared officers preference — and in several banks, weightage or eligibility advantages — for promotion from Scale I to Scale II and beyond. JAIIB gets you noticed; CAIIB gets you shortlisted. If you plan to stay in banking and rise, CAIIB is less optional than it looks: your batchmates who clear it will outrank you on every promotion panel.</p>
+        <h2>The Cost Side: Effort and Time</h2>
+        <ul>
+          <li><strong>3 papers:</strong> Advanced Bank Management (ABM), Bank Financial Management (BFM), plus one elective — each deeper than any JAIIB paper.</li>
+          <li><strong>4–6 months</strong> of 1–2 focused hours daily alongside branch work. ABM&apos;s statistics and HRM are scoring; BFM&apos;s risk and treasury maths need practice.</li>
+          <li><strong>Fees</strong> are a few thousand rupees per attempt — trivial next to the payoff, but budget for possibly two attempts.</li>
+        </ul>
+        <h2>Who Should Skip (For Now)</h2>
+        <p>Be honest with yourself: if you are leaving banking within a year, preparing for UPSC/RBI Grade B full-time, or posted somewhere with genuinely zero study hours, defer CAIIB rather than failing it twice and demoralising yourself. It will still be there — increments apply whenever you clear it.</p>
+        <h2>Verdict</h2>
+        <p>Staying in banking? <strong>Yes, worth it</strong> — the highest-ROI career move available to a bank officer, by far. Start with ABM (closest to JAIIB base), use the increment as motivation, and treat BFM as the real boss fight. Begin preparation within 3 months of clearing JAIIB while study momentum is alive.</p>
+        <div className="not-prose bg-indigo-50 rounded-xl p-6 border border-indigo-200 my-6">
+          <h3 className="text-lg font-bold text-indigo-900 mb-2">Start CAIIB ABM Free</h3>
+          <p className="text-gray-700 mb-4">740 ABM questions, timed sets, AI explanations with references.</p>
+          <a href="/practice-tests/abm" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg">Start ABM Practice →</a>
+        </div>
+        <h2>FAQs</h2>
+        <h3>Is JAIIB compulsory before CAIIB?</h3>
+        <p>Yes — clearing JAIIB (or its recognised equivalent) is a prerequisite for CAIIB registration. You must have all JAIIB papers cleared before applying.</p>
+        <h3>How many increments does CAIIB give?</h3>
+        <p>Two increments over and above the one from JAIIB, in most public sector banks. Exact amounts vary by scale and settlement — check your bank&apos;s latest circular.</p>
+        <h3>How long does CAIIB preparation take?</h3>
+        <p>4–6 months at 1–2 hours daily for a working officer. ABM is the fastest win; BFM needs the most numerical practice; the elective depends on your pick.</p>
+        <h3>Does CAIIB guarantee promotion?</h3>
+        <p>No exam guarantees promotion — but CAIIB gives weightage or eligibility advantages in most PSB promotion policies, plus the increments regardless. It is the closest thing banking has to a guaranteed career return.</p>
+      </div>
+    ),
+  },
+  {
     slug: 'jaiib-ie-ifs-important-topics-2026',
     title: 'JAIIB IE & IFS Important Topics 2026 — Module-Wise High-Priority Areas',
     description: 'JAIIB IE & IFS important topics 2026 explained module-wise. Learn high-priority areas, key concepts and a smart 30-day study plan to score 50+ with ease.',
