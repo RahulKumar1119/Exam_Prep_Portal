@@ -216,7 +216,7 @@ const HomePage: React.FC = () => {
           <h2 className="text-lg font-bold text-gray-900 mb-4">Start Practicing</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {(selectedExam === 'AI-300' ? [
-              { id: 'AI-300', name: 'AI-300', questions: 600, color: 'from-purple-600 to-indigo-700' },
+              { id: 'AI-300', name: 'AI-300', questions: 510, color: 'from-purple-600 to-indigo-700' },
             ] : selectedExam === 'CAIIB' ? [
               { id: 'ABM', name: 'ABM', questions: 740, color: 'from-emerald-500 to-teal-700' },
             ] : [
@@ -226,7 +226,7 @@ const HomePage: React.FC = () => {
               { id: 'RBWM', name: 'RBWM', questions: 635, color: 'from-pink-500 to-pink-700' },
               { id: 'ABM', name: 'ABM (CAIIB)', questions: 740, color: 'from-emerald-500 to-teal-700' },
               ...(selectedExam === 'ALL' ? [
-                { id: 'AI-300', name: 'AI-300', questions: 600, color: 'from-purple-600 to-indigo-700' },
+                { id: 'AI-300', name: 'AI-300', questions: 510, color: 'from-purple-600 to-indigo-700' },
               ] : []),
             ]).map((paper) => (
               <div

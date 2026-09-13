@@ -20,7 +20,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
     { id: 'ABM', name: 'ABM', fullName: 'Advanced Bank Management', totalQuestions: 740, sets: 14 },
   ],
   'AI-300': [
-    { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 600, sets: 12 },
+    { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 510, sets: 10 },
   ],
   'CAPM': [
     { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management', totalQuestions: 225, sets: 3 },
