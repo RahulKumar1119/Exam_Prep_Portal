@@ -214,6 +214,12 @@ REQUIREMENTS:
 8. Options MUST be 2-3 sentences each — not just short phrases. Include specific SKUs, CLI flags, YAML properties, SDK class names
 9. At least 50% of questions should require knowing MULTIPLE Azure services and how they interact
 
+FORMATTING (match real exam readability — short paragraphs, never a wall of text):
+10. Structure question_text as 2-4 SHORT paragraphs separated by blank lines (use \n\n in the JSON string): para 1 = who/what setup (2-3 sentences), para 2 = current state or constraints, para 3 (if needed) = requirements as a dash-led bullet list after a line like "The solution must meet the following requirements:"
+11. End EVERY question_text with the ask on its own line: "What should you do?", "Which X should you use?", etc.
+12. Multi-answer questions MUST append, each on its own line: "Each correct answer presents a complete solution." or "NOTE: Each correct selection is worth one point."
+13. Keep each paragraph under 3 sentences. One idea per paragraph — setup, state, requirements, ask.
+
 GENERATE THESE MICROSOFT EXAM QUESTION STYLES (mix them):
 
 STYLE 1 — Complex Multi-Constraint Scenario (50% of questions):
@@ -237,7 +243,7 @@ CRITICAL OUTPUT RULES:
 [
   {{
     "question_type": "single_choice",
-    "question_text": "You are a senior MLOps engineer at Contoso Financial Services. Your team has trained a real-time fraud detection model using PyTorch that processes credit card transactions. The model requires GPU inference with P99 latency under 50ms to meet SLA requirements. Your company processes 25,000 transactions per second during peak hours (Black Friday) but only 2,000 TPS during normal periods. The security team mandates that all inference must occur within a private virtual network with no public internet exposure. Your infrastructure budget is capped at $3,500/month and the team has no Kubernetes experience. The model artifact is 4.2GB and requires CUDA 11.8. Which deployment architecture satisfies all constraints?",
+    "question_text": "You are a senior MLOps engineer at Contoso Financial Services. Your team has trained a real-time fraud detection model using PyTorch that processes credit card transactions.\n\nThe model requires GPU inference with P99 latency under 50ms. Your company processes 25,000 transactions per second at peak but only 2,000 TPS normally. All inference must stay within a private virtual network, and the infrastructure budget is capped at $3,500/month. The team has no Kubernetes experience.\n\nWhich deployment architecture satisfies all constraints?",
     "options": {{
       "A": "Deploy to a managed online endpoint with Standard_NC6s_v3 GPU instances, configure auto-scaling from 1 to 8 instances based on request latency, and enable private endpoint connectivity by attaching the workspace to your VNet with a private link",
       "B": "Deploy to Azure Kubernetes Service with GPU node pools using Standard_NC6s_v3 VMs, configure horizontal pod autoscaler with custom metrics, and restrict access using an internal load balancer within your VNet",
