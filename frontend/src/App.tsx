@@ -66,6 +66,7 @@ const HomeLoanPage = lazy(() => import('./pages/topics/HomeLoanPage'));
 // Components
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import CookieConsent from './components/CookieConsent';
 import LoadingSpinner from './components/LoadingSpinner';
 import { SessionTimeoutWarning } from './components/SessionTimeoutWarning';
 import NotificationPrompt from './components/NotificationPrompt';
@@ -260,6 +261,7 @@ const App: React.FC = () => {
                     <AppContent />
                   </Router>
                   <ToastViewport />
+                  <CookieConsent />
                 </NotificationProvider>
               </DashboardProvider>
             </PracticeProvider>

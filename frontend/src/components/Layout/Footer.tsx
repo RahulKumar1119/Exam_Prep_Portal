@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { openCookieSettings } from '../../utils/consent';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -18,6 +19,9 @@ const Footer: React.FC = () => {
             <Link to="/terms-of-service" className="hover:text-primary-600 transition-colors">
               Terms of Service
             </Link>
+            <button onClick={openCookieSettings} className="hover:text-primary-600 transition-colors">
+              Cookie Settings
+            </button>
             <a href="mailto:support@mockmaster.fun" className="hover:text-primary-600 transition-colors">
               Contact Us
             </a>

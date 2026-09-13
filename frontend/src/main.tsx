@@ -3,10 +3,24 @@ import ReactDOM from 'react-dom/client';
 import { hydrateRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { loadConsent, applyConsent } from './utils/consent';
 
-// AWS CloudWatch RUM — Real User Monitoring (lazy-loaded to prevent blocking)
+// Returning visitor with a stored choice: re-apply it (inject granted scripts).
+try {
+  const stored = loadConsent();
+  if (stored) applyConsent(stored);
+} catch {}
+
+// AWS CloudWatch RUM — Real User Monitoring (lazy-loaded to prevent blocking).
+// Only initialised when the user has granted analytics consent.
 setTimeout(() => {
   try {
+    let analyticsGranted = false;
+    try {
+      const raw = localStorage.getItem('mockmaster_cookie_consent');
+      analyticsGranted = !!raw && (JSON.parse(raw) as { analytics?: boolean }).analytics === true;
+    } catch {}
+    if (!analyticsGranted) return;
     import('aws-rum-web').then(({ AwsRum }) => {
       const config = {
         sessionSampleRate: 1,

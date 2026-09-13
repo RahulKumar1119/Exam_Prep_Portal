@@ -37,19 +37,23 @@
     <meta name="twitter:description" content="3000+ AI-powered practice questions for JAIIB 2026. Instant explanations with RBI circular references." />
     <meta name="twitter:image" content="https://mockmaster.fun/og-image.png" />
 
-    <!-- Google Analytics (GA4) + Google Ads -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8VGLY6HD39"></script>
+    <!-- Consent Mode v2 defaults: everything denied until the user
+         chooses in the cookie banner. Granted categories load their
+         scripts dynamically (see src/utils/consent.ts). -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-8VGLY6HD39');
-      gtag('config', 'AW-17664283083');
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
     </script>
 
-    <!-- Google AdSense -->
+    <!-- Google AdSense account verification (no cookies by itself) -->
     <meta name="google-adsense-account" content="ca-pub-4438011184531485">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4438011184531485" crossorigin="anonymous"></script>
 
     <!-- Structured Data: Organization -->
     <script type="application/ld+json">
