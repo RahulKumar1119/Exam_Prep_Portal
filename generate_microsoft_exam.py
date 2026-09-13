@@ -206,7 +206,7 @@ AI-300 OFFICIAL SYLLABUS (generate questions covering ALL these areas evenly):
 REQUIREMENTS:
 1. Each question MUST have exactly 4 options (A, B, C, D) with ONE correct answer
 2. NO definitions, NO "what does X stand for", NO "which is true about X"
-3. Difficulty: 0% easy, 30% medium, 70% hard — THIS IS AN EXPERT-LEVEL EXAM
+3. Difficulty: 10% easy, 35% medium, 55% hard — mostly expert-level (Microsoft passing score is 700/1000) with a few accessible warm-up questions per batch
 4. Microsoft passing score is 700/1000 — these questions should STUMP people who only read docs without hands-on experience
 5. All options must be plausible — real Azure services, commands, or configurations
 6. EVERY question text MUST be 4-8 sentences long with a detailed enterprise scenario
