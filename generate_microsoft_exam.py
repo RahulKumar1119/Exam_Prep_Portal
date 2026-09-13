@@ -125,15 +125,18 @@ def generate_questions_from_pdf(pdf_path: str, exam: str, count: int, mixed_type
         print(f"  🤖 Generating {batch} {'mixed-type ' if mixed_types else ''}questions via Claude...")
 
         if mixed_types:
+            # Mix mirrors real AI-300 item types (observed from practice sets):
+            # single-choice, checkbox multi-select, drag-drop matching, and
+            # dropdown-style items folded into single_choice (the platform has
+            # no close/dropdown renderer, so two-blank completions become
+            # 4 combined options).
             type_instructions = """
 
-QUESTION TYPE MIX (issue #51) — produce a realistic Microsoft exam distribution across this batch:
-- ~45% "single_choice": one correct option A-D (as described above).
-- ~18% "multi_select": 5 options A-E, 2 or 3 correct. Set "question_type":"multi_select", keep "correct_answer" as a comma string like "A,C", and ALSO add "correct_answers": ["A","C"]. End the question text with "(Select all that apply.)".
-- ~10% "yes_no": present 3 related statements the candidate must judge. Set "question_type":"yes_no", OMIT "options", add "statements": ["stmt 1","stmt 2","stmt 3"] and "correct_answers": ["Yes","No","Yes"] (one Yes/No per statement, same order).
-- ~8% "drag_drop": match items to zones. Set "question_type":"drag_drop", OMIT "options", add "drag_items": [{{"id":"i1","label":"..."}}, ...], "drop_zones": [{{"id":"z1","label":"..."}}, ...], and "correct_mapping": {{"z1":"i1","z2":"i2"}} mapping each zone id to the correct item id.
-- ~7% "build_list": order steps correctly. Set "question_type":"build_list", OMIT "options", add "correct_order": ["First step","Second step","Third step","Fourth step"] in the correct sequence.
-- CASE STUDY (~12%, i.e. ONE cluster of 3-4 linked questions per batch): write a detailed 6-10 sentence enterprise scenario, then 3-4 questions that all reference it. Each such question is a normal ANSWERABLE question (use "question_type":"single_choice" or "multi_select" with real options + correct_answer), and MUST ALSO carry these THREE identical fields on every question in the cluster: "case_study_id" (e.g. "CS-CONTOSO-1"), "scenario" (the full shared scenario text), and "exhibits" (an array like [{{"title":"Network","content":"..."}}, {{"title":"Budget","content":"..."}}]). Different clusters use different case_study_id values. Questions NOT part of a case study MUST NOT include case_study_id/scenario/exhibits.
+QUESTION TYPE MIX — mirror the real exam's item styles across this batch:
+- ~68% "single_choice": scenario-based, one correct option A-D (as described above).
+- ~12% "multi_select": checkbox style with 5-6 options A-E/F and exactly 2 correct. Set "question_type":"multi_select", keep "correct_answer" as a comma string like "A,D", and ALSO add "correct_answers": ["A","D"]. End the question text with "(Select all that apply.)" or "Each correct answer presents a complete solution."
+- ~12% "drag_drop": match a Values/Tools/Metrics list to Answer Area targets. Set "question_type":"drag_drop", OMIT "options", add "drag_items": [{{"id":"i1","label":"..."}}, ...] (4-6 items), "drop_zones": [{{"id":"z1","label":"..."}}, ...] (2-3 zones), and "correct_mapping": {{"z1":"i1","z2":"i2"}} mapping each zone id to the correct item id.
+- ~8% "dropdown-folded single_choice": CLI/command-completion or two-blank items (e.g. canary traffic strings, SDK parameter pairs). Fold into "question_type":"single_choice" with 4 options where EACH option is one complete combination (e.g. "blue=80 green=20"). One combination correct.
 For every question ALWAYS include "question_type", "topic" and "difficulty". Only choice types use "options"."""
         else:
             type_instructions = ""
@@ -149,27 +152,27 @@ SOURCE CONTENT:
 
 AI-300 OFFICIAL SYLLABUS (generate questions covering ALL these areas evenly):
 
-1. Design and implement an MLOps infrastructure (15-20%):
-   - Create/manage Machine Learning workspace, datastores, compute targets
-   - Configure identity and access management for workspaces
-   - Create/manage data assets, environments, components, registries
-   - Configure GitHub integration with Machine Learning
-   - Deploy ML workspaces using Bicep and Azure CLI
-   - Automate resource provisioning with GitHub Actions workflows
-   - Restrict network access to ML workspaces
+# 1. Design and implement an MLOps infrastructure (15-20%):
+#    - Create/manage Machine Learning workspace, datastores, compute targets
+#    - Configure identity and access management for workspaces
+#    - Create/manage data assets, environments, components, registries
+#    - Configure GitHub integration with Machine Learning
+#    - Deploy ML workspaces using Bicep and Azure CLI
+#    - Automate resource provisioning with GitHub Actions workflows
+#    - Restrict network access to ML workspaces
 
-2. Implement machine learning model lifecycle and operations (25-30%):
-   - Configure experiment tracking with MLflow
-   - Use Automated ML to explore optimal models
-   - Automate hyperparameter tuning
-   - Manage distributed training for large/deep learning models
-   - Implement training pipelines, compare model performance across jobs
-   - Package feature retrieval specification with model artifact
-   - Register an MLflow model, evaluate with responsible AI principles
-   - Deploy models as real-time or batch endpoints with managed inference
-   - Implement progressive rollout and safe rollback strategies
-   - Detect/analyze data drift, monitor production model performance
-   - Configure retraining triggers when thresholds exceeded
+# 2. Implement machine learning model lifecycle and operations (25-30%):
+#    - Configure experiment tracking with MLflow
+#    - Use Automated ML to explore optimal models
+#    - Automate hyperparameter tuning
+#    - Manage distributed training for large/deep learning models
+#    - Implement training pipelines, compare model performance across jobs
+#    - Package feature retrieval specification with model artifact
+#    - Register an MLflow model, evaluate with responsible AI principles
+#    - Deploy models as real-time or batch endpoints with managed inference
+#    - Implement progressive rollout and safe rollback strategies
+#    - Detect/analyze data drift, monitor production model performance
+#    - Configure retraining triggers when thresholds exceeded
 
 3. Design and implement a GenAIOps infrastructure (20-25%):
    - Create/configure Foundry resources and project environments
