@@ -246,11 +246,11 @@ const BrowseExamsPage: React.FC = () => {
             {filtered.map((exam) => (
               <div
                 key={exam.id}
-                onClick={() => exam.status === 'live' ? navigate(exam.link) : null}
-                className={`bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden transition-all ${
+                onClick={() => navigate(exam.status === 'live' ? exam.link : '/contact')}
+                className={`bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden transition-all cursor-pointer ${
                   exam.status === 'live'
-                    ? 'cursor-pointer hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5'
-                    : 'opacity-60'
+                    ? 'hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5'
+                    : 'opacity-60 hover:border-gray-700'
                 }`}
               >
                 {/* Color bar */}
@@ -283,7 +283,7 @@ const BrowseExamsPage: React.FC = () => {
                       <span>{exam.difficulty}</span>
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-600">Questions are being prepared</p>
+                    <p className="text-xs text-gray-600">Coming soon — click to request this exam →</p>
                   )}
                 </div>
               </div>
