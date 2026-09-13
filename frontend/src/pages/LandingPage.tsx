@@ -85,7 +85,7 @@ const LandingPage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.45 }}
             className="text-xs text-gray-500 mt-6"
           >
-            No credit card. No trial period. Free forever.
+            No credit card. Free forever.
           </motion.p>
         </div>
       </section>

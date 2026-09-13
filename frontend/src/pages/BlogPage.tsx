@@ -1396,10 +1396,10 @@ const BlogListPage: React.FC = () => {
           </p>
           <button
             onClick={() => navigate('/register')}
-            className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
-          >
-            Start Free Trial
-          </button>
+              className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
+            >
+              Get Started Free
+            </button>
         </div>
       </section>
 
@@ -1520,7 +1520,7 @@ const BlogPostPage: React.FC = () => {
                 onClick={() => navigate('/register')}
                 className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
               >
-                Start Free Trial →
+                Start Practicing Free →
               </button>
             </div>
           </div>
