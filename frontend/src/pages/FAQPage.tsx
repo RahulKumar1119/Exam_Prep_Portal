@@ -91,6 +91,69 @@ const FAQPage: React.FC = () => {
       ],
     },
     {
+      title: 'About CAPM Exam',
+      icon: '📋',
+      items: [
+        {
+          question: 'What is CAPM and who should take it?',
+          answer:
+            'CAPM (Certified Associate in Project Management) is PMI’s entry-level project management credential for students, career changers, and coordinators. Unlike PMP, it requires no project leadership experience — just 23 contact hours of project management education (or a CAPM-aligned course) plus a high-school diploma.',
+        },
+        {
+          question: 'What is the CAPM exam pattern?',
+          answer:
+            'The CAPM exam has 150 multiple-choice questions to be completed in 3 hours. It covers four domains: fundamentals (36%), predictive methodologies (17%), agile frameworks (20%), and business analysis (27%). MockMaster mirrors this with 75-question practice sets.',
+        },
+        {
+          question: 'How should I prepare for CAPM?',
+          answer:
+            'Study the PMI Exam Content Outline domain-wise, then take timed 75-question sets on MockMaster. Focus on scenario questions ("what should you do next") — they dominate the paper. Our AI explanations reference PMBOK guidance for every answer.',
+        },
+      ],
+    },
+    {
+      title: 'About AI-300 Exam',
+      icon: '🤖',
+      items: [
+        {
+          question: 'What is the Microsoft AI-300 exam?',
+          answer:
+            'AI-300 (Operationalizing Machine Learning & Generative AI Solutions) is a Microsoft certification for professionals who design, deploy, and manage ML and GenAI solutions on Azure. It covers MLOps infrastructure, model lifecycle, GenAIOps, RAG, fine-tuning, and production monitoring.',
+        },
+        {
+          question: 'How tough is AI-300 and what is the passing score?',
+          answer:
+            'AI-300 is an expert-level exam with a passing score of 700/1000. Questions are scenario-heavy — multi-constraint enterprise cases involving cost, latency, compliance, and scale. Hands-on Azure experience matters more than theory. MockMaster’s 510 scenario-based questions replicate this style.',
+        },
+        {
+          question: 'How should I prepare for AI-300?',
+          answer:
+            'Combine Microsoft Learn paths with hands-on labs (ML workspaces, endpoints, Foundry projects), then drill timed scenario sets. Pay special attention to MLOps vs GenAIOps differences, RAG optimisation, and monitoring — the most-tested areas.',
+        },
+      ],
+    },
+    {
+      title: 'About Quantitative Aptitude',
+      icon: '📊',
+      items: [
+        {
+          question: 'Which exams need Quantitative Aptitude?',
+          answer:
+            'Almost all of them: JAIIB/CAIIB numericals, IBPS and SBI bank exams, SSC, Railways, LIC, CAT, XAT, MAT, GMAT, GRE, UPSC CSAT, CLAT, and state PSCs like TNPSC and KPSC. The same core topics — percentages, interest, time-work, ratios — repeat everywhere.',
+        },
+        {
+          question: 'How do MockMaster quant sets work?',
+          answer:
+            'Each quant set has 30 questions across 35 chapters, with a 20-minute timer and −0.25 negative marking per wrong answer (skips are free) — mirroring real bank-exam pressure. You need 50% to pass a set.',
+        },
+        {
+          question: 'How do I improve calculation speed?',
+          answer:
+            'Learn percentage–fraction conversions (12.5% = 1/8), successive-change shortcuts, and approximation. Then drill timed sets daily — speed comes from pattern recognition, which only repetition builds. Review every error in your topic-wise accuracy breakdown.',
+        },
+      ],
+    },
+    {
       title: 'About MockMaster Platform',
       icon: '💻',
       items: [
@@ -102,7 +165,7 @@ const FAQPage: React.FC = () => {
         {
           question: 'How many questions does MockMaster have?',
           answer:
-            'MockMaster currently has 3000+ questions covering all JAIIB papers — IE&IFS, PPB, AFM, and RBWM. We regularly add new questions to keep the question bank fresh and comprehensive. Our goal is to cover every topic in the IIBF syllabus thoroughly.',
+            'MockMaster currently has 5,600+ questions: all JAIIB papers (IE&IFS, PPB, AFM, RBWM), CAIIB ABM, Microsoft AI-300, PMI CAPM, and Quantitative Aptitude across 35 chapters. We add new questions every week to keep the banks fresh.',
         },
         {
           question: 'What are AI explanations?',
@@ -152,9 +215,25 @@ const FAQPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <SEO
-        title="JAIIB & CAIIB FAQ — Frequently Asked Questions | MockMaster"
-        description="Find answers to common questions about JAIIB and CAIIB exams — eligibility, passing criteria, exam pattern, negative marking, salary increment, and how MockMaster helps you prepare for free."
+        title="Exam FAQ — JAIIB, CAIIB, AI-300, CAPM & Quant Answers | MockMaster"
+        description="Find answers about JAIIB, CAIIB, AI-300, CAPM and Quantitative Aptitude exams — eligibility, passing criteria, pattern, negative marking, salary increment, and how MockMaster helps you prepare for free."
         canonical="https://mockmaster.fun/faq"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqSections.flatMap((section) =>
+              section.items.map((item) => ({
+                '@type': 'Question',
+                name: item.question,
+                acceptedAnswer: { '@type': 'Answer', text: item.answer },
+              }))
+            ),
+          }),
+        }}
       />
 
       {/* Navigation Bar */}
@@ -191,7 +270,7 @@ const FAQPage: React.FC = () => {
             Frequently Asked Questions
           </h1>
           <p className="text-base sm:text-xl text-gray-600 leading-relaxed">
-            Everything you need to know about JAIIB, CAIIB exams and MockMaster platform.
+            Everything you need to know about JAIIB, CAIIB, AI-300, CAPM, Quant exams and the MockMaster platform.
           </p>
         </div>
       </section>
