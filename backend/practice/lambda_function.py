@@ -98,6 +98,93 @@ def _is_quant(paper_name: str) -> bool:
     return paper_name == 'QUANT'
 
 
+# AI-300 official study-guide weights (midpoints) — used to stratify sets
+# so each practice set mirrors the exam, not the bank's skew.
+AI300_DOMAIN_WEIGHTS = [
+    ('D1', 0.175),  # MLOps infrastructure (15-20%)
+    ('D2', 0.275),  # ML lifecycle & operations (25-30%)
+    ('D3', 0.225),  # GenAIOps infrastructure (20-25%)
+    ('D4', 0.125),  # GenAI QA & observability (10-15%)
+    ('D5', 0.125),  # Optimize GenAI systems (10-15%)
+]
+
+
+def _ai300_domain(topic: str) -> str:
+    """Map a bank topic label to an official AI-300 domain (D1-D5/other)."""
+    s = (topic or '').lower()
+    if any(k in s for k in ['quality assurance', 'responsible ai', 'observability']):
+        return 'D4'
+    if any(k in s for k in ['rag optim', 'fine-tun', 'performance optimization',
+                            'system optimization', 'optimize ', 'optimiz',
+                            'cost management', 'model optimization']):
+        return 'D5'
+    if any(k in s for k in ['genaiops infrastructure', 'genai infrastructure', 'foundry',
+                            'deploy foundation', 'multi-agent', 'agent service',
+                            'agent capabilit', 'agent tool', 'genaiops cost']):
+        return 'D3'
+    if any(k in s for k in ['lifecycle', 'experiment tracking', 'distributed training',
+                            'pipeline implementation', 'monitor', 'retrain',
+                            'drift', 'troubleshoot']):
+        return 'D2'
+    if any(k in s for k in ['mlops', 'deployment', 'endpoint', 'network security',
+                            'rbac', 'github', 'data asset', 'compute infrastructure',
+                            'data management', 'development environment']):
+        return 'D1'
+    return 'other'
+
+
+def _ai300_quotas(per_set: int) -> Dict[str, int]:
+    """Largest-remainder quotas per domain for a set of per_set questions."""
+    quotas = {d: int(per_set * w) for d, w in AI300_DOMAIN_WEIGHTS}
+    short = per_set - sum(quotas.values())
+    remainders = sorted(AI300_DOMAIN_WEIGHTS,
+                        key=lambda dw: per_set * dw[1] - int(per_set * dw[1]),
+                        reverse=True)
+    i = 0
+    while short > 0:
+        quotas[remainders[i % len(remainders)][0]] += 1
+        short -= 1
+        i += 1
+    return quotas
+
+
+def _stratified_ai300(items: List[Dict], per_set: int, offset: int = 0,
+                      shuffle: bool = True) -> List[Dict]:
+    """Build an AI-300 set matching official domain weights.
+
+    offset rotates the deterministic order (used by fixed set_number);
+    shuffle=True randomises within domains (practice mode).
+    """
+    groups: Dict[str, List[Dict]] = {}
+    for q in items:
+        groups.setdefault(_ai300_domain(q.get('topic', '')), []).append(q)
+    for g in groups.values():
+        g.sort(key=lambda x: x.get('question_id', ''))
+
+    quotas = _ai300_quotas(per_set)
+    picked: List[Dict] = []
+    for domain, _ in AI300_DOMAIN_WEIGHTS:
+        group = groups.get(domain, [])
+        want = quotas.get(domain, 0)
+        if not group or want <= 0:
+            continue
+        if shuffle:
+            picked.extend(random.sample(group, min(want, len(group))))
+        else:
+            start = (offset * want) % len(group)
+            picked.extend([group[(start + j) % len(group)] for j in range(min(want, len(group)))])
+    # Fill any shortfall (thin domain / 'other' labels) randomly, avoid dupes.
+    if len(picked) < per_set:
+        seen = {q.get('question_id') for q in picked}
+        rest = [q for q in items if q.get('question_id') not in seen]
+        if shuffle:
+            random.shuffle(rest)
+        picked.extend(rest[:per_set - len(picked)])
+    if shuffle:
+        random.shuffle(picked)
+    return picked[:per_set]
+
+
 def _db_fallback_quant(quant_table, count: int, difficulty: Optional[str] = None) -> List[Dict]:
     """Fetch QUANT questions via paper-topic-index (same shape as main bank)."""
     try:
@@ -291,6 +378,27 @@ def _db_fallback(questions_table, paper_name: str, count: int, difficulty: Optio
         return []
 
 
+def _db_fetch_all(questions_table, paper_name: str) -> List[Dict]:
+    """Fetch ALL questions for a paper via paper-topic-index (paginated)."""
+    try:
+        items = []
+        kwargs = {
+            'IndexName': 'paper-topic-index',
+            'KeyConditionExpression': 'paper_name = :p',
+            'ExpressionAttributeValues': {':p': paper_name}
+        }
+        while True:
+            resp = questions_table.query(**kwargs)
+            items.extend(resp.get('Items', []))
+            if 'LastEvaluatedKey' not in resp:
+                break
+            kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
+        return items
+    except Exception as e:
+        print(f"DB fetch-all error: {e}")
+        return []
+
+
 def _db_fetch_by_difficulty(questions_table, paper_name: str) -> Dict[str, List[Dict]]:
     """Fetch all questions for a paper, grouped by difficulty."""
     try:
@@ -352,6 +460,11 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
                     questions = quant_items[start:end]
                     if len(questions) < per_set and quant_items:
                         questions += quant_items[:per_set - len(questions)]
+                elif paper_name == 'AI-300':
+                    # Stratified fixed set: official domain weights, rotated per set_number
+                    ai_items = _db_fetch_all(questions_table, paper_name)
+                    questions = _stratified_ai300(ai_items, per_set,
+                                                  offset=set_number - 1, shuffle=False)
                 else:
                     items = []
                     kwargs = {
@@ -393,6 +506,10 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
                 questions = _db_fallback_capm(_capm_table(), per_set)
             elif _is_quant(paper_name):
                 questions = _db_fallback_quant(_quant_table(), per_set)
+            elif paper_name == 'AI-300':
+                # Stratified random set: official domain weights
+                ai_items = _db_fetch_all(questions_table, paper_name)
+                questions = _stratified_ai300(ai_items, per_set, shuffle=True)
             else:
                 questions = _db_fallback(questions_table, paper_name, per_set)
             if not questions:
