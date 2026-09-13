@@ -19,7 +19,7 @@ const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="MockMaster — Free IT Certification & Banking Exam Practice Tests"
-        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (510 questions), and PMI CAPM (225 questions). AI explanations, leaderboard, timed mock tests. No payment required."
+        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (685 questions), and PMI CAPM (225 questions). AI explanations, leaderboard, timed mock tests. No payment required."
         canonical="https://mockmaster.fun/"
         keywords="JAIIB mock test 2026, AI-300 practice test, CAPM practice test, free certification practice, Microsoft AI-300, PMI CAPM, IIBF exam prep, Azure ML certification"
       />
@@ -174,12 +174,12 @@ const LandingPage: React.FC = () => {
               <p className="text-sm text-gray-400 mb-5">Operationalizing ML & GenAI Solutions. Azure ML, MLOps, Foundry, RAG, fine-tuning, and model deployment.</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-2xl font-bold text-white">510</span>
+                  <span className="text-2xl font-bold text-white">685</span>
                   <span className="text-xs text-gray-500">questions</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-white">10</span>
+                  <span className="text-lg font-bold text-white">12</span>
                   <span className="text-xs text-gray-500">sets</span>
                 </div>
               </div>

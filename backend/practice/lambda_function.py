@@ -41,7 +41,7 @@ class DecimalEncoder(json.JSONEncoder):
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
 # Per-paper overrides — CAPM practice sets are longer (75 vs default 50)
-QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30}
+QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30, 'AI-300': 57}
 
 
 def _questions_per_set(paper_name: str) -> int:

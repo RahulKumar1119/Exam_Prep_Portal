@@ -44,7 +44,7 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
                   <p className="text-xs text-emerald-600 mt-2 font-medium">355 questions available</p>
                 )}
                 {exam.id === 'AI-300' && (
-                  <p className="text-xs text-purple-600 mt-2 font-medium">510 questions available</p>
+                  <p className="text-xs text-purple-600 mt-2 font-medium">685 questions available</p>
                 )}
                 {exam.id === 'CAPM' && (
                   <p className="text-xs text-orange-600 mt-2 font-medium">New — CAPM practice launching</p>

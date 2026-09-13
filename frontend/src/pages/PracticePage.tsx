@@ -20,7 +20,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
     { id: 'ABM', name: 'ABM', fullName: 'Advanced Bank Management', totalQuestions: 740, sets: 14 },
   ],
   'AI-300': [
-    { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 510, sets: 10 },
+    { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 685, sets: 12 },
   ],
   'CAPM': [
     { id: 'CAPM', name: 'CAPM', fullName: 'Certified Associate in Project Management', totalQuestions: 225, sets: 3 },
@@ -34,6 +34,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
 const QUESTIONS_PER_SET: Record<string, number> = {
   'CAPM': 75,
   'QUANT': 30,
+  'AI-300': 57,
 };
 const questionsPerSet = (paperId: string) => QUESTIONS_PER_SET[paperId] ?? 50;
 

@@ -201,7 +201,7 @@ const AboutPage: React.FC = () => {
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>• 510 scenario-based questions</li>
+                <li>• 685 scenario-based questions</li>
                 <li>• Covers MLOps, GenAIOps, RAG, fine-tuning</li>
                 <li>• Azure ML, Foundry, GitHub Actions</li>
                 <li>• Expert-level difficulty</li>

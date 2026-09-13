@@ -123,7 +123,7 @@ const FAQPage: React.FC = () => {
         {
           question: 'How tough is AI-300 and what is the passing score?',
           answer:
-            'AI-300 is an expert-level exam with a passing score of 700/1000. Questions are scenario-heavy — multi-constraint enterprise cases involving cost, latency, compliance, and scale. Hands-on Azure experience matters more than theory. MockMaster’s 510 scenario-based questions replicate this style.',
+            'AI-300 is an expert-level exam with a passing score of 700/1000. Questions are scenario-heavy — multi-constraint enterprise cases involving cost, latency, compliance, and scale. Hands-on Azure experience matters more than theory. MockMaster’s 685 scenario-based questions replicate this style.',
         },
         {
           question: 'How should I prepare for AI-300?',
