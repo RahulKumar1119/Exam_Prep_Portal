@@ -1,15 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, MotionConfig } from 'motion/react';
 import SEO from '../components/SEO';
+import ExamOrgLogo from '../components/ExamOrgLogo';
+
+// Shared scroll-reveal: fade up once when entering the viewport.
+const reveal = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-64px' },
+} as const;
 
 const AboutPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="About MockMaster — Free Certification Exam Practice Platform"
-        description="MockMaster helps professionals pass certification exams with AI-powered practice tests, detailed explanations, and performance analytics. JAIIB, CAIIB, Microsoft AI-300, and PMI CAPM."
+        description="MockMaster helps professionals pass certification exams with AI-powered practice tests, detailed explanations, and performance analytics. JAIIB, CAIIB, Microsoft AI-300, PMI CAPM, and Quantitative Aptitude."
         canonical="https://mockmaster.fun/about"
       />
 
@@ -34,24 +44,38 @@ const AboutPage: React.FC = () => {
       <section className="relative overflow-hidden py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/40 via-transparent to-transparent" />
         <div className="max-w-3xl mx-auto text-center relative">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="text-4xl sm:text-5xl font-bold mb-6 leading-tight"
+          >
             About <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">MockMaster</span>
-          </h1>
-          <p className="text-lg text-gray-400 leading-relaxed">
-            Free AI-powered practice tests for banking professionals, cloud engineers, and project managers. Built to help you pass on your first attempt.
-          </p>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+            className="text-lg text-gray-400 leading-relaxed"
+          >
+            Free AI-powered practice tests for banking professionals, cloud engineers, project managers, and every competitive-exam aspirant. Built to help you pass on your first attempt.
+          </motion.p>
         </div>
       </section>
 
       {/* Mission */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 sm:p-10 shadow-2xl">
+          <motion.div
+            {...reveal}
+            transition={{ duration: 0.5 }}
+            className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 sm:p-10 shadow-2xl"
+          >
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">Our Mission</h2>
             <p className="text-indigo-100 text-lg leading-relaxed">
               Quality exam preparation shouldn't cost a fortune. We're building the most effective practice platform for professional certifications — powered by AI, backed by official sources, and completely free.
             </p>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -60,15 +84,19 @@ const AboutPage: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">What We Offer</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-indigo-500/30 transition">
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5 }}
+              className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-indigo-500/30 transition"
+            >
               <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">📚</span>
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">5,000+ Questions</h3>
+              <h3 className="text-lg font-bold text-white mb-2">5,600+ Questions</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
-                JAIIB (IE&IFS, PPB, AFM, RBWM) + CAIIB + Microsoft AI-300 + PMI CAPM. Previous year papers included. Updated regularly with new content.
+                JAIIB (IE&IFS, PPB, AFM, RBWM) + CAIIB + Microsoft AI-300 + PMI CAPM + Quantitative Aptitude across 35 chapters. Updated regularly with new content.
               </p>
-            </div>
+            </motion.div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-purple-500/30 transition">
               <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">🤖</span>
@@ -112,7 +140,7 @@ const AboutPage: React.FC = () => {
               We combined modern AI technology with expert-curated content to create a platform that actually helps you pass. Our questions are sourced from official textbooks and previous exam papers. Our AI explanations cite specific regulatory references so you understand the "why" behind every answer.
             </p>
             <p>
-              Whether you're a bank officer preparing for JAIIB/CAIIB, a cloud engineer studying for Microsoft AI-300, or an aspiring project manager working toward PMI CAPM, MockMaster gives you the practice and feedback you need — without spending a rupee.
+              Whether you're a bank officer preparing for JAIIB/CAIIB, a cloud engineer studying for Microsoft AI-300, an aspiring project manager working toward PMI CAPM, or a competitive-exam candidate mastering quantitative aptitude, MockMaster gives you the practice and feedback you need — without spending a rupee.
             </p>
           </div>
         </div>
@@ -123,39 +151,69 @@ const AboutPage: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">Exams We Cover</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5 }}
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-6"
+            >
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">🏦</span>
+                <ExamOrgLogo exam="JAIIB" size={40} />
                 <div>
                   <h3 className="font-bold text-white">JAIIB</h3>
                   <p className="text-xs text-gray-500">Indian Institute of Banking & Finance</p>
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>• IE & IFS — 1,163 questions (23 sets)</li>
+                <li>• IE & IFS — 1,161 questions (23 sets)</li>
                 <li>• PPB — 760 questions (15 sets)</li>
-                <li>• AFM — 1,195 questions (23 sets)</li>
-                <li>• RBWM — 635 questions (13 sets)</li>
+                <li>• AFM — 1,187 questions (23 sets)</li>
+                <li>• RBWM — 634 questions (13 sets)</li>
               </ul>
-            </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            </motion.div>
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.08 }}
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-6"
+            >
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">🤖</span>
+                <ExamOrgLogo exam="CAIIB" size={40} />
+                <div>
+                  <h3 className="font-bold text-white">CAIIB</h3>
+                  <p className="text-xs text-gray-500">Certified Associate (Advanced)</p>
+                </div>
+              </div>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>• ABM — 740 questions (14 sets)</li>
+                <li>• Statistics, HRM, credit management</li>
+                <li>• Compliance & corporate governance</li>
+              </ul>
+            </motion.div>
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.16 }}
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <ExamOrgLogo exam="AI-300" size={40} />
                 <div>
                   <h3 className="font-bold text-white">Microsoft AI-300</h3>
                   <p className="text-xs text-gray-500">Operationalizing ML & GenAI Solutions</p>
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>• 600 scenario-based questions (12 sets)</li>
+                <li>• 510 scenario-based questions</li>
                 <li>• Covers MLOps, GenAIOps, RAG, fine-tuning</li>
                 <li>• Azure ML, Foundry, GitHub Actions</li>
                 <li>• Expert-level difficulty</li>
               </ul>
-            </div>
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            </motion.div>
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5 }}
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-6"
+            >
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">📋</span>
+                <ExamOrgLogo exam="CAPM" size={40} />
                 <div>
                   <h3 className="font-bold text-white">PMI CAPM</h3>
                   <p className="text-xs text-gray-500">Certified Associate in Project Management</p>
@@ -167,7 +225,25 @@ const AboutPage: React.FC = () => {
                 <li>• Predictive, WBS, critical path, RTM</li>
                 <li>• Entry-level difficulty</li>
               </ul>
-            </div>
+            </motion.div>
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.08 }}
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <ExamOrgLogo exam="QUANT" size={40} />
+                <div>
+                  <h3 className="font-bold text-white">Quantitative Aptitude</h3>
+                  <p className="text-xs text-gray-500">Bank, SSC, CAT, UPSC & all Govt exams</p>
+                </div>
+              </div>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li>• 440+ questions across 35 chapters</li>
+                <li>• 30-question sets, 20 min, −0.25 negative</li>
+                <li>• SI/CI, time-work, DI, probability & more</li>
+              </ul>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -237,6 +313,7 @@ const AboutPage: React.FC = () => {
         </div>
       </footer>
     </div>
+    </MotionConfig>
   );
 };
 
