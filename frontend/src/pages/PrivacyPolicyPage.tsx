@@ -57,7 +57,7 @@ const PrivacyPolicyPage: React.FC = () => (
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li><strong>Strictly necessary:</strong> login session and security state. Always on — the site cannot function without these.</li>
           <li><strong>Analytics (optional):</strong> Google Analytics measures anonymous traffic so we know which pages help aspirants. Loaded only if you accept.</li>
-          <li><strong>Advertising (optional):</strong> Google Ads and AdSense fund free access. Loaded only if you accept.</li>
+          <li><strong>Advertising (optional):</strong> Google Ads and AdSense fund free access. Loaded only if you accept. Learn how Google uses data on partner sites: <a href="https://www.google.com/policies/privacy/partners/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">google.com/policies/privacy/partners</a>.</li>
         </ul>
         <p className="mt-2">We also use browser local storage for non-sensitive preferences such as dark mode and your selected exam.</p>
       </Section>
