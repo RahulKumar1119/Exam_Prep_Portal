@@ -17,6 +17,15 @@ Usage:
   python3 generate_microsoft_exam.py --pdf ./docs/ --exam AI-300 --count 50 --upload
 """
 
+# TEMPORARY bank-balance note (measured 2026-09-13, 509 AI-300 questions):
+#   D1 MLOps infra ......... 152 (30%) vs 15-20% target  → OVERWEIGHT, skip for now
+#   D2 ML lifecycle ........ 153 (30%) vs 25-30% target  → OK, maintain
+#   D3 GenAIOps infra ......  79 (16%) vs 20-25% target  → UNDERWEIGHT, prioritise (~60 Qs)
+#   D4 QA/observability ....  53 (10%) vs 10-15% target  → OK, low end
+#   D5 Optimize GenAI ......  58 (11%) vs 10-15% target  → OK
+# Next runs: bias topics toward D3 (Foundry, deployment, agents, private
+# networking). Remove this note once D3 reaches ~110+ questions.
+
 import re
 import os
 import uuid
