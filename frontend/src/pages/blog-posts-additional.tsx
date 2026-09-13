@@ -13,6 +13,436 @@ interface BlogPost {
 
 const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'jaiib-ie-ifs-important-topics-2026',
+    title: 'JAIIB IE & IFS Important Topics 2026 — Module-Wise High-Priority Areas',
+    description: 'JAIIB IE & IFS important topics 2026 explained module-wise. Learn high-priority areas, key concepts and a smart 30-day study plan to score 50+ with ease.',
+    date: '2026-09-13',
+    readTime: '10 min read',
+    category: 'Study Strategy',
+    coverImage: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">If you are preparing for JAIIB 2026, Indian Economy and Indian Financial System, popularly called IE and IFS, is the paper that sets the tone for your whole attempt. It connects basic economics with the day-to-day working of banks, so officers who understand concepts can score quickly without lengthy calculations. This guide breaks down module-wise high-priority areas, explains why each topic matters, and shows how to finish the syllabus in a focused and practical way.</p>
+        <div className="not-prose bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 my-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div><div className="text-2xl font-bold text-blue-900">1,161</div><div className="text-sm text-gray-600">Practice Questions</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">4</div><div className="text-sm text-gray-600">Modules Covered</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">100</div><div className="text-sm text-gray-600">Total Marks</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">50</div><div className="text-sm text-gray-600">Marks to Pass</div></div>
+          </div>
+        </div>
+        <h2>Paper Overview: What IE and IFS Really Tests</h2>
+        <p>IE and IFS is Paper 1 of JAIIB. It has four modules covering the Indian economic structure, core economic ideas linked to banking, the Indian financial architecture, and the financial products and services banks offer. The paper carries 100 marks and you need 50 marks to pass. Questions are objective in nature and mostly test clarity of concepts, functions of institutions, and awareness of how policy connects to banking business.</p>
+        <p>Unlike accounting or legal papers, this subject does not demand working out long problems. It rewards regular reading, logical linking, and revision of definitions and roles. For example, once you understand why the Reserve Bank changes policy rates, you can answer questions on deposits, credit growth, and bond prices together. Bankers who relate every chapter to branch-level work find this paper scoring and interesting rather than theoretical.</p>
+        <h2>High-Priority Topics for 2026</h2>
+        <p>These ten areas appear again and again in mock tests and past sessions. Start here if your time is limited, then expand module by module.</p>
+        <ul>
+          <li><strong>RBI functions and role:</strong> why the central bank matters for note issue, banker to banks, and financial stability</li>
+          <li><strong>Money supply and monetary policy:</strong> why measures of money and tools like repo rate influence credit and liquidity</li>
+          <li><strong>GDP and National Income:</strong> why growth concepts help you interpret economic performance and banking demand</li>
+          <li><strong>SEBI and market regulation:</strong> why investor protection and market supervision support healthy capital markets</li>
+          <li><strong>Banking Regulation Act 1949:</strong> why licensing, management, and powers under the Act shape bank working</li>
+          <li><strong>Financial markets overview:</strong> why money market and capital market differences are frequently tested</li>
+          <li><strong>Inflation indices:</strong> why CPI, WPI, and their uses matter for policy and depositors</li>
+          <li><strong>Fiscal policy and Union Budget:</strong> why deficits, taxation, and spending link the government to banks</li>
+          <li><strong>Forex and FEMA basics:</strong> why exchange rates and foreign exchange rules affect trade and remittances</li>
+          <li><strong>NITI Aayog and planning:</strong> why the shift from planning era to policy think-tank changed development strategy</li>
+        </ul>
+        <p>Master these first with short notes and one-line revisions. They form nearly half of the direct questions and also help you understand the remaining modules faster.</p>
+        <h2>Module A: Indian Economic Architecture</h2>
+        <p>Module A builds your foundation about how the Indian economy is organised. Focus on structure and trends rather than memorising every year and figure.</p>
+        <ul>
+          <li><strong>Nature and sectors of the economy:</strong> primary, secondary, and services sectors and their contribution to jobs and output</li>
+          <li><strong>Economic planning history:</strong> objectives of five-year plans and lessons that still guide policy thinking</li>
+          <li><strong>NITI Aayog structure and role:</strong> cooperative federalism, indices, and support to states</li>
+          <li><strong>Demographics and employment:</strong> population trends, workforce participation, and skill development needs</li>
+          <li><strong>Infrastructure and growth link:</strong> transport, energy, and digital infrastructure as drivers of credit demand</li>
+          <li><strong>Key economic reforms:</strong> liberalisation, privatisation, and recent structural changes in simple terms</li>
+        </ul>
+        <h2>Module B: Economic Concepts Related to Banking</h2>
+        <p>Module B connects textbook economics to banking decisions. Read slowly and link every concept to interest rates, deposits, or loans.</p>
+        <ul>
+          <li><strong>National income aggregates:</strong> GDP, GNP, per capita income, and nominal versus real growth</li>
+          <li><strong>Business cycles and growth:</strong> expansion, slowdown, and how banks adjust lending through cycles</li>
+          <li><strong>Money supply and credit creation:</strong> how deposits multiply and why reserve ratios matter</li>
+          <li><strong>Monetary policy tools:</strong> repo, reverse repo, CRR, SLR, and open market operations in plain language</li>
+          <li><strong>Inflation and its control:</strong> causes, effects on savers and borrowers, and policy response</li>
+          <li><strong>Fiscal policy essentials:</strong> revenue and capital budgets, deficits, and public debt basics</li>
+        </ul>
+        <h2>Module C: Indian Financial Architecture</h2>
+        <p>Module C is the heart of the paper for bankers. It covers regulators, laws, and markets that govern your daily work.</p>
+        <ul>
+          <li><strong>Reserve Bank organisation and functions:</strong> monetary authority, currency management, and supervision</li>
+          <li><strong>Banking Regulation Act 1949:</strong> licensing, shareholding, management, and powers to inspect and direct banks</li>
+          <li><strong>Commercial banks, RRBs, and cooperative banks:</strong> structure, ownership, and distinct roles in inclusion</li>
+          <li><strong>Development and specialised institutions:</strong> NABARD, SIDBI, EXIM Bank, and NHB support to priority sectors</li>
+          <li><strong>SEBI, IRDAI, and PFRDA:</strong> who regulates securities, insurance, and pensions and why it matters</li>
+          <li><strong>Money and capital markets:</strong> call money, treasury bills, shares, bonds, and mutual fund channels</li>
+        </ul>
+        <h2>Module D: Financial Products and Services</h2>
+        <p>Module D is the most practical and scoring section. Most questions come directly from products you see at the branch or on mobile banking.</p>
+        <ul>
+          <li><strong>Deposit products:</strong> savings, current, term deposits, and special schemes for seniors and youth</li>
+          <li><strong>Loan products:</strong> home, personal, vehicle, education, and MSME loans with basic features</li>
+          <li><strong>Mutual funds and insurance:</strong> types of funds, risk levels, life and general insurance basics</li>
+          <li><strong>Digital banking services:</strong> UPI, mobile banking, cards, and doorstep banking use cases</li>
+          <li><strong>Remittance and forex services:</strong> inward and outward transfers, cards for travel, and exchange basics</li>
+          <li><strong>Government schemes through banks:</strong> Jan Dhan, Mudra, Stand-Up India, and pension and insurance schemes</li>
+        </ul>
+        <h2>Latest Developments to Track in 2026</h2>
+        <p>Current updates can turn a borderline score into a clear pass. Spend thirty minutes every week on these three streams and note one line for each news item.</p>
+        <ul>
+          <li><strong>RBI monetary policy:</strong> follow repo rate decisions, inflation remarks, and liquidity measures and link them to deposit and loan rates</li>
+          <li><strong>UPI and digital banking:</strong> track new features in payments, CBDC pilots, fraud prevention steps, and financial inclusion drives</li>
+          <li><strong>Union Budget and economic survey:</strong> note fiscal deficit targets, tax changes, capex push, and support for MSMEs and agriculture</li>
+        </ul>
+        <p>Do not chase daily market noise. Focus on stable concepts first, then add current facts as examples. In the final ten days, revise only your short notes and attempted mock questions.</p>
+        <div className="not-prose bg-indigo-50 rounded-xl p-6 border border-indigo-200 my-6">
+          <h3 className="text-lg font-bold text-indigo-900 mb-2">Practice These Topics Free</h3>
+          <p className="text-gray-700 mb-4">Attempt module-wise IE and IFS quizzes with answers and explanations. Identify weak chapters and improve speed before the exam.</p>
+          <a href="/practice-tests/ie-ifs" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg">Start IE and IFS Practice →</a>
+        </div>
+        <h2>FAQs</h2>
+        <h3>Which module of IE and IFS is the toughest?</h3>
+        <p>Most learners find Module B tough at first because it has economic terms and policy tools. Once you link each tool to deposits and lending with simple examples, it becomes scoring. Module C is lengthy but familiar to bankers, so regular revision makes it manageable.</p>
+        <h3>How much current affairs is needed for IE and IFS?</h3>
+        <p>Concepts carry the highest weight, while current updates help in fifteen to twenty percent of questions. Cover the last six months of RBI policy, Budget highlights, and major digital banking developments. Avoid deep data and focus on roles, reasons, and implications.</p>
+        <h3>Is IE and IFS numericals-heavy?</h3>
+        <p>No, it is not calculation-heavy. You may see a few simple questions on GDP growth, inflation rates, or money concepts, but they test understanding rather than formulas. Practice basic interpretations and read tables carefully instead of memorising complex derivations.</p>
+        <h3>What is a smart pass strategy for 30 days?</h3>
+        <p>Give ten days each to Modules A and B plus C, and seven days to Module D with daily quizzes. Keep three days for full mocks and revision of short notes. Study two hours daily, revise previous topics every Sunday, and practise at least 50 questions per module each week.</p>
+        <h3>Where can I practice IE and IFS topics for free?</h3>
+        <p>You can start with free module-wise practice sets that cover all four modules with explanations. Attempt topic tests after each chapter, review mistakes in a notebook, and finish with timed mocks to build confidence for the final paper.</p>
+      </div>
+    ),
+  },
+  {
+    slug: 'jaiib-ppb-important-topics-2026',
+    title: 'JAIIB PPB Important Topics 2026 — Module-Wise High-Priority Areas',
+    description: 'Explore JAIIB PPB important topics 2026 module-wise. Master NI Act, KYC, NPAs and banking tech with smart tips to clear Principles and Practices easily.',
+    date: '2026-09-13',
+    readTime: '10 min read',
+    category: 'Study Strategy',
+    coverImage: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6e?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">Principles and Practices of Banking, known as PPB, is the most practical paper of JAIIB 2026. It reflects what you do at the counter, in the credit section, and on digital channels every day. If you organise your study around real branch situations, Acts, and processes, you can convert experience into marks. This guide lists high-priority topics and module-wise areas to help you plan smartly and pass with confidence.</p>
+        <div className="not-prose bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 my-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div><div className="text-2xl font-bold text-blue-900">760</div><div className="text-sm text-gray-600">Practice Questions</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">4</div><div className="text-sm text-gray-600">Modules Covered</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">100</div><div className="text-sm text-gray-600">Total Marks</div></div>
+            <div><div className="text-2xl font-bold text-blue-900">50</div><div className="text-sm text-gray-600">Marks to Pass</div></div>
+          </div>
+        </div>
+        <h2>Paper Overview: What PPB Really Tests</h2>
+        <p>PPB is Paper 2 of JAIIB. It carries 100 marks with 50 marks needed to pass and covers four modules on banking operations, functions of banks, banking technology, and ethics. Questions are objective and often framed as small case studies from branch working, such as account opening, cheque payment, loan documentation, or digital transactions.</p>
+        <p>The paper rewards bankers who know procedures, precautions, and customer rights clearly. Mugging up sections rarely helps unless you understand the logic behind each rule. For example, KYC norms exist to verify identity and track risk, while crossing of cheques exists to ensure safe payment. When you study with this cause-and-effect view, answers become intuitive even under exam pressure.</p>
+        <h2>High-Priority Topics for 2026</h2>
+        <p>Start with these eleven areas. They cover the core of operations, credit, technology, and compliance that examiners favour every session.</p>
+        <ul>
+          <li><strong>KYC norms:</strong> why identity and address verification protects banks and customers from fraud</li>
+          <li><strong>NI Act 1881 essentials:</strong> why cheques, crossing, and endorsement rules ensure safe and valid payment</li>
+          <li><strong>Banker-customer relationship:</strong> why debtor-creditor and agent roles decide rights and duties</li>
+          <li><strong>Loans and advances:</strong> why mortgage, pledge, and hypothecation differ in possession and security</li>
+          <li><strong>Priority sector lending:</strong> why targets for agriculture and MSMEs guide inclusive credit flow</li>
+          <li><strong>NPA classification and SARFAESI:</strong> why asset norms and recovery powers keep bank balance sheets healthy</li>
+          <li><strong>Core banking and CBS:</strong> why centralised processing changed service delivery and controls</li>
+          <li><strong>RTGS, NEFT, IMPS, and UPI:</strong> why each payment system suits different speed and value needs</li>
+          <li><strong>Cyber security and IT Act:</strong> why safe digital practices and legal backing matter for banks</li>
+          <li><strong>Banking Ombudsman scheme:</strong> why grievance redressal builds trust and accountability</li>
+          <li><strong>PMLA and AML-KYC compliance:</strong> why reporting and monitoring duties prevent misuse of banking channels</li>
+        </ul>
+        <p>Revise these with real examples from your branch. Write one practical instance for each rule and you will recall it faster in the exam hall.</p>
+        <h2>Module A: General Banking Operations</h2>
+        <p>Module A covers deposits, account handling, and payment instruments. Accuracy and procedure are the key themes here.</p>
+        <ul>
+          <li><strong>Types of customers and accounts:</strong> individuals, minors, joint holders, firms, companies, and trusts with opening rules</li>
+          <li><strong>KYC and account opening:</strong> documents, risk categories, periodic updation, and simplified norms for small accounts</li>
+          <li><strong>Banker-customer relationship:</strong> general and special relations, lien, set-off, and confidentiality duties</li>
+          <li><strong>Cheques under NI Act:</strong> essentials of valid cheques, crossing types, endorsement, and dishonour procedures</li>
+          <li><strong>Payment and collection duties:</strong> precautions for paying and collecting bankers and protection available</li>
+          <li><strong>Grievance handling basics:</strong> complaint registration, resolution timelines, and escalation channels</li>
+        </ul>
+        <h2>Module B: Functions of Banks</h2>
+        <p>Module B focuses on lending, credit monitoring, and support services. It is high-scoring if you master security types and recovery steps.</p>
+        <ul>
+          <li><strong>Principles of lending:</strong> safety, liquidity, profitability, and appraisal of character and cash flows</li>
+          <li><strong>Types of charges:</strong> pledge, hypothecation, mortgage, assignment, and lien with practical differences</li>
+          <li><strong>Documentation and monitoring:</strong> key loan documents, inspection, stock statements, and end-use checks</li>
+          <li><strong>Priority sector norms:</strong> categories, sub-targets, and weaker section provisions in simple form</li>
+          <li><strong>NPA norms and provisioning:</strong> classification, upgradation, and basic provisioning logic</li>
+          <li><strong>Recovery tools including SARFAESI:</strong> notices, possession steps, Lok Adalats, and one-time settlement basics</li>
+        </ul>
+        <h2>Module C: Banking Technology</h2>
+        <p>Module C covers digital systems that power modern banking. Focus on use cases, limits, and safety rather than technical depth.</p>
+        <ul>
+          <li><strong>Core banking solution:</strong> centralised data, anywhere banking, and improved audit and control</li>
+          <li><strong>Payment systems:</strong> RTGS, NEFT, IMPS, UPI, NACH, and cards with timing and value differences</li>
+          <li><strong>Delivery channels:</strong> ATMs, internet banking, mobile apps, and business correspondents</li>
+          <li><strong>Cyber security essentials:</strong> passwords, OTP safety, phishing awareness, and secure practices</li>
+          <li><strong>IT Act and data protection:</strong> legal validity of electronic records and duties to protect customer data</li>
+          <li><strong>Fintech and future trends:</strong> API banking, digital onboarding, and analytics support to decisions</li>
+        </ul>
+        <h2>Module D: Ethics in Banking</h2>
+        <p>Module D is short but valuable for quick marks. It tests values, fair conduct, and redressal systems every banker should know.</p>
+        <ul>
+          <li><strong>Ethics and values:</strong> honesty, fairness, transparency, and conflict handling in daily work</li>
+          <li><strong>Fair practices code:</strong> clear communication on charges, timelines, and loan terms to customers</li>
+          <li><strong>Grievance redressal system:</strong> internal committees, nodal officers, and escalation matrix</li>
+          <li><strong>Banking Ombudsman framework:</strong> grounds for complaints, process flow, and award nature</li>
+          <li><strong>Customer rights and education:</strong> right to privacy, suitability, and awareness about fraud prevention</li>
+          <li><strong>Whistle-blower and vigilance:</strong> reporting channels and protection principles in banks</li>
+        </ul>
+        <h2>Latest Developments to Track in 2026</h2>
+        <p>PPB examples increasingly reflect digital and compliance updates. A light weekly review keeps you ready for case-based questions.</p>
+        <ul>
+          <li><strong>RBI customer service standards:</strong> revised turnaround times, compensation for failed transactions, and safe digital practices</li>
+          <li><strong>UPI and fraud control:</strong> new limits, verification features, reporting methods, and customer awareness drives</li>
+          <li><strong>Compliance focus:</strong> stronger KYC refresh drives, PMLA reporting discipline, and updated Ombudsman directions</li>
+        </ul>
+        <p>Link each update to a module. For instance, connect a UPI safety feature to Module C and a grievance timeline to Module D. This habit helps in scenario questions.</p>
+        <div className="not-prose bg-indigo-50 rounded-xl p-6 border border-indigo-200 my-6">
+          <h3 className="text-lg font-bold text-indigo-900 mb-2">Practice These Topics Free</h3>
+          <p className="text-gray-700 mb-4">Try free PPB quizzes on operations, credit, technology, and ethics with clear explanations. Build speed and fix weak areas fast.</p>
+          <a href="/practice-tests/ppb" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg">Start PPB Practice →</a>
+        </div>
+        <h2>FAQs</h2>
+        <h3>Which module of PPB is most scoring?</h3>
+        <p>Module A and Module D are usually most scoring because they are logical and experience-based. Module B needs careful study of charge types and NPA rules, while Module C is scoring if you learn payment systems through comparison tables and daily use examples.</p>
+        <h3>How important is the NI Act for PPB?</h3>
+        <p>Very important. Expect questions on valid cheques, types of crossing, endorsement, and liability on dishonour. Learn each concept with a small example, such as what happens when a crossed cheque is presented at the counter, to avoid confusion in options.</p>
+        <h3>How do I remember Acts and years easily?</h3>
+        <p>Group them by purpose rather than year alone. Link NI Act 1881 to payments, SARFAESI 2002 to recovery, and PMLA 2002 to money laundering prevention. Make a one-page chart with Act, purpose, and one branch example, and revise it twice a week.</p>
+        <h3>How should I handle case-study questions?</h3>
+        <p>Read the last line first to know what is asked, then scan the facts. Apply the basic rule instead of guessing from memory of exceptions. Eliminate options that violate customer rights or safety precautions, then choose the most compliant and practical answer.</p>
+        <h3>Where can I practice PPB questions for free?</h3>
+        <p>You can practise with free module-wise PPB tests that mirror exam patterns with answers and logic. Start topic-wise, note your errors, and finish with full-length timed sets to improve accuracy and time management before the exam.</p>
+      </div>
+    ),
+  },
+  {
+    slug: 'jaiib-afm-important-topics-2026',
+    title: 'JAIIB AFM Important Topics 2026 — Module-Wise High-Priority Areas',
+    description: 'Explore JAIIB AFM important topics for 2026 with module-wise priority areas, key formulas, accounting concepts and smart tips to cross fifty marks confidently.',
+    date: '2026-09-13',
+    readTime: '10 min read',
+    category: 'Study Strategy',
+    coverImage: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">Accounting and Financial Management feels different from other JAIIB papers because numbers decide your result. If you understand basic logic, remember formulas with clarity, and solve short numericals regularly, AFM can become your highest scoring paper in the 2026 attempt with steady practice.</p>
+        <div className="not-prose bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 my-8 text-white">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-3xl font-bold">1,187</div>
+              <div className="text-blue-100 text-sm mt-1">Practice Questions</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">Numerical</div>
+              <div className="text-blue-100 text-sm mt-1">Calculation Heavy Paper</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">100</div>
+              <div className="text-blue-100 text-sm mt-1">Total Marks</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">50</div>
+              <div className="text-blue-100 text-sm mt-1">Marks To Pass</div>
+            </div>
+          </div>
+        </div>
+        <h2>Paper Overview</h2>
+        <p>AFM is widely seen as the numerical paper of JAIIB. It combines basic accounting, reading of financial statements, financial management, and selected ideas from taxation and costing. Questions test whether you can apply a formula correctly, interpret a ratio, prepare a simple adjustment, or choose the right method for a business decision. Theory alone is not enough here.</p>
+        <p>For 2026, expect a balanced mix of concept based questions and small calculation based questions. Most numericals are short and can be solved in one or two steps if your formula is clear. Long and confusing calculations are rare. Your main advantage comes from speed, accuracy, and regular revision of formulas, formats, and key definitions across all four modules.</p>
+        <h2>High-Priority Topics For 2026</h2>
+        <p>These ten areas appear again and again in practice sets and past trends. Give them extra time because they connect theory with numerical problem solving and help you score quickly.</p>
+        <ul>
+          <li><strong>Ratio analysis:</strong> why it matters for judging liquidity, solvency, activity, and profitability from limited data.</li>
+          <li><strong>Capital budgeting NPV and IRR:</strong> why it matters for selecting projects using discounted cash flow methods.</li>
+          <li><strong>Time value of money:</strong> why it matters because compounding and discounting form the base of almost all financial decisions.</li>
+          <li><strong>Working capital management:</strong> why it matters for maintaining daily liquidity through stock, debtors, and creditors.</li>
+          <li><strong>Cost of capital:</strong> why it matters for finding the minimum return a company must earn on its funds.</li>
+          <li><strong>Leverage:</strong> why it matters for understanding how debt changes profit, risk, and shareholder returns.</li>
+          <li><strong>Break-even analysis:</strong> why it matters for finding the sales level where total revenue equals total cost.</li>
+          <li><strong>Marginal costing:</strong> why it matters for decisions on pricing, product mix, make or buy, and shutdown points.</li>
+          <li><strong>Cash flow statement AS-3:</strong> why it matters for tracking operating, investing, and financing flows correctly.</li>
+          <li><strong>GST basics:</strong> why it matters for input credit, supply rules, registration limits, and simple tax calculation.</li>
+        </ul>
+        <h2>Accounting Principles</h2>
+        <p>This foundation block decides how comfortable you feel with the rest of the paper. Once journal entries, ledger posting, and trial balance logic are clear, later chapters on depreciation, reconciliation, and final accounts become much easier to handle under exam pressure.</p>
+        <ul>
+          <li><strong>Journal, ledger and trial balance:</strong> learn debit and credit rules, posting flow, and how errors affect agreement of balances.</li>
+          <li><strong>Depreciation methods:</strong> practise straight line and written down value methods with focus on rate, life, and residual value.</li>
+          <li><strong>Bank reconciliation statement:</strong> understand timing differences like uncleared cheques, direct credits, and bank charges.</li>
+          <li><strong>Accounting concepts and conventions:</strong> revise going concern, accrual, consistency, prudence, and matching with simple examples.</li>
+          <li><strong>Rectification of errors:</strong> focus on one sided and two sided errors and their effect on profit and trial balance.</li>
+          <li><strong>Partnership accounts basics:</strong> revise profit sharing, fixed and fluctuating capital, interest on capital, and goodwill treatment.</li>
+        </ul>
+        <h2>Financial Statements</h2>
+        <p>This section tests whether you can read what a company is really saying through its statements. Focus on format, sequence, and meaning rather than rote learning. If you can link profit, balance sheet strength, cash movement, and ratios together, many objective questions become direct and scoring.</p>
+        <ul>
+          <li><strong>Profit and loss statement:</strong> study format, operating and net profit layers, and treatment of common adjustments.</li>
+          <li><strong>Balance sheet structure:</strong> revise order of assets and liabilities, equity components, and reading of reserves and provisions.</li>
+          <li><strong>Cash flow preparation:</strong> practise classification into operating, investing, and financing activities with indirect method logic.</li>
+          <li><strong>Ratio interpretation:</strong> focus on current ratio, quick ratio, debt equity ratio, stock turnover, and return on capital employed.</li>
+          <li><strong>Fund flow basics:</strong> understand sources and uses of funds and change in working capital with simple schedules.</li>
+          <li><strong>Window dressing and limitations:</strong> learn how policy choices and one time items can change reported profits and ratios.</li>
+        </ul>
+        <h2>Financial Management</h2>
+        <p>This is the heart of AFM scoring. Every formula has a clear story behind it. If you first understand why a formula exists, you will remember it longer and apply it faster. Revise one formula family at a time and solve five to ten short questions immediately after learning it.</p>
+        <ul>
+          <li><strong>Compounding and discounting:</strong> master present value, future value, annuity, and effective rate with timeline diagrams.</li>
+          <li><strong>Investment appraisal:</strong> compare payback, accounting rate of return, net present value, profitability index, and internal rate of return.</li>
+          <li><strong>Cost of debt, equity and weighted average:</strong> learn tax adjustment on debt, dividend growth model, and weight selection logic.</li>
+          <li><strong>Operating and financial leverage:</strong> understand degree of leverage, break-even linkage, and impact on earnings variability.</li>
+          <li><strong>Dividend theories:</strong> revise relevance and irrelevance views, Walter and Gordon models, and factors shaping payout policy.</li>
+          <li><strong>Working capital cycle:</strong> practise operating cycle, cash conversion period, and estimation of working capital needs.</li>
+        </ul>
+        <h2>Taxation and Costing</h2>
+        <p>The last block is factual but highly scoring because questions are usually direct. Keep a one page sheet for tax slabs logic, deduction names, GST limits, cost terms, and budget types. Short daily revision works better than reading this portion only once before the exam.</p>
+        <ul>
+          <li><strong>Income tax basics for individuals:</strong> focus on residential status idea, salary and house property heads, deductions, and TDS outline.</li>
+          <li><strong>GST framework:</strong> revise supply concept, intra state and inter state levy, input tax credit flow, and return filing basics.</li>
+          <li><strong>Cost classification:</strong> learn fixed, variable, direct, indirect, sunk, opportunity, and conversion cost with banking examples.</li>
+          <li><strong>Marginal costing decisions:</strong> practise contribution, profit volume ratio, break-even point, margin of safety, and limiting factor cases.</li>
+          <li><strong>Budgets and control:</strong> revise cash budget, flexible budget, zero based budgeting, and variance idea in simple terms.</li>
+          <li><strong>Standard costing outline:</strong> understand standard, actual, and variance linkage without going into lengthy advanced problems.</li>
+        </ul>
+        <h2>Formula-First Strategy That Saves Marks</h2>
+        <p>Always write the formula before substituting values, even in rough work. This habit prevents mix-ups between similar formulas like present value annuity and future value annuity, or operating leverage and financial leverage. In the exam, first identify what is asked, recall the exact formula, then place the numbers carefully with units.</p>
+        <p>Maintain a personal formula register with three columns: formula, meaning of each symbol, and one common mistake. Revise it for fifteen minutes daily in the last month. Solve mixed sets under time limits so you learn to switch quickly from accounting to costing to financial management without losing rhythm.</p>
+        <div className="not-prose bg-indigo-50 rounded-xl p-6 border border-indigo-200 my-6">
+          <h3 className="text-lg font-bold text-indigo-900 mb-2">Practice These Topics Free</h3>
+          <p className="text-gray-700 mb-4">Attempt module-wise AFM quizzes with solutions and track your accuracy on ratios, budgeting, and costing questions.</p>
+          <a href="/practice-tests/afm" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg">Start AFM Practice →</a>
+        </div>
+        <h2>FAQs</h2>
+        <h3>Is AFM the toughest paper in JAIIB?</h3>
+        <p>Many learners feel so because it has calculations, but it is also the most scoring paper once formulas are clear. Regular short practice removes fear faster than only reading theory. Start with easy chapters like depreciation and ratios to build confidence early.</p>
+        <h3>Is a calculator allowed in the AFM exam?</h3>
+        <p>An online calculator is generally available in the exam interface for basic computation. Still, practise mental steps for percentages, ratios, and discount factors so you save time. Learn to round sensibly and verify whether your answer looks logical before marking it.</p>
+        <h3>How many numericals can I expect?</h3>
+        <p>A large share of questions involve small calculations or formula application, while the rest test concepts and definitions. Expect frequent short numericals from time value, ratios, leverage, break-even, and working capital. Lengthy multi-step problems are limited, so speed on basics matters more.</p>
+        <h3>How should I revise formulas in the last two weeks?</h3>
+        <p>Use a single formula notebook and revise it in short loops. Group similar formulas together, write one solved example beside each, and mark formulas where you make repeated errors. Attempt one mixed quiz daily and rework only the questions you got wrong.</p>
+        <h3>Where can I practise AFM topics for free?</h3>
+        <p>You can start with free module-wise quizzes that cover accounting, statements, management, and costing with clear explanations. Regular timed attempts will show your weak areas and improve accuracy before the 2026 exam.</p>
+      </div>
+    ),
+  },
+  {
+    slug: 'jaiib-rbwm-important-topics-2026',
+    title: 'JAIIB RBWM Important Topics 2026 — Module-Wise High-Priority Areas',
+    description: 'Master JAIIB RBWM important topics for 2026 with module-wise priorities, retail products, recovery rules, marketing basics and wealth management made simple.',
+    date: '2026-09-13',
+    readTime: '10 min read',
+    category: 'Study Strategy',
+    coverImage: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&h=400&fit=crop',
+    content: (
+      <div className="prose prose-lg max-w-none">
+        <p className="lead text-xl text-gray-700 mb-8">Retail Banking and Wealth Management is the newest and most practical paper in JAIIB. It blends day to day banking products, recovery rules, marketing ideas, and basic wealth planning. With smart module-wise focus and regular fact revision, you can finish the syllabus faster and score well in 2026.</p>
+        <div className="not-prose bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 my-8 text-white">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-3xl font-bold">634</div>
+              <div className="text-blue-100 text-sm mt-1">Practice Questions</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">4</div>
+              <div className="text-blue-100 text-sm mt-1">Modules To Cover</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">100</div>
+              <div className="text-blue-100 text-sm mt-1">Total Marks</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold">50</div>
+              <div className="text-blue-100 text-sm mt-1">Marks To Pass</div>
+            </div>
+          </div>
+        </div>
+        <h2>Paper Overview</h2>
+        <p>RBWM brings together retail asset and liability products, customer service and recovery processes, marketing of banking services, and introductory wealth management. The language is simple, but the syllabus is wide. Many questions are factual and statement based, so careful reading and recall of limits, features, and institutional roles make a clear difference.</p>
+        <p>For 2026, expect strong weightage for housing loans, cards, microfinance, recovery channels, marketing mix, and mutual fund and insurance basics. Caselets may describe a customer need and ask for the right product or the next step in recovery. Prepare with short notes, feature tables, and daily revision of factual points.</p>
+        <h2>High-Priority Topics For 2026</h2>
+        <p>Start with these high return areas. They cover customer facing products, risk and recovery, and simple investment ideas that examiners like to test through direct and application style questions.</p>
+        <ul>
+          <li><strong>Home loans:</strong> why they matter for LTV norms, documentation, PMAY support, and long tenure risk assessment.</li>
+          <li><strong>Credit and debit cards:</strong> why they matter for billing cycles, limits, overline rules, fraud care, and fee based income.</li>
+          <li><strong>Education and gold loans:</strong> why they matter for moratorium, collateral norms, margin, and priority sector linkage.</li>
+          <li><strong>Microfinance and SHGs:</strong> why they matter for joint liability, Bank linkage model, and financial inclusion goals.</li>
+          <li><strong>Recovery channels:</strong> why they matter for Lok Adalat, DRT, SARFAESI action, and one time settlement choices.</li>
+          <li><strong>Marketing concepts and CRM:</strong> why they matter for segmentation, targeting, service quality, and long term loyalty.</li>
+          <li><strong>Cross-selling:</strong> why it matters for deepening relationships while matching the right product to customer needs.</li>
+          <li><strong>Mutual fund types:</strong> why they matter for equity, debt, hybrid, NAV logic, and expense and exit load basics.</li>
+          <li><strong>Portfolio basics and risk profiling:</strong> why they matter for matching age, goals, horizon, and risk appetite correctly.</li>
+          <li><strong>Insurance and retirement planning:</strong> why they matter for term and endowment difference, pension needs, and nomination clarity.</li>
+          <li><strong>NRI banking:</strong> why it matters for account types, repatriation rules, and suitable deposit and remittance options.</li>
+        </ul>
+        <h2>Module A: Retail Banking</h2>
+        <p>This module builds your view of retail business models, delivery channels, and customer handling. Focus on how banks source retail business, score risk, price products, and serve customers across branches and digital touchpoints.</p>
+        <ul>
+          <li><strong>Retail banking evolution:</strong> learn drivers of growth, liability and asset focus, and advantages of granular retail books.</li>
+          <li><strong>Business models and channels:</strong> revise branch, DSA, digital onboarding, mobile banking, and doorstep service roles.</li>
+          <li><strong>Customer onboarding and KYC:</strong> focus on account opening, CKYC, risk categorisation, and periodic updation needs.</li>
+          <li><strong>Credit scoring and appraisal:</strong> understand CIBIL inputs, income assessment, obligation ratio, and verification steps.</li>
+          <li><strong>Customer service and grievance:</strong> study charter points, complaint handling levels, and turnaround discipline in retail.</li>
+          <li><strong>Retail risk overview:</strong> learn delinquency signals, early warning triggers, and portfolio monitoring basics.</li>
+        </ul>
+        <h2>Module B: Retail Products and Recovery</h2>
+        <p>This is the most factual and scoring module. Make one table per product with purpose, eligibility, margin, security, repayment, and special scheme points. For recovery, remember thresholds, authority levels, and sequence of action rather than learning long legal text.</p>
+        <ul>
+          <li><strong>Housing and vehicle loans:</strong> revise LTV, tenure, equated instalment logic, prepayment norms, and PMAY assistance idea.</li>
+          <li><strong>Personal, education and gold loans:</strong> focus on end use checks, moratorium, co-borrower norms, and valuation and custody care.</li>
+          <li><strong>Cards and digital credit:</strong> learn card types, billing and grace logic, minimum due effect, and safe usage practices.</li>
+          <li><strong>Microfinance, SHG and joint liability:</strong> revise group models, Bank linkage flow, and social and financial discipline.</li>
+          <li><strong>NRI products:</strong> study account categories, permitted credits and debits, deposit choices, and remittance facility features.</li>
+          <li><strong>Recovery toolkit:</strong> compare Lok Adalat, DRT process, SARFAESI steps, OTS policy, and compromise settlement selection.</li>
+        </ul>
+        <h2>Module C: Marketing of Banking Services</h2>
+        <p>Marketing in banks is about trust, clarity, and service consistency. Questions often test definitions and small situations. Learn terms with one banking example each so you can answer even twisted statements with confidence.</p>
+        <ul>
+          <li><strong>Core marketing ideas:</strong> revise needs and wants, value, exchange, segmentation, targeting, and positioning with examples.</li>
+          <li><strong>Marketing mix for services:</strong> learn product, price, place, promotion plus people, process, and physical evidence.</li>
+          <li><strong>CRM and loyalty:</strong> understand customer lifetime value, retention cost logic, feedback loops, and complaint to loyalty conversion.</li>
+          <li><strong>Cross-selling and upselling:</strong> focus on need discovery, suitability, disclosure discipline, and mis-selling avoidance.</li>
+          <li><strong>Digital marketing basics:</strong> study website, app, social, and campaign metrics like conversion and engagement in brief.</li>
+          <li><strong>Service quality gaps:</strong> learn reliability, assurance, tangibles, empathy, and responsiveness with branch illustrations.</li>
+        </ul>
+        <h2>Module D: Wealth Management</h2>
+        <p>This module needs concept clarity more than deep finance maths. Learn how risk, return, horizon, and goals connect. Focus on product features, suitability, and investor protection rather than complex valuation models.</p>
+        <ul>
+          <li><strong>Wealth stages and goals:</strong> map accumulation, preservation, and distribution needs to age and income stability.</li>
+          <li><strong>Risk profiling:</strong> practise matching conservative, moderate, and aggressive profiles to suitable asset mixes.</li>
+          <li><strong>Mutual funds and NAV:</strong> revise fund categories, systematic plans, benchmarks, loads, and reading of factsheet lines.</li>
+          <li><strong>Bonds and deposits:</strong> understand tenure, coupon, yield idea, safety, and laddering for steady income needs.</li>
+          <li><strong>Insurance planning:</strong> compare term, endowment, unit linked, and pension products with claim and nominee basics.</li>
+          <li><strong>Retirement and estate basics:</strong> learn corpus estimation logic, withdrawal discipline, will essentials, and nominee versus heir distinction.</li>
+        </ul>
+        <h2>Smart Preparation Plan For RBWM</h2>
+        <p>Finish Module B first because it gives fast marks through product features and recovery facts. Then complete Module A for context, Module C for marketing terms, and Module D for investment logic. Keep separate notebooks for limits, product tables, recovery thresholds, and marketing definitions.</p>
+        <p>Revise facts in short daily loops and solve mixed quizzes every third day. For statement based questions, practise eliminating extreme words and checking each part of the sentence separately. In the final fortnight, focus on weak tables, solved caselets, and one full mock every week with error review.</p>
+        <div className="not-prose bg-indigo-50 rounded-xl p-6 border border-indigo-200 my-6">
+          <h3 className="text-lg font-bold text-indigo-900 mb-2">Practice These Topics Free</h3>
+          <p className="text-gray-700 mb-4">Try free RBWM quizzes on retail products, recovery, marketing, and wealth basics with clear answer explanations.</p>
+          <a href="/practice-tests/rbwm" className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg">Start RBWM Practice →</a>
+        </div>
+        <h2>FAQs</h2>
+        <h3>RBWM is the newest paper, what should I expect?</h3>
+        <p>Expect practical and factual questions on products, service, recovery, marketing, and basic investments. Language is usually direct, with some caselets on product choice and recovery steps. Tables for features and limits plus regular quizzes will keep you exam ready.</p>
+        <h3>Which module is the most factual?</h3>
+        <p>Module B on retail products and recovery has the highest factual density because each loan and card has its own norms. Prepare product-wise tables and revise recovery channels through comparison charts. This module rewards repeated short revision more than long single sittings.</p>
+        <h3>How important are recovery provisions?</h3>
+        <p>Recovery is very important because banks focus strongly on collection discipline and resolution options. Learn Lok Adalat suitability, DRT coverage, SARFAESI sequence, and OTS decision factors. Questions often ask which channel fits a given loan size and security position.</p>
+        <h3>How much depth is needed for wealth management?</h3>
+        <p>You need working knowledge, not adviser level depth. Focus on risk profiling, asset suitability, mutual fund categories, insurance differences, and retirement basics. Understand what suits whom and why, rather than memorising complex formulas or market theories.</p>
+        <h3>Where can I practise RBWM for free?</h3>
+        <p>You can begin with free module-wise RBWM quizzes that mirror the exam pattern and explain each answer simply. Attempt them topic by topic, then move to mixed sets and full mocks as your accuracy improves for 2026.</p>
+      </div>
+    ),
+  },
+  {
     slug: 'jaiib-rbwm-preparation-guide-2026',
     title: 'JAIIB RBWM Paper Preparation Guide 2026 — Retail Banking & Wealth Management',
     description: 'Complete preparation guide for JAIIB Paper 4 (RBWM) covering retail products, recovery mechanisms, marketing concepts, and wealth management with topic-wise strategy.',
