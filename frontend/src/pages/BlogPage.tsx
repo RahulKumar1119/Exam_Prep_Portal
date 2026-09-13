@@ -340,6 +340,16 @@ const BLOG_POSTS: BlogPost[] = [
             Our AI-powered platform has 250+ IE & IFS questions with detailed explanations citing specific RBI circulars and IIBF textbook references. Track your module-wise performance and focus on weak areas.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>Is Indian Economy and Indian Financial System really the toughest paper in JAIIB?</h3>
+        <p>Many aspirants find it tough because the syllabus is wide and links economy concepts with banking updates. With regular revision of concepts and short notes, it becomes very manageable in first attempt.</p>
+        <h3>How important are current affairs for IE and IFS?</h3>
+        <p>Current affairs carry good weight, especially topics like RBI policies, government schemes and economic surveys. Focus on the last four to six months of banking and economy news along with your static concepts.</p>
+        <h3>Are there numericals in IE and IFS?</h3>
+        <p>IE and IFS is mostly theory and concept based, so lengthy calculations are not expected. You may still get a few data interpretation or basic economy indicator based questions, so practice reading tables and percentages.</p>
+        <h3>How should I plan 30 days to clear IE and IFS in first attempt?</h3>
+        <p>Split the first twenty days for module wise study with daily MCQ practice and keep the last ten days for mocks and revision. Give one full mock every two to three days and revise your mistake notebook before the next mock.</p>
       </div>
     ),
   },
@@ -435,6 +445,16 @@ const BLOG_POSTS: BlogPost[] = [
             Our AI explains every PPB answer with specific circular numbers and section references. Practice 250+ questions and see exactly which RBI Master Direction each answer comes from.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>How many RBI circulars should I track for PPB 2026?</h3>
+        <p>You do not need to read every circular issued in the year, only the major ones linked to your PPB syllabus topics. A focused list of important updates on KYC, loans, deposits and customer service is enough for the exam.</p>
+        <h3>Where should I read RBI circulars for PPB without getting confused?</h3>
+        <p>Start with your course material summary and then refer to the RBI website only for the original wording of important circulars. Avoid random compilations on social media because they often mix old and new guidelines.</p>
+        <h3>How are RBI circulars tested in the PPB paper?</h3>
+        <p>Circulars are usually tested through situation based questions where you apply a rule to a customer or branch scenario. So read each guideline with an example in mind, like how it changes the process for deposits, loans or grievance handling.</p>
+        <h3>How often should I revise RBI circulars before the exam?</h3>
+        <p>Revise circulars once every two weeks during preparation and then do two quick revisions in the final week. Make a one page tracker with circular topic, date and key change to make last day revision faster.</p>
       </div>
     ),
   },
@@ -554,6 +574,16 @@ const BLOG_POSTS: BlogPost[] = [
             Practice with 1000+ questions aligned to the 2026 syllabus. Our AI tracks your module-wise performance and recommends exactly which topics to focus on next.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>What score do I need to pass each JAIIB paper?</h3>
+        <p>You need a minimum of 50 marks in each paper to qualify. A strong score in one paper does not compensate for a shortfall in another paper.</p>
+        <h3>How long do JAIIB credits last if I clear only some papers?</h3>
+        <p>Your passed papers stay valid for four attempts from your first registration under the current framework. If you do not clear the remaining papers within that window you will need to reappear as per the prevailing rules.</p>
+        <h3>What kind of recent changes should I watch for in the JAIIB syllabus?</h3>
+        <p>The syllabus is revised from time to time to reflect new products, processes, and regulations in banking. Always compare your study material with the latest official curriculum to avoid preparing outdated topics.</p>
+        <h3>Where can I verify the latest JAIIB syllabus and passing criteria?</h3>
+        <p>Always verify the latest syllabus and passing criteria on iibf.org.in before you start preparation. The official notification remains the most reliable source and it overrides any third party summary.</p>
       </div>
     ),
   },
@@ -736,6 +766,16 @@ const BLOG_POSTS: BlogPost[] = [
             Our platform has 1195+ AFM questions including numerical problems. Each wrong answer gets a step-by-step AI explanation showing the exact formula and calculation.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>What is the best way to memorize AFM formulas?</h3>
+        <p>Group formulas by chapter, like ratios, time value of money and capital budgeting, and write them daily from memory. Practicing two to three related sums for each formula helps you recall the logic instead of mugging up symbols.</p>
+        <h3>Which AFM formulas are tested most often?</h3>
+        <p>Questions often come from ratios, EMI and present value calculations, working capital, cost of capital and project evaluation methods. Give extra practice to these areas because they appear in both direct sums and caselets.</p>
+        <h3>Is a calculator allowed for AFM in JAIIB?</h3>
+        <p>Yes, a basic non programmable calculator is generally allowed at the exam centre as per the exam rules. Check the latest instructions on your admit card and practice with the same model to save time in calculations.</p>
+        <h3>How should I revise AFM formulas in the last week?</h3>
+        <p>Keep a short formula sheet of about fifty key formulas and revise it twice daily in the last week. Solve one mixed set of thirty to forty questions daily to keep speed and accuracy high before the exam.</p>
       </div>
     ),
   },
@@ -828,6 +868,16 @@ const BLOG_POSTS: BlogPost[] = [
             Our AI-powered platform covers all 4 JAIIB papers with 3000+ questions. Clear JAIIB first, then use the same platform for CAIIB preparation (coming soon).
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>What is the salary benefit of JAIIB and CAIIB?</h3>
+        <p>Both qualifications fetch additional increments in salary for bank staff as per the prevailing bank rules. CAIIB usually adds more increments than JAIIB, so completing both gives the highest pay benefit.</p>
+        <h3>Is CAIIB tougher than JAIIB?</h3>
+        <p>Yes, CAIIB is generally tougher because it expects deeper analysis and practical application of concepts. JAIIB builds your foundation, while CAIIB tests decision making in areas like risk, treasury and balance sheet analysis.</p>
+        <h3>Should I attempt JAIIB first or can I go directly for CAIIB?</h3>
+        <p>You should clear JAIIB first because it builds the concepts needed for CAIIB and matches the usual eligibility sequence. Finishing JAIIB early also gives you confidence and an early increment while you prepare for CAIIB.</p>
+        <h3>Do JAIIB and CAIIB help in promotions?</h3>
+        <p>Yes, both add weightage in internal promotion processes in many public sector banks. They also improve your knowledge and interview performance, which helps you stand out during promotion evaluations.</p>
       </div>
     ),
   },
@@ -943,6 +993,16 @@ const BLOG_POSTS: BlogPost[] = [
             Take mock tests under timed conditions to build exam-day confidence. Our 50-question practice sets simulate the real exam with instant feedback and AI explanations.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>Is it realistic to pass JAIIB in 15 days?</h3>
+        <p>It is possible only if you already have basic banking awareness and can study with full focus for two weeks. Fresh beginners may need more time, but a disciplined crash plan can still help you clear one or two papers.</p>
+        <h3>How many hours should I study daily in a 15 day plan?</h3>
+        <p>Aim for six to eight focused hours daily with short breaks, divided between concept reading and MCQ practice. Keep mornings for new topics and evenings for revision and mock analysis to avoid burnout.</p>
+        <h3>Which JAIIB paper should I prepare first in 15 days?</h3>
+        <p>Start with the paper you find easiest, usually Principles and Practices of Banking, to build momentum and scores. Then move to Accounting and Financial Management for daily formula practice, keeping Indian Economy and Indian Financial System for reading slots.</p>
+        <h3>How many mocks should I attempt daily and what should I skip?</h3>
+        <p>Attempt one full mock daily in the last seven days and spend equal time analyzing mistakes. Skip low weightage fine details and outdated theories, and focus instead on high weightage chapters, summaries and previous exam patterns.</p>
       </div>
     ),
   },
@@ -1062,6 +1122,16 @@ const BLOG_POSTS: BlogPost[] = [
             Our IE&IFS question bank has 200+ questions on RBI monetary policy, CRR/SLR, and financial architecture. Get AI explanations citing specific RBI circulars for every question.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>What do CRR, SLR and repo rate mean in simple terms?</h3>
+        <p>CRR is the share of deposits banks keep with RBI, SLR is the share kept in safe liquid assets, and repo rate is the rate at which RBI lends to banks. These tools help RBI control liquidity, inflation and credit flow in the economy.</p>
+        <h3>What are the current CRR, SLR and repo rates for 2026?</h3>
+        <p>These rates keep changing with economic conditions, so check the latest RBI monetary policy review for updated figures. Always note the rate announced in the most recent review before your exam date.</p>
+        <h3>Why are CRR, SLR and repo rate important for bankers?</h3>
+        <p>They directly affect loan pricing, deposit interest and bank profitability, so every banker should understand them clearly. A change in these rates signals whether RBI wants to expand or control credit in the market.</p>
+        <h3>How are CRR, SLR and repo rate tested in JAIIB exams?</h3>
+        <p>Questions are often framed as small case studies asking what happens to liquidity or lending when RBI changes a rate. Focus on direction of impact and calculation logic rather than only memorizing past figures.</p>
       </div>
     ),
   },
@@ -1196,6 +1266,16 @@ const BLOG_POSTS: BlogPost[] = [
             Our platform has 760+ PPB questions organized by module and topic. Track your accuracy on each topic and focus on areas below 70%. AI explanations cite specific RBI circular numbers.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>Which is the most scoring module in PPB?</h3>
+        <p>Many students find the modules on functions of banks and banking technology scoring because concepts are direct and familiar. Still, your best scoring module will be the one you revise most with MCQs and short notes.</p>
+        <h3>How important is the Negotiable Instruments Act for PPB?</h3>
+        <p>The Negotiable Instruments Act carries good weightage, especially questions on cheques, endorsements, crossing and payment duties. Learn key sections with simple examples so you can solve scenario based questions quickly.</p>
+        <h3>How should I prepare case studies in PPB?</h3>
+        <p>Practice case studies by applying rules to customer situations instead of only reading theory. After each chapter, solve ten to fifteen scenario questions and note why each option is right or wrong.</p>
+        <h3>How can I memorize the different Acts in PPB easily?</h3>
+        <p>Make a one page chart for each Act with purpose, key provisions and time limits, then revise it weekly. Linking each provision to a branch example, like account opening or loan recovery, makes recall much easier in the exam.</p>
       </div>
     ),
   },

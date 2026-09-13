@@ -241,7 +241,7 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
     date: '2026-09-13',
     readTime: '10 min read',
     category: 'Study Strategy',
-    coverImage: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6e?w=800&h=400&fit=crop',
+    coverImage: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=400&fit=crop',
     content: (
       <div className="prose prose-lg max-w-none">
         <p className="lead text-xl text-gray-700 mb-8">Principles and Practices of Banking, known as PPB, is the most practical paper of JAIIB 2026. It reflects what you do at the counter, in the credit section, and on digital channels every day. If you organise your study around real branch situations, Acts, and processes, you can convert experience into marks. This guide lists high-priority topics and module-wise areas to help you plan smartly and pass with confidence.</p>
@@ -660,6 +660,16 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
             Our platform has 635+ RBWM questions covering all 4 modules. Each explanation cites specific RBI guidelines and IIBF textbook references so you learn the exact regulatory details tested in the exam.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>What should I expect from the newest RBWM paper pattern?</h3>
+        <p>Expect a mix of concept based questions and case style questions drawn from retail products and wealth offerings. Reading the question stem carefully helps you spot whether it tests a feature, a process, or an eligibility condition.</p>
+        <h3>How do I handle the factual density of RBWM?</h3>
+        <p>Break the syllabus into small themes like deposits, loans, cards, payments, and recovery, then revise each theme with short notes. Regular revision works better than long single sittings because facts fade quickly without recall.</p>
+        <h3>Why does recovery get so much weight in RBWM preparation?</h3>
+        <p>Recovery connects retail credit with collections, legal options, and customer handling, so examiners like testing it through practical situations. Focus on the sequence of steps, responsible teams, and customer communication norms rather than memorizing isolated lines.</p>
+        <h3>How much depth is needed for wealth management topics?</h3>
+        <p>You need working clarity on mutual funds, insurance, pension products, and suitability principles without going into advisory level detail. Prioritize product features, risk profiles, and grievance handling over complex calculations.</p>
       </div>
     ),
   },
@@ -764,6 +774,16 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
             Simulate the real exam experience with our 100-question, 120-minute mock tests. Practice time management and build confidence for exam day. Instant scoring with AI explanations.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>How early should I report at the exam centre?</h3>
+        <p>Plan to reach well before the reporting time printed on your admit card to allow for verification and seating. Early arrival keeps you calm and gives you time to settle before instructions begin.</p>
+        <h3>What documents should I carry for JAIIB exam day verification?</h3>
+        <p>Carry a printed copy of your admit card along with a valid photo identity proof in original form. Check the official notification for the accepted identity list and keep both documents ready before entering the hall.</p>
+        <h3>How can I manage time well inside the exam hall?</h3>
+        <p>Start with questions you can answer quickly to build rhythm and reserve time for lengthy caselets. Keep an eye on the on screen clock and move ahead if a question takes more than your planned share of time.</p>
+        <h3>What should I do if I get stuck on a difficult question?</h3>
+        <p>Mark the question for review and move to the next one so you do not lose momentum. Return to it later with fresh focus and make a reasoned choice instead of leaving it unanswered without thought.</p>
       </div>
     ),
   },
@@ -930,6 +950,16 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
             Our PPB and RBWM question banks have 100+ questions specifically on NPA classification, SARFAESI procedures, and recovery mechanisms. Each explanation cites the exact RBI Master Circular provision.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>When does a loan account become an NPA under the 90 day norm?</h3>
+        <p>A term loan turns into an NPA when interest or principal stays unpaid for more than 90 days past the due date. For other facilities like cash credit, the same overdue logic applies as per the prevailing regulatory guidelines.</p>
+        <h3>What is the difference between substandard, doubtful, and loss assets?</h3>
+        <p>Substandard refers to an NPA held for a relatively short period while doubtful refers to an NPA that has stayed in that state for a longer stretch. Loss denotes an asset where recovery looks extremely remote even though some value may still be on record.</p>
+        <h3>What are the broad steps under Section 13 of the SARFAESI Act?</h3>
+        <p>The process generally starts with a demand notice followed by possession action if dues remain unpaid within the stipulated period. It may then proceed to sale of the secured asset after due notices and valuation as per the prescribed procedure.</p>
+        <h3>What are the basics of OTS that JAIIB aspirants should know?</h3>
+        <p>OTS stands for one time settlement where a lender agrees to accept a negotiated amount to close a stressed account. Banks use board approved policies to assess eligibility, settlement amount, and payment timelines, so check the official framework for exact norms.</p>
       </div>
     ),
   },
@@ -1099,6 +1129,16 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
             Our AFM question bank has 1195+ questions including 400+ numerical problems with step-by-step solutions. Practice until NPV, EMI, and BEP calculations become second nature.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>How do I choose between PV and FV formulas in JAIIB questions?</h3>
+        <p>Use present value when the question asks what a future sum is worth today. Use future value when the question asks what a present sum will grow into after a given period.</p>
+        <h3>Why do annuity questions confuse students so often?</h3>
+        <p>Confusion usually comes from mixing ordinary annuity with annuity due and from unclear timing of payments. Always note whether the first payment happens immediately or at the end of the period before selecting the formula.</p>
+        <h3>What calculator habits help in TVM questions?</h3>
+        <p>Practice entering the sequence of keys in the same order every time so you avoid missing steps under pressure. Write down the given values first and then solve slowly to reduce errors in interest conversion and period matching.</p>
+        <h3>Which TVM variation is tested most often in JAIIB?</h3>
+        <p>Questions built around loans, deposits, and equated installments appear very often because they link math with banking use. Master EMI logic, present value of installments, and comparison of options to handle most variations with confidence.</p>
       </div>
     ),
   },
@@ -1253,6 +1293,16 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
             Don&apos;t wait for the admit card to start preparation. Begin practicing with our 3000+ questions aligned to the latest 2026 syllabus. Track your progress across all 4 papers and identify weak areas early.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>Who is eligible to register for JAIIB?</h3>
+        <p>Eligibility is linked to membership and employment norms prescribed by IIBF for banking professionals. Check the official notification to confirm your eligibility status before paying any fee.</p>
+        <h3>What are the basic steps to register on the IIBF portal?</h3>
+        <p>Create your profile on the IIBF portal, fill the exam application form, upload the required documents, and submit the payment online. Download the confirmation and admit card when released and keep them safe till result declaration.</p>
+        <h3>How much is the JAIIB registration fee?</h3>
+        <p>The fee can change across sessions, so check iibf.org.in for current fees before applying. The official notification remains the final source for fee slabs, taxes, and refund rules.</p>
+        <h3>What should I know about photo, signature specs, and deadlines?</h3>
+        <p>Upload a clear recent photograph and signature in the format and size stated in the official notification. Apply well before the last date because late windows may carry extra charges or may close without further notice.</p>
       </div>
     ),
   },
@@ -1450,6 +1500,16 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
             Our platform includes AI-300 practice questions with detailed explanations covering all 5 exam domains. Track your readiness score and focus on weak areas.
           </p>
         </div>
+
+        <h2>FAQs</h2>
+        <h3>What score is needed to pass the AI-300 exam?</h3>
+        <p>You need a score of 700 out of 1000 to pass the AI-300 exam. Aim well above this threshold in mocks so exam pressure does not pull you below the line.</p>
+        <h3>What does the scenario style of AI-300 questions look like?</h3>
+        <p>Most questions present a business need followed by constraints around data, cost, latency, or governance. You must choose the Azure AI service or design approach that fits the scenario rather than recalling isolated facts.</p>
+        <h3>How should I split MLOps and GenAIOps in my preparation?</h3>
+        <p>Give solid time to MLOps for pipelines, model tracking, deployment, and monitoring of predictive solutions. Then give focused time to GenAIOps for prompt flow, grounding, evaluation, and lifecycle management of generative solutions.</p>
+        <h3>How much hands on practice is needed compared to theory for AI-300?</h3>
+        <p>Hands on practice matters a lot because scenario judgment improves only after working inside the portal and testing service behavior. Pair short labs with concept revision so theory stays tied to real configuration choices.</p>
       </div>
     ),
   },

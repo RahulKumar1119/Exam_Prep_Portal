@@ -131,3 +131,29 @@ code {
     user-select: none;
   }
 }
+
+/* Blog tables: horizontal scroll on mobile + uniform header styling */
+.prose table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+}
+.prose thead th {
+  background: #f8fafc;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e5e7eb;
+  white-space: nowrap;
+}
+.prose tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: top;
+}
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
