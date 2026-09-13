@@ -19,6 +19,33 @@ const GA_ID = 'G-8VGLY6HD39';
 const ADS_ID = 'AW-17664283083';
 const ADSENSE_CLIENT = 'ca-pub-4438011184531485';
 
+/**
+ * App/auth screens have no publisher content — Google bans ads there
+ * ("screens without publisher-content"). AdSense only loads on content
+ * pages. Analytics/measurement tags are fine everywhere.
+ */
+const ADS_EXCLUDED_PREFIXES = [
+  '/practice',
+  '/dashboard',
+  '/home',
+  '/login',
+  '/register',
+  '/profile',
+  '/bookmarks',
+  '/previous-attempts',
+  '/leaderboard',
+  '/notifications',
+  '/admin',
+  '/verify-email',
+  '/password-reset',
+];
+
+export function isContentPage(path: string = window.location.pathname): boolean {
+  return !ADS_EXCLUDED_PREFIXES.some(
+    (prefix) => path === prefix || path.startsWith(prefix + '/')
+  );
+}
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
@@ -90,10 +117,13 @@ export function applyConsent(choice: ConsentChoice): void {
     });
     gtag('js', new Date());
     gtag('config', ADS_ID);
-    loadScript(
-      `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`,
-      'adsense-js'
-    );
+    // AdSense only on content pages — never inside the logged-in app.
+    if (isContentPage()) {
+      loadScript(
+        `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`,
+        'adsense-js'
+      );
+    }
   }
 }
 
