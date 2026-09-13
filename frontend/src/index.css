@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -156,4 +158,20 @@ code {
 }
 .prose tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* Blog Q&A rhythm: extra air above each question, tight answer follow */
+.prose h2 {
+  margin-top: 2.75rem;
+}
+.prose h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+.prose h3 + p {
+  margin-top: 0.5rem;
+}
+.prose li {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
 }
