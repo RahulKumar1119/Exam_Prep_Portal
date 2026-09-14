@@ -30,7 +30,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
     { id: 'QUANT', name: 'QUANT', fullName: 'Quantitative Aptitude for Competitive Exams', totalQuestions: 449, sets: 14 },
   ],
   'CloudOps': [
-    { id: 'CloudOps', name: 'CloudOps', fullName: 'AWS Certified CloudOps Engineer - Associate (SOA-C03)', totalQuestions: 0, sets: 1 },
+    { id: 'SOA-C03', name: 'SOA-C03', fullName: 'AWS Certified CloudOps Engineer - Associate', totalQuestions: 325, sets: 5 },
   ],
 };
 
@@ -40,6 +40,7 @@ const QUESTIONS_PER_SET: Record<string, number> = {
   'QUANT': 30,
   'AI-300': 57,
   'CloudOps': 65,
+  'SOA-C03': 65,
 };
 const questionsPerSet = (paperId: string) => QUESTIONS_PER_SET[paperId] ?? 50;
 

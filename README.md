@@ -19,7 +19,7 @@ The Exam Prep Portal provides:
 | CAIIB | ABM | 740 | 50 |
 | AI-300 | Operationalizing ML & GenAI Solutions | 600 | 50 |
 | CAPM | Fundamentals 36%, Predictive 17%, Agile 20%, Business Analysis 27% | 225 | 75 |
-| CloudOps | SOA-C03: Monitoring 22%, Reliability 22%, Deployment 22%, Security 16%, Networking 18% | seeding | 65 |
+| CloudOps | SOA-C03: Monitoring 22%, Reliability 22%, Deployment 22%, Security 16%, Networking 18% | 325 | 65 |
 
 ## 🏗️ Architecture
 

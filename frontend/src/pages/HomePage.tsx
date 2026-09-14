@@ -218,7 +218,7 @@ const HomePage: React.FC = () => {
             {(selectedExam === 'AI-300' ? [
               { id: 'AI-300', name: 'AI-300', questions: 685, color: 'from-purple-600 to-indigo-700' },
             ] : selectedExam === 'CloudOps' ? [
-              { id: 'CloudOps', name: 'CloudOps', questions: 0, color: 'from-amber-500 to-orange-700' },
+              { id: 'SOA-C03', name: 'SOA-C03', questions: 325, color: 'from-amber-500 to-orange-700' },
             ] : selectedExam === 'CAIIB' ? [
               { id: 'ABM', name: 'ABM', questions: 740, color: 'from-emerald-500 to-teal-700' },
             ] : [
@@ -229,7 +229,7 @@ const HomePage: React.FC = () => {
               { id: 'ABM', name: 'ABM (CAIIB)', questions: 740, color: 'from-emerald-500 to-teal-700' },
               ...(selectedExam === 'ALL' ? [
                 { id: 'AI-300', name: 'AI-300', questions: 685, color: 'from-purple-600 to-indigo-700' },
-                { id: 'CloudOps', name: 'CloudOps', questions: 0, color: 'from-amber-500 to-orange-700' },
+                { id: 'CloudOps', name: 'SOA-C03', questions: 325, color: 'from-amber-500 to-orange-700' },
               ] : []),
             ]).map((paper) => (
               <div

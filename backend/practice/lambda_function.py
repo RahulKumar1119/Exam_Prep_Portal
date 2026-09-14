@@ -41,7 +41,7 @@ class DecimalEncoder(json.JSONEncoder):
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
 # Per-paper overrides — CAPM practice sets are longer (75 vs default 50)
-QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30, 'AI-300': 57, 'CloudOps': 65}
+QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30, 'AI-300': 57, 'CloudOps': 65, 'SOA-C03': 65}
 
 
 def _questions_per_set(paper_name: str) -> int:
@@ -96,6 +96,16 @@ def _cloudops_table():
 
 def _is_cloudops(paper_name: str) -> bool:
     return paper_name in ('CloudOps', 'SOA-C03')
+
+
+def _canonical_paper(paper_name: str) -> str:
+    """Canonical paper id for storage and table lookups.
+
+    SOA-C03 is the official AWS exam code for the CloudOps paper — both map
+    to the same bank (paper='CloudOps' in jaiib-cloudops-question-bank),
+    so alias it here to avoid fragmenting sessions and question lookups.
+    """
+    return 'CloudOps' if paper_name == 'SOA-C03' else paper_name
 
 
 def _is_capm(paper_name: str) -> bool:
@@ -498,6 +508,7 @@ def _db_fetch_by_difficulty(questions_table, paper_name: str) -> Dict[str, List[
 # ── Async worker (invoked by itself) ─────────────────────────────────────────
 def _do_generate(session_id: str, paper_name: str, sessions_table, questions_table, mode: str = 'practice', set_number: int = 0):
     """Called asynchronously — generates questions and updates the session."""
+    paper_name = _canonical_paper(paper_name)
 
     if mode == 'mock_test':
         questions = _generate_mock_test(paper_name, questions_table)
@@ -655,6 +666,7 @@ def _generate_mock_test(paper_name: str, questions_table) -> List[Dict]:
     
     Strategy: Try DB first for each difficulty, fill gaps with Bedrock.
     """
+    paper_name = _canonical_paper(paper_name)
     needed = {
         'easy': MOCK_TEST_CONFIG['easy']['count'],    # 50
         'medium': MOCK_TEST_CONFIG['medium']['count'], # 25
@@ -831,6 +843,9 @@ def handler(event, context):
             valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT', 'CloudOps', 'SOA-C03']
             if paper_name not in valid:
                 return err(400, f"paper_name must be one of: {', '.join(valid)}")
+            # SOA-C03 is an alias for the CloudOps bank — canonicalize before
+            # storing the session so all downstream reads use one paper id.
+            paper_name = _canonical_paper(paper_name)
 
             session_id = str(uuid.uuid4())
             now = datetime.utcnow().isoformat()

@@ -254,8 +254,8 @@ const LandingPage: React.FC = () => {
               <div className="flex items-center gap-3 mb-4">
                 <ExamOrgLogo exam="CloudOps" size={48} />
                 <div>
-                  <h3 className="text-xl font-bold group-hover:text-amber-400 transition">CloudOps</h3>
-                  <p className="text-xs text-gray-500">AWS Certification (SOA-C03)</p>
+                  <h3 className="text-xl font-bold group-hover:text-amber-400 transition">SOA-C03</h3>
+                  <p className="text-xs text-gray-500">AWS CloudOps Engineer - Associate</p>
                 </div>
               </div>
               <p className="text-sm text-gray-400 mb-5">AWS Certified CloudOps Engineer - Associate. Monitoring, reliability, deployment, security & networking.</p>
@@ -402,7 +402,7 @@ const LandingPage: React.FC = () => {
                 <li><button onClick={() => navigate('/practice-tests')} className="hover:text-white transition">JAIIB Practice</button></li>
                 <li><button onClick={() => navigate('/ai-300-practice-test')} className="hover:text-white transition">AI-300 Practice</button></li>
                 <li><button onClick={() => navigate('/capm-practice-test')} className="hover:text-white transition">CAPM Practice</button></li>
-                <li><button onClick={() => navigate('/cloudops-practice-test')} className="hover:text-white transition">CloudOps Practice</button></li>
+                <li><button onClick={() => navigate('/cloudops-practice-test')} className="hover:text-white transition">SOA-C03 Practice</button></li>
               </ul>
             </div>
             <div>

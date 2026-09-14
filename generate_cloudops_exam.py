@@ -29,6 +29,7 @@ import re
 import os
 import uuid
 import json
+import time
 import argparse
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple
@@ -125,10 +126,14 @@ def generate_questions_from_pdf(pdf_path: str, exam: str, count: int, mixed_type
     all_questions = []
     remaining = count
     chunk_size = min(15, remaining)
+    # Failed batches are retried (LLM JSON is occasionally malformed) instead of skipped
+    MAX_BATCH_ATTEMPTS = 3
+    batch_failures = 0
 
     while remaining > 0:
         batch = min(chunk_size, remaining)
         print(f"  🤖 Generating {batch} {'mixed-type ' if mixed_types else ''}questions via Bedrock...")
+        batch_got = 0
 
         if mixed_types:
             type_instructions = """
@@ -285,6 +290,7 @@ CRITICAL OUTPUT RULES:
 
                 if questions and isinstance(questions, list):
                     all_questions.extend(questions)
+                    batch_got = len(questions)
                     print(f"    ✓ Got {len(questions)} questions")
                 elif questions is None:
                     pass  # already printed error
@@ -298,7 +304,17 @@ CRITICAL OUTPUT RULES:
         except Exception as e:
             print(f"    ⚠ Error: {e}")
 
-        remaining -= batch
+        if batch_got:
+            remaining -= batch_got
+            batch_failures = 0
+        elif batch_failures < MAX_BATCH_ATTEMPTS - 1:
+            batch_failures += 1
+            print(f"    ↻ Batch produced 0 questions — retrying (attempt {batch_failures + 1}/{MAX_BATCH_ATTEMPTS})...")
+            time.sleep(3)
+        else:
+            print(f"    ✗ Batch failed after {MAX_BATCH_ATTEMPTS} attempts — skipping {batch} questions")
+            remaining -= batch
+            batch_failures = 0
 
     return all_questions
 
