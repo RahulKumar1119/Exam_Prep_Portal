@@ -5,7 +5,7 @@ A full-stack web application for certification exam prep — IIBF JAIIB/CAIIB fo
 ## 🎯 Overview
 
 The Exam Prep Portal provides:
-- **Interactive Practice Sets**: 50-question practice sets (75 for CAPM) across JAIIB papers (IE & IFS, PPB, AFM, RBWM), CAIIB (ABM), AI-300, and CAPM
+- **Interactive Practice Sets**: 50-question practice sets (75 for CAPM, 65 for CloudOps, 30 for QUANT, 57 for AI-300) across JAIIB papers (IE & IFS, PPB, AFM, RBWM), CAIIB (ABM), AI-300, CAPM, and CloudOps (SOA-C03)
 - **AI-Powered Tutoring**: AWS Bedrock explanations with RBI/IIBF regulatory citations (banking) and official references per exam
 - **Performance Tracking**: Real-time dashboards with score trends, weak/strong areas, and learning analytics
 - **Admin Analytics**: System-wide metrics, user engagement tracking, and compliance reporting
@@ -19,6 +19,7 @@ The Exam Prep Portal provides:
 | CAIIB | ABM | 740 | 50 |
 | AI-300 | Operationalizing ML & GenAI Solutions | 600 | 50 |
 | CAPM | Fundamentals 36%, Predictive 17%, Agile 20%, Business Analysis 27% | 225 | 75 |
+| CloudOps | SOA-C03: Monitoring 22%, Reliability 22%, Deployment 22%, Security 16%, Networking 18% | seeding | 65 |
 
 ## 🏗️ Architecture
 
@@ -115,6 +116,7 @@ The Exam Prep Portal provides:
 - 50-question practice sets (75 for CAPM), fixed-set (deterministic paging) and random modes
 - Timed mock tests (100 questions, 100 marks, 120 min)
 - CAPM served from dedicated `jaiib-capm-question-bank` table (domain-topic GSI)
+- CloudOps (SOA-C03) served from dedicated `jaiib-cloudops-question-bank` table (domain-topic GSI)
 - Question generators: `generate_microsoft_exam.py` (AI-300) and `generate_capm_exam.py` (CAPM, `--types mixed` for multi/yes-no/drag-drop/ordering + case studies)
 
 #### 3. Session Timer Management

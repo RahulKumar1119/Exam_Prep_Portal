@@ -20,7 +20,7 @@ const RANGE_OPTIONS = [
   { value: '90', label: 'Last 90 Days' },
 ];
 
-const EXAM_OPTIONS = ['ALL', 'JAIIB', 'CAIIB', 'AI-300', 'CAPM', 'QUANT'];
+const EXAM_OPTIONS = ['ALL', 'JAIIB', 'CAIIB', 'AI-300', 'CAPM', 'QUANT', 'CloudOps'];
 
 function exportCsv(data: AdminAnalyticsData) {
   const lines = ['section,date,metric,value'];

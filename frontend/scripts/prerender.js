@@ -17,6 +17,7 @@ const PAGES = [
   '/exams',
   '/ai-300-practice-test',
   '/capm-practice-test',
+  '/cloudops-practice-test',
   '/quant-practice-test',  '/study-topics',
   '/practice-tests/ie-ifs',
   '/practice-tests/ppb',

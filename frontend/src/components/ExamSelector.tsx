@@ -28,7 +28,7 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
           >
             <div className="flex items-start gap-4">
               <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                exam.id === 'JAIIB' ? 'bg-blue-100' : exam.id === 'CAIIB' ? 'bg-emerald-100' : exam.id === 'CAPM' ? 'bg-orange-100' : 'bg-purple-100'
+                exam.id === 'JAIIB' ? 'bg-blue-100' : exam.id === 'CAIIB' ? 'bg-emerald-100' : exam.id === 'CAPM' ? 'bg-orange-100' : exam.id === 'CloudOps' ? 'bg-amber-100' : 'bg-purple-100'
               }`}>
                 <ExamOrgLogo exam={exam.id} size={32} className="!rounded-lg" />
               </div>
@@ -48,6 +48,9 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
                 )}
                 {exam.id === 'CAPM' && (
                   <p className="text-xs text-orange-600 mt-2 font-medium">New — CAPM practice launching</p>
+                )}
+                {exam.id === 'CloudOps' && (
+                  <p className="text-xs text-amber-600 mt-2 font-medium">New — SOA-C03 practice launching</p>
                 )}
               </div>
             </div>

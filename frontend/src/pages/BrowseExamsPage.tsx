@@ -162,6 +162,21 @@ const EXAMS: ExamCard[] = [
     color: 'from-rose-500 to-pink-700',
     link: '/quant-practice-test',
   },
+  {
+    id: 'cloudops',
+    name: 'CloudOps',
+    fullName: 'AWS Certified CloudOps Engineer - Associate (SOA-C03)',
+    provider: 'AWS',
+    providerIcon: '☁️',
+    org: 'AWS',
+    category: 'Cloud & AI',
+    questions: 0,
+    sets: 1,
+    difficulty: 'Associate',
+    status: 'live',
+    color: 'from-amber-500 to-orange-700',
+    link: '/cloudops-practice-test',
+  },
 ];
 
 const CATEGORIES = ['All', 'Banking', 'Cloud & AI', 'Project Management', 'Aptitude'];

@@ -27,14 +27,20 @@ cloudwatch = boto3.client('cloudwatch')
 # Table names (env override allows CAPM table reuse of same code)
 QUESTION_BANK_TABLE = os.environ.get('QUESTION_BANK_TABLE', 'jaiib-question-bank')
 CAPM_QUESTION_BANK_TABLE = os.environ.get('CAPM_QUESTION_BANK_TABLE', 'jaiib-capm-question-bank')
+CLOUDOPS_QUESTION_BANK_TABLE = os.environ.get('CLOUDOPS_QUESTION_BANK_TABLE', 'jaiib-cloudops-question-bank')
 VERSION_HISTORY_TABLE = 'jaiib-version-history'
 
 # KMS key for encryption
 KMS_KEY_ID = 'arn:aws:kms:ap-south-1:438097524343:key/8f4e49c4-9d56-47c1-a24e-37fb003c8b77'
 
 # Valid values
-VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM']
+VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'CloudOps', 'SOA-C03']
 VALID_DIFFICULTIES = ['easy', 'medium', 'hard']
+
+
+def get_cloudops_question_bank_table():
+    """Get DynamoDB CloudOps (SOA-C03) question bank table"""
+    return dynamodb.Table(CLOUDOPS_QUESTION_BANK_TABLE)
 
 
 def get_capm_question_bank_table():
@@ -145,6 +151,9 @@ def validate_mcq_fields(
     if paper == 'CAPM':
         if 'pmi_reference' not in references or not references['pmi_reference']:
             return False, "PMI reference is required for CAPM"
+    elif paper in ('CloudOps', 'SOA-C03'):
+        if 'aws_reference' not in references or not references['aws_reference']:
+            return False, "AWS reference is required for CloudOps"
     else:
         if 'rbi_reference' not in references or not references['rbi_reference']:
             return False, "RBI reference is required"
@@ -214,8 +223,13 @@ def create_mcq(
         }
     
     try:
-        # Route CAPM questions to dedicated CAPM table
-        table = get_capm_question_bank_table() if paper == 'CAPM' else get_question_bank_table()
+        # Route CAPM/CloudOps questions to their dedicated tables
+        if paper == 'CAPM':
+            table = get_capm_question_bank_table()
+        elif paper in ('CloudOps', 'SOA-C03'):
+            table = get_cloudops_question_bank_table()
+        else:
+            table = get_question_bank_table()
 
         # Generate question ID and version
         question_id = str(uuid.uuid4())
@@ -236,6 +250,7 @@ def create_mcq(
             'rbi_reference': references.get('rbi_reference', ''),
             'iibf_reference': references.get('iibf_reference', ''),
             'pmi_reference': references.get('pmi_reference', ''),
+            'aws_reference': references.get('aws_reference', ''),
             'domain': typed_fields.get('domain', ''),
             'created_at': timestamp,
             'created_by': creator_user_id,
@@ -554,7 +569,12 @@ def search_mcqs(
         Dictionary with search results and pagination info
     """
     try:
-        table = get_capm_question_bank_table() if paper == 'CAPM' else get_question_bank_table()
+        if paper == 'CAPM':
+            table = get_capm_question_bank_table()
+        elif paper in ('CloudOps', 'SOA-C03'):
+            table = get_cloudops_question_bank_table()
+        else:
+            table = get_question_bank_table()
         
         # Build filter expression
         filter_expressions = []

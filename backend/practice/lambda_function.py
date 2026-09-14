@@ -41,7 +41,7 @@ class DecimalEncoder(json.JSONEncoder):
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
 # Per-paper overrides — CAPM practice sets are longer (75 vs default 50)
-QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30, 'AI-300': 57}
+QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30, 'AI-300': 57, 'CloudOps': 65}
 
 
 def _questions_per_set(paper_name: str) -> int:
@@ -88,6 +88,14 @@ def _capm_table():
 
 def _quant_table():
     return boto3.resource('dynamodb', region_name=REGION).Table('jaiib-quant-question-bank')
+
+
+def _cloudops_table():
+    return boto3.resource('dynamodb', region_name=REGION).Table('jaiib-cloudops-question-bank')
+
+
+def _is_cloudops(paper_name: str) -> bool:
+    return paper_name in ('CloudOps', 'SOA-C03')
 
 
 def _is_capm(paper_name: str) -> bool:
@@ -224,6 +232,32 @@ def _db_fallback_capm(capm_table, count: int, difficulty: Optional[str] = None) 
         print(f"CAPM DB fallback error: {e}")
         return []
 
+
+def _db_fallback_cloudops(cloudops_table, count: int, difficulty: Optional[str] = None,
+                           paper: str = 'CloudOps') -> List[Dict]:
+    """Fetch CloudOps (SOA-C03) questions via scan — dedicated table, domain-topic GSI."""
+    try:
+        resp = cloudops_table.scan(
+            FilterExpression='#s = :active AND paper = :p',
+            ExpressionAttributeNames={'#s': 'status'},
+            ExpressionAttributeValues={':active': 'active', ':p': paper},
+        )
+        items = resp.get('Items', [])
+        if not items:
+            # Compat: older items may carry paper_name instead of paper
+            resp = cloudops_table.scan(
+                FilterExpression='#s = :active AND paper_name = :p',
+                ExpressionAttributeNames={'#s': 'status'},
+                ExpressionAttributeValues={':active': 'active', ':p': paper},
+            )
+            items = resp.get('Items', [])
+        if difficulty:
+            items = [q for q in items if q.get('difficulty', 'medium') == difficulty]
+        return random.sample(items, min(count, len(items)))
+    except Exception as e:
+        print(f"CloudOps DB fallback error: {e}")
+        return []
+
 def _bedrock():
     return boto3.client('bedrock-runtime', region_name=REGION)
 
@@ -258,6 +292,36 @@ STRICT distribution (scale to {count} total: ~25% easy, ~45% medium, ~30% hard):
 
 Syllabus (cover ALL domains evenly):
 {modules_text}
+
+Return ONLY a valid JSON array of exactly {count} objects. No markdown.
+[
+  {{{{
+    "question_text": "...",
+    "options": {{{{"A": "...", "B": "...", "C": "...", "D": "..."}}}},
+    "correct_answer": "A",
+    "topic": "<one syllabus topic above>",
+    "difficulty": "easy|medium|hard"
+  }}}}
+]"""
+
+    if _is_cloudops(paper_name):
+        return f"""You are a senior AWS Certified CloudOps Engineer - Associate (SOA-C03) exam setter.
+
+Generate exactly {count} challenging multiple-choice questions for SOA-C03 per the official exam guide (22% Monitoring/Optimization, 22% Reliability/BC, 22% Deployment/Automation, 16% Security/Compliance, 18% Networking/Content Delivery).
+
+STRICT distribution (scale to {count} total: ~20% easy, ~45% medium, ~35% hard):
+- EASY (service purpose, console/CLI basics, alarm/backup/VPC fundamentals)
+- MEDIUM (scenario application: which alarm, scaling, deployment, IAM, or networking fix next)
+- HARD (metric/log-driven remediation, RTO/RPO tradeoffs, multi-account/IAM/VPC edge cases)
+
+Syllabus (cover ALL domains evenly):
+{modules_text}
+
+QUALITY RULES:
+1. Scenario-based operations tasks — no pure definitions
+2. Name real AWS services/controls (CloudWatch composite alarms, EventBridge, SSM runbooks, RDS Proxy, ELB, Route 53 health checks, AWS Backup, CloudFormation/CDK, RAM/StackSets, IAM, KMS, ACM, Secrets Manager, Security Hub/GuardDuty/Config/Inspector, VPC/NACL/SG, PrivateLink, WAF/Shield, CloudFront)
+3. Options must be plausible console/CLI/IaC actions — only one correct
+4. Each question has exactly 4 options A, B, C, D — only one correct
 
 Return ONLY a valid JSON array of exactly {count} objects. No markdown.
 [
@@ -441,7 +505,7 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
         # Fixed set mode — deterministic slice of questions from DB
         # Fetch ALL questions for this paper, sort by question_id for consistency
         per_set = _questions_per_set(paper_name)
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT', 'CloudOps', 'SOA-C03')
         if paper_name in DB_PAPERS:
             try:
                 if _is_capm(paper_name):
@@ -452,6 +516,14 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
                     questions = capm_items[start:end]
                     if len(questions) < per_set and capm_items:
                         questions += capm_items[:per_set - len(questions)]
+                elif _is_cloudops(paper_name):
+                    cloudops_items = _db_fallback_cloudops(_cloudops_table(), 1000, paper=paper_name)
+                    cloudops_items.sort(key=lambda x: x.get('question_id', ''))
+                    start = (set_number - 1) * per_set
+                    end = start + per_set
+                    questions = cloudops_items[start:end]
+                    if len(questions) < per_set and cloudops_items:
+                        questions += cloudops_items[:per_set - len(questions)]
                 elif _is_quant(paper_name):
                     quant_items = _db_fallback_quant(_quant_table(), 500)
                     quant_items.sort(key=lambda x: x.get('question_id', ''))
@@ -500,10 +572,12 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
     else:
         # Original practice mode — random from DB, fallback to Bedrock
         per_set = _questions_per_set(paper_name)
-        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT')
+        DB_PAPERS = ('AFB', 'AFM', 'IE & IFS', 'PPB', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT', 'CloudOps', 'SOA-C03')
         if paper_name in DB_PAPERS:
             if _is_capm(paper_name):
                 questions = _db_fallback_capm(_capm_table(), per_set)
+            elif _is_cloudops(paper_name):
+                questions = _db_fallback_cloudops(_cloudops_table(), per_set, paper=paper_name)
             elif _is_quant(paper_name):
                 questions = _db_fallback_quant(_quant_table(), per_set)
             elif paper_name == 'AI-300':
@@ -595,6 +669,15 @@ def _generate_mock_test(paper_name: str, questions_table) -> List[Dict]:
             capm_items = []
         db_grouped = {'easy': [], 'medium': [], 'hard': []}
         for q in capm_items:
+            diff = q.get('difficulty', 'medium')
+            (db_grouped.get(diff) or db_grouped['medium']).append(q)
+    elif _is_cloudops(paper_name):
+        try:
+            cloudops_items = _db_fallback_cloudops(_cloudops_table(), 1000, paper=paper_name)
+        except Exception:
+            cloudops_items = []
+        db_grouped = {'easy': [], 'medium': [], 'hard': []}
+        for q in cloudops_items:
             diff = q.get('difficulty', 'medium')
             (db_grouped.get(diff) or db_grouped['medium']).append(q)
     else:
@@ -745,7 +828,7 @@ def handler(event, context):
         if action == 'generate':
             if not paper_name:
                 return err(400, 'paper_name is required')
-            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT']
+            valid = ['IE & IFS', 'PPB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'QUANT', 'CloudOps', 'SOA-C03']
             if paper_name not in valid:
                 return err(400, f"paper_name must be one of: {', '.join(valid)}")
 

@@ -246,6 +246,19 @@ const RegisterPage: React.FC = () => {
                   <p className="font-bold text-white text-lg mt-2">QUANT</p>
                   <p className="text-sm text-gray-400">Aptitude Maths</p>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setExamPreference('CloudOps')}
+                  className={`p-4 sm:p-5 rounded-xl border-2 text-left transition-all ${
+                    examPreference === 'CloudOps'
+                      ? 'border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/30'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
+                  }`}
+                >
+                  <ExamOrgLogo exam="CloudOps" size={44} />
+                  <p className="font-bold text-white text-lg mt-2">CloudOps</p>
+                  <p className="text-sm text-gray-400">AWS SOA-C03</p>
+                </button>
               </div>
               {!examPreference && formErrors.exam && (
                 <p className="text-xs text-red-500 mt-1">Please select an exam</p>

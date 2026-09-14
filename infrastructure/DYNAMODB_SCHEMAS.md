@@ -98,7 +98,47 @@ All DynamoDB tables are encrypted with AWS KMS customer-managed key and have poi
 
 **TTL**: None
 
-## 5. Audit Logs Table (`jaiib-audit-logs`)
+## 5. CloudOps Question Bank Table (`jaiib-cloudops-question-bank`)
+
+AWS Certified CloudOps Engineer - Associate (SOA-C03) question bank.
+Mirrors the CAPM table schema (dedicated table, `domain-topic-index` GSI).
+
+**Partition Key**: `question_id` (String)
+**Sort Key**: `version` (String)
+
+**Attributes**:
+- `question_id` (String, PK) - UUID of question
+- `version` (String, SK) - Version number (v1.0, v1.1, etc.)
+- `paper` / `paper_name` (String) - Exam code (`CloudOps`, compat alias `SOA-C03`)
+- `domain` (String) - SOA-C03 domain (one of the 5 official domains with weights)
+- `topic` (String) - Specific syllabus topic (NOT the domain name)
+- `difficulty` (String) - Difficulty level (easy, medium, hard)
+- `question_text` (String) - Scenario-based question text
+- `options` (Map) - Options {A, B, C, D} (choice types; `{}` for yes_no/drag_drop/build_list)
+- `correct_answer` (String) - Correct answer (A/B/C/D or comma string for multi_select)
+- `aws_reference` (String) - AWS documentation reference
+- `status` (String) - Question status (active, inactive)
+- Extended type fields as needed: `question_type`, `correct_answers`, `statements`,
+  `drag_items`, `drop_zones`, `correct_mapping`, `correct_order`,
+  `case_study_id`, `scenario`, `exhibits`
+- `created_at` / `updated_at` (String) - ISO timestamps
+- `source` (String) - `MockMaster`
+
+**SOA-C03 domains (weights)**:
+- Domain 1: Monitoring, Logging, Analysis, Remediation, and Performance Optimization (22%)
+- Domain 2: Reliability and Business Continuity (22%)
+- Domain 3: Deployment, Provisioning, and Automation (22%)
+- Domain 4: Security and Compliance (16%)
+- Domain 5: Networking and Content Delivery (18%)
+
+**Global Secondary Indexes**:
+- `domain-topic-index` (Partition Key: domain, Sort Key: topic) - For domain/topic lookups
+
+**Billing Mode**: On-demand (PITR enabled)
+
+**TTL**: None
+
+## 6. Audit Logs Table (`jaiib-audit-logs`)
 
 **Partition Key**: `log_id` (String)
 **Sort Key**: `timestamp` (Number)
@@ -122,7 +162,7 @@ All DynamoDB tables are encrypted with AWS KMS customer-managed key and have poi
 
 **TTL**: None (1-year retention, then archive to S3)
 
-## 6. Notifications Table (`jaiib-notifications`)
+## 7. Notifications Table (`jaiib-notifications`)
 
 **Partition Key**: `user_id` (String)
 **Sort Key**: `notification_id` (String)

@@ -109,6 +109,7 @@ class JaiibCaiibStack(cdk.Stack):
         scores_table = self._create_scores_table(kms_key)
         question_bank_table = self._create_question_bank_table(kms_key)
         capm_question_bank_table = self._create_capm_question_bank_table(kms_key)
+        cloudops_question_bank_table = self._create_cloudops_question_bank_table(kms_key)
         audit_logs_table = self._create_audit_logs_table(kms_key)
         notifications_table = self._create_notifications_table(kms_key)
         bookmarks_table = self._create_bookmarks_table(kms_key)
@@ -120,6 +121,7 @@ class JaiibCaiibStack(cdk.Stack):
             scores_table,
             question_bank_table,
             capm_question_bank_table,
+            cloudops_question_bank_table,
             audit_logs_table,
             notifications_table,
             bookmarks_table,
@@ -189,6 +191,12 @@ class JaiibCaiibStack(cdk.Stack):
             "CapmQuestionBankTableName",
             value=capm_question_bank_table.table_name,
             description="DynamoDB CAPM Question Bank table name",
+        )
+        cdk.CfnOutput(
+            self,
+            "CloudOpsQuestionBankTableName",
+            value=cloudops_question_bank_table.table_name,
+            description="DynamoDB CloudOps (SOA-C03) Question Bank table name",
         )
         cdk.CfnOutput(
             self,
@@ -352,6 +360,48 @@ class JaiibCaiibStack(cdk.Stack):
         )
 
         # Add GSI for domain and topic lookup (CAPM ECO domains -> tasks/enablers)
+        table.add_global_secondary_index(
+            index_name="domain-topic-index",
+            partition_key=dynamodb.Attribute(
+                name="domain", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="topic", type=dynamodb.AttributeType.STRING
+            ),
+            projection_type=dynamodb.ProjectionType.ALL,
+        )
+
+        return table
+
+    def _create_cloudops_question_bank_table(self, kms_key: kms.Key) -> dynamodb.Table:
+        """Create CloudOps (AWS SOA-C03) Question Bank DynamoDB table.
+
+        Mirrors jaiib-capm-question-bank schema for AWS Certified CloudOps
+        Engineer - Associate (SOA-C03):
+        - Domain 1 Monitoring, Logging, Analysis, Remediation, Performance Optimization 22%
+        - Domain 2 Reliability and Business Continuity 22%
+        - Domain 3 Deployment, Provisioning, and Automation 22%
+        - Domain 4 Security and Compliance 16%
+        - Domain 5 Networking and Content Delivery 18%
+        """
+        table = dynamodb.Table(
+            self,
+            "CloudOpsQuestionBankTable",
+            table_name="jaiib-cloudops-question-bank",
+            partition_key=dynamodb.Attribute(
+                name="question_id", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="version", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            encryption=dynamodb.TableEncryption.CUSTOMER_MANAGED,
+            encryption_key=kms_key,
+            removal_policy=RemovalPolicy.RETAIN,
+            point_in_time_recovery=True,
+        )
+
+        # Add GSI for domain and topic lookup (SOA-C03 domains -> skills)
         table.add_global_secondary_index(
             index_name="domain-topic-index",
             partition_key=dynamodb.Attribute(

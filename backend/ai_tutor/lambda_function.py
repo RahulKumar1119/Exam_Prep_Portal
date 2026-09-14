@@ -97,6 +97,15 @@ def generate_explanation_with_timeout(
             is_quant = (paper_name or '').upper() == 'QUANT' or (
                 not is_azure and len(re.findall(r'\d', combined_text)) >= 6
             )
+            # CloudOps detection: explicit paper or AWS operations vocabulary
+            is_cloudops = (paper_name or '').upper() in ('CLOUDOPS', 'SOA-C03', 'SOA-C02') or any(
+                kw in combined_text.lower() for kw in [
+                    'cloudwatch', 'cloudtrail', 'eventbridge', 'systems manager',
+                    'auto scaling', 'elastic load balancing', 'route 53', 'cloudformation',
+                    'cloudfront', 'vpc', 'nacls', 'security groups', 'kms', 'guardduty',
+                    'aws backup', 'rds proxy', 'multi-az', 'placement group',
+                ]
+            )
             # Options block only for choice-style questions. Non-choice types
             # (yes_no, drag_drop, build_list, hot_area) have no A-D options —
             # their answer detail is already folded into question_text and
@@ -133,6 +142,28 @@ Provide a DETAILED explanation covering ALL of the following:
 IMPORTANT: Do NOT include any URLs or hyperlinks. Do NOT make up documentation links.
 
 Write 400-500 words. Use clear headings and formatting."""
+            elif is_cloudops:
+                prompt = f"""You are an expert AWS CloudOps (SOA-C03) certification tutor. Provide a comprehensive explanation for this operations question.
+
+Question: {question_text}
+
+{options_block}Correct Answer: {correct_answer}
+
+Provide a DETAILED explanation covering ALL of the following:
+
+1. **Why {correct_answer} is correct** — Explain the operational reasoning in depth. Name the AWS services/controls involved and why they fit this scenario (metrics/alarms, scaling, HA/DR, deployment, IAM, networking).
+
+2. **Why each other option is wrong** — For EACH incorrect option, explain specifically why it fails (wrong service, wrong RTO/RPO tradeoff, insecure, non-operationally-efficient). Don't just say "it's wrong".
+
+3. **Key CloudOps Concept** — Explain the underlying concept being tested (e.g., composite alarms, EventBridge rules, SSM runbooks, Multi-AZ vs backup restore, CloudFormation/StackSets, NACL vs security group) in 3-4 sentences.
+
+4. **Real-World Operations Scenario** — Give a concrete on-call example of when you would use the correct answer in production. Include specific details like metrics, RTO/RPO, or account/Region constraints.
+
+5. **Exam Tip** — One specific tip for answering similar questions on the SOA-C03 exam. What keywords or constraints should candidates look for?
+
+IMPORTANT: Do NOT include any URLs or hyperlinks. Do NOT make up documentation links.
+
+Write 300-400 words. Use clear headings and formatting."""
             elif is_quant:
                 prompt = f"""You are an expert quantitative aptitude tutor for Indian competitive exams. Explain this maths question clearly in 200-250 words.
 

@@ -6,18 +6,20 @@ import React from 'react';
  * Microsoft: authentic 4-square mark. IIBF / PMI: styled wordmark badges —
  * we name the exam body (nominative fair use) without copying their artwork.
  */
-export type ExamOrg = 'IIBF' | 'Microsoft' | 'PMI' | 'QUANT';
+export type ExamOrg = 'IIBF' | 'Microsoft' | 'PMI' | 'QUANT' | 'AWS';
 
 export function orgForExam(exam: string): ExamOrg {
   if (exam === 'AI-300') return 'Microsoft';
   if (exam === 'CAPM') return 'PMI';
   if (exam === 'QUANT') return 'QUANT';
+  if (exam === 'CloudOps' || exam === 'SOA-C03' || exam === 'SOA-C02') return 'AWS';
   return 'IIBF';
 }
 
 export function orgForProvider(provider: string): ExamOrg {
   if (provider === 'Microsoft') return 'Microsoft';
   if (provider === 'PMI') return 'PMI';
+  if (provider === 'AWS') return 'AWS';
   return 'IIBF';
 }
 
@@ -30,7 +32,7 @@ interface ExamOrgLogoProps {
 
 const ExamOrgLogo: React.FC<ExamOrgLogoProps> = ({ exam, org, size = 48, className = '' }) => {
   const resolved: ExamOrg = org || orgForExam(exam || '');
-  const label = resolved === 'Microsoft' ? 'Microsoft' : resolved === 'PMI' ? 'PMI' : resolved === 'QUANT' ? 'Quantitative Aptitude' : 'IIBF';
+  const label = resolved === 'Microsoft' ? 'Microsoft' : resolved === 'PMI' ? 'PMI' : resolved === 'QUANT' ? 'Quantitative Aptitude' : resolved === 'AWS' ? 'AWS' : 'IIBF';
 
   return (
     <svg
@@ -106,6 +108,28 @@ const ExamOrgLogo: React.FC<ExamOrgLogoProps> = ({ exam, org, size = 48, classNa
           >
             %
           </text>
+        </g>
+      )}
+      {resolved === 'AWS' && (
+        <g>
+          <text
+            x="24"
+            y="26"
+            textAnchor="middle"
+            fontFamily="Arial, Helvetica, sans-serif"
+            fontWeight="800"
+            fontSize="11"
+            fill="#232F3E"
+          >
+            AWS
+          </text>
+          <path
+            d="M12 30 Q24 38 36 30"
+            stroke="#FF9900"
+            strokeWidth="2.5"
+            fill="none"
+            strokeLinecap="round"
+          />
         </g>
       )}
     </svg>

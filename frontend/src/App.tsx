@@ -35,6 +35,7 @@ const FreeQuizPage = lazy(() => import('./pages/FreeQuizPage'));
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
 const AI300PracticeTestPage = lazy(() => import('./pages/AI300PracticeTestPage'));
 const CAPMPracticeTestPage = lazy(() => import('./pages/CAPMPracticeTestPage'));
+const CloudOpsPracticeTestPage = lazy(() => import('./pages/CloudOpsPracticeTestPage'));
 const QuantPracticePage = lazy(() => import('./pages/QuantPracticePage'));
 const BrowseExamsPage = lazy(() => import('./pages/BrowseExamsPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -103,6 +104,7 @@ const AppContent: React.FC = () => {
       <Route path="/free-quiz/:slug" element={<FreeQuizPage />} />
       <Route path="/ai-300-practice-test" element={<AI300PracticeTestPage />} />
       <Route path="/capm-practice-test" element={<CAPMPracticeTestPage />} />
+      <Route path="/cloudops-practice-test" element={<CloudOpsPracticeTestPage />} />
       <Route path="/quant-practice-test" element={<QuantPracticePage />} />
       <Route path="/exams" element={<BrowseExamsPage />} />
       <Route path="/about" element={<AboutPage />} />

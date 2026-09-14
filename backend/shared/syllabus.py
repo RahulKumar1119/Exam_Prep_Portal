@@ -25,6 +25,12 @@ PAPER_DISPLAY_NAMES = {
     'RBWM': 'RBWM',
     'Certified Associate in Project Management': 'CAPM',
     'CAPM': 'CAPM',
+    'AWS Certified CloudOps Engineer - Associate': 'CloudOps',
+    'AWS Certified SysOps Administrator - Associate': 'CloudOps',
+    'SysOps Administrator - Associate': 'CloudOps',
+    'SOA-C03': 'CloudOps',
+    'SOA-C02': 'CloudOps',
+    'CloudOps': 'CloudOps',
     'Quantitative Aptitude': 'QUANT',
     'QUANT': 'QUANT',
 }
@@ -45,6 +51,11 @@ EXAM_CATEGORIES = {
         'name': 'CAPM',
         'full_name': 'Certified Associate in Project Management',
         'papers': ['CAPM'],
+    },
+    'CloudOps': {
+        'name': 'CloudOps',
+        'full_name': 'AWS Certified CloudOps Engineer - Associate (SOA-C03)',
+        'papers': ['CloudOps'],
     },
 }
 
@@ -265,6 +276,68 @@ PAPER_SYLLABUS = {
                 'Data Interpretation',
                 'Data Sufficiency',
                 'Chain Rule – Unitary Methods',
+            ]
+        }
+    },
+    'CloudOps': {
+        'modules': {
+            'Domain 1 - Monitoring, Logging, Analysis, Remediation, and Performance Optimization (22%)': [
+                'CloudWatch metrics alarms and dashboards',
+                'CloudTrail logging and analysis',
+                'CloudWatch agent for EC2 ECS EKS',
+                'Managed Service for Prometheus and Managed Grafana',
+                'SNS notifications from alarms',
+                'EventBridge event routing and troubleshooting',
+                'Systems Manager Automation runbooks',
+                'EBS performance troubleshooting and volume optimization',
+                'S3 performance strategies transfer acceleration multipart lifecycle DataSync',
+                'EFS and FSx selection and lifecycle optimization',
+                'RDS Performance Insights RDS Proxy and configuration tuning',
+                'EC2 placement groups storage and networking optimization',
+            ],
+            'Domain 2 - Reliability and Business Continuity (22%)': [
+                'Auto Scaling compute environments',
+                'ElastiCache and CloudFront caching for scalability',
+                'RDS and DynamoDB scaling',
+                'ELB configuration and Route 53 health checks',
+                'Multi-AZ fault-tolerant systems',
+                'AWS Backup snapshots for EC2 RDS EBS S3 DynamoDB',
+                'Point-in-time restore RTO RPO and cost tradeoffs',
+                'S3 and FSx versioning',
+                'Disaster recovery procedures',
+            ],
+            'Domain 3 - Deployment, Provisioning, and Automation (22%)': [
+                'AMIs container images and EC2 Image Builder',
+                'CloudFormation and CDK stacks',
+                'Deployment troubleshooting subnet sizing permissions',
+                'RAM and StackSets multi-account multi-Region sharing',
+                'Deployment strategies blue-green canary rolling',
+                'Terraform and Git automation',
+                'Systems Manager operational automation',
+                'Event-driven automation Lambda and S3 Event Notifications',
+            ],
+            'Domain 4 - Security and Compliance (16%)': [
+                'IAM password policies MFA roles federation resource policies conditions',
+                'CloudTrail IAM Access Analyzer and policy simulator audits',
+                'Multi-account strategies Organizations SCPs Control Tower',
+                'Trusted Advisor security remediation',
+                'Compliance Region and service selection',
+                'KMS encryption at rest',
+                'ACM encryption in transit',
+                'Secrets Manager secret storage',
+                'Security Hub GuardDuty Config Inspector findings remediation',
+            ],
+            'Domain 5 - Networking and Content Delivery (18%)': [
+                'VPC subnets route tables NACLs security groups NAT IGW',
+                'Private networking PrivateLink endpoints peering Transit Gateway VPN',
+                'WAF Shield Network Firewall DNS Firewall auditing',
+                'Route 53 Resolver DNS and routing policies query logging',
+                'CloudFront and Global Accelerator distribution',
+                'VPC troubleshooting subnets routing transit gateways',
+                'Network logs VPC flow logs ELB logs WAF logs analysis',
+                'CloudFront caching troubleshooting',
+                'Hybrid connectivity troubleshooting',
+                'CloudWatch network monitoring',
             ]
         }
     }

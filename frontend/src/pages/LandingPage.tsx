@@ -19,9 +19,9 @@ const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="MockMaster — Free IT Certification & Banking Exam Practice Tests"
-        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (685 questions), and PMI CAPM (225 questions). AI explanations, leaderboard, timed mock tests. No payment required."
+        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (685 questions), PMI CAPM (225 questions), and AWS CloudOps SOA-C03. AI explanations, leaderboard, timed mock tests. No payment required."
         canonical="https://mockmaster.fun/"
-        keywords="JAIIB mock test 2026, AI-300 practice test, CAPM practice test, free certification practice, Microsoft AI-300, PMI CAPM, IIBF exam prep, Azure ML certification"
+        keywords="JAIIB mock test 2026, AI-300 practice test, CAPM practice test, CloudOps practice test, SOA-C03 practice, free certification practice, Microsoft AI-300, PMI CAPM, AWS CloudOps, IIBF exam prep, Azure ML certification"
       />
 
       {/* Navigation */}
@@ -242,6 +242,35 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
+
+            {/* CloudOps */}
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              onClick={() => navigate('/cloudops-practice-test')}
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/5 transition-all group"
+            >
+              <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
+              <div className="flex items-center gap-3 mb-4">
+                <ExamOrgLogo exam="CloudOps" size={48} />
+                <div>
+                  <h3 className="text-xl font-bold group-hover:text-amber-400 transition">CloudOps</h3>
+                  <p className="text-xs text-gray-500">AWS Certification (SOA-C03)</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-400 mb-5">AWS Certified CloudOps Engineer - Associate. Monitoring, reliability, deployment, security & networking.</p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-2xl font-bold text-white">65</span>
+                  <span className="text-xs text-gray-500">per set</span>
+                </div>
+                <div className="w-px h-6 bg-gray-800" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-bold text-white">130</span>
+                  <span className="text-xs text-gray-500">min exam</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -373,6 +402,7 @@ const LandingPage: React.FC = () => {
                 <li><button onClick={() => navigate('/practice-tests')} className="hover:text-white transition">JAIIB Practice</button></li>
                 <li><button onClick={() => navigate('/ai-300-practice-test')} className="hover:text-white transition">AI-300 Practice</button></li>
                 <li><button onClick={() => navigate('/capm-practice-test')} className="hover:text-white transition">CAPM Practice</button></li>
+                <li><button onClick={() => navigate('/cloudops-practice-test')} className="hover:text-white transition">CloudOps Practice</button></li>
               </ul>
             </div>
             <div>

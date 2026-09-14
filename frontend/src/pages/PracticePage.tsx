@@ -29,6 +29,9 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
   'QUANT': [
     { id: 'QUANT', name: 'QUANT', fullName: 'Quantitative Aptitude for Competitive Exams', totalQuestions: 449, sets: 14 },
   ],
+  'CloudOps': [
+    { id: 'CloudOps', name: 'CloudOps', fullName: 'AWS Certified CloudOps Engineer - Associate (SOA-C03)', totalQuestions: 0, sets: 1 },
+  ],
 };
 
 // Questions per practice set (CAPM sets are longer, QUANT sets are shorter)
@@ -36,6 +39,7 @@ const QUESTIONS_PER_SET: Record<string, number> = {
   'CAPM': 75,
   'QUANT': 30,
   'AI-300': 57,
+  'CloudOps': 65,
 };
 const questionsPerSet = (paperId: string) => QUESTIONS_PER_SET[paperId] ?? 50;
 
@@ -48,7 +52,7 @@ const PracticePage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const papers = selectedExam === 'ALL'
-    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || []), ...(PAPERS_BY_EXAM['CAPM'] || []), ...(PAPERS_BY_EXAM['QUANT'] || [])]
+    ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || []), ...(PAPERS_BY_EXAM['AI-300'] || []), ...(PAPERS_BY_EXAM['CAPM'] || []), ...(PAPERS_BY_EXAM['QUANT'] || []), ...(PAPERS_BY_EXAM['CloudOps'] || [])]
     : selectedExam === 'JAIIB'
     ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || [])]
     : PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];
