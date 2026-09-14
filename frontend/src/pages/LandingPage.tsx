@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, MotionConfig } from 'motion/react';
 import SEO from '../components/SEO';
 import ExamOrgLogo from '../components/ExamOrgLogo';
+import DevToArticles from '../components/DevToArticles';
 
 // Shared scroll-reveal: fade up once when entering the viewport.
 const reveal = {
@@ -19,7 +20,7 @@ const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="MockMaster — Free IT Certification & Banking Exam Practice Tests"
-        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (685 questions), PMI CAPM (225 questions), and AWS CloudOps SOA-C03. AI explanations, leaderboard, timed mock tests. No payment required."
+        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (685 questions), PMI CAPM (225 questions), and AWS CloudOps SOA-C03 (325 questions). AI explanations, leaderboard, timed mock tests. No payment required."
         canonical="https://mockmaster.fun/"
         keywords="JAIIB mock test 2026, AI-300 practice test, CAPM practice test, CloudOps practice test, SOA-C03 practice, free certification practice, Microsoft AI-300, PMI CAPM, AWS CloudOps, IIBF exam prep, Azure ML certification"
       />
@@ -261,13 +262,13 @@ const LandingPage: React.FC = () => {
               <p className="text-sm text-gray-400 mb-5">AWS Certified CloudOps Engineer - Associate. Monitoring, reliability, deployment, security & networking.</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-2xl font-bold text-white">65</span>
-                  <span className="text-xs text-gray-500">per set</span>
+                  <span className="text-2xl font-bold text-white">325</span>
+                  <span className="text-xs text-gray-500">questions</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-white">130</span>
-                  <span className="text-xs text-gray-500">min exam</span>
+                  <span className="text-lg font-bold text-white">5</span>
+                  <span className="text-xs text-gray-500">sets</span>
                 </div>
               </div>
             </motion.div>
@@ -390,6 +391,78 @@ const LandingPage: React.FC = () => {
             Create Free Account
           </motion.button>
         </motion.div>
+      </section>
+
+      {/* Trending Articles from Dev.to */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <DevToArticles
+            tags={['aws', 'devops', 'cloud', 'terraform', 'kubernetes', 'monitoring']}
+            title="Trending Articles"
+            limit={6}
+            darkMode={true}
+          />
+        </div>
+      </section>
+
+      {/* CloudOps Community Resources */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+        <div className="max-w-5xl mx-auto">
+          <motion.h2 {...reveal} transition={{ duration: 0.5 }} className="text-2xl sm:text-3xl font-bold mb-3">SOA-C03 Community Resources</motion.h2>
+          <motion.p {...reveal} transition={{ duration: 0.5, delay: 0.08 }} className="text-gray-400 text-sm mb-8">Exam guides and experiences shared by candidates and trainers preparing for the AWS CloudOps Engineer - Associate exam.</motion.p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="https://www.whizlabs.com/blog/aws-soa-c03-preparation-guide" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-amber-500/30 transition group">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-amber-500 text-sm">Whizlabs</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white group-hover:text-amber-300 transition">How to Pass AWS SOA-C03 CloudOps Engineer Associate Exam</h4>
+              <p className="text-xs text-gray-500 mt-1">Full preparation guide: domains, study strategy, and passing score 720/1000</p>
+            </a>
+
+            <a href="https://www.qa.com/resources/blog/announcing-the-aws-certified-cloudops-engineer-associate-soa-c03-exam" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-amber-500/30 transition group">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-amber-500 text-sm">QA.com</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white group-hover:text-amber-300 transition">SOA-C02 vs SOA-C03: What Changed</h4>
+              <p className="text-xs text-gray-500 mt-1">Domain-by-domain breakdown of the new exam blueprint</p>
+            </a>
+
+            <a href="https://www.examcert.app/blog/aws-soa-c03-study-guide-2026" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-amber-500/30 transition group">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-amber-500 text-sm">ExamCert</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white group-hover:text-amber-300 transition">AWS SOA-C03 Study Guide 2026</h4>
+              <p className="text-xs text-gray-500 mt-1">8-week study plan with CloudWatch, Systems Manager, and exam lab tips</p>
+            </a>
+
+            <a href="https://repost.aws/questions/QUKssqTtNqTwmwqAfeaZ_Xmw/aws-certified-cloudops-engineer-associate-soa-c03-exam-advice" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-amber-500/30 transition group">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-amber-500 text-sm">AWS re:Post</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white group-hover:text-amber-300 transition">SOA-C03 Exam Advice Thread</h4>
+              <p className="text-xs text-gray-500 mt-1">Community Q&A on what to expect and how to prepare</p>
+            </a>
+
+            <a href="https://www.reddit.com/r/AWSCertifications/" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-amber-500/30 transition group">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-orange-500 text-sm">r/AWSCertifications</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white group-hover:text-amber-300 transition">AWS Certifications Subreddit</h4>
+              <p className="text-xs text-gray-500 mt-1">Search "SOA-C03" for pass stories, resources, and exam-day tips</p>
+            </a>
+
+            <a href="https://docs.aws.amazon.com/aws-certification/latest/sysops-administrator-associate-03/sysops-administrator-associate-03.pdf" target="_blank" rel="noopener noreferrer" className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-amber-500/30 transition group">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-amber-500 text-sm">AWS Official</span>
+              </div>
+              <h4 className="text-sm font-semibold text-white group-hover:text-amber-300 transition">SOA-C03 Official Exam Guide (PDF)</h4>
+              <p className="text-xs text-gray-500 mt-1">Domains, weights, task statements, and in-scope services from AWS</p>
+            </a>
+          </div>
+
+          <p className="text-xs text-gray-600 mt-4">External links point to their respective owners. Content belongs to the linked sites and authors.</p>
+        </div>
       </section>
 
       {/* Footer */}

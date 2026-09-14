@@ -84,27 +84,44 @@ def generate_explanation_with_timeout(
 
     def _call_bedrock():
         try:
+            # Paper takes precedence over keyword sniffing — a generic term like
+            # "auto scaling" appears in AI-300 questions too and must not
+            # hijack them into the CloudOps tutor (or vice versa).
+            paper = (paper_name or '').upper()
+            explicit_cloudops = paper in ('CLOUDOPS', 'SOA-C03', 'SOA-C02')
+            explicit_other_paper = bool(paper) and not explicit_cloudops
+
             # Detect if this is a Microsoft/Azure question or banking question
             combined_text = f"{question_text} {options.get('A', '')} {options.get('B', '')}"
-            is_azure = any(kw in combined_text.lower() for kw in [
-                'azure', 'microsoft', 'endpoint', 'pipeline', 'kubernetes', 'ml workspace',
-                'bedrock', 'deploy', 'container', 'compute cluster', 'sdk', 'cli',
-                'automl', 'mlflow', 'onnx', 'inference', 'docker', 'yaml'
-            ])
+            is_azure = paper == 'AI-300' or (
+                not explicit_cloudops and any(kw in combined_text.lower() for kw in [
+                    'azure', 'microsoft', 'endpoint', 'pipeline', 'kubernetes', 'ml workspace',
+                    'bedrock', 'deploy', 'container', 'compute cluster', 'sdk', 'cli',
+                    'automl', 'mlflow', 'onnx', 'inference', 'docker', 'yaml'
+                ])
+            )
 
             # Quant detection: explicit paper, else numbers-heavy text that
-            # isn't an Azure question (banking theory rarely has 6+ digits).
-            is_quant = (paper_name or '').upper() == 'QUANT' or (
-                not is_azure and len(re.findall(r'\d', combined_text)) >= 6
+            # isn't an Azure/CloudOps question (banking theory rarely has 6+ digits).
+            is_quant = paper == 'QUANT' or (
+                not is_azure and not explicit_cloudops
+                and len(re.findall(r'\d', combined_text)) >= 6
             )
-            # CloudOps detection: explicit paper or AWS operations vocabulary
-            is_cloudops = (paper_name or '').upper() in ('CLOUDOPS', 'SOA-C03', 'SOA-C02') or any(
-                kw in combined_text.lower() for kw in [
-                    'cloudwatch', 'cloudtrail', 'eventbridge', 'systems manager',
-                    'auto scaling', 'elastic load balancing', 'route 53', 'cloudformation',
-                    'cloudfront', 'vpc', 'nacls', 'security groups', 'kms', 'guardduty',
-                    'aws backup', 'rds proxy', 'multi-az', 'placement group',
-                ]
+            # CloudOps detection: explicit paper, else AWS-proper-noun vocabulary
+            # and only when no other paper is stated. Generic ops terms
+            # ("auto scaling", "availability zones") are deliberately excluded —
+            # they also appear in AI-300 questions.
+            is_cloudops = explicit_cloudops or (
+                not is_azure and not explicit_other_paper and any(
+                    kw in combined_text.lower() for kw in [
+                        'cloudwatch', 'cloudtrail', 'eventbridge', 'systems manager',
+                        'route 53', 'cloudformation', 'cloudfront', 'global accelerator',
+                        'transit gateway', 'privatelink', 'vpc endpoints',
+                        'nacls', 'security groups', 'kms', 'guardduty', 'security hub',
+                        'secrets manager', 'aws backup', 'rds proxy', 'placement group',
+                        'control tower', 'soa-c03', 'sysops', 'cloudops',
+                    ]
+                )
             )
             # Options block only for choice-style questions. Non-choice types
             # (yes_no, drag_drop, build_list, hot_area) have no A-D options —
