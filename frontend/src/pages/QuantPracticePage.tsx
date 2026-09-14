@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { usePractice } from '../context/PracticeContext';
@@ -59,21 +59,36 @@ const QuantPracticePage: React.FC = () => {
         title="Quantitative Aptitude Practice Test — Free Bank & Competitive Exam Prep"
         description="Free Quantitative Aptitude practice for Bank, SSC, CAT, UPSC, Railways & all competitive exams. 30-question timed sets (20 min, −0.25 negative) across 35 chapters with instant scoring."
         canonical="https://mockmaster.fun/quant-practice-test"
+        ogImage="https://mockmaster.fun/og-quant.png"
         keywords="quantitative aptitude practice, quant mock test, IBPS quant questions, bank exam maths practice, SI CI practice"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: 'Quantitative Aptitude Practice Test — Free Bank & Competitive Exam Prep',
+            description:
+              'Free Quantitative Aptitude practice for Bank, SSC, CAT, UPSC, Railways & all competitive exams. 30-question timed sets across 35 chapters with instant scoring.',
+            url: 'https://mockmaster.fun/quant-practice-test/',
+            provider: { '@type': 'Organization', name: 'MockMaster', url: 'https://mockmaster.fun/' },
+          }),
+        }}
       />
 
       {/* Nav */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
             <span className="text-base sm:text-xl font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => navigate('/login')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition">Login</button>
-            <button onClick={() => navigate('/register')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</button>
+            <Link to="/login" className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition">Login</Link>
+            <Link to="/register" className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</Link>
           </div>
         </div>
       </nav>
@@ -108,9 +123,9 @@ const QuantPracticePage: React.FC = () => {
           </button>
           {error && <p className="text-red-600 text-sm mt-4">{error}</p>}
           <p className="mt-4">
-            <button onClick={() => navigate('/guides/quantitative-aptitude-guide')} className="text-sm text-emerald-700 font-medium hover:underline">
+            <Link to="/guides/quantitative-aptitude-guide" className="text-sm text-emerald-700 font-medium hover:underline">
               First read the Quantitative Aptitude Guide →
-            </button>
+            </Link>
           </p>
         </div>
       </section>

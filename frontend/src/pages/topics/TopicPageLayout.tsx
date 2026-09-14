@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import SEO from '../../components/SEO';
 
@@ -29,8 +29,6 @@ const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
   relatedTopics,
   lastUpdated = 'June 2026',
 }) => {
-  const navigate = useNavigate();
-
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -85,38 +83,38 @@ const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
             <span className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">MockMaster</span>
             <span className="text-base font-bold text-gray-900 sm:hidden">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-1 sm:gap-4">
-            <button
-              onClick={() => navigate('/practice-tests')}
+            <Link
+              to="/practice-tests"
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
             >
               Practice Tests
-            </button>
-            <button
-              onClick={() => navigate('/blog')}
+            </Link>
+            <Link
+              to="/blog"
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden md:block"
             >
               Blog
-            </button>
-            <button
-              onClick={() => navigate('/login')}
+            </Link>
+            <Link
+              to="/login"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition"
             >
               Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
+            </Link>
+            <Link
+              to="/register"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -129,16 +127,12 @@ const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
               <React.Fragment key={index}>
                 {index > 0 && <span className="text-gray-400">›</span>}
                 {item.url ? (
-                  <a
-                    href={item.url}
+                  <Link
+                    to={item.url}
                     className="hover:text-blue-600 transition"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate(item.url!);
-                    }}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 ) : (
                   <span className="text-gray-900 font-medium">{item.label}</span>
                 )}
@@ -166,12 +160,12 @@ const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
                 <p className="text-sm text-gray-600 mb-4">
                   Test your understanding with MCQs that mirror actual JAIIB exam patterns.
                 </p>
-                <button
-                  onClick={() => navigate('/register')}
+                <Link
+                  to="/register"
                   className="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition text-sm"
                 >
                   Start Practicing Free →
-                </button>
+                </Link>
               </div>
 
               {/* Related Topics */}
@@ -180,16 +174,12 @@ const TopicPageLayout: React.FC<TopicPageLayoutProps> = ({
                 <ul className="space-y-3">
                   {relatedTopics.map((topic, index) => (
                     <li key={index}>
-                      <a
-                        href={topic.url}
+                      <Link
+                        to={topic.url}
                         className="text-blue-600 hover:text-blue-800 text-sm font-medium transition hover:underline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate(topic.url);
-                        }}
                       >
                         {topic.title}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

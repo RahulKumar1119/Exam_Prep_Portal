@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion, MotionConfig } from 'motion/react';
 import SEO from '../components/SEO';
 import ExamOrgLogo from '../components/ExamOrgLogo';
@@ -12,8 +12,6 @@ const reveal = {
 } as const;
 
 const AboutPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-gray-950 text-white">
@@ -26,16 +24,16 @@ const AboutPage: React.FC = () => {
       {/* Nav */}
       <nav className="border-b border-gray-800 sticky top-0 z-50 bg-gray-950/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-xl font-bold">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => navigate('/exams')} className="hidden sm:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Exams</button>
-            <button onClick={() => navigate('/login')} className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</button>
-            <button onClick={() => navigate('/register')} className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</button>
+            <Link to="/exams" className="hidden sm:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Exams</Link>
+            <Link to="/login" className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</Link>
+            <Link to="/register" className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</Link>
           </div>
         </div>
       </nav>
@@ -296,12 +294,12 @@ const AboutPage: React.FC = () => {
             >
               📧 support@mockmaster.fun
             </a>
-            <button
-              onClick={() => navigate('/contact')}
+            <Link
+              to="/contact"
               className="px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl transition"
             >
               Contact Form
-            </button>
+            </Link>
           </div>
         </div>
       </section>

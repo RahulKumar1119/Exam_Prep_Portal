@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
 const PAPERS = [
@@ -60,8 +60,6 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
 
 // Store listing page
 const PracticeTestsPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-white">
       <SEO
@@ -73,15 +71,15 @@ const PracticeTestsPage: React.FC = () => {
       {/* Nav */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">M</span>
             </div>
             <span className="text-xl font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex gap-4">
-            <button onClick={() => navigate('/login')} className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition">Login</button>
-            <button onClick={() => navigate('/register')} className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</button>
+            <Link to="/login" className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition">Login</Link>
+            <Link to="/register" className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</Link>
           </div>
         </div>
       </nav>
@@ -107,10 +105,10 @@ const PracticeTestsPage: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {PAPERS.map((paper) => (
-              <div
+              <Link
                 key={paper.slug}
-                onClick={() => navigate(`/practice-tests/${paper.slug}`)}
-                className="bg-white rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
+                to={`/practice-tests/${paper.slug}`}
+                className="bg-white rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition-all overflow-hidden group block"
               >
                 {/* Card Header */}
                 <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
@@ -168,7 +166,7 @@ const PracticeTestsPage: React.FC = () => {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -200,9 +198,9 @@ const PracticeTestsPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Start Practicing Today</h2>
           <p className="text-blue-100 mb-8">Join thousands of bank officers who cleared JAIIB using MockMaster</p>
-          <button onClick={() => navigate('/register')} className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition">
+          <Link to="/register" className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition">
             Sign Up Free →
-          </button>
+          </Link>
         </div>
       </section>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion, MotionConfig } from 'motion/react';
 import SEO from '../components/SEO';
 import ExamOrgLogo from '../components/ExamOrgLogo';
@@ -12,8 +12,6 @@ const reveal = {
 } as const;
 
 const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-gray-950 text-white">
@@ -27,17 +25,17 @@ const LandingPage: React.FC = () => {
       {/* Navigation */}
       <nav className="border-b border-gray-800 sticky top-0 z-50 bg-gray-950/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-xl font-bold">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => navigate('/exams')} className="hidden sm:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Exams</button>
-            <button onClick={() => navigate('/blog')} className="hidden md:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Blog</button>
-            <button onClick={() => navigate('/login')} className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</button>
-            <button onClick={() => navigate('/register')} className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</button>
+            <Link to="/exams" className="hidden sm:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Exams</Link>
+            <Link to="/blog" className="hidden md:block px-4 py-2 text-sm text-gray-300 hover:text-white transition">Blog</Link>
+            <Link to="/login" className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</Link>
+            <Link to="/register" className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</Link>
           </div>
         </div>
       </nav>
@@ -72,12 +70,12 @@ const LandingPage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/register')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-base transition shadow-lg shadow-indigo-600/25">
+            <Link to="/register" className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-base transition shadow-lg shadow-indigo-600/25 text-center">
               Create Free Account
-            </motion.button>
-            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/exams')} className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl text-base transition">
+            </Link>
+            <Link to="/exams" className="px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-semibold rounded-xl text-base transition text-center">
               Browse Exams
-            </motion.button>
+            </Link>
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
@@ -100,11 +98,11 @@ const LandingPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* JAIIB */}
+            <Link to="/register" className="block h-full" aria-label="Practice JAIIB free">
             <motion.div
               {...reveal}
               transition={{ duration: 0.5, delay: 0 }}
-              onClick={() => navigate('/register')}
-              className="bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group"
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-6 h-full hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group"
             >
               <div className="flex items-center gap-3 mb-4">
                 <ExamOrgLogo exam="JAIIB" size={48} />
@@ -126,13 +124,14 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
+            </Link>
 
             {/* CAIIB */}
+            <Link to="/register" className="block h-full" aria-label="Practice CAIIB free">
             <motion.div
               {...reveal}
               transition={{ duration: 0.5, delay: 0.08 }}
-              onClick={() => navigate('/register')}
-              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group"
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 h-full hover:border-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all group"
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
@@ -155,13 +154,15 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
+            </Link>
 
             {/* AI-300 */}
+            {/* AI-300 */}
+            <Link to="/ai-300-practice-test" className="block h-full" aria-label="AI-300 free practice test">
             <motion.div
               {...reveal}
               transition={{ duration: 0.5, delay: 0.16 }}
-              onClick={() => navigate('/ai-300-practice-test')}
-              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/5 transition-all group"
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 h-full hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/5 transition-all group"
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
@@ -184,13 +185,14 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
+            </Link>
 
             {/* CAPM */}
+            <Link to="/capm-practice-test" className="block h-full" aria-label="CAPM free practice test">
             <motion.div
               {...reveal}
               transition={{ duration: 0.5, delay: 0.24 }}
-              onClick={() => navigate('/capm-practice-test')}
-              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all group"
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 h-full hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all group"
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
@@ -213,13 +215,14 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
+            </Link>
 
             {/* QUANT */}
+            <Link to="/quant-practice-test" className="block h-full" aria-label="QUANT free practice test">
             <motion.div
               {...reveal}
               transition={{ duration: 0.5, delay: 0.32 }}
-              onClick={() => navigate('/quant-practice-test')}
-              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-rose-500/50 hover:shadow-xl hover:shadow-rose-500/5 transition-all group"
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 h-full hover:border-rose-500/50 hover:shadow-xl hover:shadow-rose-500/5 transition-all group"
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
@@ -242,13 +245,14 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
+            </Link>
 
             {/* CloudOps */}
+            <Link to="/cloudops-practice-test" className="block h-full" aria-label="SOA-C03 free practice test">
             <motion.div
               {...reveal}
               transition={{ duration: 0.5, delay: 0.4 }}
-              onClick={() => navigate('/cloudops-practice-test')}
-              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 cursor-pointer hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/5 transition-all group"
+              className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 h-full hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/5 transition-all group"
             >
               <span className="absolute top-4 right-4 text-[11px] font-bold text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">NEW</span>
               <div className="flex items-center gap-3 mb-4">
@@ -271,6 +275,7 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
             </motion.div>
+            </Link>
           </div>
         </div>
       </section>
@@ -368,16 +373,12 @@ const LandingPage: React.FC = () => {
             </div>
           </motion.div>
 
-          <motion.button
-            {...reveal}
-            transition={{ duration: 0.5 }}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/register')}
-            className="mt-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-xl transition"
+          <Link
+            to="/register"
+            className="mt-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-xl transition inline-block"
           >
             Join the Leaderboard
-          </motion.button>
+          </Link>
         </div>
       </section>
 
@@ -386,9 +387,9 @@ const LandingPage: React.FC = () => {
         <motion.div {...reveal} transition={{ duration: 0.5 }} className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to start?</h2>
           <p className="text-gray-400 mb-8 text-lg">Create your free account in 10 seconds. No credit card needed.</p>
-          <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={() => navigate('/register')} className="px-10 py-4 bg-white text-gray-900 font-bold rounded-xl text-lg hover:bg-gray-100 transition shadow-2xl">
+          <Link to="/register" className="inline-block px-10 py-4 bg-white text-gray-900 font-bold rounded-xl text-lg hover:bg-gray-100 transition shadow-2xl">
             Create Free Account
-          </motion.button>
+          </Link>
         </motion.div>
       </section>
 
@@ -399,33 +400,33 @@ const LandingPage: React.FC = () => {
             <div>
               <h4 className="font-semibold text-white mb-4">Exams</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><button onClick={() => navigate('/practice-tests')} className="hover:text-white transition">JAIIB Practice</button></li>
-                <li><button onClick={() => navigate('/ai-300-practice-test')} className="hover:text-white transition">AI-300 Practice</button></li>
-                <li><button onClick={() => navigate('/capm-practice-test')} className="hover:text-white transition">CAPM Practice</button></li>
-                <li><button onClick={() => navigate('/cloudops-practice-test')} className="hover:text-white transition">SOA-C03 Practice</button></li>
+                <li><Link to="/practice-tests" className="hover:text-white transition">JAIIB Practice</Link></li>
+                <li><Link to="/ai-300-practice-test" className="hover:text-white transition">AI-300 Practice</Link></li>
+                <li><Link to="/capm-practice-test" className="hover:text-white transition">CAPM Practice</Link></li>
+                <li><Link to="/cloudops-practice-test" className="hover:text-white transition">SOA-C03 Practice</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Resources</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><button onClick={() => navigate('/blog')} className="hover:text-white transition">Blog</button></li>
-                <li><button onClick={() => navigate('/study-topics')} className="hover:text-white transition">Study Topics</button></li>
-                <li><button onClick={() => navigate('/faq')} className="hover:text-white transition">FAQ</button></li>
+                <li><Link to="/blog" className="hover:text-white transition">Blog</Link></li>
+                <li><Link to="/study-topics" className="hover:text-white transition">Study Topics</Link></li>
+                <li><Link to="/faq" className="hover:text-white transition">FAQ</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><button onClick={() => navigate('/about')} className="hover:text-white transition">About</button></li>
-                <li><button onClick={() => navigate('/contact')} className="hover:text-white transition">Contact</button></li>
+                <li><Link to="/about" className="hover:text-white transition">About</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition">Contact</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><button onClick={() => navigate('/privacy-policy')} className="hover:text-white transition">Privacy Policy</button></li>
-                <li><button onClick={() => navigate('/terms-of-service')} className="hover:text-white transition">Terms of Service</button></li>
-                <li><button onClick={() => navigate('/disclaimer')} className="hover:text-white transition">Disclaimer</button></li>
+                <li><Link to="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link></li>
+                <li><Link to="/terms-of-service" className="hover:text-white transition">Terms of Service</Link></li>
+                <li><Link to="/disclaimer" className="hover:text-white transition">Disclaimer</Link></li>
               </ul>
             </div>
           </div>

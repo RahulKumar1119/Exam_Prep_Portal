@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
 interface FAQItem {
@@ -14,7 +14,6 @@ interface FAQSection {
 }
 
 const FAQPage: React.FC = () => {
-  const navigate = useNavigate();
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   const toggleItem = (sectionIndex: number, itemIndex: number) => {
@@ -239,26 +238,26 @@ const FAQPage: React.FC = () => {
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
             <span className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">MockMaster</span>
             <span className="text-base font-bold text-gray-900 sm:hidden">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-1 sm:gap-4">
-            <button
-              onClick={() => navigate('/login')}
+            <Link
+              to="/login"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition"
             >
               Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
+            </Link>
+            <Link
+              to="/register"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -335,18 +334,18 @@ const FAQPage: React.FC = () => {
             Join thousands of bank officers who are preparing smarter with MockMaster.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate('/register')}
+            <Link
+              to="/register"
               className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition transform hover:scale-105"
             >
               Get Started Free
-            </button>
-            <button
-              onClick={() => navigate('/login')}
+            </Link>
+            <Link
+              to="/login"
               className="px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:bg-opacity-10 transition"
             >
               Sign In
-            </button>
+            </Link>
           </div>
         </div>
       </section>

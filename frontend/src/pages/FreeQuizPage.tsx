@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
 
 // Sample questions hardcoded for each paper (no API call needed, no login required)
@@ -49,7 +49,6 @@ const PAPER_NAMES: Record<string, string> = {
 };
 
 const FreeQuizPage: React.FC = () => {
-  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -64,7 +63,7 @@ const FreeQuizPage: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Quiz Not Found</h1>
-          <button onClick={() => navigate('/practice-tests')} className="text-blue-600 hover:underline">← Back to Practice Tests</button>
+          <Link to="/practice-tests" className="text-blue-600 hover:underline">← Back to Practice Tests</Link>
         </div>
       </div>
     );
@@ -102,7 +101,8 @@ const FreeQuizPage: React.FC = () => {
         <SEO
           title={`Free ${slug?.toUpperCase()} Quiz Result | MockMaster`}
           description={`You scored ${score}% on the free ${paperName} quiz. Sign up to access 3000+ questions.`}
-          canonical={`https://mockmaster.fun/free-quiz/${slug}`}
+          robots="noindex, nofollow"
+          skipCanonical
         />
         <div className="max-w-lg mx-auto px-4 py-12">
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
@@ -132,12 +132,12 @@ const FreeQuizPage: React.FC = () => {
               <p className="text-blue-100 text-sm mb-4">
                 Sign up free to access 3000+ questions with AI explanations, performance tracking, and exam readiness scores.
               </p>
-              <button
-                onClick={() => navigate('/register')}
+              <Link
+                to="/register"
                 className="w-full py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
               >
                 Sign Up Free — Unlock All Questions
-              </button>
+              </Link>
             </div>
 
             <button
@@ -164,12 +164,12 @@ const FreeQuizPage: React.FC = () => {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(`/practice-tests/${slug}`)}>
+          <Link to={`/practice-tests/${slug}`} className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-sm font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <span className="text-xs text-gray-500 bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">FREE QUIZ</span>
             <span className="text-sm text-gray-600 font-medium">
@@ -254,7 +254,7 @@ const FreeQuizPage: React.FC = () => {
 
         {/* Bottom CTA */}
         <p className="text-center text-xs text-gray-500 mt-6">
-          This is a free sample. <button onClick={() => navigate('/register')} className="text-blue-600 font-medium hover:underline">Sign up</button> to access 3000+ questions.
+          This is a free sample. <Link to="/register" className="text-blue-600 font-medium hover:underline">Sign up</Link> to access 3000+ questions.
         </p>
 
         {/* Static SEO content — visible to crawlers, shows sample questions */}

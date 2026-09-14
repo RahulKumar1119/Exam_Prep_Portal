@@ -26,6 +26,17 @@ export default defineConfig(async () => {
   build: {
     outDir: 'dist',
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        // Split stable vendor libs into their own chunks so repeat visits
+        // reuse cached vendor JS across app-code deploys.
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          motion: ['motion'],
+          query: ['@tanstack/react-query'],
+        },
+      },
+    },
   },
   envPrefix: 'VITE_',
   };

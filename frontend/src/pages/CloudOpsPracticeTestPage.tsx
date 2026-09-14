@@ -1,32 +1,45 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import ExamOrgLogo from '../components/ExamOrgLogo';
 
 const CloudOpsPracticeTestPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-white">
       <SEO
         title="CloudOps Practice Test 2026 — Free AWS SOA-C03 Certification Prep"
         description="Free AWS Certified CloudOps Engineer - Associate (SOA-C03) practice questions. Covers monitoring, reliability, deployment automation, security, and networking with scenario-based questions."
         canonical="https://mockmaster.fun/cloudops-practice-test"
+        ogImage="https://mockmaster.fun/og-cloudops.png"
         keywords="SOA-C03 practice test, CloudOps practice test, AWS SysOps practice questions, AWS CloudOps certification free, SOA-C03 mock test, AWS associate certification"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: 'AWS Certified CloudOps Engineer - Associate (SOA-C03) — Free Practice Test',
+            description:
+              'Free AWS Certified CloudOps Engineer - Associate (SOA-C03) practice questions. Covers monitoring, reliability, deployment automation, security, and networking with scenario-based questions.',
+            url: 'https://mockmaster.fun/cloudops-practice-test/',
+            provider: { '@type': 'Organization', name: 'AWS', sameAs: 'https://aws.amazon.com' },
+          }),
+        }}
       />
 
       {/* Nav */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
             <span className="text-base sm:text-xl font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => navigate('/login')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition">Login</button>
-            <button onClick={() => navigate('/register')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</button>
+            <Link to="/login" className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition">Login</Link>
+            <Link to="/register" className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</Link>
           </div>
         </div>
       </nav>
@@ -47,9 +60,9 @@ const CloudOpsPracticeTestPage: React.FC = () => {
             the official AWS exam guide (formerly SysOps Administrator - Associate).
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button onClick={() => navigate('/register')} className="px-8 py-3.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition shadow-lg shadow-amber-200">
+            <Link to="/register" className="px-8 py-3.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition shadow-lg shadow-amber-200">
               Start Practicing Free
-            </button>
+            </Link>
             <a href="#syllabus" className="px-8 py-3.5 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 transition">
               View Full Syllabus
             </a>
@@ -166,9 +179,9 @@ const CloudOpsPracticeTestPage: React.FC = () => {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Practice SOA-C03 Questions Free</h2>
           <p className="text-amber-100 mb-8">65-question sets mirroring the real exam. Instant explanations with AWS references.</p>
-          <button onClick={() => navigate('/register')} className="px-8 py-4 bg-white text-amber-600 font-semibold rounded-lg hover:bg-gray-100 transition shadow-lg">
+          <Link to="/register" className="px-8 py-4 bg-white text-amber-600 font-semibold rounded-lg hover:bg-gray-100 transition shadow-lg">
             Create Free Account
-          </button>
+          </Link>
         </div>
       </section>
 
@@ -179,25 +192,25 @@ const CloudOpsPracticeTestPage: React.FC = () => {
             <div>
               <h4 className="text-white font-bold mb-4">Exams</h4>
               <ul className="space-y-2 text-sm">
-                <li><button onClick={() => navigate('/practice-tests')} className="hover:text-white transition">JAIIB Practice Tests</button></li>
-                <li><button onClick={() => navigate('/ai-300-practice-test')} className="hover:text-white transition">AI-300 Practice Test</button></li>
-                <li><button onClick={() => navigate('/capm-practice-test')} className="hover:text-white transition">CAPM Practice Test</button></li>
-                <li><button onClick={() => navigate('/cloudops-practice-test')} className="hover:text-white transition">CloudOps Practice Test</button></li>
+                <li><Link to="/practice-tests" className="hover:text-white transition">JAIIB Practice Tests</Link></li>
+                <li><Link to="/ai-300-practice-test" className="hover:text-white transition">AI-300 Practice Test</Link></li>
+                <li><Link to="/capm-practice-test" className="hover:text-white transition">CAPM Practice Test</Link></li>
+                <li><Link to="/cloudops-practice-test" className="hover:text-white transition">CloudOps Practice Test</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-bold mb-4">Resources</h4>
               <ul className="space-y-2 text-sm">
-                <li><button onClick={() => navigate('/blog')} className="hover:text-white transition">Blog</button></li>
-                <li><button onClick={() => navigate('/faq')} className="hover:text-white transition">FAQ</button></li>
+                <li><Link to="/blog" className="hover:text-white transition">Blog</Link></li>
+                <li><Link to="/faq" className="hover:text-white transition">FAQ</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-bold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><button onClick={() => navigate('/privacy-policy')} className="hover:text-white transition">Privacy Policy</button></li>
-                <li><button onClick={() => navigate('/terms-of-service')} className="hover:text-white transition">Terms of Service</button></li>
-                <li><button onClick={() => navigate('/contact')} className="hover:text-white transition">Contact</button></li>
+                <li><Link to="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link></li>
+                <li><Link to="/terms-of-service" className="hover:text-white transition">Terms of Service</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition">Contact</Link></li>
               </ul>
             </div>
           </div>

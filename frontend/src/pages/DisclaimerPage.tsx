@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
@@ -10,8 +10,6 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 );
 
 const DisclaimerPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
       <SEO
@@ -23,38 +21,38 @@ const DisclaimerPage: React.FC = () => {
       {/* Navigation Bar */}
       <nav className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
             <span className="text-base sm:text-xl font-bold text-gray-900 dark:text-gray-100 hidden sm:block">MockMaster</span>
             <span className="text-base font-bold text-gray-900 dark:text-gray-100 sm:hidden">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-1 sm:gap-4">
-            <button
-              onClick={() => navigate('/practice-tests')}
+            <Link
+              to="/practice-tests"
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium hover:text-gray-900 dark:hover:text-white transition hidden sm:block"
             >
               Practice Tests
-            </button>
-            <button
-              onClick={() => navigate('/blog')}
+            </Link>
+            <Link
+              to="/blog"
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium hover:text-gray-900 dark:hover:text-white transition hidden md:block"
             >
               Blog
-            </button>
-            <button
-              onClick={() => navigate('/login')}
+            </Link>
+            <Link
+              to="/login"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium hover:text-gray-900 dark:hover:text-white transition"
             >
               Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
+            </Link>
+            <Link
+              to="/register"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -62,12 +60,12 @@ const DisclaimerPage: React.FC = () => {
       {/* Content */}
       <div className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 rounded-xl shadow p-8 border border-gray-200 dark:border-gray-700">
-          <button
-            onClick={() => navigate('/')}
+          <Link
+            to="/"
             className="text-sm text-blue-600 hover:underline mb-6 inline-block"
           >
             ← Back to Home
-          </button>
+          </Link>
 
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Disclaimer</h1>
 

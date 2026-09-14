@@ -8,15 +8,17 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ToastProvider, ToastViewport } from './components/ui/Toast';
 import { TooltipProvider } from './components/ui/Tooltip';
 import { HelmetProvider } from 'react-helmet-async';
+import { Helmet } from 'react-helmet-async';
 import ErrorBoundary from './components/ErrorBoundary';
 
-// Eager: critical landing/auth
+// Eager: critical landing page only (everything else is code-split,
+// including auth — login/register are rarely the first paint)
 import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import NotFoundPage from './pages/NotFoundPage';
 
-// Lazy: heavy / less critical routes (code-split)
+// Lazy: auth + heavy / less critical routes (code-split)
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const PasswordResetPage = lazy(() => import('./pages/PasswordResetPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -83,6 +85,25 @@ const AppContent: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'MockMaster',
+            url: 'https://mockmaster.fun/',
+            logo: 'https://mockmaster.fun/logo.png',
+            description:
+              'Free certification exam practice tests for JAIIB, CAIIB, Microsoft AI-300, PMI CAPM, AWS CloudOps (SOA-C03), and Quantitative Aptitude.',
+          })}
+        </script>
+        {import.meta.env.VITE_GOOGLE_SITE_VERIFICATION && (
+          <meta
+            name="google-site-verification"
+            content={import.meta.env.VITE_GOOGLE_SITE_VERIFICATION}
+          />
+        )}
+      </Helmet>
       <SessionTimeoutWarning />
       <NotificationPrompt />
       <ErrorBoundary>

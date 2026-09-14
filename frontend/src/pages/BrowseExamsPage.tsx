@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import ExamOrgLogo, { orgForProvider, ExamOrg } from '../components/ExamOrgLogo';
 import DevToArticles from '../components/DevToArticles';
@@ -182,7 +182,6 @@ const EXAMS: ExamCard[] = [
 const CATEGORIES = ['All', 'Banking', 'Cloud & AI', 'Project Management', 'Aptitude'];
 
 const BrowseExamsPage: React.FC = () => {
-  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
 
@@ -200,21 +199,43 @@ const BrowseExamsPage: React.FC = () => {
         title="Browse Exams — Free Practice Tests | MockMaster"
         description="Browse all available practice tests. JAIIB & CAIIB banking exams, Microsoft AI-300, PMI CAPM, Quantitative Aptitude for SSC/CAT/UPSC/Bank exams, and more. Free practice with AI explanations."
         canonical="https://mockmaster.fun/exams"
+        ogImage="https://mockmaster.fun/og-exams.png"
         keywords="free certification practice test, JAIIB practice, AI-300 practice, CAPM practice test, PMI CAPM, AZ-400 practice, Microsoft certification free"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: 'Free Certification Practice Tests',
+            itemListElement: EXAMS.filter((e) => e.status === 'live').map((e, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              item: {
+                '@type': 'Course',
+                name: `${e.name} — ${e.fullName}`,
+                description: `${e.fullName} free practice test: ${e.questions} questions across ${e.sets} sets.`,
+                url: `https://mockmaster.fun${e.link}/`,
+                provider: { '@type': 'Organization', name: e.provider },
+              },
+            })),
+          }),
+        }}
       />
 
       {/* Nav */}
       <nav className="border-b border-gray-800 sticky top-0 z-50 bg-gray-950/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-xl font-bold">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => navigate('/login')} className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</button>
-            <button onClick={() => navigate('/register')} className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</button>
+            <Link to="/login" className="px-4 py-2 text-sm text-gray-300 hover:text-white transition">Login</Link>
+            <Link to="/register" className="px-5 py-2.5 text-sm bg-indigo-600 hover:bg-indigo-700 font-semibold rounded-lg transition">Sign Up Free</Link>
           </div>
         </div>
       </nav>
@@ -259,9 +280,9 @@ const BrowseExamsPage: React.FC = () => {
           {/* Exam Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((exam) => (
-              <div
+              <Link
                 key={exam.id}
-                onClick={() => navigate(exam.status === 'live' ? exam.link : '/contact')}
+                to={exam.status === 'live' ? exam.link : '/contact'}
                 className={`bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden transition-all cursor-pointer ${
                   exam.status === 'live'
                     ? 'hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/5'
@@ -301,18 +322,18 @@ const BrowseExamsPage: React.FC = () => {
                     <p className="text-xs text-gray-600">Coming soon — click to request this exam →</p>
                   )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
           <div className="text-center mt-12">
             <p className="text-gray-500 text-sm mb-3">Don't see your exam?</p>
-            <button
-              onClick={() => navigate('/contact')}
+            <Link
+              to="/contact"
               className="px-5 py-2.5 bg-gray-900 border border-gray-800 text-gray-300 hover:border-gray-700 hover:text-white rounded-lg text-sm font-medium transition"
             >
               Request an Exam
-            </button>
+            </Link>
           </div>
 
           {/* Trending Articles from Dev.to */}

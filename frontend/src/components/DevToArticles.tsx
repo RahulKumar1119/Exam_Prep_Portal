@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Article {
   id: number;
@@ -31,10 +31,35 @@ const DevToArticles: React.FC<DevToArticlesProps> = ({
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTag, setActiveTag] = useState(tags[0]);
+  // Defer the dev.to fetch until the section scrolls into view — this
+  // component always renders below the fold, so fetching on mount only
+  // competes with LCP-critical requests.
+  const [isVisible, setIsVisible] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
     fetchArticles(activeTag);
-  }, [activeTag]);
+  }, [activeTag, isVisible]);
 
   const fetchArticles = async (tag: string) => {
     setIsLoading(true);
@@ -61,7 +86,7 @@ const DevToArticles: React.FC<DevToArticlesProps> = ({
   const tabInactive = darkMode ? 'bg-gray-800 text-gray-400 border border-gray-700 hover:border-gray-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200';
 
   return (
-    <div>
+    <div ref={rootRef}>
       {/* Header + Tag Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h2 className={`text-xl sm:text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>

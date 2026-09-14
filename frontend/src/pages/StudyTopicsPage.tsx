@@ -1,10 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
 const StudyTopicsPage: React.FC = () => {
-  const navigate = useNavigate();
-
   const ppbTopics = [
     { title: 'CRR Explained', path: '/jaiib/ppb/crr-explained' },
     { title: 'SLR Explained', path: '/jaiib/ppb/slr-explained' },
@@ -48,44 +46,44 @@ const StudyTopicsPage: React.FC = () => {
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
             <span className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">MockMaster</span>
             <span className="text-base font-bold text-gray-900 sm:hidden">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-1 sm:gap-4">
-            <button
-              onClick={() => navigate('/practice-tests')}
+            <Link
+              to="/practice-tests"
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
             >
               Practice Tests
-            </button>
-            <button
-              onClick={() => navigate('/study-topics')}
+            </Link>
+            <Link
+              to="/study-topics"
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden sm:block"
             >
               Study Topics
-            </button>
-            <button
-              onClick={() => navigate('/blog')}
+            </Link>
+            <Link
+              to="/blog"
               className="px-2 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition hidden md:block"
             >
               Blog
-            </button>
-            <button
-              onClick={() => navigate('/login')}
+            </Link>
+            <Link
+              to="/login"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition"
             >
               Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
+            </Link>
+            <Link
+              to="/register"
               className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -116,15 +114,15 @@ const StudyTopicsPage: React.FC = () => {
               <ul className="space-y-1">
                 {ppbTopics.map((topic) => (
                   <li key={topic.path}>
-                    <button
-                      onClick={() => navigate(topic.path)}
+                    <Link
+                      to={topic.path}
                       className="w-full flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition group"
                     >
                       <span>{topic.title}</span>
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -141,15 +139,15 @@ const StudyTopicsPage: React.FC = () => {
               <ul className="space-y-1">
                 {afmTopics.map((topic) => (
                   <li key={topic.path}>
-                    <button
-                      onClick={() => navigate(topic.path)}
+                    <Link
+                      to={topic.path}
                       className="w-full flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition group"
                     >
                       <span>{topic.title}</span>
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-purple-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -166,15 +164,15 @@ const StudyTopicsPage: React.FC = () => {
               <ul className="space-y-1">
                 {rbwmTopics.map((topic) => (
                   <li key={topic.path}>
-                    <button
-                      onClick={() => navigate(topic.path)}
+                    <Link
+                      to={topic.path}
                       className="w-full flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-700 rounded-lg transition group"
                     >
                       <span>{topic.title}</span>
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-pink-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -190,15 +188,15 @@ const StudyTopicsPage: React.FC = () => {
               <ul className="space-y-1">
                 {generalGuides.map((topic) => (
                   <li key={topic.path}>
-                    <button
-                      onClick={() => navigate(topic.path)}
+                    <Link
+                      to={topic.path}
                       className="w-full flex items-center justify-between px-3 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition group"
                     >
                       <span>{topic.title}</span>
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-emerald-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -221,12 +219,12 @@ const StudyTopicsPage: React.FC = () => {
           <p className="text-blue-100 text-lg mb-8">
             Practice with 3000+ questions and AI-powered explanations to pass JAIIB in your first attempt.
           </p>
-          <button
-            onClick={() => navigate('/practice-tests')}
+          <Link
+            to="/practice-tests"
             className="px-8 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition shadow-lg"
           >
             Start Practice Tests
-          </button>
+          </Link>
         </div>
       </section>
 
@@ -240,11 +238,11 @@ const StudyTopicsPage: React.FC = () => {
             <span className="text-white font-semibold">MockMaster</span>
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <button onClick={() => navigate('/about')} className="hover:text-white transition">About</button>
-            <button onClick={() => navigate('/contact')} className="hover:text-white transition">Contact</button>
-            <button onClick={() => navigate('/privacy-policy')} className="hover:text-white transition">Privacy Policy</button>
-            <button onClick={() => navigate('/terms-of-service')} className="hover:text-white transition">Terms</button>
-            <button onClick={() => navigate('/disclaimer')} className="hover:text-white transition">Disclaimer</button>
+            <Link to="/about" className="hover:text-white transition">About</Link>
+            <Link to="/contact" className="hover:text-white transition">Contact</Link>
+            <Link to="/privacy-policy" className="hover:text-white transition">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-white transition">Terms</Link>
+            <Link to="/disclaimer" className="hover:text-white transition">Disclaimer</Link>
           </div>
           <p className="text-sm">&copy; {new Date().getFullYear()} MockMaster. All rights reserved.</p>
         </div>

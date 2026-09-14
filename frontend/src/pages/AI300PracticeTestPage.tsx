@@ -1,32 +1,45 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import ExamOrgLogo from '../components/ExamOrgLogo';
 
 const AI300PracticeTestPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-white">
       <SEO
         title="AI-300 Practice Test 2026 — Free Microsoft ML & GenAI Certification Prep"
         description="Free AI-300 practice questions for Microsoft Certified: Operationalizing Machine Learning & Generative AI Solutions. Covers Azure ML, MLOps, model deployment, RAG, prompt engineering, and monitoring."
         canonical="https://mockmaster.fun/ai-300-practice-test"
+        ogImage="https://mockmaster.fun/og-ai-300.png"
         keywords="AI-300 practice test, AI-300 exam questions, Microsoft AI-300, Azure ML certification, MLOps certification, GenAI certification, AI-300 mock test free"
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: 'AI-300: Operationalizing Machine Learning & Generative AI Solutions — Free Practice Test',
+            description:
+              'Free AI-300 practice questions for Microsoft Certified: Operationalizing Machine Learning & Generative AI Solutions. Covers Azure ML, MLOps pipelines, model deployment, RAG patterns, prompt engineering, and AI solution monitoring.',
+            url: 'https://mockmaster.fun/ai-300-practice-test/',
+            provider: { '@type': 'Organization', name: 'Microsoft', sameAs: 'https://www.microsoft.com' },
+          }),
+        }}
       />
 
       {/* Nav */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
             <span className="text-base sm:text-xl font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <button onClick={() => navigate('/login')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition">Login</button>
-            <button onClick={() => navigate('/register')} className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</button>
+            <Link to="/login" className="px-3 sm:px-6 py-2 text-xs sm:text-sm text-gray-700 font-medium hover:text-gray-900 transition">Login</Link>
+            <Link to="/register" className="px-3 sm:px-6 py-2 text-xs sm:text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Sign Up</Link>
           </div>
         </div>
       </nav>
@@ -45,9 +58,9 @@ const AI300PracticeTestPage: React.FC = () => {
             Free practice questions covering Azure ML, MLOps pipelines, model deployment, RAG patterns, prompt engineering, and AI solution monitoring. Aligned with the official Microsoft study guide.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button onClick={() => navigate('/register')} className="px-8 py-3.5 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition shadow-lg shadow-purple-200">
+            <Link to="/register" className="px-8 py-3.5 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition shadow-lg shadow-purple-200">
               Start Practicing Free
-            </button>
+            </Link>
             <a href="#syllabus" className="px-8 py-3.5 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 transition">
               View Full Syllabus
             </a>
@@ -161,9 +174,9 @@ const AI300PracticeTestPage: React.FC = () => {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Practice AI-300 Questions Free</h2>
           <p className="text-purple-100 mb-8">AI-powered explanations for every question. Track your progress across all exam domains.</p>
-          <button onClick={() => navigate('/register')} className="px-8 py-4 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition shadow-lg">
+          <Link to="/register" className="px-8 py-4 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition shadow-lg">
             Create Free Account
-          </button>
+          </Link>
         </div>
       </section>
 

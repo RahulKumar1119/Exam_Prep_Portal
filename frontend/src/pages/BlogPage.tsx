@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
 import ADDITIONAL_BLOG_POSTS from './blog-posts-additional';
 import DevToArticles from '../components/DevToArticles';
@@ -1285,7 +1285,6 @@ const BLOG_POSTS: BlogPost[] = [
 
 // Blog listing page
 const BlogListPage: React.FC = () => {
-  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
@@ -1293,31 +1292,32 @@ const BlogListPage: React.FC = () => {
         title="Certification Preparation Hub"
         description="Prepare smarter with expert study guides, practice questions, exam strategies, syllabus updates, and learning resources for banking, IT, cloud, cybersecurity, AI, and professional certification exams."
         canonical="https://mockmaster.fun/blog"
+        ogImage="https://mockmaster.fun/og-blog.png"
         type="website"
         keywords="JAIIB 2026, CAIIB preparation, banking exam study strategy, IT certification, cloud computing, cybersecurity, AI certification, professional certification exams, mock tests"
       />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">M</span>
             </div>
             <span className="text-xl font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex gap-4">
-            <button
-              onClick={() => navigate('/login')}
+            <Link
+              to="/login"
               className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition"
             >
               Login
-            </button>
-            <button
-              onClick={() => navigate('/register')}
+            </Link>
+            <Link
+              to="/register"
               className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -1339,10 +1339,9 @@ const BlogListPage: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <div className="space-y-8">
             {BLOG_POSTS.map((post) => (
+              <Link key={post.slug} to={`/blog/${post.slug}`} className="block">
               <article
-                key={post.slug}
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition cursor-pointer group"
-                onClick={() => navigate(`/blog/${post.slug}`)}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition group"
               >
                 {/* Cover Image */}
                 <div className="h-48 overflow-hidden">
@@ -1370,6 +1369,7 @@ const BlogListPage: React.FC = () => {
                   </span>
                 </div>
               </article>
+              </Link>
             ))}
           </div>
         </div>
@@ -1394,12 +1394,12 @@ const BlogListPage: React.FC = () => {
           <p className="text-blue-100 mb-8">
             Put these strategies into action with 1000+ AI-powered practice questions
           </p>
-          <button
-            onClick={() => navigate('/register')}
+          <Link
+            to="/register"
               className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
             >
               Get Started Free
-            </button>
+            </Link>
         </div>
       </section>
 
@@ -1415,7 +1415,6 @@ const BlogListPage: React.FC = () => {
 
 // Individual blog post page
 const BlogPostPage: React.FC = () => {
-  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
 
   const post = BLOG_POSTS.find((p) => p.slug === slug);
@@ -1425,12 +1424,12 @@ const BlogPostPage: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Post Not Found</h1>
-          <button
-            onClick={() => navigate('/blog')}
+          <Link
+            to="/blog"
             className="text-blue-600 font-medium hover:underline"
           >
             ← Back to Blog
-          </button>
+          </Link>
         </div>
       </div>
     );
@@ -1442,31 +1441,89 @@ const BlogPostPage: React.FC = () => {
         title={post.title}
         description={post.description}
         canonical={`https://mockmaster.fun/blog/${post.slug}`}
+        ogImage="https://mockmaster.fun/og-blog.png"
         type="article"
+        articlePublishedTime={post.date}
         keywords={`JAIIB 2026, ${post.category}, ${post.title.split(' ').slice(0, 5).join(' ')}`}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: post.title,
+            description: post.description,
+            image: [post.coverImage],
+            datePublished: post.date,
+            author: {
+              '@type': 'Organization',
+              name: 'MockMaster',
+              url: 'https://mockmaster.fun/',
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'MockMaster',
+              url: 'https://mockmaster.fun/',
+            },
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': `https://mockmaster.fun/blog/${post.slug}/`,
+            },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://mockmaster.fun/',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: 'https://mockmaster.fun/blog/',
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: post.title,
+                item: `https://mockmaster.fun/blog/${post.slug}/`,
+              },
+            ],
+          }),
+        }}
       />
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">M</span>
             </div>
             <span className="text-xl font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex gap-4">
-            <button
-              onClick={() => navigate('/blog')}
+            <Link
+              to="/blog"
               className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition"
             >
               Blog
-            </button>
-            <button
-              onClick={() => navigate('/register')}
+            </Link>
+            <Link
+              to="/register"
               className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -1474,12 +1531,12 @@ const BlogPostPage: React.FC = () => {
       {/* Article */}
       <article className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <button
-            onClick={() => navigate('/blog')}
+          <Link
+            to="/blog"
             className="text-blue-600 font-medium text-sm mb-6 hover:underline inline-block"
           >
             ← Back to Blog
-          </button>
+          </Link>
 
           {/* Cover Image */}
           <div className="rounded-xl overflow-hidden mb-8 shadow-lg">
@@ -1516,12 +1573,12 @@ const BlogPostPage: React.FC = () => {
               <p className="text-gray-700 mb-4">
                 Turn this knowledge into exam-ready confidence. Practice with AI-powered questions that cite specific RBI circulars and IIBF textbook references.
               </p>
-              <button
-                onClick={() => navigate('/register')}
+              <Link
+                to="/register"
                 className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
               >
                 Start Practicing Free →
-              </button>
+              </Link>
             </div>
           </div>
         </div>

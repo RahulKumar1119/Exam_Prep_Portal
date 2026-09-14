@@ -8,6 +8,10 @@ interface SEOProps {
   ogImage?: string;
   type?: string;
   keywords?: string;
+  robots?: string;
+  skipCanonical?: boolean;
+  articlePublishedTime?: string;
+  articleModifiedTime?: string;
 }
 
 const SEO: React.FC<SEOProps> = ({
@@ -17,6 +21,10 @@ const SEO: React.FC<SEOProps> = ({
   ogImage = 'https://mockmaster.fun/og-image.png',
   type = 'website',
   keywords,
+  robots,
+  skipCanonical = false,
+  articlePublishedTime,
+  articleModifiedTime,
 }) => {
   const fullTitle = title.includes('MockMaster') ? title : `${title} | MockMaster`;
   // The site is served as static prerendered files, so every route resolves to
@@ -41,12 +49,22 @@ const SEO: React.FC<SEOProps> = ({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
-      <link rel="canonical" href={url} />
+      {robots && <meta name="robots" content={robots} />}
+      {!skipCanonical && <link rel="canonical" href={url} />}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={fullTitle} />
       <meta property="og:type" content={type} />
+      {articlePublishedTime && (
+        <meta property="article:published_time" content={articlePublishedTime} />
+      )}
+      {articleModifiedTime && (
+        <meta property="article:modified_time" content={articleModifiedTime} />
+      )}
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />

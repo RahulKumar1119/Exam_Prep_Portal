@@ -29,3 +29,5 @@ Allow: /exams
 Allow: /study-topics
 Allow: /ai-300-practice-test
 Allow: /capm-practice-test
+Allow: /cloudops-practice-test
+Allow: /quant-practice-test

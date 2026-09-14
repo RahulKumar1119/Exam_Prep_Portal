@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
 
 interface PaperDetail {
@@ -175,7 +175,6 @@ const PAPER_DETAILS: Record<string, PaperDetail> = {
 };
 
 const PracticeTestDetailPage: React.FC = () => {
-  const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
 
   const paper = slug ? PAPER_DETAILS[slug] : null;
@@ -185,7 +184,7 @@ const PracticeTestDetailPage: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Paper Not Found</h1>
-          <button onClick={() => navigate('/practice-tests')} className="text-blue-600 font-medium hover:underline">← Back to Practice Tests</button>
+          <Link to="/practice-tests" className="text-blue-600 font-medium hover:underline">← Back to Practice Tests</Link>
         </div>
       </div>
     );
@@ -196,15 +195,15 @@ const PracticeTestDetailPage: React.FC = () => {
       {/* Nav */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">M</span>
             </div>
             <span className="text-xl font-bold text-gray-900">MockMaster</span>
-          </div>
+          </Link>
           <div className="flex gap-4">
-            <button onClick={() => navigate('/practice-tests')} className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition">All Papers</button>
-            <button onClick={() => navigate('/register')} className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Start Free</button>
+            <Link to="/practice-tests" className="px-6 py-2 text-gray-700 font-medium hover:text-gray-900 transition">All Papers</Link>
+            <Link to="/register" className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">Start Free</Link>
           </div>
         </div>
       </nav>
@@ -215,11 +214,62 @@ const PracticeTestDetailPage: React.FC = () => {
         canonical={`https://mockmaster.fun/practice-tests/${paper.slug}`}
         keywords={`${paper.name} practice questions, ${paper.fullName} mock test, JAIIB ${paper.name} 2026`}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: `${paper.name} Practice Questions 2026 — Free JAIIB Mock Test`,
+            description: paper.description,
+            url: `https://mockmaster.fun/practice-tests/${paper.slug}/`,
+            provider: { '@type': 'Organization', name: 'IIBF' },
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: paper.rating,
+              reviewCount: paper.reviews,
+            },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: paper.faqs.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://mockmaster.fun/' },
+              { '@type': 'ListItem', position: 2, name: 'Practice Tests', item: 'https://mockmaster.fun/practice-tests/' },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: `${paper.name} Practice Questions`,
+                item: `https://mockmaster.fun/practice-tests/${paper.slug}/`,
+              },
+            ],
+          }),
+        }}
+      />
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-600 to-indigo-700 py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <button onClick={() => navigate('/practice-tests')} className="text-blue-200 text-sm mb-4 hover:text-white transition">← All Practice Tests</button>
+          <Link to="/practice-tests" className="text-blue-200 text-sm mb-4 hover:text-white transition">← All Practice Tests</Link>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">{paper.name} Practice Questions 2026</h1>
@@ -239,18 +289,18 @@ const PracticeTestDetailPage: React.FC = () => {
             <div className="bg-white bg-opacity-10 backdrop-blur rounded-xl p-6 text-center min-w-[200px]">
               <p className="text-3xl font-bold text-white">Free</p>
               <p className="text-blue-200 text-sm mb-4">with signup</p>
-              <button
-                onClick={() => navigate(`/free-quiz/${paper.slug}`)}
+              <Link
+                to={`/free-quiz/${paper.slug}`}
                 className="w-full px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition mb-2"
               >
                 ⚡ Try 5 Free Questions
-              </button>
-              <button
-                onClick={() => navigate('/register')}
+              </Link>
+              <Link
+                to="/register"
                 className="w-full px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
               >
                 Sign Up for All →
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -391,18 +441,18 @@ const PracticeTestDetailPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-white mb-3">Ready to Start Practicing?</h2>
           <p className="text-blue-100 mb-6">Access all {paper.questions} questions with AI explanations — completely free</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => navigate(`/free-quiz/${paper.slug}`)}
+            <Link
+              to={`/free-quiz/${paper.slug}`}
               className="px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition"
             >
               ⚡ Try 5 Free Questions Now
-            </button>
-            <button
-              onClick={() => navigate('/register')}
+            </Link>
+            <Link
+              to="/register"
               className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
             >
               Sign Up for Full Access →
-            </button>
+            </Link>
           </div>
         </div>
       </div>
