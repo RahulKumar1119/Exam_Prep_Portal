@@ -381,10 +381,6 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
     verification_token = generate_verification_token(user_id, email)
     
     try:
-        # Unverified signups get a TTL so junk/abandoned accounts auto-purge.
-        # The DynamoDB TTL attribute is 'expires_at'; it is removed on
-        # verification so confirmed accounts persist. (7-day window.)
-        unverified_ttl = int((datetime.utcnow() + timedelta(days=UNVERIFIED_TTL_DAYS)).timestamp())
         users_table.put_item(
             Item={
                 'user_id': user_id,
@@ -393,7 +389,6 @@ def register_user(body: Dict[str, Any]) -> Dict[str, Any]:
                 'password_hash': password_hash,
                 'email_verified': False,  # Must verify email before login
                 'created_at': int(datetime.utcnow().timestamp()),
-                'expires_at': unverified_ttl,  # DynamoDB TTL — cleared on verify
                 'last_login': None,
                 'role': 'bank_officer',
                 'status': 'active',
@@ -440,11 +435,9 @@ def verify_email(body: Dict[str, Any]) -> Dict[str, Any]:
     user_id = payload.get('user_id')
     
     try:
-        # Mark verified and remove the TTL so the account is no longer
-        # eligible for auto-purge.
         users_table.update_item(
             Key={'user_id': user_id},
-            UpdateExpression='SET email_verified = :verified REMOVE expires_at',
+            UpdateExpression='SET email_verified = :verified',
             ExpressionAttributeValues={':verified': True}
         )
         
@@ -487,17 +480,6 @@ def resend_verification_email(body: Dict[str, Any]) -> Dict[str, Any]:
         
         # Generate new verification token
         verification_token = generate_verification_token(user['user_id'], user['email'])
-        
-        # Refresh the auto-purge window while the user is actively verifying
-        try:
-            new_ttl = int((datetime.utcnow() + timedelta(days=UNVERIFIED_TTL_DAYS)).timestamp())
-            users_table.update_item(
-                Key={'user_id': user['user_id']},
-                UpdateExpression='SET expires_at = :ttl',
-                ExpressionAttributeValues={':ttl': new_ttl}
-            )
-        except ClientError as ttl_err:
-            print(f"Warning: could not refresh TTL (non-fatal): {ttl_err}")
         
         # Send verification email
         email_sent = send_verification_email(email, user['user_id'], verification_token)
