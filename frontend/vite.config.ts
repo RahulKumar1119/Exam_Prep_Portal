@@ -30,10 +30,18 @@ export default defineConfig(async () => {
       output: {
         // Split stable vendor libs into their own chunks so repeat visits
         // reuse cached vendor JS across app-code deploys.
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          motion: ['motion'],
-          query: ['@tanstack/react-query'],
+        // Function form is required by Vite 8 / rolldown (object form is not supported).
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('/motion/')) return 'motion';
+          if (id.includes('@tanstack/react-query')) return 'query';
+          if (
+            id.includes('react-router-dom') ||
+            /node_modules[\\/]react[\\/]/.test(id) ||
+            /node_modules[\\/]react-dom[\\/]/.test(id)
+          ) {
+            return 'vendor';
+          }
         },
       },
     },
