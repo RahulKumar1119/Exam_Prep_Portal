@@ -4,6 +4,7 @@
 ACCOUNT_ID="438097524343"
 REGION="ap-south-1"
 ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/lambda-execution-role"
+RUNTIME="python3.12"
 
 echo "Deploying Lambda functions to AWS..."
 echo "Account ID: $ACCOUNT_ID"
@@ -43,12 +44,13 @@ deploy_lambda() {
             --timeout "$timeout" \
             --memory-size "$memory" \
             --handler "$handler" \
+            --runtime "$RUNTIME" \
             --region "$REGION" > /dev/null
     else
         echo "  Creating new function..."
         aws lambda create-function \
             --function-name "$function_name" \
-            --runtime python3.8 \
+            --runtime "$RUNTIME" \
             --role "$ROLE_ARN" \
             --handler "$handler" \
             --zip-file "fileb://$abs_zip_file" \

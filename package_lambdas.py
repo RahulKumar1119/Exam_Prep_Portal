@@ -9,6 +9,16 @@ import shutil
 import zipfile
 from pathlib import Path
 
+# Install wheels compatible with the Lambda runtime, not the local interpreter.
+TARGET_PYTHON_VERSION = os.environ.get("TARGET_PYTHON_VERSION", "3.12")
+PIP_TARGET_ARGS = [
+    "--python-version", TARGET_PYTHON_VERSION,
+    "--implementation", "cp",
+    "--abi", f"cp{TARGET_PYTHON_VERSION.replace('.', '')}",
+    "--platform", "manylinux2014_x86_64",
+    "--only-binary=:all:",
+]
+
 def package_lambda(module_name):
     """Package a Lambda function with its dependencies"""
     module_path = f"backend/{module_name}"
@@ -25,8 +35,8 @@ def package_lambda(module_name):
     req_file = f"{module_path}/requirements.txt"
     if os.path.exists(req_file):
         subprocess.run(
-            ["pip", "install", "-r", req_file, "-t", build_dir, "--quiet"],
-            check=False
+            ["pip", "install", "-r", req_file, "-t", build_dir, *PIP_TARGET_ARGS, "--quiet"],
+            check=True
         )
     
     # Copy Lambda function code

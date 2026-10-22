@@ -5,6 +5,10 @@
 echo "Repackaging Lambda functions..."
 echo ""
 
+# Install wheels compatible with the Lambda runtime, not the local interpreter.
+TARGET_PYTHON_VERSION="${TARGET_PYTHON_VERSION:-3.12}"
+PIP_TARGET_ARGS=(--python-version "$TARGET_PYTHON_VERSION" --implementation cp --abi "cp${TARGET_PYTHON_VERSION//./}" --platform manylinux2014_x86_64 --only-binary=:all:)
+
 # Function to repackage Lambda
 repackage_lambda() {
     local module_name=$1
@@ -18,7 +22,7 @@ repackage_lambda() {
     mkdir -p "$build_dir"
     
     # Install dependencies
-    pip install -r "$module_path/requirements.txt" -t "$build_dir" --quiet 2>/dev/null
+    pip install -r "$module_path/requirements.txt" -t "$build_dir" "${PIP_TARGET_ARGS[@]}" --quiet 2>/dev/null
     
     # Copy Lambda function code
     cp "$module_path/lambda_function.py" "$build_dir/" 2>/dev/null

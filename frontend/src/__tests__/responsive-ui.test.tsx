@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { PaperSelection } from '../components/PaperSelection';
 import { ResultsDisplay } from '../components/ResultsDisplay';
 import { PracticeProvider } from '../context/PracticeContext';

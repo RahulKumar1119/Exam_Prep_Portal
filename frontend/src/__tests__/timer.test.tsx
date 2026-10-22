@@ -10,7 +10,8 @@
  * - Stop Timer button behavior (Property 9a)
  */
 
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
+import { vi } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Timer } from '../components/Timer';
@@ -137,7 +138,7 @@ describe('Timer Component', () => {
   });
 
   describe('Timer Countdown', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     it('should countdown from 10 to 9 seconds', async () => {
       const { container, rerender } = render(
@@ -147,7 +148,7 @@ describe('Timer Component', () => {
       let timerDisplay = container.querySelector('.font-mono');
       expect(timerDisplay?.textContent).toBe('00:10');
       
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       
       rerender(
         <Timer duration={10} onTimeUp={() => {}} />
@@ -159,16 +160,16 @@ describe('Timer Component', () => {
   });
 
   describe('Auto-Submission', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     it('should call onTimeUp when timer reaches 0', async () => {
-      const onTimeUp = jest.fn();
+      const onTimeUp = vi.fn();
       
       const { rerender } = render(
         <Timer duration={2} onTimeUp={onTimeUp} />
       );
       
-      jest.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2000);
       
       rerender(
         <Timer duration={2} onTimeUp={onTimeUp} />
@@ -189,7 +190,7 @@ describe('Timer Component', () => {
   });
 
   describe('Pause/Resume', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     it('should not countdown when isPaused is true', () => {
       const { container, rerender } = render(
@@ -199,7 +200,7 @@ describe('Timer Component', () => {
       let timerDisplay = container.querySelector('.font-mono');
       expect(timerDisplay?.textContent).toBe('00:10');
       
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       
       rerender(
         <Timer duration={10} onTimeUp={() => {}} isPaused={true} />
@@ -218,7 +219,7 @@ describe('Timer Component', () => {
         <Timer duration={10} onTimeUp={() => {}} isPaused={false} />
       );
       
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       
       rerender(
         <Timer duration={10} onTimeUp={() => {}} isPaused={false} />
@@ -259,16 +260,16 @@ describe('Timer Component', () => {
   });
 
   describe('Warning Callback', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 
     it('should call onWarning callback at 5 minutes', async () => {
-      const onWarning = jest.fn();
+      const onWarning = vi.fn();
       
       const { rerender } = render(
         <Timer duration={301} onTimeUp={() => {}} onWarning={onWarning} />
       );
       
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       
       rerender(
         <Timer duration={301} onTimeUp={() => {}} onWarning={onWarning} />
@@ -280,13 +281,13 @@ describe('Timer Component', () => {
     });
 
     it('should call onWarning callback at 1 minute', async () => {
-      const onWarning = jest.fn();
+      const onWarning = vi.fn();
       
       const { rerender } = render(
         <Timer duration={61} onTimeUp={() => {}} onWarning={onWarning} />
       );
       
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
       
       rerender(
         <Timer duration={61} onTimeUp={() => {}} onWarning={onWarning} />
@@ -310,15 +311,15 @@ describe('Timer Component', () => {
    */
   describe('Stop Timer Button (Property 9a)', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
     });
 
     afterEach(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     // Helper: create a userEvent instance that advances fake timers
-    const setup = () => userEvent.setup({ advanceTimers: jest.advanceTimersByTime.bind(jest) });
+    const setup = () => userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
 
     it('should render the Stop Timer button while the timer is running', () => {
       render(<Timer duration={600} onTimeUp={() => {}} />);
@@ -340,7 +341,7 @@ describe('Timer Component', () => {
       const { container } = render(<Timer duration={30} onTimeUp={() => {}} />);
 
       // Advance 5 seconds so timer reads 00:25
-      act(() => { jest.advanceTimersByTime(5000); });
+      act(() => { vi.advanceTimersByTime(5000); });
 
       const timerDisplay = container.querySelector('.font-mono.text-5xl');
       const timeBefore = timerDisplay?.textContent;
@@ -349,7 +350,7 @@ describe('Timer Component', () => {
       await user.click(screen.getByRole('button', { name: /stop timer/i }));
 
       // Advance another 5 seconds — countdown should NOT move
-      act(() => { jest.advanceTimersByTime(5000); });
+      act(() => { vi.advanceTimersByTime(5000); });
 
       expect(timerDisplay?.textContent).toBe(timeBefore);
     });
@@ -377,7 +378,7 @@ describe('Timer Component', () => {
       render(<Timer duration={30} onTimeUp={() => {}} />);
 
       // Advance 10 seconds so timer is at 00:20
-      act(() => { jest.advanceTimersByTime(10000); });
+      act(() => { vi.advanceTimersByTime(10000); });
 
       await user.click(screen.getByRole('button', { name: /stop timer/i }));
 
@@ -387,10 +388,10 @@ describe('Timer Component', () => {
 
     it('should call onStop callback with the remaining time when stopped (req 3.9)', async () => {
       const user = setup();
-      const onStop = jest.fn();
+      const onStop = vi.fn();
       render(<Timer duration={30} onTimeUp={() => {}} onStop={onStop} />);
 
-      act(() => { jest.advanceTimersByTime(5000); });
+      act(() => { vi.advanceTimersByTime(5000); });
 
       await user.click(screen.getByRole('button', { name: /stop timer/i }));
 
@@ -403,14 +404,14 @@ describe('Timer Component', () => {
 
     it('should NOT call onTimeUp after stop even when time runs out (req 3.11)', async () => {
       const user = setup();
-      const onTimeUp = jest.fn();
+      const onTimeUp = vi.fn();
       render(<Timer duration={5} onTimeUp={onTimeUp} />);
 
       // Stop immediately
       await user.click(screen.getByRole('button', { name: /stop timer/i }));
 
       // Advance well past the original duration
-      act(() => { jest.advanceTimersByTime(10000); });
+      act(() => { vi.advanceTimersByTime(10000); });
 
       expect(onTimeUp).not.toHaveBeenCalled();
     });
@@ -444,15 +445,15 @@ describe('Timer Component', () => {
       'property: stopping at duration=%is always freezes countdown and suppresses auto-submit',
       async (duration: number) => {
         const user = setup();
-        const onTimeUp = jest.fn();
-        const onStop = jest.fn();
+        const onTimeUp = vi.fn();
+        const onStop = vi.fn();
         const { container } = render(
           <Timer duration={duration} onTimeUp={onTimeUp} onStop={onStop} />
         );
 
         // Advance a representative 30% of the duration
         const elapsed = Math.floor(duration * 0.3) * 1000;
-        act(() => { jest.advanceTimersByTime(elapsed); });
+        act(() => { vi.advanceTimersByTime(elapsed); });
 
         const timerDisplay = container.querySelector('.font-mono.text-5xl');
         const frozenTime = timerDisplay?.textContent;
@@ -460,7 +461,7 @@ describe('Timer Component', () => {
         await user.click(screen.getByRole('button', { name: /stop timer/i }));
 
         // Advance the full remaining duration — nothing should change
-        act(() => { jest.advanceTimersByTime(duration * 1000); });
+        act(() => { vi.advanceTimersByTime(duration * 1000); });
 
         expect(timerDisplay?.textContent).toBe(frozenTime);
         expect(onTimeUp).not.toHaveBeenCalled();

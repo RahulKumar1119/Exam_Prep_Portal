@@ -21,14 +21,19 @@ if os.path.exists(build_dir):
 os.makedirs(build_dir)
 
 print(f"  Installing dependencies...")
-# Install dependencies
+# Install wheels compatible with the Lambda runtime, not the local interpreter.
+target_python_version = os.environ.get("TARGET_PYTHON_VERSION", "3.12")
+target_args = [
+    "--python-version", target_python_version,
+    "--implementation", "cp",
+    "--abi", f"cp{target_python_version.replace('.', '')}",
+    "--platform", "manylinux2014_x86_64",
+    "--only-binary=:all:",
+]
 result = subprocess.run(
-    ["pip", "install", 
-     "passlib==1.7.4",
-     "boto3==1.17.53",
-     "botocore==1.20.53",
-     "PyJWT==2.9.0",
-     "-t", build_dir, "--quiet"],
+    ["pip", "install",
+     "-r", f"{module_path}/requirements.txt",
+     "-t", build_dir, *target_args, "--quiet"],
     capture_output=True,
     text=True
 )

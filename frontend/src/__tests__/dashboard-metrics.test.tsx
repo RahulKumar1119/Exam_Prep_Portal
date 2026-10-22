@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import PerformanceOverview from '../components/Dashboard/PerformanceOverview';
 import ScoreTrends from '../components/Dashboard/ScoreTrends';
 import PaperBreakdown from '../components/Dashboard/PaperBreakdown';
