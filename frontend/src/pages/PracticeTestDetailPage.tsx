@@ -84,7 +84,7 @@ const PAPER_DETAILS: Record<string, PaperDetail> = {
     slug: 'afm',
     name: 'AFM',
     fullName: 'Accounting & Financial Management for Bankers',
-    questions: '1275+',
+    questions: '1346+',
     rating: 4.7,
     reviews: 96,
     description: 'Practice numerical and conceptual questions for AFM — covering accounting principles, financial statements, capital budgeting (NPV, IRR), ratio analysis, taxation, and costing. Includes calculation-based hard questions matching the real exam format.',
@@ -103,12 +103,12 @@ const PAPER_DETAILS: Record<string, PaperDetail> = {
       { text: 'A project requires an initial investment of ₹5,00,000 and generates cash flows of ₹1,50,000 per year for 5 years. At a discount rate of 10%, the NPV is approximately:', options: ['₹68,618', '₹-68,618', '₹1,18,618', '₹-31,382'], answer: 'A', explanation: 'NPV = -5,00,000 + 1,50,000 × PVIFA(10%, 5 years). PVIFA(10%, 5) = 3.7908. NPV = -5,00,000 + (1,50,000 × 3.7908) = -5,00,000 + 5,68,618 = ₹68,618. Since NPV > 0, the project is acceptable.' },
       { text: 'If Current Ratio is 2.5 and Quick Ratio is 1.5, and Current Liabilities are ₹2,00,000, what is the value of Inventory?', options: ['₹1,00,000', '₹2,00,000', '₹3,00,000', '₹5,00,000'], answer: 'B', explanation: 'Current Assets = 2.5 × 2,00,000 = ₹5,00,000. Quick Assets = 1.5 × 2,00,000 = ₹3,00,000. Inventory = Current Assets - Quick Assets = 5,00,000 - 3,00,000 = ₹2,00,000.' },
     ],
-    features: ['1275+ questions including numerical problems', 'Step-by-step calculation explanations', 'NPV, IRR, BEP, and ratio problems', 'Hard questions are calculation-based (real exam format)', 'Depreciation, TDS, and GST computations', 'Updated for 2026 syllabus', 'Unlimited practice attempts', 'Formula reference in explanations'],
+    features: ['1346+ questions including numerical problems', 'Step-by-step calculation explanations', 'NPV, IRR, BEP, and ratio problems', 'Hard questions are calculation-based (real exam format)', 'Depreciation, TDS, and GST computations', 'Updated for 2026 syllabus', 'Unlimited practice attempts', 'Formula reference in explanations'],
     faqs: [
       { q: 'Are the hard questions numerical/calculation-based?', a: 'Yes. Unlike other papers where hard questions are statement-based, AFM hard questions (2 marks each) require actual calculations — NPV, IRR, ratios, depreciation, break-even, etc.' },
       { q: 'Do explanations show step-by-step calculations?', a: 'Yes. Every numerical question includes a detailed step-by-step solution showing the formula used, intermediate calculations, and final answer.' },
       { q: 'Is a calculator allowed in the real exam?', a: 'Yes, IIBF provides an on-screen calculator during the exam. Our practice interface simulates the same environment.' },
-      { q: 'How many questions are available?', a: 'Currently 1275+ questions covering all 4 modules with a mix of conceptual and numerical problems.' },
+      { q: 'How many questions are available?', a: 'Currently 1346+ questions covering all 4 modules with a mix of conceptual and numerical problems.' },
     ],
   },
   'rbwm': {

@@ -164,7 +164,7 @@ const AboutPage: React.FC = () => {
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>• IE & IFS — 1,146 questions (11 sets of 100)</li>
                 <li>• PPB — 758 questions (7 sets of 100)</li>
-                <li>• AFM — 1,275 questions (12 sets of 100)</li>
+                <li>• AFM — 1,346 questions (13 sets of 100)</li>
                 <li>• RBWM — 634 questions (6 sets of 100)</li>
               </ul>
             </motion.div>
