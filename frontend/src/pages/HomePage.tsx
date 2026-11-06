@@ -224,7 +224,7 @@ const HomePage: React.FC = () => {
             ] : [
               { id: 'IE & IFS', name: 'IE & IFS', questions: 1146, perSet: 100, color: 'from-blue-500 to-blue-700' },
               { id: 'PPB', name: 'PPB', questions: 758, perSet: 100, color: 'from-indigo-500 to-indigo-700' },
-              { id: 'AFM', name: 'AFM', questions: 1346, perSet: 100, color: 'from-purple-500 to-purple-700' },
+              { id: 'AFM', name: 'AFM', questions: 1275, perSet: 100, color: 'from-purple-500 to-purple-700' },
               { id: 'RBWM', name: 'RBWM', questions: 634, perSet: 100, color: 'from-pink-500 to-pink-700' },
               { id: 'ABM', name: 'ABM (CAIIB)', questions: 740, perSet: 100, color: 'from-emerald-500 to-teal-700' },
               ...(selectedExam === 'ALL' ? [

@@ -119,7 +119,7 @@ const LandingPage: React.FC = () => {
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-white">37</span>
+                  <span className="text-lg font-bold text-white">36</span>
                   <span className="text-xs text-gray-500">sets of 100</span>
                 </div>
               </div>
