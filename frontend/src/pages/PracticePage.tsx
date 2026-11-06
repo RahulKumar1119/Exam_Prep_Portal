@@ -64,6 +64,9 @@ const PracticePage: React.FC = () => {
     ? [...(PAPERS_BY_EXAM['JAIIB'] || []), ...(PAPERS_BY_EXAM['CAIIB'] || [])]
     : PAPERS_BY_EXAM[selectedExam || 'JAIIB'] || [];
   const currentPaperInfo = papers.find(p => p.id === selectedPaper);
+  // Before a paper is picked, show the set size for the user's exam (e.g. 100 for
+  // JAIIB/CAIIB) instead of the generic 50 fallback.
+  const setSize = questionsPerSet(selectedPaper || papers[0]?.id || '');
 
   const handleStartPracticeSet = async () => {
     if (!selectedPaper) {
@@ -112,7 +115,7 @@ const PracticePage: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-64 space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         <p className="text-gray-600 font-medium">Generating Practice Set...</p>
-        <p className="text-gray-400 text-sm">Preparing {questionsPerSet(selectedPaper)} questions for you</p>
+        <p className="text-gray-400 text-sm">Preparing {setSize} questions for you</p>
       </div>
     );
   }
@@ -121,7 +124,7 @@ const PracticePage: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Practice Sets</h1>
-        <p className="text-gray-600 mt-2">{questionsPerSet(selectedPaper)} questions per set • No time limit • Instant feedback</p>
+        <p className="text-gray-600 mt-2">{setSize} questions per set • No time limit • Instant feedback</p>
       </div>
 
       {error && (
@@ -226,7 +229,7 @@ const PracticePage: React.FC = () => {
             <h3 className="font-bold text-gray-900 mb-3">📝 Practice Set Format</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <p className="text-xl font-bold text-blue-600">{questionsPerSet(selectedPaper)}</p>
+                <p className="text-xl font-bold text-blue-600">{setSize}</p>
                 <p className="text-xs text-gray-600">Questions</p>
               </div>
               <div className="bg-white rounded-lg p-3 shadow-sm">
