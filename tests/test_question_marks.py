@@ -160,3 +160,59 @@ class TestExistingPracticeUnaffected:
         # +1 correct, -0.25 x 2 wrong, 1 skipped
         assert s['marks_earned'] == 0.5 and s['negative_marks'] == 0.5
         assert s['score'] == 12.5
+
+
+# ── Rebalancing so maximum marks == question count (100 questions -> 100) ─────
+
+def _items(counts):
+    """counts: {marks: n} -> list of session items with sequential question_ids."""
+    out, n = [], 0
+    for m, c in counts.items():
+        for _ in range(c):
+            out.append({'question_id': f'q{n:03d}', 'marks': Decimal(str(m))})
+            n += 1
+    return out
+
+
+def _total(items):
+    return sum((i['marks'] for i in items), Decimal('0'))
+
+
+class TestRebalanceMarks:
+    @pytest.mark.parametrize('counts', [
+        {0.5: 11, 1: 79, 2: 10},   # live AFM set 1: was 104.5
+        {2: 100},                  # all hard
+        {0.5: 100},                # all easy
+        {0.5: 50, 1: 25, 2: 25},   # mock test mix, already 100
+        {0.5: 3, 2: 97},
+        {0.5: 97, 2: 3},
+        {0.5: 1, 2: 99},
+    ])
+    def test_total_is_100_and_values_allowed(self, counts):
+        items = practice._rebalance_marks(_items(counts), Decimal('100'))
+        assert _total(items) == Decimal('100')
+        assert all(i['marks'] in practice.ALLOWED_MARKS for i in items)
+
+    def test_already_100_unchanged(self):
+        before = _items({0.5: 50, 1: 25, 2: 25})
+        after = practice._rebalance_marks([dict(i) for i in before], Decimal('100'))
+        assert [i['marks'] for i in after] == [i['marks'] for i in before]
+
+    def test_deterministic(self):
+        a = practice._rebalance_marks(_items({0.5: 11, 1: 79, 2: 10}), Decimal('100'))
+        b = practice._rebalance_marks(list(reversed(_items({0.5: 11, 1: 79, 2: 10}))), Decimal('100'))
+        assert {i['question_id']: i['marks'] for i in a} == {i['question_id']: i['marks'] for i in b}
+
+    def test_explicit_marks_preserved_when_possible(self):
+        items = _items({0.5: 11, 1: 79, 2: 10})
+        locked = frozenset(range(90, 100))  # the 2-mark questions are admin-set
+        practice._rebalance_marks(items, Decimal('100'), locked)
+        assert _total(items) == Decimal('100')
+        assert all(items[i]['marks'] == Decimal('2') for i in locked)
+
+    def test_non_100_count_targets_count(self):
+        items = practice._rebalance_marks(_items({1: 30, 2: 20}), Decimal('50'))
+        assert _total(items) == Decimal('50')
+
+    def test_empty(self):
+        assert practice._rebalance_marks([], Decimal('0')) == []

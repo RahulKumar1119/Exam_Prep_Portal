@@ -105,6 +105,49 @@ def _resolve_marks(q: Dict) -> Decimal:
     return DEFAULT_MARKS_BY_DIFFICULTY.get(q.get('difficulty', 'medium'), Decimal('1'))
 
 
+_HALF, _ONE, _TWO = Decimal('0.5'), Decimal('1'), Decimal('2')
+
+
+def _rebalance_marks(items: List[Dict], target: Decimal, locked=frozenset()) -> List[Dict]:
+    """Adjust item['marks'] (within 0.5/1/2) so the attempt totals exactly `target`.
+
+    Keeps the question set unchanged and only nudges marks one step at a time:
+    over target -> 2→1 / 1→0.5, under target -> 1→2 / 0.5→1. Difficulty-defaulted
+    questions are adjusted before those in `locked` (explicit admin marks), and
+    candidates are taken in question_id order so the same set always gets the
+    same marks.
+    """
+    if not items:
+        return items
+    by_id = sorted(range(len(items)), key=lambda i: str(items[i].get('question_id', '')))
+    groups = ([i for i in by_id if i not in locked], [i for i in by_id if i in locked])
+    for _ in range(10 * len(items) + 10):
+        diff = sum((i['marks'] for i in items), Decimal('0')) - target
+        if diff == 0:
+            break
+        if diff > 0:
+            big, small = (_TWO, _ONE), (_ONE, _HALF)          # -1, -0.5
+            moves = (big, small) if diff >= 1 else (small, big)
+        else:
+            big, small = (_ONE, _TWO), (_HALF, _ONE)          # +1, +0.5
+            moves = (big, small) if -diff >= 1 else (small, big)
+        applied = False
+        for group in groups:  # exhaust defaulted questions before explicit ones
+            for frm, to in moves:
+                for i in group:
+                    if items[i]['marks'] == frm:
+                        items[i]['marks'] = to
+                        applied = True
+                        break
+                if applied:
+                    break
+            if applied:
+                break
+        if not applied:
+            break
+    return items
+
+
 def _marks_enabled(paper_name: str) -> bool:
     return paper_name in MARKS_PAPERS
 
@@ -841,6 +884,12 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
         if mode == 'mock_test' or _marks_enabled(paper_name):
             item['marks'] = _resolve_marks(q)
         formatted.append(item)
+
+    # Maximum marks equal the question count (100 questions -> 100 marks).
+    if formatted and all('marks' in i for i in formatted):
+        explicit_idx = frozenset(
+            idx for idx, q in enumerate(questions) if _parse_marks(q.get('marks')) is not None)
+        _rebalance_marks(formatted, Decimal(len(formatted)), explicit_idx)
 
     status = 'ready' if formatted else 'failed'
 
