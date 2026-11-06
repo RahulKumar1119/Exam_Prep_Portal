@@ -12,13 +12,13 @@ import { UserAnswer } from '../types/index';
 
 const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: string; totalQuestions: number; sets: number }[]> = {
   'JAIIB': [
-    { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1163, sets: 23 },
-    { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 760, sets: 15 },
-    { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 1195, sets: 23 },
-    { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 635, sets: 13 },
+    { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1146, sets: 11 },
+    { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 758, sets: 7 },
+    { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 1151, sets: 11 },
+    { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 634, sets: 6 },
   ],
   'CAIIB': [
-    { id: 'ABM', name: 'ABM', fullName: 'Advanced Bank Management', totalQuestions: 740, sets: 14 },
+    { id: 'ABM', name: 'ABM', fullName: 'Advanced Bank Management', totalQuestions: 740, sets: 7 },
   ],
   'AI-300': [
     { id: 'AI-300', name: 'AI-300', fullName: 'Operationalizing Machine Learning & GenAI Solutions', totalQuestions: 685, sets: 12 },
@@ -34,8 +34,14 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
   ],
 };
 
-// Questions per practice set (CAPM sets are longer, QUANT sets are shorter)
+// Questions per practice set — must match QUESTIONS_PER_SET_BY_PAPER in
+// backend/practice/lambda_function.py (JAIIB + CAIIB sets are 100 questions)
 const QUESTIONS_PER_SET: Record<string, number> = {
+  'IE & IFS': 100,
+  'PPB': 100,
+  'AFM': 100,
+  'RBWM': 100,
+  'ABM': 100,
   'CAPM': 75,
   'QUANT': 30,
   'AI-300': 57,

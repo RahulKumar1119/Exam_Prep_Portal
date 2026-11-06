@@ -162,10 +162,10 @@ const AboutPage: React.FC = () => {
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>• IE & IFS — 1,161 questions (23 sets)</li>
-                <li>• PPB — 760 questions (15 sets)</li>
-                <li>• AFM — 1,187 questions (23 sets)</li>
-                <li>• RBWM — 634 questions (13 sets)</li>
+                <li>• IE & IFS — 1,146 questions (11 sets of 100)</li>
+                <li>• PPB — 758 questions (7 sets of 100)</li>
+                <li>• AFM — 1,151 questions (11 sets of 100)</li>
+                <li>• RBWM — 634 questions (6 sets of 100)</li>
               </ul>
             </motion.div>
             <motion.div
@@ -181,7 +181,7 @@ const AboutPage: React.FC = () => {
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>• ABM — 740 questions (14 sets)</li>
+                <li>• ABM — 740 questions (7 sets of 100)</li>
                 <li>• Statistics, HRM, credit management</li>
                 <li>• Compliance & corporate governance</li>
               </ul>

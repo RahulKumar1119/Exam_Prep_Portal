@@ -990,7 +990,7 @@ const BLOG_POSTS: BlogPost[] = [
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
           <h3 className="text-blue-900 mt-0">Practice Mock Tests Now</h3>
           <p className="text-blue-800 mb-0">
-            Take mock tests under timed conditions to build exam-day confidence. Our 50-question practice sets simulate the real exam with instant feedback and AI explanations.
+            Take mock tests under timed conditions to build exam-day confidence. Our 100-question practice sets simulate the real exam with instant feedback and AI explanations.
           </p>
         </div>
 

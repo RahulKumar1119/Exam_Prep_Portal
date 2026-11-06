@@ -40,8 +40,15 @@ class DecimalEncoder(json.JSONEncoder):
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 QUESTIONS_PER_SET = 50
-# Per-paper overrides — CAPM practice sets are longer (75 vs default 50)
-QUESTIONS_PER_SET_BY_PAPER = {'CAPM': 75, 'QUANT': 30, 'AI-300': 57, 'CloudOps': 65, 'SOA-C03': 65}
+# Per-paper overrides (default 50). JAIIB + CAIIB practice sets are 100 questions.
+QUESTIONS_PER_SET_BY_PAPER = {
+    # JAIIB
+    'IE & IFS': 100, 'PPB': 100, 'AFM': 100, 'AFB': 100, 'RBWM': 100,
+    # CAIIB
+    'ABM': 100, 'BFM': 100, 'ABF': 100, 'BRBL': 100,
+    # Others
+    'CAPM': 75, 'QUANT': 30, 'AI-300': 57, 'CloudOps': 65, 'SOA-C03': 65,
+}
 
 
 def _questions_per_set(paper_name: str) -> int:
@@ -435,12 +442,18 @@ def _call_bedrock(paper_name: str, count: int = QUESTIONS_PER_SET) -> List[Dict]
 def _db_fallback(questions_table, paper_name: str, count: int, difficulty: Optional[str] = None) -> List[Dict]:
     """Fetch questions from DynamoDB, optionally filtered by difficulty."""
     try:
-        resp = questions_table.query(
-            IndexName='paper-topic-index',
-            KeyConditionExpression='paper_name = :p',
-            ExpressionAttributeValues={':p': paper_name}
-        )
-        items = resp.get('Items', [])
+        kwargs = {
+            'IndexName': 'paper-topic-index',
+            'KeyConditionExpression': 'paper_name = :p',
+            'ExpressionAttributeValues': {':p': paper_name},
+        }
+        items = []
+        while True:
+            resp = questions_table.query(**kwargs)
+            items.extend(resp.get('Items', []))
+            if 'LastEvaluatedKey' not in resp:
+                break
+            kwargs['ExclusiveStartKey'] = resp['LastEvaluatedKey']
         
         # Filter by difficulty if specified
         if difficulty:
