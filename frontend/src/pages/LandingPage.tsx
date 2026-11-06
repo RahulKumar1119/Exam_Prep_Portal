@@ -114,12 +114,12 @@ const LandingPage: React.FC = () => {
               <p className="text-sm text-gray-400 mb-5">4 papers: IE&IFS, PPB, AFM, RBWM. Banking operations, financial management, wealth management.</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-2xl font-bold text-white">3,600+</span>
+                  <span className="text-2xl font-bold text-white">3,800+</span>
                   <span className="text-xs text-gray-500">questions</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-bold text-white">35</span>
+                  <span className="text-lg font-bold text-white">36</span>
                   <span className="text-xs text-gray-500">sets of 100</span>
                 </div>
               </div>
