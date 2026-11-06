@@ -72,6 +72,200 @@ MOCK_TEST_DURATION = 120     # 120 minutes
 QUANT_NEGATIVE_MARKS = 0.25
 QUANT_PASS_PCT = 50          # pass at 50% (JAIIB convention)
 
+# ── Per-question marks (issue #87) ────────────────────────────────────────────
+# JAIIB/CAIIB questions carry 0.5, 1 or 2 marks. A question may store an explicit
+# `marks` value; otherwise it defaults from difficulty (IIBF pattern). The resolved
+# value is snapshotted onto each attempt at generation time so later edits to the
+# question bank never change an existing attempt's result.
+MARKS_PAPERS = {'IE & IFS', 'PPB', 'AFM', 'AFB', 'RBWM', 'ABM', 'BFM', 'ABF', 'BRBL'}
+ALLOWED_MARKS = (Decimal('0.5'), Decimal('1'), Decimal('2'))
+DEFAULT_MARKS_BY_DIFFICULTY = {'easy': Decimal('0.5'), 'medium': Decimal('1'), 'hard': Decimal('2')}
+EXAM_PASS_RATIO = Decimal('0.5')  # JAIIB/CAIIB: 50% of maximum marks
+
+
+def _parse_marks(value) -> Optional[Decimal]:
+    """Return value as one of ALLOWED_MARKS, or None if absent/invalid."""
+    if value is None or value == '':
+        return None
+    try:
+        d = Decimal(str(value))
+    except Exception:
+        return None
+    for allowed in ALLOWED_MARKS:
+        if d == allowed:
+            return allowed
+    return None
+
+
+def _resolve_marks(q: Dict) -> Decimal:
+    """Configured marks for a question, falling back to its difficulty default."""
+    explicit = _parse_marks(q.get('marks'))
+    if explicit is not None:
+        return explicit
+    return DEFAULT_MARKS_BY_DIFFICULTY.get(q.get('difficulty', 'medium'), Decimal('1'))
+
+
+def _marks_enabled(paper_name: str) -> bool:
+    return paper_name in MARKS_PAPERS
+
+
+def _is_unanswered(user_ans) -> bool:
+    if user_ans is None:
+        return True
+    if isinstance(user_ans, str):
+        return user_ans.strip() == ''
+    if isinstance(user_ans, (list, dict)):
+        return len(user_ans) == 0 or all(
+            (v is None or (isinstance(v, str) and v.strip() == ''))
+            for v in (user_ans.values() if isinstance(user_ans, dict) else user_ans))
+    return False
+
+
+def _is_answer_correct(q: Dict, user_ans) -> bool:
+    """Type-aware correctness (single/multi-select, yes_no, ordering, drag_drop, hot_area)."""
+    q_type = q.get('question_type', 'single_choice')
+    correct_ans = q.get('correct_answer')
+    correct_answers = q.get('correct_answers')
+    if q_type == 'multi_select' and correct_answers:
+        if isinstance(user_ans, str) and user_ans:
+            user_set = set(s.strip() for s in user_ans.split(',') if s.strip())
+        elif isinstance(user_ans, list):
+            user_set = set(user_ans)
+        else:
+            user_set = set()
+        return user_set == set(correct_answers)
+    if q_type == 'yes_no' and correct_answers:
+        return user_ans == correct_answers if isinstance(user_ans, list) else user_ans == correct_ans
+    if q_type in ('ordering', 'build_list') and q.get('correct_order'):
+        return isinstance(user_ans, list) and user_ans == q.get('correct_order')
+    if q_type == 'drag_drop' and q.get('correct_mapping'):
+        return isinstance(user_ans, dict) and user_ans == q.get('correct_mapping')
+    if q_type == 'hot_area' and q.get('correct_area'):
+        return user_ans == q.get('correct_area')
+    return user_ans is not None and user_ans == correct_ans
+
+
+def _num(d) -> Any:
+    """Decimal -> int if whole else float (JSON-friendly, exact for 0.5 steps)."""
+    d = Decimal(str(d))
+    return int(d) if d == d.to_integral_value() else float(d)
+
+
+def score_attempt(questions: List[Dict], answers: Dict, session_mode: str, paper_name: str) -> Dict:
+    """Score a submitted attempt. Pure function (no I/O) so it is unit-testable.
+
+    Marks per question come from the snapshot taken at generation time
+    (`q['marks']`). Sessions created before snapshots existed fall back to the
+    previous behaviour: difficulty-based marks for mock tests, 1 mark otherwise.
+    Correct = full marks; incorrect and unanswered = 0 (QUANT practice keeps its
+    -0.25 negative marking).
+    """
+    answers = answers or {}
+    is_quant = paper_name == 'QUANT' and session_mode != 'mock_test'
+    marks_mode = (session_mode == 'mock_test' or _marks_enabled(paper_name)
+                  or any(_parse_marks(q.get('marks')) is not None for q in questions))
+
+    correct_count = incorrect_count = unanswered_count = 0
+    earned = Decimal('0')
+    possible = Decimal('0')
+    results = []
+    by_marks: Dict[str, Dict[str, Any]] = {}
+
+    for q in questions:
+        qid = q['question_id']
+        user_ans = answers.get(qid)
+        snap = _parse_marks(q.get('marks'))
+        if snap is not None:
+            marks_for_q = snap
+        elif session_mode == 'mock_test':
+            marks_for_q = DEFAULT_MARKS_BY_DIFFICULTY.get(q.get('difficulty', 'medium'), Decimal('1'))
+        else:
+            marks_for_q = Decimal('1')
+
+        unanswered = _is_unanswered(user_ans)
+        is_correct = (not unanswered) and _is_answer_correct(q, user_ans)
+        possible += marks_for_q
+
+        if is_correct:
+            correct_count += 1
+            earned += marks_for_q
+            q_marks = marks_for_q
+        elif unanswered:
+            unanswered_count += 1
+            q_marks = Decimal('0')
+        else:
+            incorrect_count += 1
+            q_marks = -Decimal(str(QUANT_NEGATIVE_MARKS)) if is_quant else Decimal('0')
+
+        bucket = by_marks.setdefault(str(_num(marks_for_q)), {
+            'marks': _num(marks_for_q), 'total': 0, 'correct': 0, 'incorrect': 0,
+            'unanswered': 0, 'marks_earned': Decimal('0'), 'max_marks': Decimal('0')})
+        bucket['total'] += 1
+        bucket['max_marks'] += marks_for_q
+        if is_correct:
+            bucket['correct'] += 1
+            bucket['marks_earned'] += marks_for_q
+        elif unanswered:
+            bucket['unanswered'] += 1
+        else:
+            bucket['incorrect'] += 1
+
+        results.append({
+            'question_id':    qid,
+            'question_text':  q.get('question_text', ''),
+            'options':        q.get('options', {}),
+            'correct':        is_correct,
+            'unanswered':     unanswered,
+            'user_answer':    user_ans or '',
+            'correct_answer': q.get('correct_answer'),
+            'difficulty':     q.get('difficulty', 'medium'),
+            'marks':          _num(q_marks),
+            'max_marks':      _num(marks_for_q),
+        })
+
+    total = len(questions)
+    marks_pct = float(round(earned / possible * 100, 2)) if possible else 0.0
+
+    if session_mode == 'mock_test':
+        score = float(round(earned / possible * 100, 1)) if possible else 0
+        passed = possible > 0 and earned >= possible * EXAM_PASS_RATIO
+    elif is_quant:
+        negative = Decimal(str(QUANT_NEGATIVE_MARKS)) * incorrect_count
+        earned = Decimal(correct_count) - negative
+        possible = Decimal(total)
+        score = float(round(max(Decimal('0'), earned) / possible * 100, 1)) if possible else 0
+        passed = score >= QUANT_PASS_PCT
+    else:
+        # Practice mode: the headline score stays % of questions correct (unchanged,
+        # feeds dashboard history / leaderboard). Marks are reported alongside.
+        score = int(correct_count / total * 100) if total else 0
+        passed = score >= 60
+
+    summary = {
+        'score': score,
+        'passed': bool(passed),
+        'results': results,
+        'total_questions': total,
+        'correct_count': correct_count,
+        'incorrect_count': incorrect_count,
+        'unanswered_count': unanswered_count,
+        'marks_mode': marks_mode,
+        'is_quant': is_quant,
+    }
+    if marks_mode or is_quant:
+        summary['marks_earned'] = _num(earned)
+        summary['total_marks'] = _num(possible)
+        summary['marks_percentage'] = marks_pct if not is_quant else score
+    if marks_mode:
+        summary['pass_marks'] = _num(possible * EXAM_PASS_RATIO)
+        summary['marks_breakdown'] = [
+            {**b, 'marks_earned': _num(b['marks_earned']), 'max_marks': _num(b['max_marks'])}
+            for _, b in sorted(by_marks.items(), key=lambda kv: Decimal(kv[0]))
+        ]
+    if is_quant:
+        summary['negative_marks'] = _num(Decimal(str(QUANT_NEGATIVE_MARKS)) * incorrect_count)
+    return summary
+
 # ── JAIIB syllabus ────────────────────────────────────────────────────────────
 # PAPER_SYLLABUS is imported from shared.syllabus (see imports above)
 
@@ -642,20 +836,30 @@ def _do_generate(session_id: str, paper_name: str, sessions_table, questions_tab
         for f in TYPED_FIELDS:
             if q.get(f) is not None:
                 item[f] = q[f]
+        # Snapshot per-question marks onto the attempt (issue #87) so the result
+        # is unaffected by later edits to the question bank.
+        if mode == 'mock_test' or _marks_enabled(paper_name):
+            item['marks'] = _resolve_marks(q)
         formatted.append(item)
 
     status = 'ready' if formatted else 'failed'
 
     update_expr = 'SET #st = :s, questions = :q'
     expr_values = {':s': status, ':q': formatted}
-    
+
+    # Maximum marks are computed from the selected questions, not a fixed 100.
+    max_marks = sum((i['marks'] for i in formatted if 'marks' in i), Decimal('0'))
+    if max_marks:
+        update_expr += ', max_marks = :mx'
+        expr_values[':mx'] = max_marks
+
     # For mock test, store the mode and marks config
     if mode == 'mock_test':
         update_expr += ', #mode = :m, marks_config = :mc, total_marks = :tm, pass_marks = :pm, duration_minutes = :dm'
         expr_values[':m'] = 'mock_test'
         expr_values[':mc'] = MOCK_TEST_CONFIG
-        expr_values[':tm'] = MOCK_TEST_TOTAL_MARKS
-        expr_values[':pm'] = MOCK_TEST_PASS_MARKS
+        expr_values[':tm'] = max_marks or Decimal(MOCK_TEST_TOTAL_MARKS)
+        expr_values[':pm'] = (max_marks * EXAM_PASS_RATIO) if max_marks else Decimal(MOCK_TEST_PASS_MARKS)
         expr_values[':dm'] = MOCK_TEST_DURATION
 
     sessions_table.update_item(
@@ -836,6 +1040,8 @@ def handler(event, context):
                     'total_questions': len(session.get('questions', [])),
                     'created_at': session.get('created_at')
                 }
+                if session.get('max_marks') is not None:
+                    response_data['max_marks'] = session.get('max_marks')
                 # Include mock test metadata
                 if session.get('mode') == 'mock_test':
                     response_data['mode'] = 'mock_test'
@@ -914,95 +1120,14 @@ def handler(event, context):
 
             questions = session.get('questions', [])
             session_mode = session.get('mode', 'practice')
-            is_quant = session.get('paper_name') == 'QUANT' and session_mode != 'mock_test'
-            correct_count = 0
-            incorrect_count = 0
-            results = []
-            
-            # Weighted scoring for mock test
-            total_marks_earned = 0
-            total_marks_possible = 0
+            paper = session.get('paper_name', '')
 
-            for q in questions:
-                qid          = q['question_id']
-                user_ans     = answers.get(qid)
-                q_type       = q.get('question_type', 'single_choice')
-                correct_ans  = q.get('correct_answer')
-                correct_answers = q.get('correct_answers')
-                difficulty   = q.get('difficulty', 'medium')
+            # Marks come from the per-question snapshot taken at generation time.
+            summary = score_attempt(questions, answers, session_mode, paper)
+            score, passed, results = summary['score'], summary['passed'], summary['results']
+            total = summary['total_questions']
+            correct_count = summary['correct_count']
 
-                # Scoring per type — supports string / string[] / mapping
-                if q_type == 'multi_select' and correct_answers:
-                    if isinstance(user_ans, str) and user_ans:
-                        user_set = set([s.strip() for s in user_ans.split(',') if s.strip()])
-                    elif isinstance(user_ans, list):
-                        user_set = set(user_ans)
-                    else:
-                        user_set = set()
-                    is_correct = user_set == set(correct_answers)
-                elif q_type == 'yes_no' and correct_answers:
-                    # statements: user_ans is Yes/No array
-                    is_correct = user_ans == correct_answers if isinstance(user_ans, list) else user_ans == correct_ans
-                elif q_type in ('ordering', 'build_list') and q.get('correct_order'):
-                    corr = q.get('correct_order')
-                    is_correct = isinstance(user_ans, list) and user_ans == corr
-                elif q_type == 'drag_drop' and q.get('correct_mapping'):
-                    corr = q.get('correct_mapping')
-                    is_correct = isinstance(user_ans, dict) and user_ans == corr
-                elif q_type == 'hot_area' and q.get('correct_area'):
-                    is_correct = user_ans == q.get('correct_area')
-                else:
-                    is_correct = user_ans == correct_ans
-                
-                # Calculate marks based on difficulty
-                if session_mode == 'mock_test':
-                    marks_for_q = MOCK_TEST_MARKS.get(difficulty, 1.0)
-                else:
-                    marks_for_q = 1.0
-
-                total_marks_possible += marks_for_q
-
-                if is_correct:
-                    correct_count += 1
-                    total_marks_earned += marks_for_q
-                    q_marks = marks_for_q
-                elif is_quant and user_ans:
-                    # QUANT: -0.25 for every answered-but-wrong question (skips are free)
-                    incorrect_count += 1
-                    q_marks = -QUANT_NEGATIVE_MARKS
-                else:
-                    q_marks = 0
-
-                results.append({
-                    'question_id':    qid,
-                    'question_text':  q.get('question_text', ''),
-                    'options':        q.get('options', {}),
-                    'correct':        is_correct,
-                    'user_answer':    user_ans or '',
-                    'correct_answer': correct_ans,
-                    'difficulty':     difficulty,
-                    'marks':          q_marks,
-                    'max_marks':      marks_for_q
-                })
-
-            total = len(questions)
-            
-            if session_mode == 'mock_test':
-                # Weighted score based on marks
-                score = round((total_marks_earned / total_marks_possible * 100), 1) if total_marks_possible else 0
-                passed = total_marks_earned >= MOCK_TEST_PASS_MARKS
-            elif is_quant:
-                # QUANT: +1 per correct, -0.25 per wrong answer, skips free
-                negative_marks = round(incorrect_count * QUANT_NEGATIVE_MARKS, 2)
-                total_marks_earned = round(correct_count - negative_marks, 2)
-                total_marks_possible = float(total)
-                score = round(max(0, total_marks_earned) / total_marks_possible * 100, 1) if total_marks_possible else 0
-                passed = score >= QUANT_PASS_PCT
-            else:
-                # Simple percentage for practice mode
-                score = int(correct_count / total * 100) if total else 0
-                passed = score >= 60
-                
             submitted = datetime.utcnow().isoformat()
 
             try:
@@ -1011,15 +1136,24 @@ def handler(event, context):
             except Exception:
                 time_taken = 0
 
+            update_expr = ('SET #s = :s, score = :sc, passed = :p, submitted_at = :sa, '
+                           'time_taken = :tt, user_answers = :ua, correct_count = :cc, '
+                           'incorrect_count = :ic, unanswered_count = :uc')
+            values = {
+                ':s': 'completed', ':sc': Decimal(str(score)),
+                ':p': passed, ':sa': submitted, ':tt': time_taken,
+                ':ua': answers, ':cc': correct_count,
+                ':ic': summary['incorrect_count'], ':uc': summary['unanswered_count'],
+            }
+            if 'marks_earned' in summary:
+                update_expr += ', marks_earned = :me, max_marks = :mm'
+                values[':me'] = Decimal(str(summary['marks_earned']))
+                values[':mm'] = Decimal(str(summary['total_marks']))
             sessions_table.update_item(
                 Key={'session_id': session_id},
-                UpdateExpression='SET #s = :s, score = :sc, passed = :p, submitted_at = :sa, time_taken = :tt, user_answers = :ua',
+                UpdateExpression=update_expr,
                 ExpressionAttributeNames={'#s': 'status'},
-                ExpressionAttributeValues={
-                    ':s': 'completed', ':sc': Decimal(str(score)),
-                    ':p': passed, ':sa': submitted, ':tt': time_taken,
-                    ':ua': answers
-                }
+                ExpressionAttributeValues=values
             )
 
             response_data = {
@@ -1029,43 +1163,43 @@ def handler(event, context):
                 'results':     results,
                 'time_taken':  time_taken,
                 'passed':      passed,
-                'submitted_at': submitted
+                'submitted_at': submitted,
+                'total_questions':  total,
+                'correct_count':    correct_count,
+                'incorrect_count':  summary['incorrect_count'],
+                'unanswered_count': summary['unanswered_count'],
             }
-            
+
+            # Marks-based result (JAIIB/CAIIB practice + all mock tests)
+            if summary['marks_mode']:
+                response_data['marks_earned'] = summary['marks_earned']
+                response_data['total_marks'] = summary['total_marks']
+                response_data['pass_marks'] = summary['pass_marks']
+                response_data['marks_percentage'] = summary['marks_percentage']
+                response_data['marks_breakdown'] = summary['marks_breakdown']
+
             # Add mock test specific data
             if session_mode == 'mock_test':
                 response_data['mode'] = 'mock_test'
-                response_data['marks_earned'] = total_marks_earned
-                response_data['total_marks'] = total_marks_possible
-                response_data['pass_marks'] = MOCK_TEST_PASS_MARKS
-                response_data['correct_count'] = correct_count
-                response_data['total_questions'] = total
-                response_data['breakdown'] = {
-                    'easy': {
-                        'total': sum(1 for q in questions if q.get('difficulty') == 'easy'),
-                        'correct': sum(1 for r in results if r['correct'] and r['difficulty'] == 'easy'),
-                        'marks_per_q': 0.5
-                    },
-                    'medium': {
-                        'total': sum(1 for q in questions if q.get('difficulty') == 'medium'),
-                        'correct': sum(1 for r in results if r['correct'] and r['difficulty'] == 'medium'),
-                        'marks_per_q': 1.0
-                    },
-                    'hard': {
-                        'total': sum(1 for q in questions if q.get('difficulty') == 'hard'),
-                        'correct': sum(1 for r in results if r['correct'] and r['difficulty'] == 'hard'),
-                        'marks_per_q': 2.0
+
+                def _bucket(diff):
+                    rs = [r for r in results if r['difficulty'] == diff]
+                    earned = sum(Decimal(str(r['marks'])) for r in rs if r['correct'])
+                    mx = sum(Decimal(str(r['max_marks'])) for r in rs)
+                    return {
+                        'total': len(rs),
+                        'correct': sum(1 for r in rs if r['correct']),
+                        'marks_per_q': _num(mx / len(rs)) if rs else _num(DEFAULT_MARKS_BY_DIFFICULTY[diff]),
+                        'marks_earned': _num(earned),
+                        'max_marks': _num(mx),
                     }
-                }
+                response_data['breakdown'] = {d: _bucket(d) for d in ('easy', 'medium', 'hard')}
 
             # QUANT scoring details (negative marking)
-            if is_quant:
-                response_data['marks_earned'] = total_marks_earned
-                response_data['total_marks'] = total_marks_possible
-                response_data['negative_marks'] = round(incorrect_count * QUANT_NEGATIVE_MARKS, 2)
-                response_data['correct_count'] = correct_count
-                response_data['incorrect_count'] = incorrect_count
-                response_data['total_questions'] = total
+            if summary['is_quant']:
+                response_data['marks_earned'] = summary['marks_earned']
+                response_data['total_marks'] = summary['total_marks']
+                response_data['negative_marks'] = summary['negative_marks']
 
             return ok(response_data)
 

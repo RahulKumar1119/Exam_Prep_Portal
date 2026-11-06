@@ -8,6 +8,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 import { useExamPreference, ExamId } from '../hooks/useExamPreference';
 import ExamSelector from '../components/ExamSelector';
 import RichText from '../components/RichText';
+import MarksSummary, { formatMarks, marksLabel } from '../components/Practice/MarksSummary';
 import { UserAnswer } from '../types/index';
 
 const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: string; totalQuestions: number; sets: number }[]> = {
@@ -265,7 +266,7 @@ const PracticePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="bg-blue-50 rounded-lg p-6 text-center">
               <p className="text-gray-600 text-sm mb-2">Your Score</p>
-              <p className="text-4xl font-bold text-blue-600">{session_result.score}</p>
+              <p className="text-4xl font-bold text-blue-600">{session_result.score}%</p>
             </div>
             <div className="bg-green-50 rounded-lg p-6 text-center">
               <p className="text-gray-600 text-sm mb-2">Time Taken</p>
@@ -280,6 +281,9 @@ const PracticePage: React.FC = () => {
               </p>
             </div>
           </div>
+
+          {/* Marks summary (issue #87) — only when the attempt carries marks */}
+          <MarksSummary result={session_result} />
 
           {/* Results Details */}
           <div className="space-y-4">
@@ -298,10 +302,19 @@ const PracticePage: React.FC = () => {
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     Question {index + 1}
                   </span>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                    result.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>
-                    {result.correct ? '✓ Correct' : '✗ Incorrect'}
+                  <span className="flex items-center gap-2">
+                    {result.max_marks != null && session_result.marks_earned != null && (
+                      <span className="text-xs font-medium text-gray-700 bg-white border border-gray-200 px-2 py-0.5 rounded-full">
+                        {formatMarks(result.marks)} / {marksLabel(result.max_marks)}
+                      </span>
+                    )}
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      result.correct ? 'bg-green-100 text-green-700'
+                        : result.unanswered ? 'bg-gray-100 text-gray-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}>
+                      {result.correct ? '✓ Correct' : result.unanswered ? '– Unanswered' : '✗ Incorrect'}
+                    </span>
                   </span>
                 </div>
 

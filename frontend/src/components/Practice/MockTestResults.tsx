@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SessionResult, UserAnswer } from '../../types/index';
 import { ExplanationDisplay } from './ExplanationDisplay';
 import RichText from '../RichText';
+import MarksSummary, { formatMarks, marksLabel } from './MarksSummary';
 
 /** Render any answer shape (single key, multi-key array, or mapping) as readable text. */
 function formatAnswer(answer: UserAnswer | undefined): string {
@@ -30,9 +31,16 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
 
   const isMockTest = result.mode === 'mock_test';
   const marksEarned = result.marks_earned ?? 0;
-  const totalMarks = result.total_marks ?? 100;
-  const passMarks = result.pass_marks ?? 50;
+  // Dynamic maximum from the attempt's per-question marks (issue #87).
+  const totalMarks = result.total_marks
+    ?? result.results.reduce((sum, r) => sum + Number(r.max_marks ?? 1), 0);
+  const passMarks = result.pass_marks ?? totalMarks / 2;
   const breakdown = result.breakdown;
+  // Earned / max per difficulty, preferring server values over recomputation.
+  const bucketEarned = (b: { correct: number; marks_per_q: number; marks_earned?: number }) =>
+    b.marks_earned ?? b.correct * b.marks_per_q;
+  const bucketMax = (b: { total: number; marks_per_q: number; max_marks?: number }) =>
+    b.max_marks ?? b.total * b.marks_per_q;
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
@@ -65,10 +73,10 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
           {isMockTest ? (
             <div className="mt-4">
               <p className={`text-4xl font-bold ${getScoreColor()}`}>
-                {marksEarned} / {totalMarks} marks
+                {formatMarks(marksEarned)} / {formatMarks(totalMarks)} marks
               </p>
               <p className="text-gray-600 mt-1">
-                Pass marks: {passMarks} | Your score: {result.score}%
+                Pass marks: {formatMarks(passMarks)} | Your score: {result.score}%
               </p>
             </div>
           ) : (
@@ -84,6 +92,13 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
         </div>
       </div>
 
+      {/* Marks summary (issue #87) */}
+      {result.marks_earned != null && (
+        <div className="card">
+          <MarksSummary result={result} />
+        </div>
+      )}
+
       {/* Difficulty Breakdown (Mock Test only) */}
       {isMockTest && breakdown && (
         <div className="card">
@@ -94,14 +109,14 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-green-800">🟢 Easy</span>
                 <span className="text-xs bg-green-200 text-green-800 px-2 py-0.5 rounded-full">
-                  {breakdown.easy.marks_per_q} mark each
+                  {marksLabel(breakdown.easy.marks_per_q)} each
                 </span>
               </div>
               <p className="text-2xl font-bold text-green-700">
                 {breakdown.easy.correct}/{breakdown.easy.total}
               </p>
               <p className="text-sm text-green-600">
-                Marks: {(breakdown.easy.correct * breakdown.easy.marks_per_q).toFixed(1)} / {(breakdown.easy.total * breakdown.easy.marks_per_q).toFixed(1)}
+                Marks: {formatMarks(bucketEarned(breakdown.easy))} / {formatMarks(bucketMax(breakdown.easy))}
               </p>
               <div className="mt-2 bg-green-200 rounded-full h-2">
                 <div
@@ -116,14 +131,14 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-yellow-800">🟡 Medium</span>
                 <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded-full">
-                  {breakdown.medium.marks_per_q} mark each
+                  {marksLabel(breakdown.medium.marks_per_q)} each
                 </span>
               </div>
               <p className="text-2xl font-bold text-yellow-700">
                 {breakdown.medium.correct}/{breakdown.medium.total}
               </p>
               <p className="text-sm text-yellow-600">
-                Marks: {(breakdown.medium.correct * breakdown.medium.marks_per_q).toFixed(1)} / {(breakdown.medium.total * breakdown.medium.marks_per_q).toFixed(1)}
+                Marks: {formatMarks(bucketEarned(breakdown.medium))} / {formatMarks(bucketMax(breakdown.medium))}
               </p>
               <div className="mt-2 bg-yellow-200 rounded-full h-2">
                 <div
@@ -138,14 +153,14 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-red-800">🔴 Hard</span>
                 <span className="text-xs bg-red-200 text-red-800 px-2 py-0.5 rounded-full">
-                  {breakdown.hard.marks_per_q} marks each
+                  {marksLabel(breakdown.hard.marks_per_q)} each
                 </span>
               </div>
               <p className="text-2xl font-bold text-red-700">
                 {breakdown.hard.correct}/{breakdown.hard.total}
               </p>
               <p className="text-sm text-red-600">
-                Marks: {(breakdown.hard.correct * breakdown.hard.marks_per_q).toFixed(1)} / {(breakdown.hard.total * breakdown.hard.marks_per_q).toFixed(1)}
+                Marks: {formatMarks(bucketEarned(breakdown.hard))} / {formatMarks(bucketMax(breakdown.hard))}
               </p>
               <div className="mt-2 bg-red-200 rounded-full h-2">
                 <div
@@ -160,8 +175,9 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
           {breakdown.hard.total > 0 && (
             <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-blue-800">
-                💡 <strong>Key insight:</strong> Hard questions carry {breakdown.hard.marks_per_q} marks each 
-                ({(breakdown.hard.total * breakdown.hard.marks_per_q).toFixed(0)} marks total = 50% of the paper). 
+                💡 <strong>Key insight:</strong> Hard questions carry {marksLabel(breakdown.hard.marks_per_q)} each
+                ({formatMarks(bucketMax(breakdown.hard))} of {formatMarks(totalMarks)} marks
+                = {totalMarks > 0 ? Math.round((bucketMax(breakdown.hard) / totalMarks) * 100) : 0}% of the paper).{' '}
                 You got {breakdown.hard.correct}/{breakdown.hard.total} correct 
                 ({breakdown.hard.total > 0 ? Math.round((breakdown.hard.correct / breakdown.hard.total) * 100) : 0}% accuracy).
                 {breakdown.hard.correct / breakdown.hard.total < 0.5 && 
@@ -216,7 +232,7 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
             {filteredResults.map((r, idx) => (
               <div
                 key={r.question_id}
-                className={`p-4 rounded-lg border ${r.correct ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}
+                className={`p-4 rounded-lg border ${r.correct ? 'border-green-200 bg-green-50' : r.unanswered ? 'border-gray-200 bg-gray-50' : 'border-red-200 bg-red-50'}`}
               >
                 <div className="flex items-start justify-between mb-2">
                   <p className="font-medium text-gray-900 flex-1 text-sm">
@@ -229,11 +245,11 @@ const MockTestResults: React.FC<MockTestResultsProps> = ({ result, onBack }) => 
                         r.difficulty === 'medium' ? 'bg-yellow-200 text-yellow-800' :
                         'bg-red-200 text-red-800'
                       }`}>
-                        {r.difficulty} ({r.max_marks ?? 1} mk)
+                        {r.difficulty} ({formatMarks(r.max_marks ?? 1)} mk)
                       </span>
                     )}
-                    <span className={`text-lg ${r.correct ? '✅' : '❌'}`}>
-                      {r.correct ? '✅' : '❌'}
+                    <span className="text-lg" aria-label={r.correct ? 'Correct' : r.unanswered ? 'Unanswered' : 'Incorrect'}>
+                      {r.correct ? '✅' : r.unanswered ? '➖' : '❌'}
                     </span>
                   </div>
                 </div>

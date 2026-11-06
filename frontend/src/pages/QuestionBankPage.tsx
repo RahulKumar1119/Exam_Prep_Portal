@@ -257,6 +257,7 @@ const QuestionBankPage: React.FC = () => {
                   difficulty: editing_question.difficulty,
                   rbi_reference: editing_question.rbi_reference,
                   iibf_reference: editing_question.iibf_reference,
+                  marks: editing_question.marks != null ? Number(editing_question.marks) : undefined,
                 }
               : undefined
           }

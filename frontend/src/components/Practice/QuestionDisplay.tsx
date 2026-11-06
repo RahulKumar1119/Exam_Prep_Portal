@@ -10,6 +10,7 @@ import RichText from '../RichText';
 import DragDropBoard from './DragDropBoard';
 import OrderableList from './OrderableList';
 import CaseStudyTabs from './CaseStudyTabs';
+import { formatMarks, marksLabel } from './MarksSummary';
 
 /** Build a human-readable "correct answer" string per question type, so the
  *  AI-explain endpoint (which requires a non-empty correct_answer and is
@@ -195,6 +196,12 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
   const currentQuestion = session.questions[currentQuestionIndex];
   const totalQuestions = session.questions.length;
+  // Dynamic maximum for mixed-mark papers (issue #87); null when the attempt has no marks.
+  const paperMaxMarks = session.max_marks != null
+    ? Number(session.max_marks)
+    : session.questions.some((q) => q.marks != null)
+      ? session.questions.reduce((sum, q) => sum + Number(q.marks ?? 0), 0)
+      : null;
   const answeredCount = Object.keys(answers).length;
 
   const handleSelectAnswer = (optionKey: string) => {
@@ -402,8 +409,11 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
       </div>
 
       {/* Question counter */}
-      <p className="text-xs md:text-sm text-indigo-600 font-medium">
-        Question {currentQuestionIndex + 1} of {totalQuestions}
+      <p className="text-xs md:text-sm text-indigo-600 font-medium flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
+        {paperMaxMarks != null && (
+          <span className="text-gray-600">Maximum marks: {formatMarks(paperMaxMarks)}</span>
+        )}
       </p>
 
       {/* Question Card */}
@@ -424,9 +434,16 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 
         {/* Question text */}
         <div className="mb-4 md:mb-6">
-          <h3 className="text-sm md:text-base font-bold text-gray-900">
-            {currentQuestionIndex + 1}. Question {currentQuestion.question_type && currentQuestion.question_type !== 'single_choice' ? `— ${currentQuestion.question_type.replace('_',' ')}` : ''}
-          </h3>
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="text-sm md:text-base font-bold text-gray-900">
+              {currentQuestionIndex + 1}. Question {currentQuestion.question_type && currentQuestion.question_type !== 'single_choice' ? `— ${currentQuestion.question_type.replace('_',' ')}` : ''}
+            </h3>
+            {currentQuestion.marks != null && (
+              <span className="shrink-0 text-xs font-semibold text-indigo-800 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                {marksLabel(Number(currentQuestion.marks))}
+              </span>
+            )}
+          </div>
           <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
             <RichText text={currentQuestion.question_text} />
           </p>

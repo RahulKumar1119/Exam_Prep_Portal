@@ -97,6 +97,7 @@ const MCQForm: React.FC<MCQFormProps> = ({ onSubmit, initial_data, is_loading = 
       question_type: qType,
       options: ['', '', '', ''],
       correct_answer: 'A',
+      ...(form_data.marks != null ? { marks: form_data.marks } : {}),
     };
 
     if (qType === 'single_choice') {
@@ -376,6 +377,25 @@ const MCQForm: React.FC<MCQFormProps> = ({ onSubmit, initial_data, is_loading = 
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
+        </div>
+
+        <div>
+          <label htmlFor="mcq-marks" className="block text-sm font-medium text-gray-900 mb-2">Marks</label>
+          <select
+            id="mcq-marks"
+            value={form_data.marks != null ? String(form_data.marks) : ''}
+            onChange={(e) => setFormData({ ...form_data, marks: e.target.value ? Number(e.target.value) : undefined })}
+            className={inputClass}
+            aria-describedby="mcq-marks-help"
+          >
+            <option value="">Auto (from difficulty)</option>
+            <option value="0.5">0.5 marks</option>
+            <option value="1">1 mark</option>
+            <option value="2">2 marks</option>
+          </select>
+          <p id="mcq-marks-help" className="text-xs text-gray-600 mt-1">
+            Auto uses Easy 0.5, Medium 1, Hard 2.
+          </p>
         </div>
       </div>
 

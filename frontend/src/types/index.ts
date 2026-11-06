@@ -55,6 +55,7 @@ export interface Question {
   correct_area?: string;
   rbi_reference?: string;
   iibf_reference?: string;
+  marks?: number; // per-question marks snapshot: 0.5 | 1 | 2 (issue #87)
 }
 
 export type UserAnswer = string | string[] | Record<string, string>;
@@ -74,6 +75,7 @@ export interface PracticeSession {
   duration_minutes?: number;
   total_marks?: number;
   pass_marks?: number;
+  max_marks?: number; // sum of per-question marks for this attempt (issue #87)
   marks_config?: {
     easy: { count: number; marks: number };
     medium: { count: number; marks: number };
@@ -92,13 +94,35 @@ export interface SessionResult {
   pass_marks?: number;
   correct_count?: number;
   incorrect_count?: number;
+  unanswered_count?: number;
   negative_marks?: number;
   total_questions?: number;
+  marks_percentage?: number;
+  marks_breakdown?: MarksBreakdownRow[];
   breakdown?: {
-    easy: { total: number; correct: number; marks_per_q: number };
-    medium: { total: number; correct: number; marks_per_q: number };
-    hard: { total: number; correct: number; marks_per_q: number };
+    easy: DifficultyBreakdown;
+    medium: DifficultyBreakdown;
+    hard: DifficultyBreakdown;
   };
+}
+
+export interface DifficultyBreakdown {
+  total: number;
+  correct: number;
+  marks_per_q: number;
+  marks_earned?: number;
+  max_marks?: number;
+}
+
+/** Per mark-value summary returned by the submit endpoint (issue #87). */
+export interface MarksBreakdownRow {
+  marks: number;
+  total: number;
+  correct: number;
+  incorrect: number;
+  unanswered: number;
+  marks_earned: number;
+  max_marks: number;
 }
 
 export interface QuestionResult {
@@ -113,6 +137,7 @@ export interface QuestionResult {
   difficulty?: string;
   marks?: number;
   max_marks?: number;
+  unanswered?: boolean;
 }
 
 // Dashboard types
@@ -375,6 +400,8 @@ export interface MCQFormData {
   difficulty: 'easy' | 'medium' | 'hard';
   rbi_reference?: string;
   iibf_reference?: string;
+  // Marks per question (issue #87): 0.5 | 1 | 2. Omit to derive from difficulty.
+  marks?: number;
   // Extended Microsoft question types (issue #51). Defaults to single_choice.
   question_type?: QuestionType;
   correct_answers?: string[]; // multi_select: ["A","C"]; yes_no: ["Yes","No",...]

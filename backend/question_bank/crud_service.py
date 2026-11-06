@@ -37,6 +37,30 @@ KMS_KEY_ID = 'arn:aws:kms:ap-south-1:438097524343:key/8f4e49c4-9d56-47c1-a24e-37
 VALID_PAPERS = ['IE & IFS', 'PPB', 'AFB', 'AFM', 'RBWM', 'AI-300', 'ABM', 'CAPM', 'CloudOps', 'SOA-C03']
 VALID_DIFFICULTIES = ['easy', 'medium', 'hard']
 
+# Per-question marks (issue #87). Stored as a DynamoDB Number (Decimal).
+# Optional: when absent, exam generation defaults marks from difficulty
+# (easy 0.5 / medium 1 / hard 2), so the existing bank needs no migration.
+VALID_MARKS = (Decimal('0.5'), Decimal('1'), Decimal('2'))
+
+
+def parse_marks(value: Any) -> Tuple[bool, Optional[Decimal], str]:
+    """Validate a marks value. Returns (is_valid, Decimal-or-None, error).
+
+    None / '' means "not set" (valid). Anything else must be 0.5, 1 or 2.
+    """
+    if value is None or value == '':
+        return True, None, ''
+    if isinstance(value, bool):
+        return False, None, 'Marks must be 0.5, 1 or 2'
+    try:
+        d = Decimal(str(value))
+    except Exception:
+        return False, None, 'Marks must be 0.5, 1 or 2'
+    for allowed in VALID_MARKS:
+        if d == allowed:
+            return True, allowed, ''
+    return False, None, 'Marks must be 0.5, 1 or 2'
+
 
 def get_cloudops_question_bank_table():
     """Get DynamoDB CloudOps (SOA-C03) question bank table"""
@@ -183,7 +207,8 @@ def create_mcq(
     paper: str,
     creator_user_id: str,
     question_type: str = 'single_choice',
-    typed_fields: Optional[Dict[str, Any]] = None
+    typed_fields: Optional[Dict[str, Any]] = None,
+    marks: Any = None
 ) -> Dict[str, Any]:
     """
     Create a question in the question bank.
@@ -208,6 +233,11 @@ def create_mcq(
         Dictionary with question_id, version, and success status
     """
     typed_fields = typed_fields or {}
+
+    # Validate marks (0.5 / 1 / 2, optional)
+    marks_ok, marks_value, marks_err = parse_marks(marks)
+    if not marks_ok:
+        return {'success': False, 'error': marks_err}
 
     # Validate fields (type-aware)
     is_valid, error_msg = validate_mcq_fields(
@@ -263,6 +293,14 @@ def create_mcq(
         for f in TYPED_OPTIONAL_FIELDS:
             if typed_fields.get(f) is not None:
                 question_item[f] = typed_fields[f]
+
+        # Main bank is queried by paper_name (paper-topic-index); keep both keys so
+        # admin-created questions are picked up by exam generation.
+        if paper not in ('CAPM', 'CloudOps', 'SOA-C03'):
+            question_item['paper_name'] = paper
+
+        if marks_value is not None:
+            question_item['marks'] = marks_value
         
         # Store in DynamoDB
         table.put_item(Item=question_item)
@@ -364,7 +402,8 @@ def update_mcq(
     topic: Optional[str] = None,
     difficulty: Optional[str] = None,
     references: Optional[Dict[str, str]] = None,
-    updater_user_id: Optional[str] = None
+    updater_user_id: Optional[str] = None,
+    marks: Any = None
 ) -> Dict[str, Any]:
     """
     Update an MCQ by creating a new version and preserving the previous version.
@@ -403,7 +442,14 @@ def update_mcq(
             'iibf_reference': current_question.get('iibf_reference', '')
         }
         paper = current_question.get('paper')
-        
+
+        # Marks: explicit new value, else keep the current one (if any)
+        marks_ok, marks_value, marks_err = parse_marks(marks)
+        if not marks_ok:
+            return {'success': False, 'error': marks_err}
+        if marks_value is None:
+            _, marks_value, _ = parse_marks(current_question.get('marks'))
+
         # Validate new fields
         is_valid, error_msg = validate_mcq_fields(
             new_question_text, new_options, new_correct_answer,
@@ -444,22 +490,29 @@ def update_mcq(
             'status': 'active',
             'previous_version': current_version
         }
+        if current_question.get('paper_name'):
+            new_question_item['paper_name'] = current_question.get('paper_name')
+        if marks_value is not None:
+            new_question_item['marks'] = marks_value
         
         # Store new version
         table.put_item(Item=new_question_item)
         
-        # Publish metric
-        cloudwatch.put_metric_data(
-            Namespace='JAIIB-QuestionBank',
-            MetricData=[
-                {
-                    'MetricName': 'MCQUpdated',
-                    'Value': 1,
-                    'Unit': 'Count',
-                    'Timestamp': datetime.utcnow()
-                }
-            ]
-        )
+        # Publish metric — best-effort telemetry, never fail the update on this
+        try:
+            cloudwatch.put_metric_data(
+                Namespace='JAIIB-QuestionBank',
+                MetricData=[
+                    {
+                        'MetricName': 'MCQUpdated',
+                        'Value': 1,
+                        'Unit': 'Count',
+                        'Timestamp': datetime.utcnow()
+                    }
+                ]
+            )
+        except Exception as metric_err:
+            print(f"MCQUpdated metric skipped: {metric_err}")
         
         return {
             'success': True,

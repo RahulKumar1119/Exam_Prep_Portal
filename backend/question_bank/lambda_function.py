@@ -338,7 +338,8 @@ def handler(event, context):
                 paper=body.get('paper'),
                 creator_user_id=body.get('creator_user_id'),
                 question_type=body.get('question_type', 'single_choice'),
-                typed_fields=typed_fields
+                typed_fields=typed_fields,
+                marks=body.get('marks')
             )
             
             if not result.get('success'):
@@ -360,15 +361,17 @@ def handler(event, context):
         
         # Handle update_mcq action
         elif action == 'update_mcq':
+            # Request fields live in the parsed `body` (API Gateway proxy).
             result = update_mcq(
-                question_id=event.get('question_id'),
-                question_text=event.get('question_text'),
-                options=event.get('options'),
-                correct_answer=event.get('correct_answer'),
-                topic=event.get('topic'),
-                difficulty=event.get('difficulty'),
-                references=event.get('references'),
-                updater_user_id=event.get('updater_user_id')
+                question_id=body.get('question_id'),
+                question_text=body.get('question_text'),
+                options=body.get('options'),
+                correct_answer=body.get('correct_answer'),
+                topic=body.get('topic'),
+                difficulty=body.get('difficulty'),
+                references=body.get('references'),
+                updater_user_id=body.get('updater_user_id'),
+                marks=body.get('marks')
             )
             
             if not result.get('success'):
