@@ -16,7 +16,7 @@ const PAPERS_BY_EXAM: Record<string, { id: string; name: string; fullName: strin
     { id: 'IE & IFS', name: 'IE & IFS', fullName: 'Indian Economy & Indian Financial System', totalQuestions: 1146, sets: 11 },
     { id: 'PPB', name: 'PPB', fullName: 'Principles & Practices of Banking', totalQuestions: 754, sets: 7 },
     { id: 'AFM', name: 'AFM', fullName: 'Accounting & Financial Management for Bankers', totalQuestions: 1600, sets: 16 },
-    { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 633, sets: 6 },
+    { id: 'RBWM', name: 'RBWM', fullName: 'Retail Banking & Wealth Management', totalQuestions: 682, sets: 6 },
   ],
   'CAIIB': [
     { id: 'ABM', name: 'ABM', fullName: 'Advanced Bank Management', totalQuestions: 740, sets: 7 },

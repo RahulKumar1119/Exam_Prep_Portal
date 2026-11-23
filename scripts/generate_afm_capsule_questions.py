@@ -741,12 +741,69 @@ def run_upload(path):
                 'correct_answer': q['correct_answer'],
                 'explanation': q['explanation'].strip(),
                 'source': SOURCE,
-                'reference': f"AFM Capsule (Ambitious Baba) pp. {q['pages']}",
+                'reference': f"{PAPER} Capsule (Ambitious Baba) pp. {q['pages']}",
                 'status': 'active',
                 'created_at': now,
                 'updated_at': now,
             })
-    print(f'Uploaded {len(qs)} AFM questions (source={SOURCE}).')
+    print(f'Uploaded {len(qs)} {PAPER} questions (source={SOURCE}).')
+
+
+
+AFM_NUMERICAL = TRAP_PROMPT[TRAP_PROMPT.index('- Numerical traps'):TRAP_PROMPT.index('\n', TRAP_PROMPT.index('- Numerical traps'))]
+AFM_AVOID = TOPUP_RULES[TOPUP_RULES.index('- AVOID these'):TOPUP_RULES.index('- Never mention')]
+
+PAPER_CONFIGS = {
+    'RBWM': {
+        'title': 'JAIIB Paper 4, "Retail Banking & Wealth Management" (RBWM)',
+        'short': 'JAIIB RBWM (Retail Banking & Wealth Management)',
+        's3_key': 'JAIIB-Capsule-PDF-Paper-4-RBWM-by-Ambitious-Baba.pdf',
+        'source': 'capsule_ambitiousbaba_rbwm_glm5',
+        'modules': {'A': (2, 19), 'B': (20, 103), 'C': (104, 140), 'D': (141, 178), 'E': (179, 204)},
+        'targets': {'A': 8, 'B': 16, 'C': 10, 'D': 12, 'E': 6},
+        'topics': {
+            'A': 'Module A - Retail Banking',
+            'B': 'Module B - Retail Products and Recovery',
+            'C': 'Module C - Marketing of Banking Services and Products',
+            'D': 'Module D - Wealth Management',
+            'E': 'Module B - Retail Products and Recovery',   # home-loan reading maps to retail products
+        },
+        'numerical': ('- Numerical traps (at least {n_num}): multi-step problems where a tempting shortcut gives a wrong option, e.g. home-loan '
+                      'eligibility using FOIR/NMI and LTV limits (the lower of the two binds), EMI vs flat-rate interest, prepayment effect on tenure, '
+                      'margin on vehicle/education loans, credit-card interest on revolving balance and minimum due, NPA classification by days past due '
+                      'and quarter-end dates, provisioning on NPA categories, SARFAESI / DRT / Lok Adalat monetary thresholds, recovery and OTS amounts, '
+                      'CAGR vs absolute return, SIP vs lumpsum, NAV and exit load, expense-ratio drag, real vs nominal return, human life value / insurance '
+                      'need, retirement corpus with inflation, asset allocation rebalancing, branch break-even and cost of funds. Every wrong option must be '
+                      'the exact result of a specific common mistake (wrong base, missed step, wrong period, nominal instead of real, gross instead of net).'),
+        'avoid': ('- AVOID facts that change often or are disputed (current tax rates or slabs, exact scheme interest rates, latest limits announced after '
+                  'the material); if a limit is used, give it in the question as data.\n'),
+    },
+}
+
+
+def apply_paper(name):
+    """Switch every paper-specific setting (prompts, modules, source tag) to another JAIIB paper."""
+    global PAPER, SOURCE, S3_KEY, MODULES, MODULE_TARGET, MODULE_TOPICS
+    global GEN_PROMPT, TRAP_PROMPT, VERIFY_PROMPT, CRITIC_PROMPT, REPAIR_PROMPT, TOPUP_RULES
+    if name == 'AFM':
+        return
+    c = PAPER_CONFIGS[name]
+    PAPER, SOURCE, S3_KEY = name, c['source'], c['s3_key']
+    MODULES, MODULE_TARGET, MODULE_TOPICS = c['modules'], c['targets'], c['topics']
+    afm_title = 'JAIIB Paper 3, "Accounting & Financial Management for Bankers" (AFM)'
+    GEN_PROMPT = GEN_PROMPT.replace(afm_title, c['title'])
+    TRAP_PROMPT = TRAP_PROMPT.replace(afm_title, c['title']).replace(AFM_NUMERICAL, c['numerical'])
+    TRAP_PROMPT = TRAP_PROMPT.replace('who memorise formulas', 'who memorise facts')
+    for pname in ('VERIFY_PROMPT', 'CRITIC_PROMPT', 'REPAIR_PROMPT'):
+        txt = globals()[pname]
+        txt = txt.replace('JAIIB AFM (Accounting & Financial Management for Bankers)', c['short'])
+        txt = txt.replace('JAIIB AFM', c['short'])
+        txt = txt.replace('Indian accounting standards (AS / Ind AS), RBI banking practice, Indian income-tax / GST law and standard financial-management theory',
+                          'RBI regulations and banking practice, retail lending and recovery law (SARFAESI, DRT), and standard wealth-management and marketing theory')
+        globals()[pname] = txt
+    TOPUP_RULES = TOPUP_RULES.replace(AFM_AVOID, c['avoid'])
+    # calc rule should not force arithmetic on non-numerical topics
+    TOPUP_RULES = TOPUP_RULES.replace('Use "" for non-numerical questions.', 'Use "" for non-numerical questions. Around 30% of questions should be numerical.')
 
 
 if __name__ == '__main__':
@@ -757,13 +814,15 @@ if __name__ == '__main__':
     ap.add_argument('--need', default='A=8,B=18,C=18,D=25', help='per-module shortfall for --topup')
     ap.add_argument('--factor', type=float, default=2.2, help='over-generation factor for --topup')
     ap.add_argument('--pdf', help='read the capsule from a local PDF instead of S3')
+    ap.add_argument('--paper', choices=['AFM', 'RBWM'], default='AFM', help='JAIIB paper to generate for')
     ap.add_argument('--style', choices=['standard', 'trap'], default='standard',
                     help="'trap' = tough trap questions (all hard), tagged with a separate source")
     args = ap.parse_args()
+    apply_paper(args.paper)
     PDF_PATH = args.pdf
     STYLE = args.style
     if STYLE == 'trap':
-        SOURCE = 'capsule_ambitiousbaba_glm5_trap'
+        SOURCE = SOURCE + '_trap'
     if args.topup:
         need = {k: int(v) for k, v in (p.split('=') for p in args.need.split(','))}
         run_topup(args.topup, need, factor=args.factor)

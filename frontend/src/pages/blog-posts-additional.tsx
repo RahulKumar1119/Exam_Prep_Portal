@@ -463,7 +463,7 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
         <div className="not-prose bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 my-8 text-white">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-3xl font-bold">633</div>
+              <div className="text-3xl font-bold">682</div>
               <div className="text-blue-100 text-sm mt-1">Practice Questions</div>
             </div>
             <div>
