@@ -29,7 +29,7 @@ const PAPERS = [
     slug: 'afm',
     name: 'AFM',
     fullName: 'Accounting & Financial Management for Bankers',
-    questions: '1500+',
+    questions: '1600+',
     rating: 4.7,
     reviews: 96,
     color: 'purple',

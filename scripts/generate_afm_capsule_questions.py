@@ -193,7 +193,8 @@ SOURCE_REF = re.compile(
     r'\b(the|this|above|given|provided)\s+(passage|text|pdf|material|study material|document|capsule|notes)\b'
     r'|\b(as per|according to|in|from)\s+the\s+(text|passage|material|study material|pdf|notes)\b'
     r'|\bstudy material\b|\bpages?\s+\d+', re.I)
-THINKING = re.compile(r"self-correct|let me|let's re|re-evaluat|re-check|recalculat|\bwait\b|\bhmm\b|i think|actually,|on second thought", re.I)
+THINKING = re.compile(r"self-correct|let me|let's re|re-evaluat|re-check|recalculat|\bwait\b|\bhmm\b|i think|actually,|on second thought"
+                      r"|\bsequence\b|\bfits\b|correct answer [A-D]\b|key is [A-D]\b|\bkey q\d|previous (text|question)|source example|\$", re.I)
 STATEMENT_Q = re.compile(r'\b(following|these|above)\s+statements?\b', re.I)
 
 
@@ -552,6 +553,8 @@ Additional strict rules (from editorial review):
 - For matching questions label the items P, Q, R, S (never A-D) so they cannot be confused with option keys.
 - Never refer to other questions ("previous question", "Q7"). Do not state facts that are disputed, outdated, or depend on the latest amendments.
 - AVOID these already well-covered topics: performance budgeting, Rule of 72, simple-interest maturity amounts, future value of a Rs. 10,000 annuity, target-profit sales volume, lessor initial direct costs, current yield of a bond, Section 206CCA, absorption vs marginal costing profit difference, lessor finance-lease receivable, share forfeiture/reissue, insolvent debtor paying paise in the rupee, SLM depreciation for part year.
+- Also avoid (already in the bank): gross profit with wages, SI-3-years/CI-2-years principal or rate, population growth, inter-branch provisioning, cost-based transfer price, lessor operating-lease depreciation, debtors turnover / collection period, ROI on capital employed, income-tax standard deduction or slab figures (these change often).
+- Never mention the answer-letter sequence, question numbers or your own checking in the explanation; write it as a clean official answer key. Do not use LaTeX or $ signs.
 - The correct option for question k (1-based) MUST be the letter at position k of this sequence: {letters}
 """
 
