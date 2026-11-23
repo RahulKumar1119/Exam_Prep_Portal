@@ -463,7 +463,7 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
         <div className="not-prose bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 my-8 text-white">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <div className="text-3xl font-bold">634</div>
+              <div className="text-3xl font-bold">633</div>
               <div className="text-blue-100 text-sm mt-1">Practice Questions</div>
             </div>
             <div>
@@ -1290,7 +1290,7 @@ const ADDITIONAL_BLOG_POSTS: BlogPost[] = [
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
           <h3 className="text-blue-900 mt-0">Start Preparing While You Wait</h3>
           <p className="text-blue-800 mb-0">
-            Don&apos;t wait for the admit card to start preparation. Begin practicing with our 3000+ questions aligned to the latest 2026 syllabus. Track your progress across all 4 papers and identify weak areas early.
+            Don&apos;t wait for the admit card to start preparation. Begin practicing with our 4,100+ questions aligned to the latest 2026 syllabus. Track your progress across all 4 papers and identify weak areas early.
           </p>
         </div>
 

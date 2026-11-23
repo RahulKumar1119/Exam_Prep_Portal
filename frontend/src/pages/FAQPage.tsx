@@ -122,7 +122,7 @@ const FAQPage: React.FC = () => {
         {
           question: 'How tough is AI-300 and what is the passing score?',
           answer:
-            'AI-300 is an expert-level exam with a passing score of 700/1000. Questions are scenario-heavy — multi-constraint enterprise cases involving cost, latency, compliance, and scale. Hands-on Azure experience matters more than theory. MockMaster’s 685 scenario-based questions replicate this style.',
+            'AI-300 is an expert-level exam with a passing score of 700/1000. Questions are scenario-heavy — multi-constraint enterprise cases involving cost, latency, compliance, and scale. Hands-on Azure experience matters more than theory. MockMaster’s 758 scenario-based questions replicate this style.',
         },
         {
           question: 'How should I prepare for AI-300?',
@@ -164,7 +164,7 @@ const FAQPage: React.FC = () => {
         {
           question: 'How many questions does MockMaster have?',
           answer:
-            'MockMaster currently has 5,600+ questions: all JAIIB papers (IE&IFS, PPB, AFM, RBWM), CAIIB ABM, Microsoft AI-300, PMI CAPM, and Quantitative Aptitude across 35 chapters. We add new questions every week to keep the banks fresh.',
+            'MockMaster currently has 6,600+ questions: all JAIIB papers (IE&IFS, PPB, AFM, RBWM), CAIIB ABM, Microsoft AI-300, PMI CAPM, and Quantitative Aptitude across 35 chapters. We add new questions every week to keep the banks fresh.',
         },
         {
           question: 'What are AI explanations?',

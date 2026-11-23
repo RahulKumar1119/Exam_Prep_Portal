@@ -18,7 +18,7 @@ const PAPERS = [
     slug: 'ppb',
     name: 'PPB',
     fullName: 'Principles & Practices of Banking',
-    questions: '758+',
+    questions: '754+',
     rating: 4.9,
     reviews: 128,
     color: 'indigo',
@@ -40,7 +40,7 @@ const PAPERS = [
     slug: 'rbwm',
     name: 'RBWM',
     fullName: 'Retail Banking & Wealth Management',
-    questions: '634+',
+    questions: '633+',
     rating: 4.8,
     reviews: 74,
     color: 'pink',
@@ -64,7 +64,7 @@ const PracticeTestsPage: React.FC = () => {
     <div className="min-h-screen bg-white">
       <SEO
         title="JAIIB Practice Tests 2026 — Free Mock Tests for All Papers"
-        description="3000+ free JAIIB practice questions for IE&IFS, PPB, AFM, RBWM. AI-powered explanations with RBI circular references. Updated for 2026 syllabus."
+        description="4100+ free JAIIB practice questions for IE&IFS, PPB, AFM, RBWM. AI-powered explanations with RBI circular references. Updated for 2026 syllabus."
         canonical="https://mockmaster.fun/practice-tests"
         keywords="JAIIB practice test free, JAIIB mock test online, IE IFS practice questions, PPB mock test, AFM questions"
       />
@@ -92,7 +92,7 @@ const PracticeTestsPage: React.FC = () => {
             AI-powered practice questions with detailed explanations citing RBI circulars and IIBF textbook references. Updated for the latest syllabus.
           </p>
           <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-600">
-            <span>✅ 3,400+ Questions</span>
+            <span>✅ 4,100+ Questions</span>
             <span>✅ AI Explanations</span>
             <span>✅ No Negative Marking</span>
             <span>✅ Lifetime Access</span>

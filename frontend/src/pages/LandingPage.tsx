@@ -17,7 +17,7 @@ const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-gray-950 text-white">
       <SEO
         title="MockMaster — Free IT Certification & Banking Exam Practice Tests"
-        description="Free practice tests for JAIIB 2026 (3700+ questions), Microsoft AI-300 (685 questions), PMI CAPM (225 questions), and AWS CloudOps SOA-C03 (325 questions). AI explanations, leaderboard, timed mock tests. No payment required."
+        description="Free practice tests for JAIIB 2026 (4100+ questions), Microsoft AI-300 (758 questions), PMI CAPM (225 questions), and AWS CloudOps SOA-C03 (325 questions). AI explanations, leaderboard, timed mock tests. No payment required."
         canonical="https://mockmaster.fun/"
         keywords="JAIIB mock test 2026, AI-300 practice test, CAPM practice test, CloudOps practice test, SOA-C03 practice, free certification practice, Microsoft AI-300, PMI CAPM, AWS CloudOps, IIBF exam prep, Azure ML certification"
       />
@@ -114,7 +114,7 @@ const LandingPage: React.FC = () => {
               <p className="text-sm text-gray-400 mb-5">4 papers: IE&IFS, PPB, AFM, RBWM. Banking operations, financial management, wealth management.</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-2xl font-bold text-white">3,800+</span>
+                  <span className="text-2xl font-bold text-white">4,100+</span>
                   <span className="text-xs text-gray-500">questions</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />
@@ -175,7 +175,7 @@ const LandingPage: React.FC = () => {
               <p className="text-sm text-gray-400 mb-5">Operationalizing ML & GenAI Solutions. Azure ML, MLOps, Foundry, RAG, fine-tuning, and model deployment.</p>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-2xl font-bold text-white">685</span>
+                  <span className="text-2xl font-bold text-white">758</span>
                   <span className="text-xs text-gray-500">questions</span>
                 </div>
                 <div className="w-px h-6 bg-gray-800" />

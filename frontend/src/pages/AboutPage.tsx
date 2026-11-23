@@ -90,7 +90,7 @@ const AboutPage: React.FC = () => {
               <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
                 <span className="text-xl">📚</span>
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">5,600+ Questions</h3>
+              <h3 className="text-lg font-bold text-white mb-2">6,600+ Questions</h3>
               <p className="text-gray-400 text-sm leading-relaxed">
                 JAIIB (IE&IFS, PPB, AFM, RBWM) + CAIIB + Microsoft AI-300 + PMI CAPM + Quantitative Aptitude across 35 chapters. Updated regularly with new content.
               </p>
@@ -163,9 +163,9 @@ const AboutPage: React.FC = () => {
               </div>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>• IE & IFS — 1,146 questions (11 sets of 100)</li>
-                <li>• PPB — 758 questions (7 sets of 100)</li>
+                <li>• PPB — 754 questions (7 sets of 100)</li>
                 <li>• AFM — 1,600 questions (16 sets of 100)</li>
-                <li>• RBWM — 634 questions (6 sets of 100)</li>
+                <li>• RBWM — 633 questions (6 sets of 100)</li>
               </ul>
             </motion.div>
             <motion.div
@@ -199,7 +199,7 @@ const AboutPage: React.FC = () => {
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>• 685 scenario-based questions</li>
+                <li>• 758 scenario-based questions</li>
                 <li>• Covers MLOps, GenAIOps, RAG, fine-tuning</li>
                 <li>• Azure ML, Foundry, GitHub Actions</li>
                 <li>• Expert-level difficulty</li>

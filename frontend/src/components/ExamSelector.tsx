@@ -38,13 +38,13 @@ const ExamSelector: React.FC<ExamSelectorProps> = ({ onSelect, title }) => {
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">{exam.fullName}</p>
                 {exam.id === 'JAIIB' && (
-                  <p className="text-xs text-green-600 mt-2 font-medium">3,700+ questions available</p>
+                  <p className="text-xs text-green-600 mt-2 font-medium">4,100+ questions available</p>
                 )}
                 {exam.id === 'CAIIB' && (
-                  <p className="text-xs text-emerald-600 mt-2 font-medium">355 questions available</p>
+                  <p className="text-xs text-emerald-600 mt-2 font-medium">740 questions available</p>
                 )}
                 {exam.id === 'AI-300' && (
-                  <p className="text-xs text-purple-600 mt-2 font-medium">685 questions available</p>
+                  <p className="text-xs text-purple-600 mt-2 font-medium">758 questions available</p>
                 )}
                 {exam.id === 'CAPM' && (
                   <p className="text-xs text-orange-600 mt-2 font-medium">New — CAPM practice launching</p>

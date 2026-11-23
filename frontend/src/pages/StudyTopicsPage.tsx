@@ -217,7 +217,7 @@ const StudyTopicsPage: React.FC = () => {
             Ready to Test Your Knowledge?
           </h2>
           <p className="text-blue-100 text-lg mb-8">
-            Practice with 3000+ questions and AI-powered explanations to pass JAIIB in your first attempt.
+            Practice with 4,100+ questions and AI-powered explanations to pass JAIIB in your first attempt.
           </p>
           <Link
             to="/practice-tests"

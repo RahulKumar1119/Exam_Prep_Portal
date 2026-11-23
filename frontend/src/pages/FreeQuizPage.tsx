@@ -100,7 +100,7 @@ const FreeQuizPage: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
         <SEO
           title={`Free ${slug?.toUpperCase()} Quiz Result | MockMaster`}
-          description={`You scored ${score}% on the free ${paperName} quiz. Sign up to access 3000+ questions.`}
+          description={`You scored ${score}% on the free ${paperName} quiz. Sign up to access 4,100+ questions.`}
           robots="noindex, nofollow"
           skipCanonical
         />
@@ -130,7 +130,7 @@ const FreeQuizPage: React.FC = () => {
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 text-white mb-6">
               <h3 className="font-bold text-lg mb-2">Want more practice?</h3>
               <p className="text-blue-100 text-sm mb-4">
-                Sign up free to access 3000+ questions with AI explanations, performance tracking, and exam readiness scores.
+                Sign up free to access 4,100+ questions with AI explanations, performance tracking, and exam readiness scores.
               </p>
               <Link
                 to="/register"
@@ -254,13 +254,13 @@ const FreeQuizPage: React.FC = () => {
 
         {/* Bottom CTA */}
         <p className="text-center text-xs text-gray-500 mt-6">
-          This is a free sample. <Link to="/register" className="text-blue-600 font-medium hover:underline">Sign up</Link> to access 3000+ questions.
+          This is a free sample. <Link to="/register" className="text-blue-600 font-medium hover:underline">Sign up</Link> to access 4,100+ questions.
         </p>
 
         {/* Static SEO content — visible to crawlers, shows sample questions */}
         <div className="mt-12 bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Sample {paperName} Questions</h2>
-          <p className="text-sm text-gray-600 mb-6">Here are the practice questions included in this free quiz. Sign up to access our full question bank with 3000+ questions and AI explanations.</p>
+          <p className="text-sm text-gray-600 mb-6">Here are the practice questions included in this free quiz. Sign up to access our full question bank with 4,100+ questions and AI explanations.</p>
           <div className="space-y-6">
             {questions.map((q, idx) => (
               <div key={q.id} className="border-b border-gray-100 pb-4 last:border-0">

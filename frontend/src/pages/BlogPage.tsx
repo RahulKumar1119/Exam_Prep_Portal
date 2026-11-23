@@ -571,7 +571,7 @@ const BLOG_POSTS: BlogPost[] = [
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
           <h3 className="text-blue-900 mt-0">Start Your JAIIB Preparation</h3>
           <p className="text-blue-800 mb-0">
-            Practice with 1000+ questions aligned to the 2026 syllabus. Our AI tracks your module-wise performance and recommends exactly which topics to focus on next.
+            Practice with 4,100+ questions aligned to the 2026 syllabus. Our AI tracks your module-wise performance and recommends exactly which topics to focus on next.
           </p>
         </div>
 
@@ -865,7 +865,7 @@ const BLOG_POSTS: BlogPost[] = [
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-8">
           <h3 className="text-blue-900 mt-0">Start Your JAIIB Preparation Today</h3>
           <p className="text-blue-800 mb-0">
-            Our AI-powered platform covers all 4 JAIIB papers with 3000+ questions. Clear JAIIB first, then use the same platform for CAIIB preparation (coming soon).
+            Our AI-powered platform covers all 4 JAIIB papers with 4,100+ questions. Clear JAIIB first, then use the same platform for CAIIB preparation (coming soon).
           </p>
         </div>
 
@@ -1392,7 +1392,7 @@ const BlogListPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Practicing?</h2>
           <p className="text-blue-100 mb-8">
-            Put these strategies into action with 1000+ AI-powered practice questions
+            Put these strategies into action with 4,100+ AI-powered practice questions
           </p>
           <Link
             to="/register"

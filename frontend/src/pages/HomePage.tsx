@@ -216,19 +216,19 @@ const HomePage: React.FC = () => {
           <h2 className="text-lg font-bold text-gray-900 mb-4">Start Practicing</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             {(selectedExam === 'AI-300' ? [
-              { id: 'AI-300', name: 'AI-300', questions: 685, perSet: 57, color: 'from-purple-600 to-indigo-700' },
+              { id: 'AI-300', name: 'AI-300', questions: 758, perSet: 57, color: 'from-purple-600 to-indigo-700' },
             ] : selectedExam === 'CloudOps' ? [
               { id: 'SOA-C03', name: 'SOA-C03', questions: 325, perSet: 65, color: 'from-amber-500 to-orange-700' },
             ] : selectedExam === 'CAIIB' ? [
               { id: 'ABM', name: 'ABM', questions: 740, perSet: 100, color: 'from-emerald-500 to-teal-700' },
             ] : [
               { id: 'IE & IFS', name: 'IE & IFS', questions: 1146, perSet: 100, color: 'from-blue-500 to-blue-700' },
-              { id: 'PPB', name: 'PPB', questions: 758, perSet: 100, color: 'from-indigo-500 to-indigo-700' },
+              { id: 'PPB', name: 'PPB', questions: 754, perSet: 100, color: 'from-indigo-500 to-indigo-700' },
               { id: 'AFM', name: 'AFM', questions: 1600, perSet: 100, color: 'from-purple-500 to-purple-700' },
-              { id: 'RBWM', name: 'RBWM', questions: 634, perSet: 100, color: 'from-pink-500 to-pink-700' },
+              { id: 'RBWM', name: 'RBWM', questions: 633, perSet: 100, color: 'from-pink-500 to-pink-700' },
               { id: 'ABM', name: 'ABM (CAIIB)', questions: 740, perSet: 100, color: 'from-emerald-500 to-teal-700' },
               ...(selectedExam === 'ALL' ? [
-                { id: 'AI-300', name: 'AI-300', questions: 685, perSet: 57, color: 'from-purple-600 to-indigo-700' },
+                { id: 'AI-300', name: 'AI-300', questions: 758, perSet: 57, color: 'from-purple-600 to-indigo-700' },
                 { id: 'CloudOps', name: 'SOA-C03', questions: 325, perSet: 65, color: 'from-amber-500 to-orange-700' },
               ] : []),
             ]).map((paper) => (
