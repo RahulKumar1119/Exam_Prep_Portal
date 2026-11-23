@@ -99,6 +99,36 @@ STUDY MATERIAL ({module_name}, pages {p1}-{p2}):
 {text}
 >>>"""
 
+TRAP_PROMPT = """You are the toughest IIBF paper-setter for JAIIB Paper 3, "Accounting & Financial Management for Bankers" (AFM), {module_name}. Your job is to write TRAP questions that separate candidates who truly understand the subject from those who memorise formulas.
+
+Using the study material below as the factual basis, write exactly {n} NEW, VERY DIFFICULT multiple-choice questions in ENGLISH.
+
+Every question MUST contain a deliberate trap. Use a mix of these trap types:
+- Numerical traps (at least {n_num}): multi-step problems where a tempting shortcut gives a wrong option, e.g. part-year depreciation, change of depreciation method, WDV vs SLM, BRS starting from an overdraft (unfavourable) balance, rectification through Suspense A/c, rebate on bills discounted spanning year-end, annuity due vs ordinary annuity, effective vs nominal rate, front-end interest, semi-annual coupons, after-tax cost of debt, operating vs financial leverage, margin of safety vs BEP, variances split into price and usage, TDS thresholds, GST on inter-state vs intra-state supply. Every wrong option must be the exact result of a specific common mistake (wrong base, missed step, wrong sign, wrong period, simple instead of compound, pre-tax instead of post-tax).
+- Distractor-data traps: include one or two plausible but irrelevant figures that a careless candidate will use.
+- Wording traps: "NOT", "EXCEPT", "LEAST", "incorrectly matched", "which statement is FALSE", or a reversed concept (debit vs credit, source vs application, lessor vs lessee, drawer vs drawee, capital vs revenue).
+- Multi-statement traps: 3-4 numbered statements written out IN FULL inside question_text (one per line), options like "1 and 3 only"; include statements that are almost right but contain one subtle error (wrong number, wrong section, swapped term).
+- Case traps: a short banking scenario where the obvious treatment is wrong and the correct treatment needs a finer rule.
+
+Hard rules:
+- Difficulty: every question "hard". No definition-recall or one-step questions.
+- Every question AND explanation must be fully self-contained, as in a real exam paper: include all data needed and state concepts directly. NEVER mention the source: no "the text", "the passage", "the PDF", "the study material", "as per the material", "as provided", "according to the text" or page numbers.
+- Exactly 4 options keyed A, B, C, D; exactly ONE correct and indisputable; options must be distinct. Do NOT use "All of the above", "None of the above" or "Both A and B". The trap must mislead, but the question must not be ambiguous.
+- Compute numerical answers carefully and double-check them; the correct option must exactly match the computation.
+- Facts must be consistent with the material and current Indian standards/law as presented in it.
+- "explanation": 3-6 sentences: the correct working/reasoning, then name the trap and which option it leads to; end with "Hence, option X is correct." where X is the correct key.
+- "trap": one short sentence describing the trap.
+- "subtopic": the specific concept tested.
+- "qtype": one of "numerical", "case", "statements", "conceptual".
+
+Return ONLY a JSON array, no markdown fences, no commentary:
+[{{"question_text": "...", "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}}, "correct_answer": "A", "difficulty": "hard", "qtype": "numerical", "subtopic": "...", "trap": "...", "explanation": "..."}}]
+
+STUDY MATERIAL ({module_name}, pages {p1}-{p2}):
+<<<
+{text}
+>>>"""
+
 VERIFY_PROMPT = """You are an expert examiner for JAIIB AFM. Solve each multiple-choice question below independently and carefully (do the full calculation for numerical ones). Do not assume any option is correct.
 
 For each question return:
@@ -212,12 +242,21 @@ def validate(q):
 
 # ── Stages ────────────────────────────────────────────────────────────────────
 
+PDF_PATH = None  # set by --pdf to read a local file instead of S3
+STYLE = 'standard'  # set by --style; 'trap' uses TRAP_PROMPT
+
+
 def load_pages():
-    s3 = boto3.client('s3', region_name=REGION)
-    data = s3.get_object(Bucket=S3_BUCKET, Key=S3_KEY)['Body'].read()
-    doc = fitz.open(stream=data, filetype='pdf')
+    if PDF_PATH:
+        doc = fitz.open(PDF_PATH)
+        where = PDF_PATH
+    else:
+        s3 = boto3.client('s3', region_name=REGION)
+        data = s3.get_object(Bucket=S3_BUCKET, Key=S3_KEY)['Body'].read()
+        doc = fitz.open(stream=data, filetype='pdf')
+        where = f's3://{S3_BUCKET}/{S3_KEY}'
     pages = {i + 1: clean_page(doc[i].get_text()) for i in range(doc.page_count)}
-    print(f'Loaded {doc.page_count} pages from s3://{S3_BUCKET}/{S3_KEY}')
+    print(f'Loaded {doc.page_count} pages from {where}')
     return pages
 
 
@@ -595,7 +634,7 @@ def run_topup(base_path, need_by_module, factor=2.2):
         c['letters'], pool = pool[:c['n']], pool[c['n']:]
 
     def gen(c):
-        prompt = GEN_PROMPT.format(module_name=MODULE_TOPICS[c['module']], n=c['n'],
+        prompt = (TRAP_PROMPT if STYLE == 'trap' else GEN_PROMPT).format(module_name=MODULE_TOPICS[c['module']], n=c['n'],
                                    n_num=max(1, round(c['n'] * 0.4)), p1=c['p1'], p2=c['p2'],
                                    text=c['text'])
         prompt = prompt.replace('STUDY MATERIAL (', TOPUP_RULES.format(letters=', '.join(c['letters'])) + '\nSTUDY MATERIAL (', 1)
@@ -691,6 +730,7 @@ def run_upload(path):
                 'paper_name': PAPER,
                 'topic': MODULE_TOPICS[q['module']],
                 'subtopic': q.get('subtopic', ''),
+                **({'trap_note': q['trap']} if q.get('trap') else {}),
                 'difficulty': q['difficulty'],
                 'question_type': 'single_choice',
                 'question_text': q['question_text'].strip(),
@@ -713,7 +753,14 @@ if __name__ == '__main__':
     ap.add_argument('--topup', metavar='JSON', help='generate verified top-up candidates for a reviewed JSON')
     ap.add_argument('--need', default='A=8,B=18,C=18,D=25', help='per-module shortfall for --topup')
     ap.add_argument('--factor', type=float, default=2.2, help='over-generation factor for --topup')
+    ap.add_argument('--pdf', help='read the capsule from a local PDF instead of S3')
+    ap.add_argument('--style', choices=['standard', 'trap'], default='standard',
+                    help="'trap' = tough trap questions (all hard), tagged with a separate source")
     args = ap.parse_args()
+    PDF_PATH = args.pdf
+    STYLE = args.style
+    if STYLE == 'trap':
+        SOURCE = 'capsule_ambitiousbaba_glm5_trap'
     if args.topup:
         need = {k: int(v) for k, v in (p.split('=') for p in args.need.split(','))}
         run_topup(args.topup, need, factor=args.factor)
