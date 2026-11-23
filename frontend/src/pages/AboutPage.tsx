@@ -165,7 +165,7 @@ const AboutPage: React.FC = () => {
                 <li>• IE & IFS — 1,146 questions (11 sets of 100)</li>
                 <li>• PPB — 754 questions (7 sets of 100)</li>
                 <li>• AFM — 1,600 questions (16 sets of 100)</li>
-                <li>• RBWM — 682 questions (6 sets of 100)</li>
+                <li>• RBWM — 700 questions (7 sets of 100)</li>
               </ul>
             </motion.div>
             <motion.div

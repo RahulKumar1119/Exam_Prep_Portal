@@ -40,7 +40,7 @@ const PAPERS = [
     slug: 'rbwm',
     name: 'RBWM',
     fullName: 'Retail Banking & Wealth Management',
-    questions: '682+',
+    questions: '700+',
     rating: 4.8,
     reviews: 74,
     color: 'pink',
